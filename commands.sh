@@ -75,3 +75,18 @@ git push origin main
 
 # Aggiungi questo comando
 mv database.types.ts lib/database.types.ts
+
+# Inizializza shadcn-ui
+npx shadcn-ui@latest init
+
+# Installa i componenti necessari
+npx shadcn-ui@latest add card
+npx shadcn-ui@latest add button
+npx shadcn-ui@latest add input
+npx shadcn-ui@latest add dialog
+npx shadcn-ui@latest add table
+npx shadcn-ui@latest add tabs
+
+# Rimuovi e reinstalla le dipendenze per assicurarti che tutto sia aggiornato
+rm -rf node_modules package-lock.json
+npm install

@@ -8,6 +8,17 @@ import type { Database } from '@/types/database'
 import DettaglioQuestionario from '@/components/DettaglioQuestionario'
 import { exportToExcel, exportToPDF } from '@/utils/export'
 import { ArrowDownIcon } from '@heroicons/react/24/solid'
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Button } from "@/components/ui/button"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 
 type Struttura = Database['public']['Tables']['strutture']['Row']
 type Operatore = Database['public']['Tables']['operatori']['Row']
@@ -105,7 +116,6 @@ export default function AdminDashboard() {
       }
     } catch (error) {
       console.error('Errore durante l\'esportazione:', error)
-      // TODO: Mostrare un messaggio di errore all'utente
     }
   }
 
@@ -113,84 +123,68 @@ export default function AdminDashboard() {
   if (loading) return <div>Caricamento...</div>
   if (error) return <div>Errore: {error}</div>
 
-  return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white shadow rounded-lg">
-          <div className="px-4 py-5 sm:p-6">
-            <div className="sm:flex sm:items-center">
-              <div className="sm:flex-auto">
-                <h2 className="text-lg font-medium text-gray-900">
-                  Dashboard Admin
-                </h2>
-                <p className="mt-1 text-sm text-gray-500">
-                  Visualizza tutti i questionari compilati
-                </p>
-              </div>
-              <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none space-x-4">
-                <button
-                  onClick={() => handleExport('excel')}
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                >
-                  <ArrowDownIcon className="h-5 w-5 mr-2" />
-                  Esporta Excel
-                </button>
-                <button
-                  onClick={() => handleExport('pdf')}
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                >
-                  <ArrowDownIcon className="h-5 w-5 mr-2" />
-                  Esporta PDF
-                </button>
-              </div>
-            </div>
+  const getSubmissionsByType = (tipo: 'struttura' | 'operatore' | 'giovane') => {
+    return submissions.filter(s => s.tipo === tipo)
+  }
 
-            <div className="mt-6">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Tipo
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Data
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Compilato da
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Azioni
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {submissions.map(submission => (
-                    <tr key={submission.id}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        {submission.tipo}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {new Date(submission.created_at).toLocaleDateString()}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {submission.created_by}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        <button
-                          onClick={() => setSelectedSubmission(submission)}
-                          className="text-indigo-600 hover:text-indigo-900"
-                        >
-                          Visualizza
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+  return (
+    <div className="flex-1 space-y-4 p-8 pt-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-3xl font-bold tracking-tight">Dashboard Admin</h2>
+        <div className="flex items-center space-x-2">
+          <Button 
+            onClick={() => handleExport('excel')}
+            variant="outline"
+          >
+            <ArrowDownIcon className="mr-2 h-4 w-4" />
+            Excel
+          </Button>
+          <Button 
+            onClick={() => handleExport('pdf')}
+            variant="outline"
+          >
+            <ArrowDownIcon className="mr-2 h-4 w-4" />
+            PDF
+          </Button>
         </div>
       </div>
+
+      <Tabs defaultValue="all" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="all">Tutti</TabsTrigger>
+          <TabsTrigger value="strutture">Strutture</TabsTrigger>
+          <TabsTrigger value="operatori">Operatori</TabsTrigger>
+          <TabsTrigger value="giovani">Giovani</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="all">
+          <SubmissionsTable 
+            submissions={submissions} 
+            onView={setSelectedSubmission} 
+          />
+        </TabsContent>
+
+        <TabsContent value="strutture">
+          <SubmissionsTable 
+            submissions={getSubmissionsByType('struttura')} 
+            onView={setSelectedSubmission} 
+          />
+        </TabsContent>
+
+        <TabsContent value="operatori">
+          <SubmissionsTable 
+            submissions={getSubmissionsByType('operatore')} 
+            onView={setSelectedSubmission} 
+          />
+        </TabsContent>
+
+        <TabsContent value="giovani">
+          <SubmissionsTable 
+            submissions={getSubmissionsByType('giovane')} 
+            onView={setSelectedSubmission} 
+          />
+        </TabsContent>
+      </Tabs>
 
       {selectedSubmission && (
         <DettaglioQuestionario
@@ -200,5 +194,50 @@ export default function AdminDashboard() {
         />
       )}
     </div>
+  )
+}
+
+function SubmissionsTable({ 
+  submissions, 
+  onView 
+}: { 
+  submissions: Submission[]
+  onView: (submission: Submission) => void
+}) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Questionari</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Tipo</TableHead>
+              <TableHead>Data</TableHead>
+              <TableHead>Compilato da</TableHead>
+              <TableHead className="text-right">Azioni</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {submissions.map(submission => (
+              <TableRow key={submission.id}>
+                <TableCell className="font-medium">{submission.tipo}</TableCell>
+                <TableCell>{new Date(submission.created_at).toLocaleDateString()}</TableCell>
+                <TableCell>{submission.created_by}</TableCell>
+                <TableCell className="text-right">
+                  <Button
+                    variant="ghost"
+                    onClick={() => onView(submission)}
+                  >
+                    Visualizza
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
   )
 } 
