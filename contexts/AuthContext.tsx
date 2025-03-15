@@ -1,46 +1,89 @@
 'use client'
 
-import React, { createContext, useContext, useState, ReactNode } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 
-type UserType = 'admin' | 'anonimo' | 'operatore' | null
+type UserType = 'admin' | 'operatore' | 'anonimo'
+
 type AuthContextType = {
-  userType: UserType
-  login: (code: string) => Promise<boolean>
-  logout: () => void
+  userType: UserType | null
+  signIn: (code: string) => Promise<void>
+  signOut: () => void
+  loading: boolean
+  error: string | null
 }
 
 const AuthContext = createContext<AuthContextType>({
   userType: null,
-  login: async () => false,
-  logout: () => {},
+  signIn: async () => {},
+  signOut: () => {},
+  loading: false,
+  error: null
 })
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [userType, setUserType] = useState<UserType>(null)
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [userType, setUserType] = useState<UserType | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const router = useRouter()
 
-  const login = async (code: string) => {
-    if (code === 'admin2025') {
-      setUserType('admin')
-      return true
-    } else if (code === 'utente9999') {
-      setUserType('anonimo') 
-      return true
-    } else if (code.startsWith('operatore') && /^operatore\d+$/.test(code)) {
-      setUserType('operatore')
-      return true
+  useEffect(() => {
+    // Recupera il tipo di utente dal localStorage al caricamento
+    const savedUserType = localStorage.getItem('userType') as UserType | null
+    if (savedUserType) {
+      setUserType(savedUserType)
     }
-    return false
+  }, [])
+
+  const signIn = async (code: string) => {
+    setLoading(true)
+    setError(null)
+
+    try {
+      // Verifica il codice di accesso
+      if (code === 'admin2025') {
+        setUserType('admin')
+        localStorage.setItem('userType', 'admin')
+        router.push('/dashboard/admin')
+      } else if (code === 'anonimo9999') {
+        setUserType('anonimo')
+        localStorage.setItem('userType', 'anonimo')
+        router.push('/dashboard/anonimo')
+      } else {
+        // Verifica se è un codice operatore (da 1 a 300)
+        const operatorNumber = parseInt(code)
+        if (!isNaN(operatorNumber) && operatorNumber >= 1 && operatorNumber <= 300) {
+          setUserType('operatore')
+          localStorage.setItem('userType', 'operatore')
+          router.push('/dashboard/operatore')
+        } else {
+          throw new Error('Codice non valido')
+        }
+      }
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Errore durante il login')
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const logout = () => {
+  const signOut = () => {
     setUserType(null)
+    localStorage.removeItem('userType')
+    router.push('/')
   }
 
   return (
-    <AuthContext.Provider value={{ userType, login, logout }}>
+    <AuthContext.Provider value={{ userType, signIn, signOut, loading, error }}>
       {children}
     </AuthContext.Provider>
   )
 }
 
-export const useAuth = () => useContext(AuthContext) 
+export const useAuth = () => {
+  const context = useContext(AuthContext)
+  if (!context) {
+    throw new Error('useAuth deve essere usato all\'interno di AuthProvider')
+  }
+  return context
+} 

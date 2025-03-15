@@ -6,8 +6,6 @@ import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase'
 import type { Database } from '@/types/database'
 import DettaglioQuestionario from '@/components/DettaglioQuestionario'
-import { exportToExcel, exportToPDF } from '@/utils/export'
-import { ArrowDownIcon } from '@heroicons/react/24/solid'
 
 type Struttura = Database['public']['Tables']['strutture']['Row']
 type Operatore = Database['public']['Tables']['operatori']['Row']
@@ -17,11 +15,34 @@ type Submission = {
   id: string
   tipo: 'struttura' | 'operatore' | 'giovane'
   created_at: string
-  created_by: string
   data: Struttura | Operatore | Giovane
 }
 
-export default function AdminDashboard() {
+const QUESTIONARI = [
+  {
+    id: 'strutture',
+    title: 'Questionario Strutture',
+    description: 'Compila il questionario per le strutture di accoglienza',
+    color: 'blue',
+    href: '/questionari/strutture'
+  },
+  {
+    id: 'operatori',
+    title: 'Questionario Operatori',
+    description: 'Compila il questionario per gli operatori',
+    color: 'green',
+    href: '/questionari/operatori'
+  },
+  {
+    id: 'giovani',
+    title: 'Questionario Giovani',
+    description: 'Compila il questionario per i giovani',
+    color: 'yellow',
+    href: '/questionari/giovani'
+  }
+]
+
+export default function AnonimoDashboard() {
   const router = useRouter()
   const { userType } = useAuth()
   const [loading, setLoading] = useState(true)
@@ -35,7 +56,7 @@ export default function AdminDashboard() {
       return
     }
 
-    if (userType !== 'admin') {
+    if (userType !== 'anonimo') {
       router.push(`/dashboard/${userType}`)
       return
     }
@@ -43,9 +64,18 @@ export default function AdminDashboard() {
     const fetchData = async () => {
       try {
         const [strutture, operatori, giovani] = await Promise.all([
-          supabase.from('strutture').select('*'),
-          supabase.from('operatori').select('*'),
-          supabase.from('giovani').select('*')
+          supabase
+            .from('strutture')
+            .select('*')
+            .eq('created_by', 'anonimo'),
+          supabase
+            .from('operatori')
+            .select('*')
+            .eq('created_by', 'anonimo'),
+          supabase
+            .from('giovani')
+            .select('*')
+            .eq('created_by', 'anonimo')
         ])
 
         const allSubmissions: Submission[] = [
@@ -53,21 +83,18 @@ export default function AdminDashboard() {
             id: s.id,
             tipo: 'struttura' as const,
             created_at: s.created_at,
-            created_by: s.created_by,
             data: s
           })) || []),
           ...(operatori.data?.map(o => ({
             id: o.id,
             tipo: 'operatore' as const,
             created_at: o.created_at,
-            created_by: o.created_by,
             data: o
           })) || []),
           ...(giovani.data?.map(g => ({
             id: g.id,
             tipo: 'giovane' as const,
             created_at: g.created_at,
-            created_by: g.created_by,
             data: g
           })) || [])
         ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
@@ -84,32 +111,7 @@ export default function AdminDashboard() {
     fetchData()
   }, [userType, router])
 
-  const handleExport = async (format: 'excel' | 'pdf') => {
-    try {
-      const [strutture, operatori, giovani] = await Promise.all([
-        supabase.from('strutture').select('*'),
-        supabase.from('operatori').select('*'),
-        supabase.from('giovani').select('*')
-      ])
-
-      const data = {
-        strutture: strutture.data || [],
-        operatori: operatori.data || [],
-        giovani: giovani.data || []
-      }
-
-      if (format === 'excel') {
-        exportToExcel(data)
-      } else {
-        exportToPDF(data)
-      }
-    } catch (error) {
-      console.error('Errore durante l\'esportazione:', error)
-      // TODO: Mostrare un messaggio di errore all'utente
-    }
-  }
-
-  if (!userType || userType !== 'admin') return null
+  if (!userType || userType !== 'anonimo') return null
   if (loading) return <div>Caricamento...</div>
   if (error) return <div>Errore: {error}</div>
 
@@ -121,31 +123,37 @@ export default function AdminDashboard() {
             <div className="sm:flex sm:items-center">
               <div className="sm:flex-auto">
                 <h2 className="text-lg font-medium text-gray-900">
-                  Dashboard Admin
+                  Dashboard Anonimo
                 </h2>
                 <p className="mt-1 text-sm text-gray-500">
-                  Visualizza tutti i questionari compilati
+                  I tuoi questionari compilati
                 </p>
               </div>
-              <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none space-x-4">
-                <button
-                  onClick={() => handleExport('excel')}
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                >
-                  <ArrowDownIcon className="h-5 w-5 mr-2" />
-                  Esporta Excel
-                </button>
-                <button
-                  onClick={() => handleExport('pdf')}
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                >
-                  <ArrowDownIcon className="h-5 w-5 mr-2" />
-                  Esporta PDF
-                </button>
+              <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+                <div className="space-x-4">
+                  <button
+                    onClick={() => router.push('/questionari/strutture')}
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+                  >
+                    Nuovo Questionario Strutture
+                  </button>
+                  <button
+                    onClick={() => router.push('/questionari/operatori')}
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+                  >
+                    Nuovo Questionario Operatori
+                  </button>
+                  <button
+                    onClick={() => router.push('/questionari/giovani')}
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+                  >
+                    Nuovo Questionario Giovani
+                  </button>
+                </div>
               </div>
             </div>
 
-            <div className="mt-6">
+            <div className="mt-8">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
@@ -154,9 +162,6 @@ export default function AdminDashboard() {
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Data
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Compilato da
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Azioni
@@ -173,9 +178,6 @@ export default function AdminDashboard() {
                         {new Date(submission.created_at).toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {submission.created_by}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         <button
                           onClick={() => setSelectedSubmission(submission)}
                           className="text-indigo-600 hover:text-indigo-900"
@@ -190,15 +192,15 @@ export default function AdminDashboard() {
             </div>
           </div>
         </div>
-      </div>
 
-      {selectedSubmission && (
-        <DettaglioQuestionario
-          data={selectedSubmission.data}
-          tipo={selectedSubmission.tipo}
-          onClose={() => setSelectedSubmission(null)}
-        />
-      )}
+        {selectedSubmission && (
+          <DettaglioQuestionario
+            data={selectedSubmission.data}
+            tipo={selectedSubmission.tipo}
+            onClose={() => setSelectedSubmission(null)}
+          />
+        )}
+      </div>
     </div>
   )
 } 
