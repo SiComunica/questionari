@@ -1,0 +1,20 @@
+# Crea la cartella components/ui se non esiste
+mkdir -p components/ui
+
+# Installa i componenti shadcn-ui
+npx shadcn-ui@latest add textarea
+npx shadcn-ui@latest add radio-group
+npx shadcn-ui@latest add label
+npx shadcn-ui@latest add alert
+
+# Installa le dipendenze di Radix UI
+npm install @radix-ui/react-label @radix-ui/react-radio-group
+
+# Installa lucide-react per le icone
+npm install lucide-react
+
+# Installa class-variance-authority per gli stili
+npm install class-variance-authority
+
+# Installa clsx e tailwind-merge per l'utility cn
+npm install clsx tailwind-merge

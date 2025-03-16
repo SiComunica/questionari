@@ -32,13 +32,21 @@ type Submission = {
   data: Struttura | Operatore | Giovane
 }
 
-export default function AdminDashboard() {
+type Questionario = {
+  id: string
+  created_at: string
+  created_by: string
+  tipo: 'giovani' | 'strutture' | 'operatori'
+}
+
+export default function DashboardAdmin() {
   const router = useRouter()
   const { userType } = useAuth()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [submissions, setSubmissions] = useState<Submission[]>([])
   const [selectedSubmission, setSelectedSubmission] = useState<Submission | null>(null)
+  const [questionari, setQuestionari] = useState<Questionario[]>([])
 
   useEffect(() => {
     if (!userType) {
@@ -94,6 +102,32 @@ export default function AdminDashboard() {
 
     fetchData()
   }, [userType, router])
+
+  useEffect(() => {
+    async function fetchQuestionari() {
+      try {
+        // Fetch questionari giovani
+        const { data: giovani, error: errGiovani } = await supabase
+          .from('giovani')
+          .select('id, created_at, created_by')
+          .order('created_at', { ascending: false })
+
+        if (errGiovani) throw errGiovani
+
+        // Formatta i dati
+        const questionariFormattati = (giovani || []).map(q => ({
+          ...q,
+          tipo: 'giovani' as const
+        }))
+
+        setQuestionari(questionariFormattati)
+      } catch (error) {
+        console.error('Errore nel caricamento dei questionari:', error)
+      }
+    }
+
+    fetchQuestionari()
+  }, [])
 
   const handleExport = async (format: 'excel' | 'pdf') => {
     try {
@@ -193,6 +227,37 @@ export default function AdminDashboard() {
           onClose={() => setSelectedSubmission(null)}
         />
       )}
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Questionari Ricevuti</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {questionari.map((q) => (
+              <div
+                key={q.id}
+                className="p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                <div className="flex justify-between items-center">
+                  <div>
+                    <p className="font-medium">ID: {q.id}</p>
+                    <p className="text-sm text-gray-500">
+                      Inviato da: {q.created_by}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      Data: {new Date(q.created_at).toLocaleString('it-IT')}
+                    </p>
+                  </div>
+                  <div className="text-sm text-blue-600">
+                    {q.tipo.charAt(0).toUpperCase() + q.tipo.slice(1)}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }

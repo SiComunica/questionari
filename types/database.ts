@@ -37,14 +37,23 @@ export type Database = {
           id: string
           created_at: string
           created_by: string
-          percorso_autonomia: boolean
+          percorso_autonomia: {
+            presente: boolean
+            tipo?: string
+          }
           tipo_percorso: string | null
           vive_in_struttura: boolean
-          collocazione_attuale: string | null
+          collocazione_attuale: {
+            tipo: string
+            comunita_specificare?: string
+          }
           fattori_vulnerabilita: string[]
           sesso: string
           classe_eta: string
-          luogo_nascita: string
+          luogo_nascita: {
+            italia: boolean
+            altro_paese?: string
+          }
           cittadinanza: string
           permesso_soggiorno: boolean
           tempo_in_struttura: string
@@ -53,6 +62,35 @@ export type Database = {
           titolo_studio: string
           attivita_precedenti: string[]
           attivita_attuali: string[]
+          orientamento_lavoro: {
+            usufruito: boolean
+            utilita?: string
+            luoghi?: string[]
+          }
+          abitazione_precedente: Record<string, boolean>
+          figure_aiuto: {
+            padre: boolean
+            madre: boolean
+            fratelli: boolean
+            parenti: boolean
+            amici: boolean
+            tutore: boolean
+            insegnanti: boolean
+            figure_sostegno: boolean
+            volontari: boolean
+            altri: boolean
+            altri_specificare?: string
+          }
+          preoccupazioni_futuro: Record<string, string>
+          obiettivi_realizzabili: Record<string, string>
+          aiuto_futuro?: string
+          pronto_uscita: {
+            risposta: boolean
+            motivazione?: string
+          }
+          emozioni_uscita: Record<string, boolean>
+          desiderio?: string
+          note_aggiuntive?: string
         }
       }
     }

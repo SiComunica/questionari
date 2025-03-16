@@ -86,6 +86,9 @@ npx shadcn-ui@latest add input
 npx shadcn-ui@latest add dialog
 npx shadcn-ui@latest add table
 npx shadcn-ui@latest add tabs
+npx shadcn-ui@latest add textarea
+npx shadcn-ui@latest add radio-group
+npx shadcn-ui@latest add label
 
 # Rimuovi e reinstalla le dipendenze per assicurarti che tutto sia aggiornato
 rm -rf node_modules package-lock.json
