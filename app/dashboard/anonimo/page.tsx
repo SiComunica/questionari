@@ -1,21 +1,19 @@
 'use client'
 
-import { useEffect } from 'react'
+import { Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import QuestionarioGiovani from '@/components/questionari/QuestionarioGiovani'
 import { Card, CardContent } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 
-// Aggiungiamo la configurazione per il rendering dinamico
+// Configurazione per il rendering dinamico
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
-export default function DashboardAnonimo() {
-  const router = useRouter()
+function DashboardContent() {
   const searchParams = useSearchParams()
   const success = searchParams.get('success')
 
-  // Se c'è il parametro success, mostra il messaggio di successo
   if (success) {
     return (
       <div className="container mx-auto p-6">
@@ -36,5 +34,13 @@ export default function DashboardAnonimo() {
         </CardContent>
       </Card>
     </div>
+  )
+}
+
+export default function DashboardAnonimo() {
+  return (
+    <Suspense fallback={<div>Caricamento...</div>}>
+      <DashboardContent />
+    </Suspense>
   )
 } 
