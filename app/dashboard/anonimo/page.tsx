@@ -6,6 +6,10 @@ import QuestionarioGiovani from '@/components/questionari/QuestionarioGiovani'
 import { Card, CardContent } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 
+// Aggiungiamo la configurazione per il rendering dinamico
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default function DashboardAnonimo() {
   const router = useRouter()
   const searchParams = useSearchParams()
