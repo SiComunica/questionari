@@ -285,6 +285,15 @@ const LAVORO_AUTONOMO = [
   { value: '1', label: 'Sì' }
 ]
 
+// Aggiungiamo la costante per le attività attuali
+const ATTIVITA_ATTUALI = [
+  { id: 'studio', label: 'Studio' },
+  { id: 'formazione', label: 'Formazione' },
+  { id: 'lavoro', label: 'Lavoro' },
+  { id: 'ricerca_lavoro', label: 'Ricerca attiva di un lavoro' },
+  { id: 'nessuna', label: 'Nessuna attività' }
+]
+
 export default function QuestionarioGiovani() {
   const router = useRouter()
   const { userType } = useAuth()
@@ -957,9 +966,20 @@ export default function QuestionarioGiovani() {
 
           {/* C5: Attività attuali */}
           <div className="space-y-4">
-            <Label>C5. Attualmente in quali attività sei impegnato/a?</Label>
+            <Label>C5. Attualmente in quale attività sei impegnato/a?</Label>
             <div className="grid grid-cols-2 gap-4">
-              {/* Checkbox per attività attuali */}
+              {ATTIVITA_ATTUALI.map(attivita => (
+                <div key={attivita.id} className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id={`attivita_${attivita.id}`}
+                    checked={formData.attivita_attuali.includes(attivita.id)}
+                    onChange={() => handleArrayCheckboxChange('attivita_attuali', attivita.id)}
+                    className="h-4 w-4 rounded border-gray-300"
+                  />
+                  <Label htmlFor={`attivita_${attivita.id}`}>{attivita.label}</Label>
+                </div>
+              ))}
             </div>
           </div>
 
