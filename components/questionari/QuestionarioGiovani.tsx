@@ -18,7 +18,20 @@ type LuogoNascita = {
   altro_paese?: string
 }
 
-type Giovane = Database['public']['Tables']['giovani']['Row']
+// Definiamo prima i tipi per la famiglia di origine
+type FamigliaOrigine = {
+  padre: boolean
+  madre: boolean
+  fratelli: boolean
+  nonni: boolean
+  altri_parenti: boolean
+  altri_conviventi: boolean
+}
+
+// Aggiorniamo il tipo Giovane per includere il tipo corretto di famiglia_origine
+type Giovane = Omit<Database['public']['Tables']['giovani']['Row'], 'famiglia_origine'> & {
+  famiglia_origine: FamigliaOrigine
+}
 
 // Aggiungiamo il tipo per i valori dei checkbox
 type CheckboxValue = {
@@ -41,16 +54,6 @@ const COLLOCAZIONI = [
   { value: '3', label: 'Ospite di strutture sanitarie' },
   { value: '4', label: 'Ospite di altro tipo di struttura' },
   { value: '5', label: 'Ospite di comunità' }
-]
-
-const FATTORI_VULNERABILITA = [
-  'Disagio economico',
-  'Disagio familiare',
-  'Disagio psicologico',
-  'Dipendenze',
-  'Problemi legali',
-  'Problemi di salute',
-  'Altro'
 ]
 
 const CLASSI_ETA = [
@@ -131,7 +134,14 @@ const STRUTTURE_PRECEDENTI = [
   { value: '3', label: 'Sì, più di una volta' }
 ]
 
-// Aggiorniamo i tipi per i campi array e booleani
+// Aggiungiamo il tipo per l'orientamento al lavoro
+type OrientamentoLavoro = {
+  usufruito: boolean
+  luoghi: string[]
+  utilita: string
+}
+
+// Aggiorniamo il tipo ArrayFields per includere orientamento_luoghi
 type ArrayFields = {
   fattori_vulnerabilita: string[]
   attivita_precedenti: string[]
@@ -140,21 +150,140 @@ type ArrayFields = {
   motivi_non_studio: string[]
   livelli_utilita: string[]
   livelli_obiettivi: string[]
+  ricerca_lavoro: string[]
+  orientamento_luoghi: string[]
 }
 
+// Aggiorniamo il tipo BooleanFields per includere famiglia_origine
 type BooleanFields = {
   abitazione_precedente: Record<string, boolean>
   figure_aiuto: Record<string, boolean>
   emozioni_uscita: Record<string, boolean>
+  famiglia_origine: FamigliaOrigine
 }
 
-// Aggiorniamo i tipi per includere tutti i campi necessari
-type FormData = Omit<Giovane, 'id' | 'created_at' | 'created_by'> & {
+// Aggiorniamo il tipo FormData
+type FormData = Omit<Giovane, 'id' | 'created_at' | 'created_by' | 'precedenti_strutture'> & {
   condizioni_lavoro: string[]
   motivi_non_studio: string[]
   livelli_utilita: string[]
   livelli_obiettivi: string[]
+  famiglia_origine: Record<string, boolean>
+  madre: {
+    titolo_studio: string
+    condizione_lavoro: string
+  }
+  padre: {
+    titolo_studio: string
+    condizione_lavoro: string
+  }
+  ricerca_lavoro: string[]
+  aspetti_lavoro: Record<string, string>
+  curriculum_vitae: string
+  centro_impiego: string
+  lavoro_autonomo: string
+  corso_formazione: {
+    frequenta: boolean
+    descrizione: string
+  }
+  lavoro_attuale: {
+    occupato: boolean
+    descrizione: string
+  }
+  precedenti_strutture: number
+  orientamento_lavoro: OrientamentoLavoro
+  orientamento_luoghi: string[]
 }
+
+// Aggiungiamo le costanti per i nuovi campi
+const FAMIGLIA_ORIGINE = [
+  { id: 'padre', label: 'Padre' },
+  { id: 'madre', label: 'Madre' },
+  { id: 'fratelli', label: 'Fratelli/Sorelle' },
+  { id: 'nonni', label: 'Nonni/Nonne' },
+  { id: 'altri_parenti', label: 'Altri parenti' },
+  { id: 'altri_conviventi', label: 'Altri conviventi non parenti' }
+]
+
+const CONDIZIONE_LAVORO = [
+  { value: '1', label: 'Ha un lavoro stabile' },
+  { value: '2', label: 'Ha un lavoro saltuario' },
+  { value: '3', label: 'Non lavora' },
+  { value: '4', label: 'Pensionato/a' },
+  { value: '9', label: 'Non so' }
+]
+
+// Manteniamo solo la versione con id e label
+const FATTORI_VULNERABILITA = [
+  { id: 'disagio_economico', label: 'Disagio economico' },
+  { id: 'disagio_familiare', label: 'Disagio familiare' },
+  { id: 'disagio_psicologico', label: 'Disagio psicologico' },
+  { id: 'dipendenze', label: 'Dipendenze' },
+  { id: 'problemi_legali', label: 'Problemi legali' },
+  { id: 'problemi_salute', label: 'Problemi di salute' },
+  { id: 'stranieri', label: 'Stranieri con problemi legati alla condizione migratoria' },
+  { id: 'tratta', label: 'Vittime di tratta' },
+  { id: 'violenza', label: 'Vittime di violenza domestica' },
+  { id: 'allontanati', label: 'Persone allontanate dalla famiglia' },
+  { id: 'detenuti', label: 'Detenuti' },
+  { id: 'ex_detenuti', label: 'Ex detenuti' },
+  { id: 'penale_esterna', label: 'Persone in esecuzione penale esterna' },
+  { id: 'indigenti', label: 'Indigenti e/o senza dimora' },
+  { id: 'rom', label: 'Rom e Sinti' },
+  { id: 'disabilita_fisica', label: 'Persone con disabilità fisica' },
+  { id: 'disabilita_cognitiva', label: 'Persone con disabilità cognitiva' },
+  { id: 'disturbi_psichiatrici', label: 'Persone con disturbi psichiatrici' },
+  { id: 'genitori_precoci', label: 'Genitori precoci' },
+  { id: 'orientamento', label: 'Persone con problemi legati all\'orientamento sessuale' },
+  { id: 'altro', label: 'Altro' }
+]
+
+// Aggiorniamo il tipo per i fattori di vulnerabilità
+type FattoreVulnerabilita = {
+  id: string
+  label: string
+}
+
+const RICERCA_LAVORO = [
+  { id: 'centro_impiego', label: 'Centro per l\'impiego (ex collocamento)' },
+  { id: 'sportelli', label: 'Sportelli di orientamento al lavoro' },
+  { id: 'inps', label: 'INPS e patronati' },
+  { id: 'servizi_sociali', label: 'Servizi sociali' },
+  { id: 'agenzie', label: 'Agenzie interinali' },
+  { id: 'cooperative', label: 'Cooperative sociali' },
+  { id: 'struttura', label: 'Struttura ospitante' },
+  { id: 'conoscenti', label: 'Amici, parenti, conoscenti' },
+  { id: 'portali', label: 'Portali online per la ricerca del lavoro' },
+  { id: 'social', label: 'Social network' },
+  { id: 'altro', label: 'Altro' }
+]
+
+const ASPETTI_LAVORO = [
+  { id: 'stabilita', label: 'Stabilità del posto di lavoro' },
+  { id: 'flessibilita', label: 'Flessibilità dell\'orario di lavoro' },
+  { id: 'valorizzazione', label: 'Valorizzazione delle mie capacità' },
+  { id: 'retribuzione', label: 'Lavoro ben pagato' },
+  { id: 'fatica', label: 'Lavoro poco faticoso' },
+  { id: 'sicurezza', label: 'Sicurezza sul lavoro' },
+  { id: 'utilita', label: 'Utilità del lavoro per la società' },
+  { id: 'vicinanza', label: 'Vicinanza alla propria casa' }
+]
+
+// Aggiungiamo costanti per le nuove domande
+const CURRICULUM = [
+  { value: '0', label: 'No' },
+  { value: '1', label: 'Sì' }
+]
+
+const CENTRO_IMPIEGO = [
+  { value: '0', label: 'No' },
+  { value: '1', label: 'Sì' }
+]
+
+const LAVORO_AUTONOMO = [
+  { value: '0', label: 'No' },
+  { value: '1', label: 'Sì' }
+]
 
 export default function QuestionarioGiovani() {
   const router = useRouter()
@@ -184,8 +313,15 @@ export default function QuestionarioGiovani() {
     cittadinanza: '',
     permesso_soggiorno: false,
     tempo_in_struttura: '',
-    precedenti_strutture: 0,
-    famiglia_origine: '',
+    precedenti_strutture: 1,
+    famiglia_origine: {
+      padre: false,
+      madre: false,
+      fratelli: false,
+      nonni: false,
+      altri_parenti: false,
+      altri_conviventi: false
+    },
     titolo_studio: '',
     attivita_precedenti: [],
     attivita_attuali: [],
@@ -195,9 +331,10 @@ export default function QuestionarioGiovani() {
     livelli_obiettivi: [],
     orientamento_lavoro: {
       usufruito: false,
-      utilita: '',
-      luoghi: []
+      luoghi: [],
+      utilita: '0'
     },
+    orientamento_luoghi: [],
     abitazione_precedente: {
       solo: false,
       struttura: false,
@@ -260,7 +397,37 @@ export default function QuestionarioGiovani() {
       determinazione: false
     },
     desiderio: '',
-    note_aggiuntive: ''
+    note_aggiuntive: '',
+    madre: {
+      titolo_studio: '',
+      condizione_lavoro: ''
+    },
+    padre: {
+      titolo_studio: '',
+      condizione_lavoro: ''
+    },
+    ricerca_lavoro: [],
+    aspetti_lavoro: {
+      stabilita: '0',
+      flessibilita: '0',
+      valorizzazione: '0',
+      retribuzione: '0',
+      fatica: '0',
+      sicurezza: '0',
+      utilita: '0',
+      vicinanza: '0'
+    },
+    curriculum_vitae: '0',
+    centro_impiego: '0',
+    lavoro_autonomo: '0',
+    corso_formazione: {
+      frequenta: false,
+      descrizione: ''
+    },
+    lavoro_attuale: {
+      occupato: false,
+      descrizione: ''
+    }
   })
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -319,7 +486,7 @@ export default function QuestionarioGiovani() {
       ...prev,
       [object]: {
         ...prev[object],
-        [key]: checked as boolean
+        [key]: checked
       }
     }))
   }
@@ -461,17 +628,17 @@ export default function QuestionarioGiovani() {
             </select>
           </div>
 
-          {/* Luogo di nascita */}
+          {/* B3-B4: Luogo nascita e cittadinanza */}
           <div className="space-y-4">
             <Label>B3. Luogo di nascita</Label>
             <RadioGroup
-              value={formData.luogo_nascita.italia ? '1' : '2'}
+              value={formData.luogo_nascita.italia ? "1" : "2"}
               onValueChange={(value) => setFormData(prev => ({
                 ...prev,
                 luogo_nascita: {
-                  italia: value === '1',
-                  altro_paese: value === '2' ? prev.luogo_nascita.altro_paese : undefined
-                } as LuogoNascita
+                  ...prev.luogo_nascita,
+                  italia: value === "1"
+                }
               }))}
             >
               <div className="flex items-center space-x-2">
@@ -495,244 +662,62 @@ export default function QuestionarioGiovani() {
                     luogo_nascita: {
                       ...prev.luogo_nascita,
                       altro_paese: e.target.value
-                    } as LuogoNascita
+                    }
                   }))}
                 />
               </div>
             )}
-          </div>
 
-          <div className="sm:col-span-3">
-            <label htmlFor="cittadinanza" className="block text-sm font-medium text-gray-700">
-              Cittadinanza
-            </label>
-            <select
-              id="cittadinanza"
-              name="cittadinanza"
-              required
+            <Label>B4. Cittadinanza</Label>
+            <RadioGroup
               value={formData.cittadinanza}
-              onChange={handleChange}
-              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+              onValueChange={(value) => setFormData(prev => ({
+                ...prev,
+                cittadinanza: value
+              }))}
             >
-              <option value="">Seleziona...</option>
               {CITTADINANZA.map(option => (
-                <option key={option.value} value={option.value}>{option.label}</option>
+                <div key={option.value} className="flex items-center space-x-2">
+                  <RadioGroupItem value={option.value} id={`cittadinanza_${option.value}`} />
+                  <Label htmlFor={`cittadinanza_${option.value}`}>{option.label}</Label>
+                </div>
               ))}
-            </select>
+            </RadioGroup>
           </div>
 
-          {formData.cittadinanza !== 'Italiana' && (
-            <div className="sm:col-span-3">
-              <label htmlFor="permesso_soggiorno" className="block text-sm font-medium text-gray-700">
-                Permesso di Soggiorno
-              </label>
-              <select
-                id="permesso_soggiorno"
-                name="permesso_soggiorno"
-                required
-                value={formData.permesso_soggiorno ? '1' : '3'}
-                onChange={handleChange}
-                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-              >
-                <option value="">Seleziona...</option>
-                <option value="1">Con permesso di soggiorno</option>
-                <option value="2">In attesa di permesso di soggiorno</option>
-                <option value="3">Senza permesso di soggiorno</option>
-              </select>
-            </div>
-          )}
-
-          {/* Informazioni sulla permanenza */}
-          <div className="sm:col-span-3">
-            <label htmlFor="tempo_in_struttura" className="block text-sm font-medium text-gray-700">
-              Tempo in Struttura
-            </label>
-            <select
-              id="tempo_in_struttura"
-              name="tempo_in_struttura"
-              required
+          {/* B6-B7: Tempo in struttura */}
+          <div className="space-y-4">
+            <Label>B6. Da quanto tempo sei in questa struttura/progetto (attuale ingresso)?</Label>
+            <RadioGroup
               value={formData.tempo_in_struttura}
-              onChange={handleChange}
-              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+              onValueChange={(value) => setFormData(prev => ({
+                ...prev,
+                tempo_in_struttura: value
+              }))}
             >
-              <option value="">Seleziona...</option>
               {TEMPO_STRUTTURA.map(option => (
-                <option key={option.value} value={option.value}>{option.label}</option>
+                <div key={option.value} className="flex items-center space-x-2">
+                  <RadioGroupItem value={option.value} id={`tempo_${option.value}`} />
+                  <Label htmlFor={`tempo_${option.value}`}>{option.label}</Label>
+                </div>
               ))}
-            </select>
-          </div>
+            </RadioGroup>
 
-          <div className="sm:col-span-3">
-            <label htmlFor="precedenti_strutture" className="block text-sm font-medium text-gray-700">
-              Precedenti Strutture
-            </label>
-            <select
-              id="precedenti_strutture"
-              name="precedenti_strutture"
-              required
-              value={formData.precedenti_strutture}
-              onChange={handleChange}
-              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+            <Label>B7. In precedenza, sei stato ospite di altre strutture o preso in carico da altro progetto?</Label>
+            <RadioGroup
+              value={formData.precedenti_strutture.toString()}
+              onValueChange={(value) => setFormData(prev => ({
+                ...prev,
+                precedenti_strutture: parseInt(value, 10)
+              }))}
             >
-              <option value="">Seleziona...</option>
               {STRUTTURE_PRECEDENTI.map(option => (
-                <option key={option.value} value={option.value}>{option.label}</option>
+                <div key={option.value} className="flex items-center space-x-2">
+                  <RadioGroupItem value={option.value} id={`precedenti_${option.value}`} />
+                  <Label htmlFor={`precedenti_${option.value}`}>{option.label}</Label>
+                </div>
               ))}
-            </select>
-          </div>
-
-          {/* Fattori di vulnerabilità */}
-          <div className="sm:col-span-6">
-            <fieldset>
-              <legend className="text-base font-medium text-gray-900">Fattori di Vulnerabilità</legend>
-              <div className="mt-4 grid grid-cols-2 gap-4">
-                {FATTORI_VULNERABILITA.map(fattore => (
-                  <div key={fattore} className="flex items-start">
-                    <div className="flex items-center h-5">
-                      <input
-                        type="checkbox"
-                        checked={formData.fattori_vulnerabilita.includes(fattore)}
-                        onChange={() => handleArrayCheckboxChange('fattori_vulnerabilita', fattore)}
-                        className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-                      />
-                    </div>
-                    <div className="ml-3 text-sm">
-                      <label className="font-medium text-gray-700">{fattore}</label>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </fieldset>
-          </div>
-
-          {/* Famiglia di origine */}
-          <div className="sm:col-span-3">
-            <label htmlFor="famiglia_origine" className="block text-sm font-medium text-gray-700">
-              Famiglia di Origine
-            </label>
-            <select
-              id="famiglia_origine"
-              name="famiglia_origine"
-              required
-              value={formData.famiglia_origine}
-              onChange={handleChange}
-              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-            >
-              <option value="">Seleziona...</option>
-              {/* Add famiglia_origine options here */}
-            </select>
-          </div>
-
-          {/* Titolo di studio e attività */}
-          <div className="sm:col-span-3">
-            <label htmlFor="titolo_studio" className="block text-sm font-medium text-gray-700">
-              Titolo di Studio
-            </label>
-            <select
-              id="titolo_studio"
-              name="titolo_studio"
-              required
-              value={formData.titolo_studio}
-              onChange={handleChange}
-              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-            >
-              <option value="">Seleziona...</option>
-              {TITOLI_STUDIO.map(titolo => (
-                <option key={titolo.value} value={titolo.value}>{titolo.label}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="sm:col-span-6">
-            <fieldset>
-              <legend className="text-base font-medium text-gray-900">Condizioni di Lavoro</legend>
-              <div className="mt-4 grid grid-cols-2 gap-4">
-                {CONDIZIONI_LAVORO.map(condizione => (
-                  <div key={condizione.value} className="flex items-start">
-                    <div className="flex items-center h-5">
-                      <input
-                        type="checkbox"
-                        checked={formData.condizioni_lavoro.includes(condizione.value)}
-                        onChange={() => handleArrayCheckboxChange('condizioni_lavoro', condizione.value)}
-                        className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-                      />
-                    </div>
-                    <div className="ml-3 text-sm">
-                      <label className="font-medium text-gray-700">{condizione.label}</label>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </fieldset>
-          </div>
-
-          <div className="sm:col-span-6">
-            <fieldset>
-              <legend className="text-base font-medium text-gray-900">Motivi Non Studio</legend>
-              <div className="mt-4 grid grid-cols-2 gap-4">
-                {MOTIVI_NON_STUDIO.map(motivo => (
-                  <div key={motivo.value} className="flex items-start">
-                    <div className="flex items-center h-5">
-                      <input
-                        type="checkbox"
-                        checked={formData.motivi_non_studio.includes(motivo.value)}
-                        onChange={() => handleArrayCheckboxChange('motivi_non_studio', motivo.value)}
-                        className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-                      />
-                    </div>
-                    <div className="ml-3 text-sm">
-                      <label className="font-medium text-gray-700">{motivo.label}</label>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </fieldset>
-          </div>
-
-          <div className="sm:col-span-6">
-            <fieldset>
-              <legend className="text-base font-medium text-gray-900">Livelli di Utilità</legend>
-              <div className="mt-4 grid grid-cols-2 gap-4">
-                {LIVELLI_UTILITA.map(livello => (
-                  <div key={livello.value} className="flex items-start">
-                    <div className="flex items-center h-5">
-                      <input
-                        type="checkbox"
-                        checked={formData.livelli_utilita.includes(livello.value)}
-                        onChange={() => handleArrayCheckboxChange('livelli_utilita', livello.value)}
-                        className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-                      />
-                    </div>
-                    <div className="ml-3 text-sm">
-                      <label className="font-medium text-gray-700">{livello.label}</label>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </fieldset>
-          </div>
-
-          <div className="sm:col-span-6">
-            <fieldset>
-              <legend className="text-base font-medium text-gray-900">Livelli di Obiettivi</legend>
-              <div className="mt-4 grid grid-cols-2 gap-4">
-                {LIVELLI_OBIETTIVI.map(livello => (
-                  <div key={livello.value} className="flex items-start">
-                    <div className="flex items-center h-5">
-                      <input
-                        type="checkbox"
-                        checked={formData.livelli_obiettivi.includes(livello.value)}
-                        onChange={() => handleArrayCheckboxChange('livelli_obiettivi', livello.value)}
-                        className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-                      />
-                    </div>
-                    <div className="ml-3 text-sm">
-                      <label className="font-medium text-gray-700">{livello.label}</label>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </fieldset>
+            </RadioGroup>
           </div>
         </div>
       </div>
@@ -785,13 +770,13 @@ export default function QuestionarioGiovani() {
           <div className="space-y-4">
             <Label>B3. Luogo di nascita</Label>
             <RadioGroup
-              value={formData.luogo_nascita.italia ? '1' : '2'}
+              value={formData.luogo_nascita.italia ? "1" : "2"}
               onValueChange={(value) => setFormData(prev => ({
                 ...prev,
                 luogo_nascita: {
-                  italia: value === '1',
-                  altro_paese: value === '2' ? prev.luogo_nascita.altro_paese : undefined
-                } as LuogoNascita
+                  ...prev.luogo_nascita,
+                  italia: value === "1"
+                }
               }))}
             >
               <div className="flex items-center space-x-2">
@@ -815,7 +800,7 @@ export default function QuestionarioGiovani() {
                     luogo_nascita: {
                       ...prev.luogo_nascita,
                       altro_paese: e.target.value
-                    } as LuogoNascita
+                    }
                   }))}
                 />
               </div>
@@ -858,24 +843,43 @@ export default function QuestionarioGiovani() {
               <div className="flex items-center space-x-2">
                 <input
                   type="checkbox"
-                  id="attivita_studio"
-                  checked={formData.attivita_precedenti.includes('studio')}
-                  onChange={() => handleArrayCheckboxChange('attivita_precedenti', 'studio')}
+                  id="att_prec_studio"
+                  checked={formData.attivita_precedenti.includes('studiavo')}
+                  onChange={() => handleArrayCheckboxChange('attivita_precedenti', 'studiavo')}
                   className="h-4 w-4 rounded border-gray-300"
                 />
-                <Label htmlFor="attivita_studio">Studiavo</Label>
+                <Label htmlFor="att_prec_studio">Studiavo</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <input
                   type="checkbox"
-                  id="attivita_lavoro_stabile"
-                  checked={formData.attivita_precedenti.includes('lavoro_stabile')}
-                  onChange={() => handleArrayCheckboxChange('attivita_precedenti', 'lavoro_stabile')}
+                  id="att_prec_lavoro_stabile"
+                  checked={formData.attivita_precedenti.includes('lavoravo_stabilmente')}
+                  onChange={() => handleArrayCheckboxChange('attivita_precedenti', 'lavoravo_stabilmente')}
                   className="h-4 w-4 rounded border-gray-300"
                 />
-                <Label htmlFor="attivita_lavoro_stabile">Lavoravo stabilmente</Label>
+                <Label htmlFor="att_prec_lavoro_stabile">Lavoravo stabilmente</Label>
               </div>
-              {/* ... altri checkbox per attività precedenti ... */}
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="att_prec_lavoro_saltuario"
+                  checked={formData.attivita_precedenti.includes('lavoravo_saltuariamente')}
+                  onChange={() => handleArrayCheckboxChange('attivita_precedenti', 'lavoravo_saltuariamente')}
+                  className="h-4 w-4 rounded border-gray-300"
+                />
+                <Label htmlFor="att_prec_lavoro_saltuario">Lavoravo saltuariamente</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="att_prec_formazione"
+                  checked={formData.attivita_precedenti.includes('corso_formazione')}
+                  onChange={() => handleArrayCheckboxChange('attivita_precedenti', 'corso_formazione')}
+                  className="h-4 w-4 rounded border-gray-300"
+                />
+                <Label htmlFor="att_prec_formazione">Frequentavo un corso di formazione</Label>
+              </div>
             </div>
           </div>
 
@@ -883,7 +887,7 @@ export default function QuestionarioGiovani() {
           <div className="space-y-4">
             <Label>C3. Hai mai usufruito di servizi di orientamento al lavoro?</Label>
             <RadioGroup
-              value={formData.orientamento_lavoro?.usufruito ? "1" : "0"}
+              value={formData.orientamento_lavoro.usufruito ? "1" : "0"}
               onValueChange={(value) => setFormData(prev => ({
                 ...prev,
                 orientamento_lavoro: {
@@ -902,17 +906,36 @@ export default function QuestionarioGiovani() {
               </div>
             </RadioGroup>
 
-            {formData.orientamento_lavoro?.usufruito && (
-              <div className="space-y-4">
+            {formData.orientamento_lavoro.usufruito && (
+              <>
                 <Label>C4. Se sì, dove?</Label>
                 <div className="grid grid-cols-2 gap-4">
-                  {/* Checkbox per luoghi orientamento */}
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id="orientamento_scuola"
+                      checked={formData.orientamento_lavoro.luoghi.includes('scuola')}
+                      onChange={() => handleArrayCheckboxChange('orientamento_luoghi', 'scuola')}
+                      className="h-4 w-4 rounded border-gray-300"
+                    />
+                    <Label htmlFor="orientamento_scuola">A scuola/università</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id="orientamento_formazione"
+                      checked={formData.orientamento_lavoro.luoghi.includes('formazione')}
+                      onChange={() => handleArrayCheckboxChange('orientamento_luoghi', 'formazione')}
+                      className="h-4 w-4 rounded border-gray-300"
+                    />
+                    <Label htmlFor="orientamento_formazione">Presso enti di formazione professionale</Label>
+                  </div>
+                  {/* ... altri luoghi ... */}
                 </div>
                 
-                <div className="space-y-2">
-                  <Label>Quanto lo ritieni utile?</Label>
+                <Label>C4_BIS. Quanto lo ritieni utile?</Label>
                   <RadioGroup
-                    value={formData.orientamento_lavoro.utilita || "1"}
+                  value={formData.orientamento_lavoro.utilita}
                     onValueChange={(value) => setFormData(prev => ({
                       ...prev,
                       orientamento_lavoro: {
@@ -928,8 +951,7 @@ export default function QuestionarioGiovani() {
                       </div>
                     ))}
                   </RadioGroup>
-                </div>
-              </div>
+              </>
             )}
           </div>
 
@@ -941,7 +963,146 @@ export default function QuestionarioGiovani() {
             </div>
           </div>
 
-          {/* ... altri campi della sezione C ... */}
+          {/* C9: Ricerca lavoro */}
+          <div className="space-y-4">
+            <Label>C9. A chi ti rivolgeresti per cercare un lavoro? (Massimo tre scelte)</Label>
+            <div className="grid grid-cols-2 gap-4">
+              {RICERCA_LAVORO.map(opzione => (
+                <div key={opzione.id} className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id={`ricerca_${opzione.id}`}
+                    checked={formData.ricerca_lavoro.includes(opzione.id)}
+                    onChange={() => handleArrayCheckboxChange('ricerca_lavoro', opzione.id)}
+                    disabled={formData.ricerca_lavoro.length >= 3 && !formData.ricerca_lavoro.includes(opzione.id)}
+                    className="h-4 w-4 rounded border-gray-300"
+                  />
+                  <Label htmlFor={`ricerca_${opzione.id}`}>{opzione.label}</Label>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* C13: Aspetti del lavoro */}
+          <div className="space-y-4">
+            <Label>C13. Pensando al tuo futuro lavorativo, quanta importanza attribuisci ai seguenti aspetti?</Label>
+            <div className="space-y-6">
+              {ASPETTI_LAVORO.map(aspetto => (
+                <div key={aspetto.id} className="space-y-2">
+                  <Label>{aspetto.label}</Label>
+                  <RadioGroup
+                    value={formData.aspetti_lavoro[aspetto.id]}
+                    onValueChange={(value) => setFormData(prev => ({
+                      ...prev,
+                      aspetti_lavoro: {
+                        ...prev.aspetti_lavoro,
+                        [aspetto.id]: value
+                      }
+                    }))}
+                  >
+                    {LIVELLI_UTILITA.map(option => (
+                      <div key={option.value} className="flex items-center space-x-2">
+                        <RadioGroupItem value={option.value} id={`aspetto_${aspetto.id}_${option.value}`} />
+                        <Label htmlFor={`aspetto_${aspetto.id}_${option.value}`}>{option.label}</Label>
+                      </div>
+                    ))}
+                  </RadioGroup>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* C10: Curriculum vitae */}
+          <div className="space-y-4">
+            <Label>C10. Hai mai compilato un curriculum vitae?</Label>
+            <RadioGroup
+              value={formData.curriculum_vitae}
+              onValueChange={(value) => setFormData(prev => ({
+                ...prev,
+                curriculum_vitae: value
+              }))}
+            >
+              {CURRICULUM.map(option => (
+                <div key={option.value} className="flex items-center space-x-2">
+                  <RadioGroupItem value={option.value} id={`cv_${option.value}`} />
+                  <Label htmlFor={`cv_${option.value}`}>{option.label}</Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </div>
+
+          {/* C11: Centro per l'impiego */}
+          <div className="space-y-4">
+            <Label>C11. Ti sei mai rivolto al Centro per l'impiego (ex collocamento)?</Label>
+            <RadioGroup
+              value={formData.centro_impiego}
+              onValueChange={(value) => setFormData(prev => ({
+                ...prev,
+                centro_impiego: value
+              }))}
+            >
+              {CENTRO_IMPIEGO.map(option => (
+                <div key={option.value} className="flex items-center space-x-2">
+                  <RadioGroupItem value={option.value} id={`cpi_${option.value}`} />
+                  <Label htmlFor={`cpi_${option.value}`}>{option.label}</Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </div>
+
+          {/* C12: Lavoro autonomo */}
+          <div className="space-y-4">
+            <Label>C12. Hai mai pensato di avviare un'attività di lavoro autonomo?</Label>
+            <RadioGroup
+              value={formData.lavoro_autonomo}
+              onValueChange={(value) => setFormData(prev => ({
+                ...prev,
+                lavoro_autonomo: value
+              }))}
+            >
+              {LAVORO_AUTONOMO.map(option => (
+                <div key={option.value} className="flex items-center space-x-2">
+                  <RadioGroupItem value={option.value} id={`autonomo_${option.value}`} />
+                  <Label htmlFor={`autonomo_${option.value}`}>{option.label}</Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </div>
+
+          {/* C7: Corso di formazione */}
+          <div className="space-y-4">
+            <Label>C7. Se sei impegnato in attività formativa, quale corso frequenti?</Label>
+            <Textarea
+              id="corso_formazione"
+              value={formData.corso_formazione.descrizione || ''}
+              onChange={(e) => setFormData(prev => ({
+                ...prev,
+                corso_formazione: {
+                  ...prev.corso_formazione,
+                  descrizione: e.target.value
+                }
+              }))}
+              className="min-h-[100px]"
+            />
+          </div>
+
+          {/* C8: Lavoro attuale */}
+          <div className="space-y-4">
+            <Label>C8. Se sei impegnato in attività lavorative, qual è il tuo lavoro?</Label>
+            <Textarea
+              id="lavoro_attuale"
+              placeholder="Indicare professione, tipo di posto di lavoro e tipo di contratto"
+              value={formData.lavoro_attuale.descrizione || ''}
+              onChange={(e) => setFormData(prev => ({
+                ...prev,
+                lavoro_attuale: {
+                  ...prev.lavoro_attuale,
+                  descrizione: e.target.value
+                }
+              }))}
+              className="min-h-[100px]"
+            />
+          </div>
         </CardContent>
       </Card>
 
