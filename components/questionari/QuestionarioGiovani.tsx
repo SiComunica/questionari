@@ -28,11 +28,6 @@ type FamigliaOrigine = {
   altri_conviventi: boolean
 }
 
-// Aggiorniamo il tipo Giovane per includere il tipo corretto di famiglia_origine
-type Giovane = Omit<Database['public']['Tables']['giovani']['Row'], 'famiglia_origine'> & {
-  famiglia_origine: FamigliaOrigine
-}
-
 // Aggiungiamo il tipo per i valori dei checkbox
 type CheckboxValue = {
   value: boolean
@@ -141,58 +136,72 @@ type OrientamentoLavoro = {
   utilita: string
 }
 
-// Aggiorniamo il tipo ArrayFields per includere orientamento_luoghi
+// Aggiorniamo il tipo ArrayFields per includere i nomi corretti
 type ArrayFields = {
-  fattori_vulnerabilita: string[]
-  attivita_precedenti: string[]
-  attivita_attuali: string[]
+  fattori_vulnerabilità: string[]
+  attività_precedenti: string[]
+  attività_attuali: string[]
   condizioni_lavoro: string[]
   motivi_non_studio: string[]
-  livelli_utilita: string[]
+  livelli_utilità: string[]
   livelli_obiettivi: string[]
   ricerca_lavoro: string[]
   orientamento_luoghi: string[]
 }
 
-// Aggiorniamo il tipo BooleanFields per includere famiglia_origine
+// Aggiorniamo il tipo BooleanFields
 type BooleanFields = {
   abitazione_precedente: Record<string, boolean>
-  figure_aiuto: Record<string, boolean>
+  figura_aiuto: Record<string, boolean>
   emozioni_uscita: Record<string, boolean>
   famiglia_origine: FamigliaOrigine
 }
 
-// Aggiorniamo il tipo FormData
-type FormData = Omit<Giovane, 'id' | 'created_at' | 'created_by' | 'precedenti_strutture'> & {
+// Modifichiamo il tipo FormData per rimuovere completamente l'id
+type FormData = {
+  percorso_autonomia: boolean
+  tipo_percorso: string | null
+  vivere_in_struttura: boolean
+  collocazione_attuale: string
+  fattori_vulnerabilità: string[]
+  sesso: string
+  classe_eta: string
+  luogo_nascita: {
+    italia: boolean
+    altro_paese?: string
+  }
+  cittadinanza: string
+  permesso_soggiorno: string
+  tempo_in_struttura: string
+  precedenti_strutture: string
+  titolo_studio: string
+  attività_precedenti: string[]
+  attività_attuali: string[]
+  abitazione_precedente: Record<string, boolean>
+  figura_aiuto: Record<string, any>
+  emozioni_uscita: Record<string, boolean>
+  preoccupazioni_futuro: Record<string, string>
+  obiettivi_realizzabili: Record<string, string>
+  pronto_uscita: Record<string, any>
+  orientamento_lavoro: Record<string, any>
+  ricerca_lavoro: string[]
+  orientamento_luoghi: string[]
+  aiuto_futuro: string
+  desiderio: string
+  nota_aggiuntiva: string
+  aspetti_lavoro: Record<string, string>
+  corso_formazione: Record<string, any>
+  lavoro_attuale: Record<string, any>
+  lavoro_autonomo: string
+  centro_impiego: string
+  curriculum_vitae: string
   condizioni_lavoro: string[]
   motivi_non_studio: string[]
-  livelli_utilita: string[]
+  livelli_utilità: string[]
   livelli_obiettivi: string[]
+  madre: Record<string, string>
+  Padre: Record<string, string>
   famiglia_origine: Record<string, boolean>
-  madre: {
-    titolo_studio: string
-    condizione_lavoro: string
-  }
-  padre: {
-    titolo_studio: string
-    condizione_lavoro: string
-  }
-  ricerca_lavoro: string[]
-  aspetti_lavoro: Record<string, string>
-  curriculum_vitae: string
-  centro_impiego: string
-  lavoro_autonomo: string
-  corso_formazione: {
-    frequenta: boolean
-    descrizione: string
-  }
-  lavoro_attuale: {
-    occupato: boolean
-    descrizione: string
-  }
-  precedenti_strutture: number
-  orientamento_lavoro: OrientamentoLavoro
-  orientamento_luoghi: string[]
 }
 
 // Aggiungiamo le costanti per i nuovi campi
@@ -294,25 +303,34 @@ const ATTIVITA_ATTUALI = [
   { id: 'nessuna', label: 'Nessuna attività' }
 ]
 
+// 1. Modifichiamo il tipo per figure_aiuto
+type FigureAiuto = {
+  padre: boolean
+  madre: boolean
+  fratelli: boolean
+  parenti: boolean
+  amici: boolean
+  tutore: boolean
+  insegnanti: boolean
+  figure_sostegno: boolean
+  volontari: boolean
+  altri: boolean
+  altri_specificare: string  // Cambiato da boolean a string
+}
+
 export default function QuestionarioGiovani() {
   const router = useRouter()
   const { userType } = useAuth()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   
-  // Aggiorniamo lo stato iniziale
+  // Nello stato iniziale, rimuoviamo qualsiasi riferimento all'id
   const [formData, setFormData] = useState<FormData>({
-    percorso_autonomia: {
-      presente: false,
-      tipo: ''
-    },
+    percorso_autonomia: false,
     tipo_percorso: null,
-    vive_in_struttura: false,
-    collocazione_attuale: {
-      tipo: '',
-      comunita_specificare: ''
-    },
-    fattori_vulnerabilita: [],
+    vivere_in_struttura: false,
+    collocazione_attuale: '',
+    fattori_vulnerabilità: [],
     sesso: '',
     classe_eta: '',
     luogo_nascita: {
@@ -320,150 +338,55 @@ export default function QuestionarioGiovani() {
       altro_paese: ''
     },
     cittadinanza: '',
-    permesso_soggiorno: false,
+    permesso_soggiorno: '',
     tempo_in_struttura: '',
-    precedenti_strutture: 1,
-    famiglia_origine: {
-      padre: false,
-      madre: false,
-      fratelli: false,
-      nonni: false,
-      altri_parenti: false,
-      altri_conviventi: false
-    },
+    precedenti_strutture: '',
     titolo_studio: '',
-    attivita_precedenti: [],
-    attivita_attuali: [],
+    attività_precedenti: [],
+    attività_attuali: [],
+    abitazione_precedente: {},
+    figura_aiuto: {},
+    emozioni_uscita: {},
+    preoccupazioni_futuro: {},
+    obiettivi_realizzabili: {},
+    pronto_uscita: {},
+    orientamento_lavoro: {},
+    ricerca_lavoro: [],
+    orientamento_luoghi: [],
+    aiuto_futuro: '',
+    desiderio: '',
+    nota_aggiuntiva: '',
+    aspetti_lavoro: {},
+    corso_formazione: {},
+    lavoro_attuale: {},
+    lavoro_autonomo: '',
+    centro_impiego: '',
+    curriculum_vitae: '',
     condizioni_lavoro: [],
     motivi_non_studio: [],
-    livelli_utilita: [],
+    livelli_utilità: [],
     livelli_obiettivi: [],
-    orientamento_lavoro: {
-      usufruito: false,
-      luoghi: [],
-      utilita: '0'
-    },
-    orientamento_luoghi: [],
-    abitazione_precedente: {
-      solo: false,
-      struttura: false,
-      madre: false,
-      padre: false,
-      partner: false,
-      figli: false,
-      fratelli: false,
-      nonni: false,
-      altri_parenti: false,
-      amici: false
-    },
-    figure_aiuto: {
-      padre: false,
-      madre: false,
-      fratelli: false,
-      parenti: false,
-      amici: false,
-      tutore: false,
-      insegnanti: false,
-      figure_sostegno: false,
-      volontari: false,
-      altri: false,
-      altri_specificare: ''
-    },
-    preoccupazioni_futuro: {
-      pregiudizi: '0',
-      mancanza_lavoro: '0',
-      mancanza_aiuto: '0',
-      mancanza_casa: '0',
-      solitudine: '0',
-      salute: '0',
-      perdita_persone: '0',
-      altro: '0',
-      altro_specificare: ''
-    },
-    obiettivi_realizzabili: {
-      lavoro_piacevole: '0',
-      autonomia: '0',
-      famiglia: '0',
-      trovare_lavoro: '0',
-      salute: '0',
-      casa: '0'
-    },
-    aiuto_futuro: '',
-    pronto_uscita: {
-      risposta: false,
-      motivazione: ''
-    },
-    emozioni_uscita: {
-      felicita: false,
-      tristezza: false,
-      curiosita: false,
-      preoccupazione: false,
-      paura: false,
-      liberazione: false,
-      solitudine: false,
-      rabbia: false,
-      speranza: false,
-      determinazione: false
-    },
-    desiderio: '',
-    note_aggiuntive: '',
-    madre: {
-      titolo_studio: '',
-      condizione_lavoro: ''
-    },
-    padre: {
-      titolo_studio: '',
-      condizione_lavoro: ''
-    },
-    ricerca_lavoro: [],
-    aspetti_lavoro: {
-      stabilita: '0',
-      flessibilita: '0',
-      valorizzazione: '0',
-      retribuzione: '0',
-      fatica: '0',
-      sicurezza: '0',
-      utilita: '0',
-      vicinanza: '0'
-    },
-    curriculum_vitae: '0',
-    centro_impiego: '0',
-    lavoro_autonomo: '0',
-    corso_formazione: {
-      frequenta: false,
-      descrizione: ''
-    },
-    lavoro_attuale: {
-      occupato: false,
-      descrizione: ''
-    }
+    madre: {},
+    Padre: {},
+    famiglia_origine: {}
   })
 
+  // Nel submit, inviamo direttamente i dati
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setError('')
-
     try {
-      // Generiamo un ID univoco usando timestamp + random string
-      const id = `G${Date.now()}${Math.random().toString(36).substr(2, 5)}`
-
+      console.log('Dati da inviare:', formData) // Per debug
       const { error } = await supabase
         .from('giovani')
-        .insert({
-          ...formData,
-          id,
-          created_at: new Date().toISOString(),
-          created_by: 'anonimo 9999'
-        })
+        .insert([formData])
 
       if (error) throw error
-
-      // Redirect alla pagina di successo o dashboard
-      router.push('/dashboard/anonimo?success=true')
-    } catch (err) {
-      console.error('Errore durante il salvataggio:', err)
-      setError('Errore durante il salvataggio del questionario. Riprova più tardi.')
+      
+      router.push('/dashboard')
+    } catch (error) {
+      console.error('Errore durante il salvataggio:', error)
+      setError('Errore durante il salvataggio')
     } finally {
       setLoading(false)
     }
@@ -481,16 +404,12 @@ export default function QuestionarioGiovani() {
     setFormData(prev => ({
       ...prev,
       [array]: prev[array].includes(value)
-        ? prev[array].filter(item => item !== value)
+        ? prev[array].filter((item: string) => item !== value)
         : [...prev[array], value]
     }))
   }
 
-  const handleBooleanCheckboxChange = (
-    object: keyof BooleanFields,
-    key: string,
-    checked: boolean
-  ) => {
+  const handleBooleanCheckboxChange = (object: keyof BooleanFields, key: string, checked: boolean) => {
     setFormData(prev => ({
       ...prev,
       [object]: {
@@ -529,7 +448,7 @@ export default function QuestionarioGiovani() {
                 type="checkbox"
                 id="percorso_autonomia"
                 name="percorso_autonomia"
-                checked={formData.percorso_autonomia.presente}
+                checked={formData.percorso_autonomia}
                 onChange={handleChange}
                 className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
               />
@@ -539,7 +458,7 @@ export default function QuestionarioGiovani() {
             </div>
           </div>
 
-          {formData.percorso_autonomia.presente && (
+          {formData.percorso_autonomia && (
             <div className="sm:col-span-3">
               <label htmlFor="tipo_percorso" className="block text-sm font-medium text-gray-700">
                 Tipo di Percorso
@@ -565,19 +484,19 @@ export default function QuestionarioGiovani() {
             <div className="flex items-center">
               <input
                 type="checkbox"
-                id="vive_in_struttura"
-                name="vive_in_struttura"
-                checked={formData.vive_in_struttura}
+                id="vivere_in_struttura"
+                name="vivere_in_struttura"
+                checked={formData.vivere_in_struttura}
                 onChange={handleChange}
                 className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
               />
-              <label htmlFor="vive_in_struttura" className="ml-2 block text-sm text-gray-900">
+              <label htmlFor="vivere_in_struttura" className="ml-2 block text-sm text-gray-900">
                 Vive in struttura
               </label>
             </div>
           </div>
 
-          {!formData.vive_in_struttura && (
+          {!formData.vivere_in_struttura && (
             <div className="sm:col-span-3">
               <label htmlFor="collocazione_attuale" className="block text-sm font-medium text-gray-700">
                 Collocazione Attuale
@@ -586,7 +505,7 @@ export default function QuestionarioGiovani() {
                 id="collocazione_attuale"
                 name="collocazione_attuale"
                 required
-                value={formData.collocazione_attuale.tipo}
+                value={formData.collocazione_attuale}
                 onChange={handleChange}
                 className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
               >
@@ -645,8 +564,8 @@ export default function QuestionarioGiovani() {
               onValueChange={(value) => setFormData(prev => ({
                 ...prev,
                 luogo_nascita: {
-                  ...prev.luogo_nascita,
-                  italia: value === "1"
+                  italia: value === "1",
+                  altro_paese: value === "1" ? '' : prev.luogo_nascita.altro_paese
                 }
               }))}
             >
@@ -665,6 +584,7 @@ export default function QuestionarioGiovani() {
                 <Label htmlFor="altro_paese">Specificare il Paese</Label>
                 <Input
                   id="altro_paese"
+                  type="text"
                   value={formData.luogo_nascita.altro_paese || ''}
                   onChange={(e) => setFormData(prev => ({
                     ...prev,
@@ -714,10 +634,10 @@ export default function QuestionarioGiovani() {
 
             <Label>B7. In precedenza, sei stato ospite di altre strutture o preso in carico da altro progetto?</Label>
             <RadioGroup
-              value={formData.precedenti_strutture.toString()}
+              value={formData.precedenti_strutture}
               onValueChange={(value) => setFormData(prev => ({
                 ...prev,
-                precedenti_strutture: parseInt(value, 10)
+                precedenti_strutture: value
               }))}
             >
               {STRUTTURE_PRECEDENTI.map(option => (
@@ -783,8 +703,8 @@ export default function QuestionarioGiovani() {
               onValueChange={(value) => setFormData(prev => ({
                 ...prev,
                 luogo_nascita: {
-                  ...prev.luogo_nascita,
-                  italia: value === "1"
+                  italia: value === "1",
+                  altro_paese: value === "1" ? '' : prev.luogo_nascita.altro_paese
                 }
               }))}
             >
@@ -803,6 +723,7 @@ export default function QuestionarioGiovani() {
                 <Label htmlFor="altro_paese">Specificare il Paese</Label>
                 <Input
                   id="altro_paese"
+                  type="text"
                   value={formData.luogo_nascita.altro_paese || ''}
                   onChange={(e) => setFormData(prev => ({
                     ...prev,
@@ -853,8 +774,8 @@ export default function QuestionarioGiovani() {
                 <input
                   type="checkbox"
                   id="att_prec_studio"
-                  checked={formData.attivita_precedenti.includes('studiavo')}
-                  onChange={() => handleArrayCheckboxChange('attivita_precedenti', 'studiavo')}
+                  checked={formData.attività_precedenti.includes('studiavo')}
+                  onChange={() => handleArrayCheckboxChange('attività_precedenti', 'studiavo')}
                   className="h-4 w-4 rounded border-gray-300"
                 />
                 <Label htmlFor="att_prec_studio">Studiavo</Label>
@@ -863,8 +784,8 @@ export default function QuestionarioGiovani() {
                 <input
                   type="checkbox"
                   id="att_prec_lavoro_stabile"
-                  checked={formData.attivita_precedenti.includes('lavoravo_stabilmente')}
-                  onChange={() => handleArrayCheckboxChange('attivita_precedenti', 'lavoravo_stabilmente')}
+                  checked={formData.attività_precedenti.includes('lavoravo_stabilmente')}
+                  onChange={() => handleArrayCheckboxChange('attività_precedenti', 'lavoravo_stabilmente')}
                   className="h-4 w-4 rounded border-gray-300"
                 />
                 <Label htmlFor="att_prec_lavoro_stabile">Lavoravo stabilmente</Label>
@@ -873,8 +794,8 @@ export default function QuestionarioGiovani() {
                 <input
                   type="checkbox"
                   id="att_prec_lavoro_saltuario"
-                  checked={formData.attivita_precedenti.includes('lavoravo_saltuariamente')}
-                  onChange={() => handleArrayCheckboxChange('attivita_precedenti', 'lavoravo_saltuariamente')}
+                  checked={formData.attività_precedenti.includes('lavoravo_saltuariamente')}
+                  onChange={() => handleArrayCheckboxChange('attività_precedenti', 'lavoravo_saltuariamente')}
                   className="h-4 w-4 rounded border-gray-300"
                 />
                 <Label htmlFor="att_prec_lavoro_saltuario">Lavoravo saltuariamente</Label>
@@ -883,8 +804,8 @@ export default function QuestionarioGiovani() {
                 <input
                   type="checkbox"
                   id="att_prec_formazione"
-                  checked={formData.attivita_precedenti.includes('corso_formazione')}
-                  onChange={() => handleArrayCheckboxChange('attivita_precedenti', 'corso_formazione')}
+                  checked={formData.attività_precedenti.includes('corso_formazione')}
+                  onChange={() => handleArrayCheckboxChange('attività_precedenti', 'corso_formazione')}
                   className="h-4 w-4 rounded border-gray-300"
                 />
                 <Label htmlFor="att_prec_formazione">Frequentavo un corso di formazione</Label>
@@ -973,8 +894,8 @@ export default function QuestionarioGiovani() {
                   <input
                     type="checkbox"
                     id={`attivita_${attivita.id}`}
-                    checked={formData.attivita_attuali.includes(attivita.id)}
-                    onChange={() => handleArrayCheckboxChange('attivita_attuali', attivita.id)}
+                    checked={formData.attività_attuali.includes(attivita.id)}
+                    onChange={() => handleArrayCheckboxChange('attività_attuali', attivita.id)}
                     className="h-4 w-4 rounded border-gray-300"
                   />
                   <Label htmlFor={`attivita_${attivita.id}`}>{attivita.label}</Label>
@@ -1157,7 +1078,7 @@ export default function QuestionarioGiovani() {
           <div className="space-y-4">
             <Label>D2. A chi puoi rivolgerti per un aiuto?</Label>
             <div className="grid grid-cols-2 gap-4">
-              {Object.entries(formData.figure_aiuto).map(([key, value]) => {
+              {Object.entries(formData.figura_aiuto).map(([key, value]) => {
                 if (key === 'altri_specificare') return null;
                 return (
                   <div key={key} className="flex items-center space-x-2">
@@ -1165,7 +1086,7 @@ export default function QuestionarioGiovani() {
                       type="checkbox"
                       id={`aiuto_${key}`}
                       checked={Boolean(value)}
-                      onChange={(e) => handleBooleanCheckboxChange('figure_aiuto', key, e.target.checked)}
+                      onChange={(e) => handleBooleanCheckboxChange('figura_aiuto', key, e.target.checked)}
                       className="h-4 w-4 rounded border-gray-300"
                     />
                     <Label htmlFor={`aiuto_${key}`}>
@@ -1176,16 +1097,17 @@ export default function QuestionarioGiovani() {
               })}
             </div>
 
-            {formData.figure_aiuto.altri && (
+            {formData.figura_aiuto.altri && (
               <div className="space-y-2">
                 <Label htmlFor="aiuto_altri_spec">Specificare altre persone</Label>
                 <Input
                   id="aiuto_altri_spec"
-                  value={formData.figure_aiuto.altri_specificare || ''}
+                  type="text"
+                  value={formData.figura_aiuto.altri_specificare}
                   onChange={(e) => setFormData(prev => ({
                     ...prev,
-                    figure_aiuto: {
-                      ...prev.figure_aiuto,
+                    figura_aiuto: {
+                      ...prev.figura_aiuto,
                       altri_specificare: e.target.value
                     }
                   }))}
@@ -1367,10 +1289,10 @@ export default function QuestionarioGiovani() {
             <Label htmlFor="note">Note aggiuntive</Label>
             <Textarea
               id="note"
-              value={formData.note_aggiuntive || ''}
+              value={formData.nota_aggiuntiva || ''}
               onChange={(e) => setFormData(prev => ({
                 ...prev,
-                note_aggiuntive: e.target.value
+                nota_aggiuntiva: e.target.value
               }))}
               className="min-h-[100px]"
             />
