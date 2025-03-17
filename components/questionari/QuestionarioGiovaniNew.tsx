@@ -1245,6 +1245,17 @@ export default function QuestionarioGiovaniNew() {
               </div>
             </div>
           </div>
+
+          {/* Aggiungi il pulsante di submit alla fine del form */}
+          <div className="flex justify-end">
+            <Button 
+              type="submit" 
+              disabled={loading}
+              className="w-full md:w-auto"
+            >
+              {loading ? 'Invio in corso...' : 'Invia questionario'}
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </form>
