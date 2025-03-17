@@ -20,34 +20,31 @@ export default function LoginPage() {
     setError('')
 
     try {
-      // Prima verifichiamo se il codice esiste
-      const { data: user, error: searchError } = await supabase
-        .from('auth.users')
-        .select('role')
-        .eq('codice', codice)
-        .single()
+      // Verifica il codice direttamente con una RPC (funzione database)
+      const { data, error: rpcError } = await supabase
+        .rpc('verify_user_code', {
+          user_code: codice
+        })
 
-      if (searchError || !user) {
+      if (rpcError || !data) {
+        console.error('Errore di login:', rpcError)
         setError('Codice non valido')
         return
       }
 
-      // Reindirizza in base al ruolo
-      switch (user.role) {
-        case 'admin':
-          router.push('/dashboard/admin')
-          break
-        case 'anonimo':
-          router.push('/dashboard/anonimo')
-          break
-        case 'operatore':
-          router.push('/dashboard/operatore')
-          break
-        default:
-          setError('Ruolo non valido')
+      // Reindirizza in base al codice
+      if (codice === 'admin2025') {
+        router.push('/dashboard/admin')
+      } else if (codice === 'anonimo9999') {
+        router.push('/dashboard/anonimo')
+      } else if (codice.startsWith('operatore')) {
+        router.push('/dashboard/operatore')
+      } else {
+        setError('Codice non valido')
       }
+
     } catch (err) {
-      console.error('Errore di login:', err)
+      console.error('Errore:', err)
       setError('Errore durante l\'accesso')
     } finally {
       setLoading(false)
