@@ -512,11 +512,19 @@ export default function QuestionarioGiovaniNew() {
     }))
   }
 
+  // Aggiungi questa funzione handleChange insieme agli altri handler
+  const handleChange = (field: keyof QuestionarioGiovani, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }))
+  }
+
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
       <Card>
-        <CardContent className="space-y-6">
-          {/* SEZIONE A */}
+        <CardContent>
+          {/* Sezione A */}
           <div className="space-y-6">
             <h2 className="text-2xl font-bold">SEZIONE A: Descrizione del giovane</h2>
             <p className="text-sm italic">
@@ -800,7 +808,7 @@ export default function QuestionarioGiovaniNew() {
             </div>
           </div>
 
-          {/* Sezione B: Dati personali */}
+          {/* Sezione B */}
           <div className="space-y-6">
             <h3 className="text-lg font-medium">B. Dati personali</h3>
             
@@ -1102,7 +1110,7 @@ export default function QuestionarioGiovaniNew() {
             </div>
           </div>
 
-          {/* Sezione C: Formazione e lavoro */}
+          {/* Sezione C */}
           <div className="space-y-6">
             <h3 className="text-lg font-medium">C. Formazione e lavoro</h3>
 
@@ -1327,7 +1335,7 @@ export default function QuestionarioGiovaniNew() {
             </div>
           </div>
 
-          {/* Sezione D: Area relazionale */}
+          {/* Sezione D */}
           <div className="space-y-6">
             <h3 className="text-lg font-medium">D. Area relazionale</h3>
 
@@ -1386,7 +1394,7 @@ export default function QuestionarioGiovaniNew() {
             </div>
           </div>
 
-          {/* Sezione E: Area personale */}
+          {/* Sezione E */}
           <div className="space-y-6">
             <h3 className="text-lg font-medium">E. Area personale: capacità di immaginare il proprio futuro</h3>
             
@@ -1419,36 +1427,276 @@ export default function QuestionarioGiovaniNew() {
               </div>
             </div>
 
-            {/* E2. Obiettivi realizzabili */}
+            {/* E2 */}
             <div className="space-y-4">
-              <h3 className="font-medium mb-2">E2. Pensando al tuo futuro, quanto ritieni realizzabili i seguenti obiettivi?</h3>
-              {/* ... resto del codice per E2 ... */}
+              <h4 className="font-medium">E2. Pensando al tuo futuro, quanto ritieni realizzabili i seguenti obiettivi?</h4>
+              
+              <div className="space-y-6">
+                {/* E2.1 */}
+                <div>
+                  <p className="mb-2">E2.1 Fare un lavoro che mi piace</p>
+                  <RadioGroup 
+                    value={formData.obiettivi_realizzabili.lavoro_piacevole}
+                    onValueChange={(value) => 
+                      handleNestedChange('obiettivi_realizzabili', 'lavoro_piacevole', value)}
+                    className="flex flex-wrap gap-4"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="0" id="e21-0" />
+                      <Label htmlFor="e21-0">Per niente (0)</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="1" id="e21-1" />
+                      <Label htmlFor="e21-1">Poco (1)</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="2" id="e21-2" />
+                      <Label htmlFor="e21-2">Abbastanza (2)</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="3" id="e21-3" />
+                      <Label htmlFor="e21-3">Molto (3)</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="9" id="e21-9" />
+                      <Label htmlFor="e21-9">Non è mio obiettivo (9)</Label>
+                    </div>
+                  </RadioGroup>
+                </div>
+
+                {/* E2.2 */}
+                <div>
+                  <p className="mb-2">E2.2 Essere autonomo/a</p>
+                  <RadioGroup 
+                    value={formData.obiettivi_realizzabili.autonomia}
+                    onValueChange={(value) => 
+                      handleNestedChange('obiettivi_realizzabili', 'autonomia', value)}
+                    className="flex flex-wrap gap-4"
+                  >
+                    {/* Stessa struttura dei radio button come sopra */}
+                  </RadioGroup>
+                </div>
+
+                {/* E2.3 */}
+                <div>
+                  <p className="mb-2">E2.3 Costruire una famiglia</p>
+                  <RadioGroup 
+                    value={formData.obiettivi_realizzabili.famiglia}
+                    onValueChange={(value) => 
+                      handleNestedChange('obiettivi_realizzabili', 'famiglia', value)}
+                    className="flex flex-wrap gap-4"
+                  >
+                    {/* Stessa struttura dei radio button come sopra */}
+                  </RadioGroup>
+                </div>
+
+                {/* E2.4 */}
+                <div>
+                  <p className="mb-2">E2.4 Trovare un lavoro</p>
+                  <RadioGroup 
+                    value={formData.obiettivi_realizzabili.trovare_lavoro}
+                    onValueChange={(value) => 
+                      handleNestedChange('obiettivi_realizzabili', 'trovare_lavoro', value)}
+                    className="flex flex-wrap gap-4"
+                  >
+                    {/* Stessa struttura dei radio button come sopra */}
+                  </RadioGroup>
+                </div>
+
+                {/* E2.5 */}
+                <div>
+                  <p className="mb-2">E2.5 Stare in buona salute</p>
+                  <RadioGroup 
+                    value={formData.obiettivi_realizzabili.salute}
+                    onValueChange={(value) => 
+                      handleNestedChange('obiettivi_realizzabili', 'salute', value)}
+                    className="flex flex-wrap gap-4"
+                  >
+                    {/* Stessa struttura dei radio button come sopra */}
+                  </RadioGroup>
+                </div>
+
+                {/* E2.6 */}
+                <div>
+                  <p className="mb-2">E2.6 Avere una casa</p>
+                  <RadioGroup 
+                    value={formData.obiettivi_realizzabili.casa}
+                    onValueChange={(value) => 
+                      handleNestedChange('obiettivi_realizzabili', 'casa', value)}
+                    className="flex flex-wrap gap-4"
+                  >
+                    {/* Stessa struttura dei radio button come sopra */}
+                  </RadioGroup>
+                </div>
+              </div>
             </div>
-          </div>
 
             {/* E3 */}
             <div className="space-y-4">
-              {/* ... contenuto E3 ... */}
+              <h4 className="font-medium">E3. Cosa ti aiuterebbe ad affrontare il futuro?</h4>
+              <Textarea
+                value={formData.aiuto_futuro}
+                onChange={(e) => handleChange('aiuto_futuro', e.target.value)}
+                className="min-h-[100px]"
+              />
             </div>
 
             {/* E4 */}
             <div className="space-y-4">
-              {/* ... contenuto E4 ... */}
+              <h4 className="font-medium">E4. Pensando al momento in cui uscirai da questa struttura, ti senti pronto ad affrontare la tua vita?</h4>
+              <p className="text-sm text-gray-500">[barrare tutte le caselle pertinenti]</p>
+              
+              <RadioGroup 
+                value={formData.pronto_uscita.pronto ? "1" : "0"}
+                onValueChange={(value) => {
+                  handleNestedChange('pronto_uscita', 'pronto', value === "1")
+                }}
+                className="flex space-x-4"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="0" id="e4-no" />
+                  <Label htmlFor="e4-no">0. No</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="1" id="e4-si" />
+                  <Label htmlFor="e4-si">1. Sì</Label>
+                </div>
+              </RadioGroup>
+
+              <Textarea
+                placeholder={formData.pronto_uscita.pronto ? "Sì, perché..." : "No, perché..."}
+                value={formData.pronto_uscita.motivazione}
+                onChange={(e) => handleNestedChange('pronto_uscita', 'motivazione', e.target.value)}
+                className="min-h-[100px]"
+              />
             </div>
 
             {/* E5 */}
             <div className="space-y-4">
-              {/* ... contenuto E5 ... */}
+              <h4 className="font-medium">E5. Pensando all'uscita dalla struttura/dal progetto di presa in carico quali emozioni provi?</h4>
+              <p className="text-sm text-gray-500">[barrare tutte le caselle pertinenti]</p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="e5-1"
+                    checked={formData.emozioni_uscita.felicita}
+                    onCheckedChange={(checked) => 
+                      handleNestedBooleanChange('emozioni_uscita', 'felicita', checked === true)}
+                  />
+                  <Label htmlFor="e5-1">E5.1 Felicità</Label>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="e5-2"
+                    checked={formData.emozioni_uscita.tristezza}
+                    onCheckedChange={(checked) => 
+                      handleNestedBooleanChange('emozioni_uscita', 'tristezza', checked === true)}
+                  />
+                  <Label htmlFor="e5-2">E5.2 Tristezza</Label>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="e5-3"
+                    checked={formData.emozioni_uscita.curiosita}
+                    onCheckedChange={(checked) => 
+                      handleNestedBooleanChange('emozioni_uscita', 'curiosita', checked === true)}
+                  />
+                  <Label htmlFor="e5-3">E5.3 Curiosità</Label>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="e5-4"
+                    checked={formData.emozioni_uscita.preoccupazione}
+                    onCheckedChange={(checked) => 
+                      handleNestedBooleanChange('emozioni_uscita', 'preoccupazione', checked === true)}
+                  />
+                  <Label htmlFor="e5-4">E5.4 Preoccupazione</Label>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="e5-5"
+                    checked={formData.emozioni_uscita.paura}
+                    onCheckedChange={(checked) => 
+                      handleNestedBooleanChange('emozioni_uscita', 'paura', checked === true)}
+                  />
+                  <Label htmlFor="e5-5">E5.5 Paura</Label>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="e5-6"
+                    checked={formData.emozioni_uscita.liberazione}
+                    onCheckedChange={(checked) => 
+                      handleNestedBooleanChange('emozioni_uscita', 'liberazione', checked === true)}
+                  />
+                  <Label htmlFor="e5-6">E5.6 Liberazione</Label>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="e5-7"
+                    checked={formData.emozioni_uscita.solitudine}
+                    onCheckedChange={(checked) => 
+                      handleNestedBooleanChange('emozioni_uscita', 'solitudine', checked === true)}
+                  />
+                  <Label htmlFor="e5-7">E5.7 Solitudine</Label>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="e5-8"
+                    checked={formData.emozioni_uscita.rabbia}
+                    onCheckedChange={(checked) => 
+                      handleNestedBooleanChange('emozioni_uscita', 'rabbia', checked === true)}
+                  />
+                  <Label htmlFor="e5-8">E5.8 Rabbia</Label>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="e5-9"
+                    checked={formData.emozioni_uscita.speranza}
+                    onCheckedChange={(checked) => 
+                      handleNestedBooleanChange('emozioni_uscita', 'speranza', checked === true)}
+                  />
+                  <Label htmlFor="e5-9">E5.9 Speranza</Label>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="e5-10"
+                    checked={formData.emozioni_uscita.determinazione}
+                    onCheckedChange={(checked) => 
+                      handleNestedBooleanChange('emozioni_uscita', 'determinazione', checked === true)}
+                  />
+                  <Label htmlFor="e5-10">E5.10 Determinazione</Label>
+                </div>
+              </div>
             </div>
 
             {/* E6 */}
             <div className="space-y-4">
-              {/* ... contenuto E6 ... */}
+              <h4 className="font-medium">E6. Qual è il tuo più grande desiderio?</h4>
+              <Textarea
+                value={formData.desiderio}
+                onChange={(e) => handleChange('desiderio', e.target.value)}
+                className="min-h-[100px]"
+              />
             </div>
 
             {/* E7 */}
             <div className="space-y-4">
-              {/* ... contenuto E7 ... */}
+              <h4 className="font-medium">E7. C'è qualche cosa di importante che non ti abbiamo chiesto ma che vorresti aggiungere?</h4>
+              <Textarea
+                value={formData.nota_aggiuntiva}
+                onChange={(e) => handleChange('nota_aggiuntiva', e.target.value)}
+                className="min-h-[100px]"
+              />
             </div>
           </div>
 
