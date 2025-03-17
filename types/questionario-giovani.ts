@@ -96,7 +96,7 @@ export interface QuestionarioGiovani {
 
   // Sezione C
   titolo_studio: string
-  attività_precedenti: AttivitaPrecedenti
+  attivita_precedenti: AttivitaPrecedenti
   attivita_attuali: {
     studio: boolean
     lavoro: boolean
