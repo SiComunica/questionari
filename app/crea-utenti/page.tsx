@@ -19,9 +19,9 @@ export default function CreaUtenti() {
       
       if (error) throw error
       return `Creato utente ${email}`
-    } catch (error) {
+    } catch (error: any) {
       console.error('Errore:', error)
-      return `Errore per ${email}: ${error.message}`
+      return `Errore per ${email}: ${error?.message || 'Errore sconosciuto'}`
     }
   }
 
