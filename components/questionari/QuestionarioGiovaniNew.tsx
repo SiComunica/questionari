@@ -136,7 +136,25 @@ const initialData: QuestionarioGiovani = {
   tipo_percorso: '',
   vivere_in_struttura: false,
   collocazione_attuale: "1" as CollocazioneAttuale,
-  fattori_vulnerabilità: [],
+  fattori_vulnerabilita: {
+    fv1_stranieri: false,
+    fv2_vittime_tratta: false,
+    fv3_vittime_violenza: false,
+    fv4_allontanati_famiglia: false,
+    fv5_detenuti: false,
+    fv6_ex_detenuti: false,
+    fv7_esecuzione_penale: false,
+    fv8_indigenti: false,
+    fv9_rom_sinti: false,
+    fv10_disabilita_fisica: false,
+    fv11_disabilita_cognitiva: false,
+    fv12_disturbi_psichiatrici: false,
+    fv13_dipendenze: false,
+    fv14_genitori_precoci: false,
+    fv15_orientamento_sessuale: false,
+    fv16_altro: false,
+    fv16_spec: ''
+  },
 
   // Sezione B
   sesso: "1" as Sesso,
@@ -430,7 +448,7 @@ export default function QuestionarioGiovaniNew() {
       const supabaseData = {
         ...formData,
         // Converti i campi in array usando unknown come tipo intermedio
-        fattori_vulnerabilità: checkboxToArray(formData.fattori_vulnerabilità as unknown as Record<string, boolean>),
+        fattori_vulnerabilita: checkboxToArray(formData.fattori_vulnerabilita as unknown as Record<string, boolean>),
         attività_precedenti: checkboxToArray(formData.attività_precedenti as unknown as Record<string, boolean>),
         attività_attuali: checkboxToArray(formData.attività_attuali as unknown as Record<string, boolean>),
         ricerca_lavoro: checkboxToArray(formData.ricerca_lavoro as unknown as Record<string, boolean>),
@@ -597,30 +615,182 @@ export default function QuestionarioGiovaniNew() {
             {/* Fattori di vulnerabilità */}
             <div className="space-y-4">
               <Label>Fattori di vulnerabilità del giovane</Label>
-              <div className="grid grid-cols-2 gap-4">
-                {/* Lista dei checkbox per i fattori di vulnerabilità */}
-                {Object.entries(formData.fattori_vulnerabilità).map(([key, value]) => (
-                  <div key={key} className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      id={`fv-${key}`}
-                      checked={Boolean(value)}
-                      onChange={(e) => 
-                        setFormData(prev => ({
-                          ...prev,
-                          fattori_vulnerabilità: {
-                            ...prev.fattori_vulnerabilità,
-                            [key]: e.target.checked
-                          }
-                        }))
-                      }
-                      className="h-4 w-4 rounded border-gray-300"
+              <div className="space-y-2">
+                <p className="font-medium">[barrare tutte le caselle pertinenti]</p>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="fv1"
+                      checked={formData.fattori_vulnerabilita.fv1_stranieri}
+                      onCheckedChange={(checked) => 
+                        handleNestedBooleanChange('fattori_vulnerabilita', 'fv1_stranieri', checked === true)}
                     />
-                    <Label htmlFor={`fv-${key}`}>
-                      {key.replace(/_/g, ' ').charAt(0).toUpperCase() + key.slice(1)}
-                    </Label>
+                    <Label htmlFor="fv1">FV.1 Stranieri con problemi legati alla condizione migratoria</Label>
                   </div>
-                ))}
+
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="fv2"
+                      checked={formData.fattori_vulnerabilita.fv2_vittime_tratta}
+                      onCheckedChange={(checked) => 
+                        handleNestedBooleanChange('fattori_vulnerabilita', 'fv2_vittime_tratta', checked === true)}
+                    />
+                    <Label htmlFor="fv2">FV.2 Vittime di tratta</Label>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="fv3"
+                      checked={formData.fattori_vulnerabilita.fv3_vittime_violenza}
+                      onCheckedChange={(checked) => 
+                        handleNestedBooleanChange('fattori_vulnerabilita', 'fv3_vittime_violenza', checked === true)}
+                    />
+                    <Label htmlFor="fv3">FV.3 Vittime di violenza domestica</Label>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="fv4"
+                      checked={formData.fattori_vulnerabilita.fv4_allontanati_famiglia}
+                      onCheckedChange={(checked) => 
+                        handleNestedBooleanChange('fattori_vulnerabilita', 'fv4_allontanati_famiglia', checked === true)}
+                    />
+                    <Label htmlFor="fv4">FV.4 Persone allontanate dalla famiglia</Label>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="fv5"
+                      checked={formData.fattori_vulnerabilita.fv5_detenuti}
+                      onCheckedChange={(checked) => 
+                        handleNestedBooleanChange('fattori_vulnerabilita', 'fv5_detenuti', checked === true)}
+                    />
+                    <Label htmlFor="fv5">FV.5 Detenuti</Label>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="fv6"
+                      checked={formData.fattori_vulnerabilita.fv6_ex_detenuti}
+                      onCheckedChange={(checked) => 
+                        handleNestedBooleanChange('fattori_vulnerabilita', 'fv6_ex_detenuti', checked === true)}
+                    />
+                    <Label htmlFor="fv6">FV.6 Ex detenuti</Label>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="fv7"
+                      checked={formData.fattori_vulnerabilita.fv7_esecuzione_penale}
+                      onCheckedChange={(checked) => 
+                        handleNestedBooleanChange('fattori_vulnerabilita', 'fv7_esecuzione_penale', checked === true)}
+                    />
+                    <Label htmlFor="fv7">FV.7 Persone in esecuzione penale esterna/misura alternativa alla detenzione</Label>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="fv8"
+                      checked={formData.fattori_vulnerabilita.fv8_indigenti}
+                      onCheckedChange={(checked) => 
+                        handleNestedBooleanChange('fattori_vulnerabilita', 'fv8_indigenti', checked === true)}
+                    />
+                    <Label htmlFor="fv8">FV.8 Indigenti e/o senza dimora</Label>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="fv9"
+                      checked={formData.fattori_vulnerabilita.fv9_rom_sinti}
+                      onCheckedChange={(checked) => 
+                        handleNestedBooleanChange('fattori_vulnerabilita', 'fv9_rom_sinti', checked === true)}
+                    />
+                    <Label htmlFor="fv9">FV.9 Rom e Sinti</Label>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="fv10"
+                      checked={formData.fattori_vulnerabilita.fv10_disabilita_fisica}
+                      onCheckedChange={(checked) => 
+                        handleNestedBooleanChange('fattori_vulnerabilita', 'fv10_disabilita_fisica', checked === true)}
+                    />
+                    <Label htmlFor="fv10">FV.10 Persone con disabilità fisica</Label>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="fv11"
+                      checked={formData.fattori_vulnerabilita.fv11_disabilita_cognitiva}
+                      onCheckedChange={(checked) => 
+                        handleNestedBooleanChange('fattori_vulnerabilita', 'fv11_disabilita_cognitiva', checked === true)}
+                    />
+                    <Label htmlFor="fv11">FV.11 Persone con disabilità cognitiva</Label>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="fv12"
+                      checked={formData.fattori_vulnerabilita.fv12_disturbi_psichiatrici}
+                      onCheckedChange={(checked) => 
+                        handleNestedBooleanChange('fattori_vulnerabilita', 'fv12_disturbi_psichiatrici', checked === true)}
+                    />
+                    <Label htmlFor="fv12">FV.12 Persone con disturbi psichiatrici</Label>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="fv13"
+                      checked={formData.fattori_vulnerabilita.fv13_dipendenze}
+                      onCheckedChange={(checked) => 
+                        handleNestedBooleanChange('fattori_vulnerabilita', 'fv13_dipendenze', checked === true)}
+                    />
+                    <Label htmlFor="fv13">FV.13 Persone con dipendenze</Label>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="fv14"
+                      checked={formData.fattori_vulnerabilita.fv14_genitori_precoci}
+                      onCheckedChange={(checked) => 
+                        handleNestedBooleanChange('fattori_vulnerabilita', 'fv14_genitori_precoci', checked === true)}
+                    />
+                    <Label htmlFor="fv14">FV.14 Genitori precoci</Label>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="fv15"
+                      checked={formData.fattori_vulnerabilita.fv15_orientamento_sessuale}
+                      onCheckedChange={(checked) => 
+                        handleNestedBooleanChange('fattori_vulnerabilita', 'fv15_orientamento_sessuale', checked === true)}
+                    />
+                    <Label htmlFor="fv15">FV.15 Persone con problemi legati all'orientamento sessuale</Label>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="fv16"
+                      checked={formData.fattori_vulnerabilita.fv16_altro}
+                      onCheckedChange={(checked) => 
+                        handleNestedBooleanChange('fattori_vulnerabilita', 'fv16_altro', checked === true)}
+                    />
+                    <Label htmlFor="fv16">FV.16 Altro</Label>
+                  </div>
+                </div>
+                
+                {formData.fattori_vulnerabilita.fv16_altro && (
+                  <div className="mt-2">
+                    <Input
+                      type="text"
+                      placeholder="Specificare la voce 'Altro'"
+                      value={formData.fattori_vulnerabilita.fv16_spec}
+                      onChange={(e) => 
+                        handleNestedChange('fattori_vulnerabilita', 'fv16_spec', e.target.value)}
+                    />
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -1244,6 +1414,180 @@ export default function QuestionarioGiovaniNew() {
                   ))}
               </div>
             </div>
+
+            {/* E2. Obiettivi realizzabili */}
+            <div className="space-y-4">
+              <h3 className="font-medium mb-2">E2. Pensando al tuo futuro, quanto ritieni realizzabili i seguenti obiettivi?</h3>
+              {/* ... resto del codice per E2 ... */}
+            </div>
+          </div>
+
+          {/* E3. Cosa ti aiuterebbe ad affrontare il futuro? */}
+          <div className="space-y-4">
+            <h3 className="font-medium mb-2">E3. Cosa ti aiuterebbe ad affrontare il futuro?</h3>
+            <Textarea
+              value={formData.aiuto_futuro}
+              onChange={(e) => handleTextAreaChange(e)}
+              className="min-h-[100px]"
+            />
+          </div>
+
+          {/* E4. Pensando al momento in cui uscirai da questa struttura, ti senti pronto ad affrontare la tua vita? */}
+          <div className="space-y-4">
+            <h3 className="font-medium mb-4">E4. Pensando al momento in cui uscirai da questa struttura, ti senti pronto ad affrontare la tua vita?</h3>
+            <div className="space-y-4">
+              <RadioGroup 
+                value={formData.pronto_uscita.pronto ? "1" : "0"}
+                onValueChange={(value) => {
+                  handleNestedChange('pronto_uscita', 'pronto', value === "1")
+                }}
+                className="flex space-x-4"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="0" id="e4-no" />
+                  <Label htmlFor="e4-no">No</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="1" id="e4-si" />
+                  <Label htmlFor="e4-si">Sì</Label>
+                </div>
+              </RadioGroup>
+
+              <Textarea
+                placeholder={formData.pronto_uscita.pronto ? "Sì, perché..." : "No, perché..."}
+                value={formData.pronto_uscita.motivazione}
+                onChange={(e) => handleNestedChange('pronto_uscita', 'motivazione', e.target.value)}
+                className="min-h-[100px]"
+              />
+            </div>
+          </div>
+
+          {/* E5. Pensando all'uscita dalla struttura/dal progetto di presa in carico quali emozioni provi? */}
+          <div className="space-y-4">
+            <h3 className="font-medium mb-2">E5. Pensando all'uscita dalla struttura/dal progetto di presa in carico quali emozioni provi?</h3>
+            <p className="text-sm text-gray-500 mb-4">[barrare tutte le caselle pertinenti]</p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="e5-1"
+                  checked={formData.emozioni_uscita.felicita}
+                  onCheckedChange={(checked) => 
+                    handleNestedBooleanChange('emozioni_uscita', 'felicita', checked === true)}
+                />
+                <Label htmlFor="e5-1">E5.1 Felicità</Label>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="e5-2"
+                  checked={formData.emozioni_uscita.tristezza}
+                  onCheckedChange={(checked) => 
+                    handleNestedBooleanChange('emozioni_uscita', 'tristezza', checked === true)}
+                />
+                <Label htmlFor="e5-2">E5.2 Tristezza</Label>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="e5-3"
+                  checked={formData.emozioni_uscita.curiosita}
+                  onCheckedChange={(checked) => 
+                    handleNestedBooleanChange('emozioni_uscita', 'curiosita', checked === true)}
+                />
+                <Label htmlFor="e5-3">E5.3 Curiosità</Label>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="e5-4"
+                  checked={formData.emozioni_uscita.preoccupazione}
+                  onCheckedChange={(checked) => 
+                    handleNestedBooleanChange('emozioni_uscita', 'preoccupazione', checked === true)}
+                />
+                <Label htmlFor="e5-4">E5.4 Preoccupazione</Label>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="e5-5"
+                  checked={formData.emozioni_uscita.paura}
+                  onCheckedChange={(checked) => 
+                    handleNestedBooleanChange('emozioni_uscita', 'paura', checked === true)}
+                />
+                <Label htmlFor="e5-5">E5.5 Paura</Label>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="e5-6"
+                  checked={formData.emozioni_uscita.liberazione}
+                  onCheckedChange={(checked) => 
+                    handleNestedBooleanChange('emozioni_uscita', 'liberazione', checked === true)}
+                />
+                <Label htmlFor="e5-6">E5.6 Liberazione</Label>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="e5-7"
+                  checked={formData.emozioni_uscita.solitudine}
+                  onCheckedChange={(checked) => 
+                    handleNestedBooleanChange('emozioni_uscita', 'solitudine', checked === true)}
+                />
+                <Label htmlFor="e5-7">E5.7 Solitudine</Label>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="e5-8"
+                  checked={formData.emozioni_uscita.rabbia}
+                  onCheckedChange={(checked) => 
+                    handleNestedBooleanChange('emozioni_uscita', 'rabbia', checked === true)}
+                />
+                <Label htmlFor="e5-8">E5.8 Rabbia</Label>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="e5-9"
+                  checked={formData.emozioni_uscita.speranza}
+                  onCheckedChange={(checked) => 
+                    handleNestedBooleanChange('emozioni_uscita', 'speranza', checked === true)}
+                />
+                <Label htmlFor="e5-9">E5.9 Speranza</Label>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="e5-10"
+                  checked={formData.emozioni_uscita.determinazione}
+                  onCheckedChange={(checked) => 
+                    handleNestedBooleanChange('emozioni_uscita', 'determinazione', checked === true)}
+                />
+                <Label htmlFor="e5-10">E5.10 Determinazione</Label>
+              </div>
+            </div>
+          </div>
+
+          {/* E6. Qual è il tuo più grande desiderio? */}
+          <div className="space-y-4">
+            <h3 className="font-medium mb-2">E6. Qual è il tuo più grande desiderio?</h3>
+            <Textarea
+              value={formData.desiderio}
+              onChange={(e) => handleTextAreaChange(e)}
+              className="min-h-[100px]"
+            />
+          </div>
+
+          {/* E7. C'è qualche cosa di importante che non ti abbiamo chiesto ma che vorresti aggiungere? */}
+          <div className="space-y-4">
+            <h3 className="font-medium mb-2">E7. C'è qualche cosa di importante che non ti abbiamo chiesto ma che vorresti aggiungere?</h3>
+            <Textarea
+              value={formData.nota_aggiuntiva}
+              onChange={(e) => handleTextAreaChange(e)}
+              className="min-h-[100px]"
+            />
           </div>
 
           {/* Aggiungi il pulsante di submit alla fine del form */}

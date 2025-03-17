@@ -49,7 +49,25 @@ export interface QuestionarioGiovani {
   tipo_percorso: string
   vivere_in_struttura: boolean
   collocazione_attuale: string
-  fattori_vulnerabilità: string[]
+  fattori_vulnerabilita: {
+    fv1_stranieri: boolean
+    fv2_vittime_tratta: boolean
+    fv3_vittime_violenza: boolean
+    fv4_allontanati_famiglia: boolean
+    fv5_detenuti: boolean
+    fv6_ex_detenuti: boolean
+    fv7_esecuzione_penale: boolean
+    fv8_indigenti: boolean
+    fv9_rom_sinti: boolean
+    fv10_disabilita_fisica: boolean
+    fv11_disabilita_cognitiva: boolean
+    fv12_disturbi_psichiatrici: boolean
+    fv13_dipendenze: boolean
+    fv14_genitori_precoci: boolean
+    fv15_orientamento_sessuale: boolean
+    fv16_altro: boolean
+    fv16_spec: string
+  }
 
   // Sezione B
   sesso: string
