@@ -8,27 +8,40 @@ import { Session } from '@supabase/supabase-js'
 // Prima installa il pacchetto necessario con:
 // npm install @supabase/auth-helpers-nextjs @supabase/supabase-js
 
+type UserType = 'admin' | 'operatore' | 'anonimo' | null
+
 interface AuthContextType {
   session: Session | null
   loading: boolean
   error: string | null
+  userType: UserType
   signIn: (code: string) => Promise<void>
   signOut: () => Promise<void>
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined)
+export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [userType, setUserType] = useState<UserType>(null)
   const router = useRouter()
   const supabase = createClientComponentClient()
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event: string, session: Session | null) => {
+      async (_event, session) => {
         setSession(session)
+        if (session?.user) {
+          const email = session.user.email
+          if (email?.includes('admin')) setUserType('admin')
+          else if (email?.includes('operatore')) setUserType('operatore')
+          else if (email?.includes('anonimo')) setUserType('anonimo')
+          else setUserType(null)
+        } else {
+          setUserType(null)
+        }
         setLoading(false)
       }
     )
@@ -41,39 +54,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(true)
       setError(null)
       
-      // Verifica il tipo di codice
+      let email: string
       if (code === 'admin2025') {
-        const { error } = await supabase.auth.signInWithPassword({
-          email: 'admin@example.com',
-          password: code
-        })
-        if (error) throw error
-        router.push('/dashboard/admin')
-      } 
-      else if (code === 'anonimo9999') {
-        const { error } = await supabase.auth.signInWithPassword({
-          email: 'anonimo@example.com',
-          password: code
-        })
-        if (error) throw error
-        router.push('/dashboard/anonimo')
+        email = 'admin@ferro.com'
+      } else if (code === 'anonimo9999') {
+        email = 'anonimo@ferro.com'
+      } else if (code.match(/^operatore[1-9][0-9]?$|^operatore100$/)) {
+        const num = code.replace('operatore', '')
+        email = `operatore${num}@ferro.com`
+      } else {
+        throw new Error('Codice non valido')
       }
-      // Verifica se è un operatore (da operatore1 a operatore100)
-      else if (/^operatore[1-9][0-9]?$|^operatore100$/.test(code)) {
-        const operatoreNum = code.replace('operatore', '')
-        const { error } = await supabase.auth.signInWithPassword({
-          email: `operatore${operatoreNum}@example.com`,
-          password: code
-        })
-        if (error) throw error
-        router.push('/dashboard/operatore')
-      }
-      else {
-        setError('Codice di accesso non valido')
-      }
-    } catch (err) {
-      console.error('Errore di accesso:', err)
-      setError('Errore durante l\'accesso. Riprova.')
+
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password: code
+      })
+
+      if (error) throw error
+
+      // Reindirizza in base al tipo di utente
+      if (email.includes('admin')) router.push('/dashboard/admin')
+      else if (email.includes('operatore')) router.push('/dashboard/operatore')
+      else if (email.includes('anonimo')) router.push('/dashboard/anonimo')
+
+    } catch (err: any) {
+      console.error('Errore di login:', err)
+      setError(err?.message || 'Errore durante l\'accesso')
     } finally {
       setLoading(false)
     }
@@ -93,6 +100,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       session,
       loading,
       error,
+      userType,
       signIn,
       signOut
     }}>
