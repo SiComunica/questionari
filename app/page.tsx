@@ -1,41 +1,50 @@
-import Link from 'next/link'
+'use client'
 
-export default function Home() {
+import { useState } from 'react'
+import { useAuth } from '@/contexts/AuthContext'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+
+export default function LoginPage() {
+  const [code, setCode] = useState('')
+  const { signIn, loading, error } = useAuth()
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    await signIn(code)
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Sistema Questionari
-        </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          Seleziona il tipo di accesso
-        </p>
-      </div>
+    <div className="container flex items-center justify-center min-h-screen py-10">
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle className="text-2xl text-center">Accesso</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <Input
+              type="text"
+              placeholder="Inserisci il codice di accesso"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              disabled={loading}
+            />
+            
+            <Button 
+              type="submit"
+              className="w-full"
+              disabled={loading || !code.trim()} // Disabilita se loading o codice vuoto
+            >
+              {loading ? 'Accesso in corso...' : 'Accedi'}
+            </Button>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <div className="space-y-6">
-            <Link 
-              href="/login?type=admin"
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Accesso Admin
-            </Link>
-            <Link
-              href="/login?type=operatore"
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-            >
-              Accesso Operatore
-            </Link>
-            <Link
-              href="/login?type=anonimo"
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
-            >
-              Accesso Anonimo
-            </Link>
-          </div>
-        </div>
-      </div>
+            {error && (
+              <p className="text-red-500 text-sm text-center">{error}</p>
+            )}
+          </form>
+        </CardContent>
+      </Card>
     </div>
   )
 } 
