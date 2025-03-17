@@ -1,18 +1,57 @@
 'use client'
 
 import { useState } from 'react'
-import { useAuth } from '@/contexts/AuthContext'
+import { useRouter } from 'next/navigation'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 export default function LoginPage() {
-  const [code, setCode] = useState('')
-  const { signIn, loading, error } = useAuth()
+  const [codice, setCodice] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const router = useRouter()
+  const supabase = createClientComponentClient()
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    await signIn(code)
+    setLoading(true)
+    setError('')
+
+    try {
+      // Prima verifichiamo se il codice esiste
+      const { data: user, error: searchError } = await supabase
+        .from('auth.users')
+        .select('role')
+        .eq('codice', codice)
+        .single()
+
+      if (searchError || !user) {
+        setError('Codice non valido')
+        return
+      }
+
+      // Reindirizza in base al ruolo
+      switch (user.role) {
+        case 'admin':
+          router.push('/dashboard/admin')
+          break
+        case 'anonimo':
+          router.push('/dashboard/anonimo')
+          break
+        case 'operatore':
+          router.push('/dashboard/operatore')
+          break
+        default:
+          setError('Ruolo non valido')
+      }
+    } catch (err) {
+      console.error('Errore di login:', err)
+      setError('Errore durante l\'accesso')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -22,19 +61,19 @@ export default function LoginPage() {
           <CardTitle className="text-2xl text-center">Accesso</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleLogin} className="space-y-4">
             <Input
               type="text"
               placeholder="Inserisci il codice di accesso"
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
+              value={codice}
+              onChange={(e) => setCodice(e.target.value)}
               disabled={loading}
             />
             
             <Button 
               type="submit"
               className="w-full"
-              disabled={loading || !code.trim()} // Disabilita se loading o codice vuoto
+              disabled={loading || !codice.trim()}
             >
               {loading ? 'Accesso in corso...' : 'Accedi'}
             </Button>
