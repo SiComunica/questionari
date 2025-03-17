@@ -97,7 +97,12 @@ export interface QuestionarioGiovani {
   // Sezione C
   titolo_studio: string
   attività_precedenti: AttivitaPrecedenti
-  attività_attuali: string[]
+  attivita_attuali: {
+    studio: boolean
+    lavoro: boolean
+    tirocinio: boolean
+    nessuna: boolean
+  }
   motivi_non_studio: string[]
   corso_formazione: {
     presente: boolean

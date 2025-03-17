@@ -197,7 +197,12 @@ const initialData: QuestionarioGiovani = {
     altro: false,
     altro_specificare: ''
   },
-  attività_attuali: [],
+  attivita_attuali: {
+    studio: false,
+    lavoro: false,
+    tirocinio: false,
+    nessuna: false
+  },
   motivi_non_studio: [],
   corso_formazione: {
     presente: false,
@@ -450,7 +455,7 @@ export default function QuestionarioGiovaniNew() {
         // Converti i campi in array usando unknown come tipo intermedio
         fattori_vulnerabilita: checkboxToArray(formData.fattori_vulnerabilita as unknown as Record<string, boolean>),
         attività_precedenti: checkboxToArray(formData.attività_precedenti as unknown as Record<string, boolean>),
-        attività_attuali: checkboxToArray(formData.attività_attuali as unknown as Record<string, boolean>),
+        attivita_attuali: checkboxToArray(formData.attivita_attuali as unknown as Record<string, boolean>),
         ricerca_lavoro: checkboxToArray(formData.ricerca_lavoro as unknown as Record<string, boolean>),
         orientamento_luoghi: checkboxToArray(formData.orientamento_luoghi as unknown as Record<string, boolean>),
         
@@ -500,8 +505,8 @@ export default function QuestionarioGiovaniNew() {
   const handleAttivitaAttualiChange = (id: string, checked: boolean) => {
     setFormData(prev => ({
       ...prev,
-      attività_attuali: {
-        ...prev.attività_attuali,
+      attivita_attuali: {
+        ...prev.attivita_attuali,
         [id]: checked
       }
     }))
@@ -1156,7 +1161,7 @@ export default function QuestionarioGiovaniNew() {
                     <input
                       type="checkbox"
                       id={`att_att_${id}`}
-                      checked={Boolean(formData.attività_attuali[id as keyof typeof formData.attività_attuali])}
+                      checked={Boolean(formData.attivita_attuali[id as keyof typeof formData.attivita_attuali])}
                       onChange={(e) => handleAttivitaAttualiChange(id, e.target.checked)}
                       className="h-4 w-4 rounded border-gray-300"
                     />
