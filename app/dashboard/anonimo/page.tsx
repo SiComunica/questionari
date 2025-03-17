@@ -1,10 +1,10 @@
 'use client'
 
 import { Suspense } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import QuestionarioGiovani from '@/components/questionari/QuestionarioGiovani'
+import { useSearchParams } from 'next/navigation'
 import { Card, CardContent } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import QuestionarioGiovani from '@/components/questionari/QuestionarioGiovaniNew'
 
 // Configurazione per il rendering dinamico
 export const dynamic = 'force-dynamic'

@@ -11,6 +11,7 @@ type AuthContextType = {
   signOut: () => void
   loading: boolean
   error: string | null
+  session: Session | null
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -18,7 +19,8 @@ const AuthContext = createContext<AuthContextType>({
   signIn: async () => {},
   signOut: () => {},
   loading: false,
-  error: null
+  error: null,
+  session: null
 })
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -74,7 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ userType, signIn, signOut, loading, error }}>
+    <AuthContext.Provider value={{ userType, signIn, signOut, loading, error, session: null }}>
       {children}
     </AuthContext.Provider>
   )
