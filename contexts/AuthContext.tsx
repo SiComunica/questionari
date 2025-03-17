@@ -1,92 +1,109 @@
 'use client'
 
 import { createContext, useContext, useEffect, useState } from 'react'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
 import { Session } from '@supabase/supabase-js'
 
-type UserType = 'admin' | 'operatore' | 'anonimo'
+// Prima installa il pacchetto necessario con:
+// npm install @supabase/auth-helpers-nextjs @supabase/supabase-js
 
 interface AuthContextType {
-  userType: UserType | null
-  signIn: (code: string) => Promise<void>
-  signOut: () => void
+  session: Session | null
   loading: boolean
   error: string | null
-  session: Session | null
+  signIn: (code: string) => Promise<void>
+  signOut: () => Promise<void>
 }
 
-export const AuthContext = createContext<AuthContextType>({
-  userType: null,
-  signIn: async () => {},
-  signOut: () => {},
-  loading: true,
-  error: null,
-  session: null
-})
+const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [userType, setUserType] = useState<UserType | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
+  const supabase = createClientComponentClient()
 
   useEffect(() => {
-    // Recupera il tipo di utente dal localStorage al caricamento
-    const savedUserType = localStorage.getItem('userType') as UserType | null
-    if (savedUserType) {
-      setUserType(savedUserType)
-    }
-  }, [])
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event: string, session: Session | null) => {
+        setSession(session)
+        setLoading(false)
+      }
+    )
+
+    return () => subscription.unsubscribe()
+  }, [supabase.auth])
 
   const signIn = async (code: string) => {
-    setLoading(true)
-    setError(null)
-
     try {
-      // Verifica il codice di accesso
+      setLoading(true)
+      setError(null)
+      
+      // Verifica il tipo di codice
       if (code === 'admin2025') {
-        setUserType('admin')
-        localStorage.setItem('userType', 'admin')
+        const { error } = await supabase.auth.signInWithPassword({
+          email: 'admin@example.com',
+          password: code
+        })
+        if (error) throw error
         router.push('/dashboard/admin')
-      } else if (code === 'anonimo9999') {
-        setUserType('anonimo')
-        localStorage.setItem('userType', 'anonimo')
+      } 
+      else if (code === 'anonimo9999') {
+        const { error } = await supabase.auth.signInWithPassword({
+          email: 'anonimo@example.com',
+          password: code
+        })
+        if (error) throw error
         router.push('/dashboard/anonimo')
-      } else {
-        // Verifica se è un codice operatore (da 1 a 300)
-        const operatorNumber = parseInt(code)
-        if (!isNaN(operatorNumber) && operatorNumber >= 1 && operatorNumber <= 300) {
-          setUserType('operatore')
-          localStorage.setItem('userType', 'operatore')
-          router.push('/dashboard/operatore')
-        } else {
-          throw new Error('Codice non valido')
-        }
       }
-    } catch (error) {
-      setError(error instanceof Error ? error.message : 'Errore durante il login')
+      // Verifica se è un operatore (da operatore1 a operatore100)
+      else if (/^operatore[1-9][0-9]?$|^operatore100$/.test(code)) {
+        const operatoreNum = code.replace('operatore', '')
+        const { error } = await supabase.auth.signInWithPassword({
+          email: `operatore${operatoreNum}@example.com`,
+          password: code
+        })
+        if (error) throw error
+        router.push('/dashboard/operatore')
+      }
+      else {
+        setError('Codice di accesso non valido')
+      }
+    } catch (err) {
+      console.error('Errore di accesso:', err)
+      setError('Errore durante l\'accesso. Riprova.')
     } finally {
       setLoading(false)
     }
   }
 
-  const signOut = () => {
-    setUserType(null)
-    localStorage.removeItem('userType')
-    router.push('/')
+  const signOut = async () => {
+    try {
+      await supabase.auth.signOut()
+      router.push('/')
+    } catch (err) {
+      console.error('Errore durante il logout:', err)
+    }
   }
 
   return (
-    <AuthContext.Provider value={{ userType, signIn, signOut, loading, error, session }}>
+    <AuthContext.Provider value={{
+      session,
+      loading,
+      error,
+      signIn,
+      signOut
+    }}>
       {children}
     </AuthContext.Provider>
   )
 }
 
-export const useAuth = () => {
+export function useAuth() {
   const context = useContext(AuthContext)
-  if (!context) {
+  if (context === undefined) {
     throw new Error('useAuth deve essere usato all\'interno di AuthProvider')
   }
   return context
