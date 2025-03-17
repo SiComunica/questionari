@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
-import QuestionarioGiovani from '@/components/questionari/QuestionarioGiovani'
+import QuestionarioGiovani from '@/components/questionari/QuestionarioGiovaniNew'
 
 export default function QuestionarioGiovaniPage() {
   const router = useRouter()
