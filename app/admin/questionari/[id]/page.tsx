@@ -170,17 +170,21 @@ export default function QuestionarioDetail() {
             <div>
               <h3 className="font-semibold">Abitazione precedente</h3>
               <ul className="list-disc list-inside">
-                {Object.entries(questionario.abitazione_precedente || {}).map(([key, value]) => (
-                  value && <li key={key}>{key}</li>
-                ))}
+                {questionario.abitazione_precedente && 
+                  Object.entries(questionario.abitazione_precedente).map(([key, value]: [string, any]) => (
+                    value && <li key={key}>{key}</li>
+                  ))
+                }
               </ul>
             </div>
             <div>
               <h3 className="font-semibold">Figure di aiuto</h3>
               <ul className="list-disc list-inside">
-                {Object.entries(questionario.figure_aiuto || {}).map(([key, value]) => (
-                  value && <li key={key}>{key}</li>
-                ))}
+                {questionario.figure_aiuto && 
+                  Object.entries(questionario.figure_aiuto).map(([key, value]: [string, any]) => (
+                    value && <li key={key}>{key}</li>
+                  ))
+                }
               </ul>
             </div>
           </div>
@@ -196,25 +200,29 @@ export default function QuestionarioDetail() {
           <div className="space-y-4">
             <div>
               <h3 className="font-semibold">Preoccupazioni per il futuro</h3>
-              {Object.entries(questionario.preoccupazioni_futuro || {}).map(([key, value]) => (
-                <div key={key} className="ml-4">
-                  <span className="font-medium">{key}: </span>
-                  <span>{value}</span>
-                </div>
-              ))}
+              {questionario.preoccupazioni_futuro && 
+                Object.entries(questionario.preoccupazioni_futuro).map(([key, value]: [string, any]) => (
+                  <div key={key} className="ml-4">
+                    <span className="font-medium">{key}: </span>
+                    <span>{String(value)}</span>
+                  </div>
+                ))
+              }
             </div>
             <div>
               <h3 className="font-semibold">Pronto per l'uscita</h3>
               <p>{questionario.pronto_uscita?.pronto ? 'Sì' : 'No'}</p>
-              <p className="mt-2"><strong>Motivazione:</strong> {questionario.pronto_uscita?.motivazione}</p>
+              {questionario.pronto_uscita?.motivazione && (
+                <p className="mt-2"><strong>Motivazione:</strong> {questionario.pronto_uscita.motivazione}</p>
+              )}
             </div>
             <div>
               <h3 className="font-semibold">Desiderio</h3>
-              <p>{questionario.desiderio}</p>
+              <p>{questionario.desiderio || ''}</p>
             </div>
             <div>
               <h3 className="font-semibold">Note aggiuntive</h3>
-              <p>{questionario.nota_aggiuntiva}</p>
+              <p>{questionario.nota_aggiuntiva || ''}</p>
             </div>
           </div>
         </CardContent>
