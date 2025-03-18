@@ -1711,5 +1711,5 @@ export default function QuestionarioGiovaniNew() {
         </CardContent>
       </Card>
     </form>
-  )
-}
+  );
+} // <-- Aggiungi questa parentesi graffa di chiusura
