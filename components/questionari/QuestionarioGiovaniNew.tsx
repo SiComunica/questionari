@@ -1902,10 +1902,16 @@ export default function QuestionarioGiovaniNew() {
       const session = await supabase.auth.getSession();
       const isOperatore = session?.data?.session?.user?.user_metadata?.role === 'operatore';
       
+      // Converti attivita_attuali da oggetto ad array
+      const attivitaAttualiArray = Object.entries(formData.attivita_attuali)
+        .filter(([key, value]) => value === true)
+        .map(([key]) => key);
+
       const { data, error } = await supabase
         .from('giovani')
         .insert({
           ...formData,
+          attivita_attuali: attivitaAttualiArray, // Usa l'array invece dell'oggetto
           fonte: isOperatore ? 'operatore' : 'anonimo',
           created_by: session?.data?.session?.user?.id || null,
           stato: 'nuovo'
