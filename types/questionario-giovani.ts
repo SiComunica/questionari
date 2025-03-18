@@ -24,9 +24,19 @@ interface AttivitaPrecedenti {
   altro_specificare?: string;
 }
 
-interface RicercaLavoro {
+export interface RicercaLavoro {
   [key: string]: boolean | string | undefined;
-  altro?: boolean;
+  centro_impiego: boolean;
+  sportelli: boolean;
+  inps_patronati: boolean;
+  servizi_sociali: boolean;
+  agenzie_interinali: boolean;
+  cooperative: boolean;
+  struttura: boolean;
+  conoscenti: boolean;
+  portali_online: boolean;
+  social: boolean;
+  altro: boolean;
   altro_specificare?: string;
 }
 
@@ -97,12 +107,7 @@ export interface QuestionarioGiovani {
   // Sezione C
   titolo_studio: string
   attivita_precedenti: AttivitaPrecedenti
-  attivita_attuali: {
-    studio: boolean
-    lavoro: boolean
-    tirocinio: boolean
-    nessuna: boolean
-  }
+  attivita_attuali: AttivitaAttuali
   motivi_non_studio: string[]
   corso_formazione: {
     presente: boolean
@@ -118,18 +123,9 @@ export interface QuestionarioGiovani {
   curriculum_vitae: string
   centro_impiego: string
   lavoro_autonomo: string
-  aspetti_lavoro: {
-    stabilita: string
-    flessibilita: string
-    valorizzazione: string
-    retribuzione: string
-    fatica: string
-    sicurezza: string
-    utilita_sociale: string
-    vicinanza_casa: string
-  }
+  aspetti_lavoro: AspettiLavoro
   condizioni_lavoro: string[]
-  livelli_utilità: string[]
+  livelli_utilità: LivelliUtilita
   livelli_obiettivi: string[]
 
   // Sezione D
@@ -198,4 +194,33 @@ export interface QuestionarioGiovani {
   aiuto_futuro: string
   desiderio: string
   nota_aggiuntiva: string
+}
+
+export interface AttivitaAttuali {
+  studio: boolean;
+  formazione: boolean;
+  lavoro: boolean;
+  ricerca_lavoro: boolean;
+  tirocinio: boolean;
+  nessuna: boolean;
+}
+
+export interface LivelliUtilita {
+  [key: string]: ValutazioneUtilita;
+  studio: ValutazioneUtilita;
+  formazione: ValutazioneUtilita;
+  lavoro: ValutazioneUtilita;
+  ricerca_lavoro: ValutazioneUtilita;
+}
+
+export interface AspettiLavoro {
+  [key: string]: ValutazioneUtilita;
+  stabilita: ValutazioneUtilita;
+  flessibilita: ValutazioneUtilita;
+  valorizzazione: ValutazioneUtilita;
+  retribuzione: ValutazioneUtilita;
+  fatica: ValutazioneUtilita;
+  sicurezza: ValutazioneUtilita;
+  utilita_sociale: ValutazioneUtilita;
+  vicinanza_casa: ValutazioneUtilita;
 }
