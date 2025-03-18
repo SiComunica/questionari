@@ -1333,7 +1333,7 @@ export default function QuestionarioGiovaniNew() {
                 )}
               </div>
             </div>
-          </div>
+          </div> {/* Fine Sezione C */}
 
           {/* Sezione D */}
           <div className="space-y-6">
