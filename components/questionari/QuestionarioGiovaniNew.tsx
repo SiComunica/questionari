@@ -295,12 +295,7 @@ const initialFormData: QuestionarioGiovani = {
     vicinanza_casa: "0"
   },
   condizioni_lavoro: [],
-  livelli_utilità: {
-    studio: "0",
-    formazione: "0",
-    lavoro: "0",
-    ricerca_lavoro: "0"
-  } as LivelliUtilita,
+  livelli_utilita: [],  // era livelli_utilità
   livelli_obiettivi: [],
 
   // Sezione D
@@ -1286,14 +1281,11 @@ const SectionC = ({ formData, setFormData }: {
           <div className="space-y-2">
             <Label>C8.1 Studiare</Label>
             <RadioGroup
-              value={formData.livelli_utilità.studio}
+              value={formData.livelli_utilita[0] || "0"}
               onValueChange={(value) => 
                 setFormData(prev => ({
                   ...prev,
-                  livelli_utilità: {
-                    ...prev.livelli_utilità,
-                    studio: value as ValutazioneUtilita
-                  }
+                  livelli_utilita: [value as ValutazioneUtilita]
                 }))
               }
             >
@@ -1311,14 +1303,11 @@ const SectionC = ({ formData, setFormData }: {
           <div className="space-y-2">
             <Label>C8.2 Frequentare un corso di formazione</Label>
             <RadioGroup
-              value={formData.livelli_utilità.formazione}
+              value={formData.livelli_utilita[1] || "0"}
               onValueChange={(value) => 
                 setFormData(prev => ({
                   ...prev,
-                  livelli_utilità: {
-                    ...prev.livelli_utilità,
-                    formazione: value as ValutazioneUtilita
-                  }
+                  livelli_utilita: [formData.livelli_utilita[0] || "0", value as ValutazioneUtilita]
                 }))
               }
             >
@@ -1336,14 +1325,11 @@ const SectionC = ({ formData, setFormData }: {
           <div className="space-y-2">
             <Label>C8.3 Lavorare</Label>
             <RadioGroup
-              value={formData.livelli_utilità.lavoro}
+              value={formData.livelli_utilita[2] || "0"}
               onValueChange={(value) => 
                 setFormData(prev => ({
                   ...prev,
-                  livelli_utilità: {
-                    ...prev.livelli_utilità,
-                    lavoro: value as ValutazioneUtilita
-                  }
+                  livelli_utilita: [formData.livelli_utilita[0] || "0", formData.livelli_utilita[1] || "0", value as ValutazioneUtilita]
                 }))
               }
             >
@@ -1361,14 +1347,11 @@ const SectionC = ({ formData, setFormData }: {
           <div className="space-y-2">
             <Label>C8.4 Ricerca attiva del lavoro</Label>
             <RadioGroup
-              value={formData.livelli_utilità.ricerca_lavoro}
+              value={formData.livelli_utilita[3] || "0"}
               onValueChange={(value) => 
                 setFormData(prev => ({
                   ...prev,
-                  livelli_utilità: {
-                    ...prev.livelli_utilità,
-                    ricerca_lavoro: value as ValutazioneUtilita
-                  }
+                  livelli_utilita: [formData.livelli_utilita[0] || "0", formData.livelli_utilita[1] || "0", formData.livelli_utilita[2] || "0", value as ValutazioneUtilita]
                 }))
               }
             >
