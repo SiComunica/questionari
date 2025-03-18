@@ -1882,6 +1882,7 @@ export default function QuestionarioGiovaniNew() {
   
   const [formData, setFormData] = useState<QuestionarioGiovani>(initialFormData)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)  // Aggiungi questo state
   
   const { session } = useAuth()
   const router = useRouter()
@@ -1931,6 +1932,12 @@ export default function QuestionarioGiovaniNew() {
 
   return (
     <div className="container mx-auto p-4">
+      {error && (  // Aggiungi questo blocco per mostrare l'errore
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          {error}
+        </div>
+      )}
+      
       <Card>
         <CardContent className="p-6">
           {/* Progress bar */}
