@@ -316,7 +316,7 @@ const initialFormData: QuestionarioGiovani = {
     altri_parenti: false,
     amici: false
   },
-  figura_aiuto: {
+  figure_aiuto: {
     padre: false,
     madre: false,
     fratelli: false,
@@ -1567,12 +1567,12 @@ const SectionD = ({ formData, setFormData }: {
             <div key={figura.id} className="flex items-center space-x-2">
               <Checkbox
                 id={`aiuto-${figura.id}`}
-                checked={Boolean(formData.figura_aiuto[figura.id as keyof typeof formData.figura_aiuto])}
+                checked={Boolean(formData.figure_aiuto[figura.id as keyof typeof formData.figure_aiuto])}
                 onCheckedChange={(checked) => 
                   setFormData(prev => ({
                     ...prev,
-                    figura_aiuto: {
-                      ...prev.figura_aiuto,
+                    figure_aiuto: {
+                      ...prev.figure_aiuto,
                       [figura.id]: checked === true
                     }
                   }))
@@ -1583,17 +1583,17 @@ const SectionD = ({ formData, setFormData }: {
           ))}
         </div>
 
-        {formData.figura_aiuto.altri && (
+        {formData.figure_aiuto.altri && (
           <div className="mt-2">
             <Label htmlFor="aiuto-altri-spec">Specificare altre persone</Label>
             <Input
               id="aiuto-altri-spec"
-              value={formData.figura_aiuto.altri_specificare}
+              value={formData.figure_aiuto.altri_specificare}
               onChange={(e) => 
                 setFormData(prev => ({
                   ...prev,
-                  figura_aiuto: {
-                    ...prev.figura_aiuto,
+                  figure_aiuto: {
+                    ...prev.figure_aiuto,
                     altri_specificare: e.target.value
                   }
                 }))
