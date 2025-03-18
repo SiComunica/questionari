@@ -1916,6 +1916,11 @@ export default function QuestionarioGiovaniNew() {
         .filter(([key, value]) => value === true && !key.includes('spec'))
         .map(([key]) => key);
 
+      // Converti ricerca_lavoro da oggetto ad array
+      const ricercaLavoroArray = Object.entries(formData.ricerca_lavoro)
+        .filter(([key, value]) => value === true && key !== 'altro_specificare')
+        .map(([key]) => key);
+
       const { data, error } = await supabase
         .from('giovani')
         .insert({
@@ -1923,6 +1928,7 @@ export default function QuestionarioGiovaniNew() {
           attivita_attuali: attivitaAttualiArray,
           attivita_precedenti: attivitaPrecedentiArray,
           fattori_vulnerabilita: fattoriVulnerabilitaArray,
+          ricerca_lavoro: ricercaLavoroArray,
           fonte: isOperatore ? 'operatore' : 'anonimo',
           created_by: session?.data?.session?.user?.id || null,
           stato: 'nuovo'
