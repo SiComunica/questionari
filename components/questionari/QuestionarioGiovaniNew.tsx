@@ -1712,4 +1712,4 @@ export default function QuestionarioGiovaniNew() {
       </Card>
     </form>
   );
-} // <-- Aggiungi questa parentesi graffa di chiusura
+}
