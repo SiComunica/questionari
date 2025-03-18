@@ -1911,12 +1911,18 @@ export default function QuestionarioGiovaniNew() {
         .filter(([_, value]) => value === true)
         .map(([key]) => key);
 
+      // Converti fattori_vulnerabilita da oggetto ad array
+      const fattoriVulnerabilitaArray = Object.entries(formData.fattori_vulnerabilita)
+        .filter(([key, value]) => value === true && !key.includes('spec'))
+        .map(([key]) => key);
+
       const { data, error } = await supabase
         .from('giovani')
         .insert({
           ...formData,
           attivita_attuali: attivitaAttualiArray,
           attivita_precedenti: attivitaPrecedentiArray,
+          fattori_vulnerabilita: fattoriVulnerabilitaArray,
           fonte: isOperatore ? 'operatore' : 'anonimo',
           created_by: session?.data?.session?.user?.id || null,
           stato: 'nuovo'
