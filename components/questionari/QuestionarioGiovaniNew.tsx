@@ -295,7 +295,7 @@ const initialFormData: QuestionarioGiovani = {
     vicinanza_casa: "0"
   },
   condizioni_lavoro: [],
-  livelli_utilita: [],  // era livelli_utilità
+  livelli_utilita: [],  // cambiato da livelli_utilità a livelli_utilita
   livelli_obiettivi: [],
 
   // Sezione D
@@ -1307,7 +1307,10 @@ const SectionC = ({ formData, setFormData }: {
               onValueChange={(value) => 
                 setFormData(prev => ({
                   ...prev,
-                  livelli_utilita: [formData.livelli_utilita[0] || "0", value as ValutazioneUtilita]
+                  livelli_utilita: [
+                    formData.livelli_utilita[0] || "0", 
+                    value as ValutazioneUtilita
+                  ]
                 }))
               }
             >
@@ -1329,7 +1332,11 @@ const SectionC = ({ formData, setFormData }: {
               onValueChange={(value) => 
                 setFormData(prev => ({
                   ...prev,
-                  livelli_utilita: [formData.livelli_utilita[0] || "0", formData.livelli_utilita[1] || "0", value as ValutazioneUtilita]
+                  livelli_utilita: [
+                    formData.livelli_utilita[0] || "0",
+                    formData.livelli_utilita[1] || "0",
+                    value as ValutazioneUtilita
+                  ]
                 }))
               }
             >
@@ -1351,7 +1358,12 @@ const SectionC = ({ formData, setFormData }: {
               onValueChange={(value) => 
                 setFormData(prev => ({
                   ...prev,
-                  livelli_utilita: [formData.livelli_utilita[0] || "0", formData.livelli_utilita[1] || "0", formData.livelli_utilita[2] || "0", value as ValutazioneUtilita]
+                  livelli_utilita: [
+                    formData.livelli_utilita[0] || "0",
+                    formData.livelli_utilita[1] || "0",
+                    formData.livelli_utilita[2] || "0",
+                    value as ValutazioneUtilita
+                  ]
                 }))
               }
             >

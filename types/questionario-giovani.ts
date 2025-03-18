@@ -125,7 +125,7 @@ export interface QuestionarioGiovani {
   lavoro_autonomo: string
   aspetti_lavoro: AspettiLavoro
   condizioni_lavoro: string[]
-  livelli_utilità: LivelliUtilita
+  livelli_utilita: string[]
   livelli_obiettivi: string[]
 
   // Sezione D
