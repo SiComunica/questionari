@@ -150,8 +150,8 @@ export default function QuestionarioDetail() {
             <div>
               <h3 className="font-semibold">Attività attuali</h3>
               <ul className="list-disc list-inside">
-                {Object.entries(questionario.attivita_attuali || {}).map(([key, value]) => (
-                  value && <li key={key}>{key}</li>
+                {(questionario.attivita_attuali || []).map((attivita: string, index: number) => (
+                  <li key={index}>{attivita}</li>
                 ))}
               </ul>
             </div>
