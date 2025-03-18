@@ -1107,7 +1107,6 @@ export default function QuestionarioGiovaniNew() {
               </RadioGroup>
             </div>
           </div>
-
           {/* Sezione C */}
           <div className="space-y-6">
             <h3 className="text-lg font-medium">C. Formazione e lavoro</h3>
@@ -1712,4 +1711,4 @@ export default function QuestionarioGiovaniNew() {
       </Card>
     </form>
   );
-}
+} // <-- Questa è la parentesi graffa di chiusura che mancava
