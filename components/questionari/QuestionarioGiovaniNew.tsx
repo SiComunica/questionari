@@ -175,7 +175,7 @@ const initialFormData: QuestionarioGiovani = {
   // Sezione A
   percorso_autonomia: false,
   tipo_percorso: '',
-  vivere_in_struttura: false,
+  vive_in_struttura: false,
   collocazione_attuale: "1",
   fattori_vulnerabilita: {
     fv1_stranieri: false,
@@ -432,11 +432,11 @@ const SectionA = ({ formData, setFormData }: {
       <div className="space-y-4">
         <Label>La persona vive stabilmente presso la struttura?</Label>
         <RadioGroup
-          value={formData.vivere_in_struttura ? "1" : "0"}
+          value={formData.vive_in_struttura ? "1" : "0"}
           onValueChange={(value) => 
             setFormData(prev => ({
               ...prev,
-              vivere_in_struttura: value === "1"
+              vive_in_struttura: value === "1"
             }))
           }
         >

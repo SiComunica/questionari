@@ -57,7 +57,7 @@ export interface QuestionarioGiovani {
   // Sezione A
   percorso_autonomia: boolean
   tipo_percorso: string
-  vivere_in_struttura: boolean
+  vive_in_struttura: boolean
   collocazione_attuale: CollocazioneAttuale
   fattori_vulnerabilita: {
     fv1_stranieri: boolean
