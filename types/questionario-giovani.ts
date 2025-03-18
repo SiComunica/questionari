@@ -40,15 +40,15 @@ interface OrientamentoLavoro {
 
 export interface QuestionarioGiovani {
   // Metadati
-  id?: string
-  creato_a?: string
-  creato_da?: string
+  id: string | undefined
+  creato_a: string | undefined
+  creato_da: string | undefined
 
   // Sezione A
   percorso_autonomia: boolean
   tipo_percorso: string
   vivere_in_struttura: boolean
-  collocazione_attuale: string
+  collocazione_attuale: CollocazioneAttuale
   fattori_vulnerabilita: {
     fv1_stranieri: boolean
     fv2_vittime_tratta: boolean

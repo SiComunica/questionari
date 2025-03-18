@@ -1,26 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { 
-  QuestionarioGiovani,
-  Sesso, 
-  ClasseEta, 
-  Cittadinanza, 
-  PermessoSoggiorno, 
-  TempoStruttura, 
-  TitoloStudio, 
-  ValutazioneUtilita,
-  CollocazioneAttuale,
-  PrecedentiStrutture,
-  ValutazionePreoccupazione,
-  TitoloStudioGenitori,
-  LavoroGenitori,
-  ValutazioneObiettivo
-} from '@/types/questionario-giovani'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
-import type { Database } from '@/types/database'
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -29,6 +12,21 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
 import { toast } from "react-hot-toast"
+import type { Database } from '@/types/database'
+import { 
+  QuestionarioGiovani,
+  Sesso, 
+  ClasseEta, 
+  Cittadinanza, 
+  PermessoSoggiorno, 
+  TempoStruttura, 
+  TitoloStudio,
+  ValutazioneUtilita,
+  ValutazionePreoccupazione,
+  CollocazioneAttuale,
+  TitoloStudioGenitori,
+  LavoroGenitori
+} from '@/types/questionario-giovani'
 
 // Costanti per le opzioni
 const TIPI_PERCORSO = [
@@ -135,7 +133,7 @@ const initialData: QuestionarioGiovani = {
   percorso_autonomia: false,
   tipo_percorso: '',
   vivere_in_struttura: false,
-  collocazione_attuale: "1" as CollocazioneAttuale,
+  collocazione_attuale: "1",
   fattori_vulnerabilita: {
     fv1_stranieri: false,
     fv2_vittime_tratta: false,
@@ -157,16 +155,16 @@ const initialData: QuestionarioGiovani = {
   },
 
   // Sezione B
-  sesso: "1" as Sesso,
-  classe_eta: "1" as ClasseEta,
+  sesso: "1",
+  classe_eta: "1",
   luogo_nascita: {
     italia: false,
     altro_paese: ''
   },
-  cittadinanza: "1" as Cittadinanza,
-  permesso_soggiorno: "1" as PermessoSoggiorno,
-  tempo_in_struttura: "1" as TempoStruttura,
-  precedenti_strutture: "1" as PrecedentiStrutture,
+  cittadinanza: "1",
+  permesso_soggiorno: "1",
+  tempo_in_struttura: "1",
+  precedenti_strutture: "1",
   
   famiglia_origine: {
     padre: false,
@@ -178,17 +176,17 @@ const initialData: QuestionarioGiovani = {
   },
   
   madre: {
-    titolo_studio: "1" as TitoloStudioGenitori,
-    lavoro: "1" as LavoroGenitori
+    titolo_studio: "1",
+    lavoro: "1"
   },
   
   padre: {
-    titolo_studio: "1" as TitoloStudioGenitori,
-    lavoro: "1" as LavoroGenitori
+    titolo_studio: "1",
+    lavoro: "1"
   },
 
   // Sezione C
-  titolo_studio: "1" as TitoloStudio,
+  titolo_studio: "1",
   attivita_precedenti: {
     studiavo: false,
     lavoravo_stabilmente: false,
@@ -210,7 +208,7 @@ const initialData: QuestionarioGiovani = {
   },
   orientamento_lavoro: {
     usufruito: false,
-    utilita: "0" as ValutazioneUtilita,
+    utilita: "0",
     dove: {
       scuola_universita: false,
       enti_formazione: false,
@@ -242,14 +240,14 @@ const initialData: QuestionarioGiovani = {
   centro_impiego: '',
   lavoro_autonomo: '',
   aspetti_lavoro: {
-    stabilita: "0" as ValutazionePreoccupazione,
-    flessibilita: "0" as ValutazionePreoccupazione,
-    valorizzazione: "0" as ValutazionePreoccupazione,
-    retribuzione: "0" as ValutazionePreoccupazione,
-    fatica: "0" as ValutazionePreoccupazione,
-    sicurezza: "0" as ValutazionePreoccupazione,
-    utilita_sociale: "0" as ValutazionePreoccupazione,
-    vicinanza_casa: "0" as ValutazionePreoccupazione
+    stabilita: "0",
+    flessibilita: "0",
+    valorizzazione: "0",
+    retribuzione: "0",
+    fatica: "0",
+    sicurezza: "0",
+    utilita_sociale: "0",
+    vicinanza_casa: "0"
   },
   condizioni_lavoro: [],
   livelli_utilità: [],
@@ -284,23 +282,23 @@ const initialData: QuestionarioGiovani = {
 
   // Sezione E
   preoccupazioni_futuro: {
-    pregiudizi: "0" as ValutazionePreoccupazione,
-    mancanza_lavoro: "0" as ValutazionePreoccupazione,
-    mancanza_aiuto: "0" as ValutazionePreoccupazione,
-    mancanza_casa: "0" as ValutazionePreoccupazione,
-    solitudine: "0" as ValutazionePreoccupazione,
-    salute: "0" as ValutazionePreoccupazione,
-    perdita_persone: "0" as ValutazionePreoccupazione,
-    altro: "0" as ValutazionePreoccupazione,
+    pregiudizi: "0",
+    mancanza_lavoro: "0",
+    mancanza_aiuto: "0",
+    mancanza_casa: "0",
+    solitudine: "0",
+    salute: "0",
+    perdita_persone: "0",
+    altro: "0",
     altro_specificare: ''
   },
   obiettivi_realizzabili: {
-    lavoro_piacevole: "0" as ValutazioneObiettivo,
-    autonomia: "0" as ValutazioneObiettivo,
-    famiglia: "0" as ValutazioneObiettivo,
-    trovare_lavoro: "0" as ValutazioneObiettivo,
-    salute: "0" as ValutazioneObiettivo,
-    casa: "0" as ValutazioneObiettivo
+    lavoro_piacevole: "0",
+    autonomia: "0",
+    famiglia: "0",
+    trovare_lavoro: "0",
+    salute: "0",
+    casa: "0"
   },
   emozioni_uscita: {
     felicita: false,
