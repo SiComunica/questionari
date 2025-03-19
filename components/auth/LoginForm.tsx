@@ -14,34 +14,47 @@ const LoginForm: React.FC = () => {
     setError(null);
 
     try {
-      // Query per verificare il codice
-      const { data: users, error: queryError } = await supabase
-        .from('users')
+      // Prima verifica il codice e il ruolo
+      const { data: userData, error: userError } = await supabase
+        .from('auth.users')
         .select('id, role, codice')
         .eq('codice', code)
         .single();
 
-      if (queryError || !users) {
-        console.error('Errore query:', queryError);
+      if (userError || !userData) {
+        console.error('Errore verifica codice:', userError);
         setError('Codice non valido');
         return;
       }
 
-      // Login con Supabase Auth
-      const { data, error: signInError } = await supabase.auth.signInWithPassword({
-        email: `${code}@ferro.com`,
+      // Effettua il login
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email: `${userData.id}@ferro.com`,  // Usa l'ID come email
         password: code
       });
 
-      if (signInError) {
-        console.error('Errore signin:', signInError);
-        throw signInError;
+      if (authError) {
+        console.error('Errore autenticazione:', authError);
+        throw authError;
+      }
+
+      // Imposta il ruolo nella sessione
+      const { error: updateError } = await supabase.auth.updateUser({
+        data: { 
+          role: userData.role,
+          userId: userData.id 
+        }
+      });
+
+      if (updateError) {
+        console.error('Errore aggiornamento utente:', updateError);
+        throw updateError;
       }
 
       // Reindirizza in base al ruolo
-      if (users.role === 'admin') {
+      if (userData.role === 'admin') {
         router.push('/admin');
-      } else if (users.role === 'operatore') {
+      } else if (userData.role === 'operatore') {
         router.push('/operatori');
       }
 
