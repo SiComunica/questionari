@@ -1905,30 +1905,76 @@ export default function QuestionarioGiovaniNew() {
       const session = await supabase.auth.getSession();
       const userId = session?.data?.session?.user?.id;
       
-      // Convertiamo gli oggetti in array
-      const attivitaAttualiArray = Object.entries(formData.attivita_attuali || {})
-        .filter(([_, value]) => value === true)
-        .map(([key]) => key);
+      // Prepara i dati da inviare
+      const dataToInsert = {
+        // Metadati
+        creato_a: new Date().toISOString(),
+        creato_da: userId,
+        fonte: userId ? 'operatore' : 'anonimo',
+        stato: 'nuovo',
 
-      const attivitaPrecedentiArray = Object.entries(formData.attivita_precedenti || {})
-        .filter(([_, value]) => value === true)
-        .map(([key]) => key);
+        // Sezione A
+        percorso_autonomia: formData.percorso_autonomia,
+        tipo_percorso: formData.tipo_percorso,
+        vivere_in_struttura: formData.vive_in_struttura, // Corretto il nome del campo
+        collocazione_attuale: formData.collocazione_attuale,
+        fattori_vulnerabilità: Object.entries(formData.fattori_vulnerabilita)
+          .filter(([key, value]) => value === true && !key.includes('spec'))
+          .map(([key]) => key),
 
-      const fattoriVulnerabilitaArray = Object.entries(formData.fattori_vulnerabilita || {})
-        .filter(([_, value]) => value === true)
-        .map(([key]) => key);
+        // Sezione B
+        sesso: formData.sesso,
+        classe_eta: formData.classe_eta,
+        luogo_nascita: formData.luogo_nascita.italia ? 'Italia' : formData.luogo_nascita.altro_paese,
+        cittadinanza: formData.cittadinanza,
+        permesso_soggiorno: formData.permesso_soggiorno,
+        tempo_in_struttura: formData.tempo_in_struttura,
+        precedenti_strutture: formData.precedenti_strutture,
+        famiglia_origine: formData.famiglia_origine,
+        madre: formData.madre,
+        padre: formData.padre, // Nota: nel DB è "Padre" con la P maiuscola
+
+        // Sezione C
+        titolo_studio: formData.titolo_studio,
+        attività_precedenti: Object.entries(formData.attivita_precedenti)
+          .filter(([key, value]) => value === true && !key.includes('spec'))
+          .map(([key]) => key),
+        attività_attuali: Object.entries(formData.attivita_attuali)
+          .filter(([key, value]) => value === true)
+          .map(([key]) => key),
+        motivi_non_studio: formData.motivi_non_studio,
+        corso_formazione: formData.corso_formazione,
+        orientamento_lavoro: formData.orientamento_lavoro,
+        orientamento_luoghi: formData.orientamento_luoghi,
+        ricerca_lavoro: Object.entries(formData.ricerca_lavoro)
+          .filter(([key, value]) => value === true && !key.includes('spec'))
+          .map(([key]) => key),
+        lavoro_attuale: formData.lavoro_attuale,
+        curriculum_vitae: formData.curriculum_vitae,
+        centro_impiego: formData.centro_impiego,
+        lavoro_autonomo: formData.lavoro_autonomo,
+        aspetti_lavoro: formData.aspetti_lavoro,
+        condizioni_lavoro: formData.condizioni_lavoro,
+        livelli_utilità: formData.livelli_utilita, // Corretto l'accento
+        livelli_obiettivi: formData.livelli_obiettivi,
+
+        // Sezione D
+        abitazione_precedente: formData.abitazione_precedente,
+        figura_aiuto: formData.figura_aiuto,
+
+        // Sezione E
+        preoccupazioni_futuro: formData.preoccupazioni_futuro,
+        obiettivi_realizzabili: formData.obiettivi_realizzabili,
+        emozioni_uscita: formData.emozioni_uscita,
+        pronto_uscita: formData.pronto_uscita,
+        aiuto_futuro: formData.aiuto_futuro,
+        desiderio: formData.desiderio,
+        nota_aggiuntiva: formData.nota_aggiuntiva
+      };
 
       const { error } = await supabase
         .from('giovani')
-        .insert({
-          ...formData,
-          attivita_attuali: attivitaAttualiArray,
-          attivita_precedenti: attivitaPrecedentiArray,
-          fattori_vulnerabilita: fattoriVulnerabilitaArray,
-          fonte: userId ? 'operatore' : 'anonimo',
-          created_by: userId,
-          stato: 'nuovo'
-        });
+        .insert(dataToInsert);
 
       if (error) throw error;
 
