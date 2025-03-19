@@ -14,47 +14,40 @@ const LoginForm: React.FC = () => {
     setError(null);
 
     try {
-      // Prima verifica il codice e il ruolo
-      const { data: userData, error: userError } = await supabase
-        .from('auth.users')
-        .select('id, role, codice')
-        .eq('codice', code)
-        .single();
+      let role: string | null = null;
+      
+      // Determina il ruolo dal codice
+      if (code === 'admin2025') {
+        role = 'admin';
+      } else if (code.startsWith('operatore') && /^operatore\d+$/.test(code)) {
+        const operatorNumber = parseInt(code.replace('operatore', ''));
+        if (operatorNumber >= 1 && operatorNumber <= 300) {
+          role = 'operatore';
+        }
+      } else if (code === 'anonimo9999') {
+        role = 'anonimo';
+      }
 
-      if (userError || !userData) {
-        console.error('Errore verifica codice:', userError);
+      if (!role) {
         setError('Codice non valido');
         return;
       }
 
       // Effettua il login
-      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-        email: `${userData.id}@ferro.com`,  // Usa l'ID come email
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
+        email: `${code}@ferro.com`,
         password: code
       });
 
-      if (authError) {
-        console.error('Errore autenticazione:', authError);
-        throw authError;
-      }
-
-      // Imposta il ruolo nella sessione
-      const { error: updateError } = await supabase.auth.updateUser({
-        data: { 
-          role: userData.role,
-          userId: userData.id 
-        }
-      });
-
-      if (updateError) {
-        console.error('Errore aggiornamento utente:', updateError);
-        throw updateError;
+      if (signInError) {
+        console.error('Errore login:', signInError);
+        throw signInError;
       }
 
       // Reindirizza in base al ruolo
-      if (userData.role === 'admin') {
+      if (role === 'admin') {
         router.push('/admin');
-      } else if (userData.role === 'operatore') {
+      } else if (role === 'operatore') {
         router.push('/operatori');
       }
 
