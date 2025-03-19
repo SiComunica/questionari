@@ -1905,72 +1905,81 @@ export default function QuestionarioGiovaniNew() {
       const session = await supabase.auth.getSession();
       const userId = session?.data?.session?.user?.id;
       
-      // Prepara i dati da inviare
-      const dataToInsert = {
+      type DataToInsert = Partial<Record<keyof QuestionarioGiovani, any>>;
+      
+      const dataToInsert: DataToInsert = {
         // Metadati
-        creato_a: new Date().toISOString(),
-        creato_da: userId,
+        created_at: new Date().toISOString(),  // Cambiato da creato_a a created_at
+        created_by: userId,                     // Già corretto
         fonte: userId ? 'operatore' : 'anonimo',
         stato: 'nuovo',
 
-        // Sezione A
+        // Dati del form - correzione del nome della proprietà
         percorso_autonomia: formData.percorso_autonomia,
         tipo_percorso: formData.tipo_percorso,
-        vivere_in_struttura: formData.vive_in_struttura, // Corretto il nome del campo
+        vive_in_struttura: formData.vive_in_struttura,  // Corretto qui
         collocazione_attuale: formData.collocazione_attuale,
-        fattori_vulnerabilità: Object.entries(formData.fattori_vulnerabilita)
+        fattori_vulnerabilita: Object.entries(formData.fattori_vulnerabilita || {})
           .filter(([key, value]) => value === true && !key.includes('spec'))
           .map(([key]) => key),
+      
+        attivita_precedenti: Object.entries(formData.attivita_precedenti || {})
+          .filter(([key, value]) => value === true)
+          .map(([key]) => key),
+      
+        attivita_attuali: Object.entries(formData.attivita_attuali || {})
+          .filter(([key, value]) => value === true)
+          .map(([key]) => key),
 
-        // Sezione B
+        // Altri campi
         sesso: formData.sesso,
         classe_eta: formData.classe_eta,
-        luogo_nascita: formData.luogo_nascita.italia ? 'Italia' : formData.luogo_nascita.altro_paese,
+        luogo_nascita: formData.luogo_nascita,
         cittadinanza: formData.cittadinanza,
         permesso_soggiorno: formData.permesso_soggiorno,
         tempo_in_struttura: formData.tempo_in_struttura,
         precedenti_strutture: formData.precedenti_strutture,
-        famiglia_origine: formData.famiglia_origine,
-        madre: formData.madre,
-        padre: formData.padre, // Nota: nel DB è "Padre" con la P maiuscola
-
-        // Sezione C
         titolo_studio: formData.titolo_studio,
-        attività_precedenti: Object.entries(formData.attivita_precedenti)
-          .filter(([key, value]) => value === true && !key.includes('spec'))
-          .map(([key]) => key),
-        attività_attuali: Object.entries(formData.attivita_attuali)
+      
+        ricerca_lavoro: Object.entries(formData.ricerca_lavoro || {})
           .filter(([key, value]) => value === true)
           .map(([key]) => key),
-        motivi_non_studio: formData.motivi_non_studio,
-        corso_formazione: formData.corso_formazione,
-        orientamento_lavoro: formData.orientamento_lavoro,
-        orientamento_luoghi: formData.orientamento_luoghi,
-        ricerca_lavoro: Object.entries(formData.ricerca_lavoro)
-          .filter(([key, value]) => value === true && !key.includes('spec'))
-          .map(([key]) => key),
-        lavoro_attuale: formData.lavoro_attuale,
-        curriculum_vitae: formData.curriculum_vitae,
-        centro_impiego: formData.centro_impiego,
-        lavoro_autonomo: formData.lavoro_autonomo,
-        aspetti_lavoro: formData.aspetti_lavoro,
-        condizioni_lavoro: formData.condizioni_lavoro,
-        livelli_utilità: formData.livelli_utilita, // Corretto l'accento
-        livelli_obiettivi: formData.livelli_obiettivi,
 
-        // Sezione D
+        // Campi JSON
         abitazione_precedente: formData.abitazione_precedente,
         figura_aiuto: formData.figura_aiuto,
-
-        // Sezione E
+        emozioni_uscita: formData.emozioni_uscita,
         preoccupazioni_futuro: formData.preoccupazioni_futuro,
         obiettivi_realizzabili: formData.obiettivi_realizzabili,
-        emozioni_uscita: formData.emozioni_uscita,
         pronto_uscita: formData.pronto_uscita,
+        orientamento_lavoro: formData.orientamento_lavoro,
+        aspetti_lavoro: formData.aspetti_lavoro,
+        corso_formazione: formData.corso_formazione,
+        lavoro_attuale: formData.lavoro_attuale,
+        madre: formData.madre,
+        padre: formData.padre,
+        famiglia_origine: formData.famiglia_origine,
+
+        // Altri campi semplici
+        orientamento_luoghi: formData.orientamento_luoghi,
         aiuto_futuro: formData.aiuto_futuro,
         desiderio: formData.desiderio,
-        nota_aggiuntiva: formData.nota_aggiuntiva
+        nota_aggiuntiva: formData.nota_aggiuntiva,
+        lavoro_autonomo: formData.lavoro_autonomo,
+        centro_impiego: formData.centro_impiego,
+        curriculum_vitae: formData.curriculum_vitae,
+        condizioni_lavoro: formData.condizioni_lavoro,
+        motivi_non_studio: formData.motivi_non_studio,
+        livelli_utilita: formData.livelli_utilita,
+        livelli_obiettivi: formData.livelli_obiettivi
       };
+
+      // Rimuovi i campi undefined o null in modo type-safe
+      (Object.keys(dataToInsert) as Array<keyof DataToInsert>).forEach(key => {
+        if (dataToInsert[key] === undefined || dataToInsert[key] === null) {
+          delete dataToInsert[key];
+        }
+      });
 
       const { error } = await supabase
         .from('giovani')
