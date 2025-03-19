@@ -1988,7 +1988,7 @@ export default function QuestionarioGiovaniNew() {
       if (error) throw error;
 
       toast.success('Questionario salvato con successo!');
-      router.push('/success');
+      router.push('/');  // Modifica qui: reindirizza alla home invece che alla pagina success
     } catch (err: any) {
       console.error('Errore durante il salvataggio:', err);
       setError(err.message || 'Errore durante il salvataggio del questionario');
