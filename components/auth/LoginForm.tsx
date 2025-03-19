@@ -44,6 +44,16 @@ const LoginForm: React.FC = () => {
         throw signInError;
       }
 
+      // Aggiorna i metadati dell'utente con il ruolo
+      const { error: updateError } = await supabase.auth.updateUser({
+        data: { user_role: role }  // Usiamo user_role invece di role
+      });
+
+      if (updateError) {
+        console.error('Errore aggiornamento:', updateError);
+        throw updateError;
+      }
+
       // Reindirizza in base al ruolo
       if (role === 'admin') {
         router.push('/admin');
