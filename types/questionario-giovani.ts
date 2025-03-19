@@ -51,8 +51,10 @@ interface OrientamentoLavoro {
 export interface QuestionarioGiovani {
   // Metadati
   id: string | undefined
-  creato_a: string | undefined
-  creato_da: string | undefined
+  created_at: string | undefined
+  created_by: string | undefined
+  fonte: string
+  stato: string
 
   // Sezione A
   percorso_autonomia: boolean

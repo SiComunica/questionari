@@ -169,8 +169,10 @@ const EMOZIONI_USCITA = [
 const initialFormData: QuestionarioGiovani = {
   // Metadati
   id: undefined,
-  creato_a: undefined,
-  creato_da: undefined,
+  created_at: undefined,     // Cambiato da creato_a a created_at
+  created_by: undefined,     // Cambiato da creato_da a created_by
+  fonte: '',
+  stato: '',
 
   // Sezione A
   percorso_autonomia: false,
@@ -1897,52 +1899,29 @@ export default function QuestionarioGiovaniNew() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError(null);
 
     try {
       const session = await supabase.auth.getSession();
-      const isOperatore = session?.data?.session?.user?.user_metadata?.role === 'operatore';
+      const userId = session?.data?.session?.user?.id;
       
-      // Converti attivita_attuali e attivita_precedenti da oggetti ad array
-      const attivitaAttualiArray = Object.entries(formData.attivita_attuali)
-        .filter(([_, value]) => value === true)
-        .map(([key]) => key);
-
-      const attivitaPrecedentiArray = Object.entries(formData.attivita_precedenti)
-        .filter(([_, value]) => value === true)
-        .map(([key]) => key);
-
-      // Converti fattori_vulnerabilita da oggetto ad array
-      const fattoriVulnerabilitaArray = Object.entries(formData.fattori_vulnerabilita)
-        .filter(([key, value]) => value === true && !key.includes('spec'))
-        .map(([key]) => key);
-
-      // Converti ricerca_lavoro da oggetto ad array
-      const ricercaLavoroArray = Object.entries(formData.ricerca_lavoro)
-        .filter(([key, value]) => value === true && key !== 'altro_specificare')
-        .map(([key]) => key);
-
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('giovani')
         .insert({
           ...formData,
-          attivita_attuali: attivitaAttualiArray,
-          attivita_precedenti: attivitaPrecedentiArray,
-          fattori_vulnerabilita: fattoriVulnerabilitaArray,
-          ricerca_lavoro: ricercaLavoroArray,
-          fonte: isOperatore ? 'operatore' : 'anonimo',
-          created_by: session?.data?.session?.user?.id || null,
+          fonte: userId ? 'operatore' : 'anonimo',
+          created_by: userId,
           stato: 'nuovo'
-        })
-        .select()
-        .single();
+        });
 
       if (error) throw error;
 
-      // Redirect o mostra messaggio di successo
+      toast.success('Questionario salvato con successo!');
       router.push('/success');
-    } catch (error) {
-      console.error('Errore durante il salvataggio:', error);
-      setError('Errore durante il salvataggio del questionario');
+    } catch (err: any) {
+      console.error('Errore durante il salvataggio:', err);
+      setError(err.message || 'Errore durante il salvataggio del questionario');
+      toast.error('Errore durante il salvataggio');
     } finally {
       setLoading(false);
     }
