@@ -3,6 +3,7 @@
 import * as React from "react"
 import * as SelectPrimitive from "@radix-ui/react-select"
 import { Check, ChevronDown, ChevronUp } from "lucide-react"
+import { SelectHTMLAttributes } from 'react';
 
 import { cn } from "@/lib/utils"
 
@@ -145,6 +146,46 @@ const SelectSeparator = React.forwardRef<
   />
 ))
 SelectSeparator.displayName = SelectPrimitive.Separator.displayName
+
+interface SelectProps {
+  value: string;
+  onValueChange: (value: string) => void;
+  children: React.ReactNode;
+  className?: string;
+  label?: string;
+  error?: string;
+}
+
+export function Select({ 
+  value, 
+  onValueChange, 
+  children, 
+  className = '', 
+  label, 
+  error 
+}: SelectProps) {
+  return (
+    <div className="space-y-1">
+      {label && (
+        <label className="block text-sm font-medium text-gray-700">
+          {label}
+        </label>
+      )}
+      <select
+        value={value}
+        onChange={(e) => onValueChange(e.target.value)}
+        className={`block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm ${className}`}
+      >
+        {children}
+      </select>
+      {error && (
+        <p className="text-sm text-red-600">
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
 
 export {
   Select,

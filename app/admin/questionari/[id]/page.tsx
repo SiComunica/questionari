@@ -7,8 +7,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
-export default function QuestionarioDetail() {
-  const params = useParams()
+interface PageProps {
+  params: {
+    id: string;
+  };
+}
+
+export default async function QuestionarioPage({ params }: PageProps) {
+  if (!params?.id) {
+    return <div>ID questionario non valido</div>;
+  }
+
   const router = useRouter()
   const [questionario, setQuestionario] = useState<any>(null)
   const [loading, setLoading] = useState(true)
