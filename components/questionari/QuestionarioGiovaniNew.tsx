@@ -1905,10 +1905,26 @@ export default function QuestionarioGiovaniNew() {
       const session = await supabase.auth.getSession();
       const userId = session?.data?.session?.user?.id;
       
+      // Convertiamo gli oggetti in array
+      const attivitaAttualiArray = Object.entries(formData.attivita_attuali || {})
+        .filter(([_, value]) => value === true)
+        .map(([key]) => key);
+
+      const attivitaPrecedentiArray = Object.entries(formData.attivita_precedenti || {})
+        .filter(([_, value]) => value === true)
+        .map(([key]) => key);
+
+      const fattoriVulnerabilitaArray = Object.entries(formData.fattori_vulnerabilita || {})
+        .filter(([_, value]) => value === true)
+        .map(([key]) => key);
+
       const { error } = await supabase
         .from('giovani')
         .insert({
           ...formData,
+          attivita_attuali: attivitaAttualiArray,
+          attivita_precedenti: attivitaPrecedentiArray,
+          fattori_vulnerabilita: fattoriVulnerabilitaArray,
           fonte: userId ? 'operatore' : 'anonimo',
           created_by: userId,
           stato: 'nuovo'
