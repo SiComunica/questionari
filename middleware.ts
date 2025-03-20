@@ -1,36 +1,66 @@
-import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { createServerClient } from '@supabase/ssr'
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 
-export async function middleware(req: NextRequest) {
-  const res = NextResponse.next();
-  const supabase = createMiddlewareClient({ req, res });
-  const { data: { session } } = await supabase.auth.getSession();
+export async function middleware(request: NextRequest) {
+  let response = NextResponse.next({
+    request: {
+      headers: request.headers,
+    },
+  })
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return request.cookies.get(name)?.value
+        },
+        set(name: string, value: string, options: any) {
+          response.cookies.set({
+            name,
+            value,
+            ...options,
+          })
+        },
+        remove(name: string, options: any) {
+          response.cookies.set({
+            name,
+            value: '',
+            ...options,
+          })
+        },
+      },
+    }
+  )
+
+  const { data: { session } } = await supabase.auth.getSession()
 
   // Verifica il ruolo dall'URL
-  const isAdminRoute = req.nextUrl.pathname.startsWith('/admin');
-  const isOperatoreRoute = req.nextUrl.pathname.startsWith('/operatore');
-  const isAnonimoRoute = req.nextUrl.pathname.startsWith('/anonimo');
+  const isAdminRoute = request.nextUrl.pathname.startsWith('/admin');
+  const isOperatoreRoute = request.nextUrl.pathname.startsWith('/operatore');
+  const isAnonimoRoute = request.nextUrl.pathname.startsWith('/anonimo');
 
   if (!session) {
-    return NextResponse.redirect(new URL('/login', req.url));
+    return NextResponse.redirect(new URL('/login', request.url));
   }
 
   const userRole = session.user.user_metadata.role;
 
   if (isAdminRoute && userRole !== 'admin') {
-    return NextResponse.redirect(new URL('/unauthorized', req.url));
+    return NextResponse.redirect(new URL('/unauthorized', request.url));
   }
 
   if (isOperatoreRoute && userRole !== 'operatore') {
-    return NextResponse.redirect(new URL('/unauthorized', req.url));
+    return NextResponse.redirect(new URL('/unauthorized', request.url));
   }
 
   if (isAnonimoRoute && userRole !== 'anonimo') {
-    return NextResponse.redirect(new URL('/unauthorized', req.url));
+    return NextResponse.redirect(new URL('/unauthorized', request.url));
   }
 
-  return res;
+  return response
 }
 
 export const config = {

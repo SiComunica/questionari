@@ -4,10 +4,25 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import QuestionarioGiovani from '@/components/questionari/QuestionarioGiovaniNew'
+import { createServerClient } from '@supabase/ssr'
+import { cookies } from 'next/headers'
 
-export default function QuestionarioGiovaniPage() {
+export default async function QuestionarioGiovaniPage() {
   const router = useRouter()
   const { userType } = useAuth()
+  const cookieStore = cookies()
+  
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return cookieStore.get(name)?.value
+        },
+      },
+    }
+  )
 
   useEffect(() => {
     // Reindirizza alla home se non autenticato
