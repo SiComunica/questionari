@@ -1,21 +1,63 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import { useAuth } from '@/contexts/AuthContext'
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import Link from 'next/link'
 
-export default function OperatorePage() {
+export default function OperatoreDashboard() {
+  const { userType } = useAuth()
+
+  if (userType !== 'operatore') {
+    return null
+  }
+
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Area Operatore</h1>
+      <h1 className="text-2xl font-bold mb-6">Dashboard Operatore</h1>
       <div className="grid gap-6">
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h2 className="text-xl font-semibold mb-4">Questionari</h2>
-          <div className="space-y-4">
+        <Card>
+          <CardHeader>
+            <CardTitle>Questionario Giovani</CardTitle>
+          </CardHeader>
+          <CardContent>
             <Link 
-              href="/questionari/operatori/nuovo"
-              className="inline-block px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+              href="/operatore/questionari-giovani"
+              className="px-4 py-2 bg-blue-600 text-white rounded"
             >
-              Compila Nuovo Questionario
+              Compila Questionario
             </Link>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Questionario Operatori</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Link 
+              href="/operatore/questionari-operatori"
+              className="px-4 py-2 bg-blue-600 text-white rounded"
+            >
+              Compila Questionario
+            </Link>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Questionario Strutture</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Link 
+              href="/operatore/questionari-strutture"
+              className="px-4 py-2 bg-blue-600 text-white rounded"
+            >
+              Compila Questionario
+            </Link>
+          </CardContent>
+        </Card>
       </div>
     </div>
   )

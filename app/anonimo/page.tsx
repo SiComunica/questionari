@@ -1,33 +1,34 @@
 'use client'
 
-import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import Link from 'next/link'
 
-export default function AnonimoPage() {
-  const { user, userType } = useAuth()
-  const router = useRouter()
+export default function AnonimoDashboard() {
+  const { userType } = useAuth()
 
-  useEffect(() => {
-    if (!user || userType !== 'anonimo') {
-      router.push('/login')
-    }
-  }, [user, userType, router])
+  if (userType !== 'anonimo') {
+    return null
+  }
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Dashboard Anonimo</h1>
-      <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-semibold mb-4">Questionari Disponibili</h2>
-        <div className="space-y-4">
-          <Link 
-            href="/questionari/giovani/nuovo"
-            className="block w-full text-center bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors"
-          >
-            Compila Questionario Giovani
-          </Link>
-        </div>
+      <h1 className="text-2xl font-bold mb-6">Area Questionari</h1>
+      <div className="grid gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Questionario Giovani</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="mb-4">Compila il questionario per i giovani</p>
+            <Link 
+              href="/anonimo/questionari-giovani"
+              className="px-4 py-2 bg-blue-600 text-white rounded"
+            >
+              Inizia Questionario
+            </Link>
+          </CardContent>
+        </Card>
       </div>
     </div>
   )
