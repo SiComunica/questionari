@@ -30,17 +30,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setLoading(true)
     try {
       let userData: User | null = null;
-      let redirectPath = '';
 
       if (code === 'admin2025') {
         userData = { id: 'admin-id', type: 'admin' };
-        redirectPath = '/admin';
       } else if (code === 'anonimo9999') {
         userData = { id: 'anonimo-id', type: 'anonimo' };
-        redirectPath = '/anonimo';
       } else if (/^operatore([1-9]|[1-9][0-9]|[1-2][0-9][0-9]|300)$/.test(code)) {
         userData = { id: `operatore-${code}`, type: 'operatore' };
-        redirectPath = '/operatore';
       } else {
         throw new Error('Codice di accesso non valido');
       }
@@ -49,12 +45,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(userData);
       localStorage.setItem('user', JSON.stringify(userData));
 
-      // Poi facciamo il redirect
-      console.log('Redirecting to:', redirectPath); // Debug
-      router.push(redirectPath);
+      // Poi facciamo il redirect in base al tipo
+      switch (userData.type) {
+        case 'admin':
+          router.push('/dashboard/admin');
+          break;
+        case 'operatore':
+          router.push('/dashboard/operatore');
+          break;
+        case 'anonimo':
+          router.push('/dashboard/anonimo');
+          break;
+      }
 
     } catch (error) {
-      console.error('Errore login:', error); // Debug
+      console.error('Errore login:', error);
       throw error;
     } finally {
       setLoading(false);
