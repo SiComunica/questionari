@@ -1,12 +1,14 @@
+'use client'
+
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
 
-export default function OperatoreLayout({
-  children,
-}: {
+interface OperatoreLayoutProps {
   children: React.ReactNode
-}) {
+}
+
+export default function OperatoreLayout({ children }: OperatoreLayoutProps) {
   return (
-    <ProtectedRoute requiredRole="operatore">
+    <ProtectedRoute allowedTypes={['operatore']}>
       <div className="min-h-screen bg-gray-50">
         <nav className="bg-white shadow-sm">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
