@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -9,27 +9,34 @@ import QuestionarioGiovaniNew from '@/components/questionari/QuestionarioGiovani
 import QuestionarioOperatoriNew from '@/components/questionari/QuestionarioOperatoriNew'
 import QuestionarioStruttureNew from '@/components/questionari/QuestionarioStruttureNew'
 
-interface PageProps {
-  params: {
-    id: string
-  }
+interface Questionario {
+  id: string
+  tipo: 'giovani' | 'operatori' | 'strutture'
+  created_at: string
+  fonte: string
+  stato: string
 }
 
-export default function ViewQuestionario({ params }: PageProps) {
+export default function QuestionariPage() {
   const router = useRouter()
-  const [questionario, setQuestionario] = useState<any>(null)
+  const searchParams = useSearchParams()
+  const tipo = searchParams?.get('tipo') as 'giovani' | 'operatori' | 'strutture' | null
+  const id = searchParams?.get('id')
+  const [questionario, setQuestionario] = useState<Questionario | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const fetchQuestionario = async () => {
+      if (!tipo || !id) {
+        router.push('/dashboard/admin')
+        return
+      }
+
       try {
-        // L'ID sarà nel formato "tipo-id" (es: "giovani-123")
-        const [tipo, realId] = params.id.split('-')
-        
         const { data, error } = await supabase
           .from(tipo)
           .select('*')
-          .eq('id', realId)
+          .eq('id', id)
           .single()
 
         if (error) throw error
@@ -43,12 +50,9 @@ export default function ViewQuestionario({ params }: PageProps) {
     }
 
     fetchQuestionario()
-  }, [params.id])
+  }, [tipo, id, router])
 
-  if (loading) return <div>Caricamento...</div>
-  if (!questionario) return <div>Questionario non trovato</div>
-
-  const renderQuestionario = () => {
+  function renderQuestionarioContent(questionario: Questionario) {
     switch (questionario.tipo) {
       case 'giovani':
         return <QuestionarioGiovaniNew readOnly initialData={questionario} />
@@ -57,8 +61,16 @@ export default function ViewQuestionario({ params }: PageProps) {
       case 'strutture':
         return <QuestionarioStruttureNew readOnly initialData={questionario} />
       default:
-        return <div>Tipo questionario non valido</div>
+        return null
     }
+  }
+
+  if (loading) {
+    return <div>Caricamento...</div>
+  }
+
+  if (!questionario) {
+    return <div>Questionario non trovato</div>
   }
 
   return (
@@ -94,7 +106,7 @@ export default function ViewQuestionario({ params }: PageProps) {
         </CardContent>
       </Card>
 
-      {renderQuestionario()}
+      {renderQuestionarioContent(questionario)}
     </div>
   )
 } 

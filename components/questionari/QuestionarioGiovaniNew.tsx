@@ -1872,7 +1872,13 @@ const SectionE = ({ formData, setFormData }: {
   )
 }
 
-export default function QuestionarioGiovaniNew() {
+// Aggiungi all'interfaccia delle props
+interface Props {
+  readOnly?: boolean;
+  initialData?: any;
+}
+
+export default function QuestionarioGiovaniNew({ readOnly, initialData }: Props) {
   const [currentStep, setCurrentStep] = useState(1)
   const totalSteps = 5 // A, B, C, D, E
   const progress = (currentStep / totalSteps) * 100

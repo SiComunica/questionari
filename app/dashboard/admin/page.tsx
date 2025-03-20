@@ -12,10 +12,10 @@ import { PDFDocument, rgb } from 'pdf-lib'
 
 interface Questionario {
   id: string
+  tipo: 'giovani' | 'operatori' | 'strutture'
   created_at: string
   fonte: string
   stato: string
-  tipo: 'giovani' | 'operatori' | 'strutture'
 }
 
 export default function AdminDashboard() {
@@ -28,30 +28,23 @@ export default function AdminDashboard() {
 
     const fetchQuestionari = async () => {
       try {
-        // Fetch questionari giovani (solo quelli anonimi)
-        const { data: questionariGiovani, error: errorGiovani } = await supabase
+        const { data: questionariGiovani } = await supabase
           .from('giovani')
           .select('*')
           .eq('stato', 'inviato')
           .order('created_at', { ascending: false })
 
-        // Fetch questionari operatori
-        const { data: questionariOperatori, error: errorOperatori } = await supabase
+        const { data: questionariOperatori } = await supabase
           .from('operatori')
           .select('*')
           .eq('stato', 'inviato')
           .order('created_at', { ascending: false })
 
-        // Fetch questionari strutture
-        const { data: questionariStrutture, error: errorStrutture } = await supabase
+        const { data: questionariStrutture } = await supabase
           .from('strutture')
           .select('*')
           .eq('stato', 'inviato')
           .order('created_at', { ascending: false })
-
-        if (errorGiovani || errorOperatori || errorStrutture) {
-          throw new Error('Errore nel caricamento dei questionari')
-        }
 
         const allQuestionari = [
           ...(questionariGiovani || []).map(q => ({ ...q, tipo: 'giovani' as const })),
@@ -71,7 +64,14 @@ export default function AdminDashboard() {
   }, [userType])
 
   const downloadExcel = () => {
-    const ws = XLSX.utils.json_to_sheet(questionari)
+    const dataToExport = questionari.map(q => ({
+      Tipo: q.tipo,
+      Data: new Date(q.created_at).toLocaleDateString(),
+      Fonte: q.fonte,
+      Stato: q.stato
+    }))
+    
+    const ws = XLSX.utils.json_to_sheet(dataToExport)
     const wb = XLSX.utils.book_new()
     XLSX.utils.book_append_sheet(wb, ws, 'Questionari')
     const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' })
