@@ -10,9 +10,13 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setError('')
+    
     try {
+      console.log('Tentativo di login con codice:', code) // Debug
       await signIn(code)
     } catch (err) {
+      console.error('Errore login:', err) // Debug
       setError('Codice di accesso non valido')
     }
   }
@@ -30,6 +34,7 @@ export default function LoginPage() {
               onChange={(e) => setCode(e.target.value)}
               placeholder="Inserisci il codice di accesso"
               className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              autoComplete="off"
             />
           </div>
           

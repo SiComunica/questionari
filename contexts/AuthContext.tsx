@@ -2,15 +2,9 @@
 
 import { createContext, useContext, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { createBrowserClient } from '@supabase/ssr'
 
 // Prima installa il pacchetto necessario con:
 // npm install @supabase/auth-helpers-nextjs @supabase/supabase-js
-
-const supabase = createBrowserClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
 
 interface User {
   id: string
@@ -32,39 +26,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true)
   const router = useRouter()
 
-  useEffect(() => {
-    const savedUser = localStorage.getItem('user')
-    if (savedUser) {
-      setUser(JSON.parse(savedUser))
-    }
-    setLoading(false)
-  }, [])
-
-  useEffect(() => {
-    if (user) {
-      localStorage.setItem('user', JSON.stringify(user))
-    } else {
-      localStorage.removeItem('user')
-    }
-  }, [user])
-
   const signIn = async (code: string) => {
     setLoading(true)
     try {
+      let userData: User | null = null;
+      let redirectPath = '';
+
       if (code === 'admin2025') {
-        setUser({ id: 'admin-id', type: 'admin' })
-        router.push('/admin')
+        userData = { id: 'admin-id', type: 'admin' };
+        redirectPath = '/admin';
       } else if (code === 'anonimo9999') {
-        setUser({ id: 'anonimo-id', type: 'anonimo' })
-        router.push('/anonimo')
+        userData = { id: 'anonimo-id', type: 'anonimo' };
+        redirectPath = '/anonimo';
       } else if (/^operatore([1-9]|[1-9][0-9]|[1-2][0-9][0-9]|300)$/.test(code)) {
-        setUser({ id: `operatore-${code}`, type: 'operatore' })
-        router.push('/operatore')
+        userData = { id: `operatore-${code}`, type: 'operatore' };
+        redirectPath = '/operatore';
       } else {
-        throw new Error('Codice di accesso non valido')
+        throw new Error('Codice di accesso non valido');
       }
+
+      // Prima settiamo l'utente
+      setUser(userData);
+      localStorage.setItem('user', JSON.stringify(userData));
+
+      // Poi facciamo il redirect
+      console.log('Redirecting to:', redirectPath); // Debug
+      router.push(redirectPath);
+
+    } catch (error) {
+      console.error('Errore login:', error); // Debug
+      throw error;
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
@@ -73,6 +66,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem('user')
     router.push('/login')
   }
+
+  // Recupera l'utente dal localStorage all'avvio
+  useEffect(() => {
+    const savedUser = localStorage.getItem('user')
+    if (savedUser) {
+      try {
+        setUser(JSON.parse(savedUser))
+      } catch (error) {
+        console.error('Errore nel parsing dell\'utente salvato:', error)
+        localStorage.removeItem('user')
+      }
+    }
+    setLoading(false)
+  }, [])
 
   return (
     <AuthContext.Provider value={{ 
