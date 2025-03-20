@@ -1,14 +1,14 @@
 'use client'
 
-import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import QuestionarioGiovani from '@/components/questionari/QuestionarioGiovaniNew'
 import { createBrowserClient } from '@supabase/ssr'
 
-export default function QuestionarioGiovaniPage() {
+export default function QuestionariGiovaniPage() {
+  const { user, userType } = useAuth()
   const router = useRouter()
-  const { user } = useAuth()
   
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -16,10 +16,10 @@ export default function QuestionarioGiovaniPage() {
   )
 
   useEffect(() => {
-    if (!user) {
-      router.push('/')
+    if (!user || (userType !== 'anonimo' && userType !== 'operatore')) {
+      router.push('/login')
     }
-  }, [user, router])
+  }, [user, userType, router])
 
   if (!user) return null
 

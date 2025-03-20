@@ -12,7 +12,13 @@ const supabase = createBrowserClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 
+interface User {
+  id: string
+  type: string
+}
+
 interface AuthContextType {
+  user: User | null
   userType: string | null
   signIn: (code: string) => Promise<void>
   signOut: () => void
@@ -21,35 +27,36 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType>({} as AuthContextType)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [userType, setUserType] = useState<string | null>(null)
+  const [user, setUser] = useState<User | null>(null)
   const router = useRouter()
 
   const signIn = async (code: string) => {
-    switch (code) {
-      case 'admin2025':
-        setUserType('admin')
-        router.push('/admin')
-        break
-      case 'operatore1':
-        setUserType('operatore')
-        router.push('/operatore')
-        break
-      case 'anonimo9999':
-        setUserType('anonimo')
-        router.push('/anonimo')
-        break
-      default:
-        throw new Error('Codice non valido')
+    if (code === 'admin2025') {
+      setUser({ id: 'admin-id', type: 'admin' })
+      router.push('/admin')
+    } else if (code === 'anonimo9999') {
+      setUser({ id: 'anonimo-id', type: 'anonimo' })
+      router.push('/anonimo')
+    } else if (/^operatore([1-9]|[1-9][0-9]|[1-2][0-9][0-9]|300)$/.test(code)) {
+      setUser({ id: `operatore-${code}`, type: 'operatore' })
+      router.push('/operatore')
+    } else {
+      throw new Error('Codice di accesso non valido')
     }
   }
 
   const signOut = () => {
-    setUserType(null)
+    setUser(null)
     router.push('/login')
   }
 
   return (
-    <AuthContext.Provider value={{ userType, signIn, signOut }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      userType: user?.type ?? null, 
+      signIn, 
+      signOut 
+    }}>
       {children}
     </AuthContext.Provider>
   )
