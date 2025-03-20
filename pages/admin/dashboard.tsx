@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import AdminLayout from '@/components/layouts/AdminLayout'
 import QuestionariOperatoriList from '../../components/dashboard/QuestionariOperatoriList';

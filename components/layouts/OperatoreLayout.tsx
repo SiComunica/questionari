@@ -1,17 +1,22 @@
-import { useRouter } from 'next/router';
-import { useUser } from '../../context/UserContext';
+import { ReactNode } from 'react'
+import { useAuth } from '@/contexts/AuthContext'
+import { useRouter } from 'next/navigation'
 
-export function OperatoreLayout({ children }: { children: React.ReactNode }) {
-  const router = useRouter();
-  const { user, loading } = useUser();
+interface OperatoreLayoutProps {
+  children: ReactNode
+}
+
+const OperatoreLayout = ({ children }: OperatoreLayoutProps) => {
+  const { user, userType, loading } = useAuth()
+  const router = useRouter()
 
   if (loading) {
-    return <div>Caricamento...</div>;
+    return <div>Caricamento...</div>
   }
 
-  if (!user || user.role !== 'operatore') {
-    router.push('/login');
-    return null;
+  if (!user || userType !== 'operatore') {
+    router.push('/')
+    return null
   }
 
   return (
@@ -19,20 +24,17 @@ export function OperatoreLayout({ children }: { children: React.ReactNode }) {
       <nav className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
-            <div className="flex">
-              <div className="flex-shrink-0 flex items-center">
-                <h1 className="text-xl font-bold">Dashboard Operatore</h1>
-              </div>
+            <div className="flex items-center">
+              <h1 className="text-xl font-semibold">Operatore Dashboard</h1>
             </div>
           </div>
         </div>
       </nav>
-
-      <main className="py-10">
-        <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-          {children}
-        </div>
+      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        {children}
       </main>
     </div>
-  );
-} 
+  )
+}
+
+export default OperatoreLayout 
