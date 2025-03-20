@@ -1,102 +1,86 @@
-"use client"
+'use client'
 
-import { createContext, useContext, useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-
-// Prima installa il pacchetto necessario con:
-// npm install @supabase/auth-helpers-nextjs @supabase/supabase-js
-
-interface User {
-  id: string
-  type: string
-}
+import { createContext, useContext, useEffect, useState } from 'react'
+import { supabase } from '@/lib/supabase'
+import type { User } from '@supabase/supabase-js'
 
 interface AuthContextType {
   user: User | null
-  userType: string | null
+  userType: 'admin' | 'operatore' | 'anonimo' | null
   loading: boolean
-  signIn: (code: string) => Promise<void>
-  signOut: () => void
 }
 
-const AuthContext = createContext<AuthContextType>({} as AuthContextType)
+const AuthContext = createContext<AuthContextType>({
+  user: null,
+  userType: null,
+  loading: true
+})
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
+  const [userType, setUserType] = useState<'admin' | 'operatore' | 'anonimo' | null>(null)
   const [loading, setLoading] = useState(true)
-  const router = useRouter()
 
-  const signIn = async (code: string) => {
-    setLoading(true)
-    try {
-      let userData: User | null = null;
-
-      if (code === 'admin2025') {
-        userData = { id: 'admin-id', type: 'admin' };
-      } else if (code === 'anonimo9999') {
-        userData = { id: 'anonimo-id', type: 'anonimo' };
-      } else if (/^operatore([1-9]|[1-9][0-9]|[1-2][0-9][0-9]|300)$/.test(code)) {
-        userData = { id: `operatore-${code}`, type: 'operatore' };
-      } else {
-        throw new Error('Codice di accesso non valido');
-      }
-
-      // Prima settiamo l'utente
-      setUser(userData);
-      localStorage.setItem('user', JSON.stringify(userData));
-
-      // Poi facciamo il redirect in base al tipo
-      switch (userData.type) {
-        case 'admin':
-          router.push('/dashboard/admin');
-          break;
-        case 'operatore':
-          router.push('/dashboard/operatore');
-          break;
-        case 'anonimo':
-          router.push('/dashboard/anonimo');
-          break;
-      }
-
-    } catch (error) {
-      console.error('Errore login:', error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  const signOut = () => {
-    setUser(null)
-    localStorage.removeItem('user')
-    router.push('/login')
-  }
-
-  // Recupera l'utente dal localStorage all'avvio
   useEffect(() => {
-    const savedUser = localStorage.getItem('user')
-    if (savedUser) {
+    const checkUser = async () => {
       try {
-        setUser(JSON.parse(savedUser))
+        const { data: { user } } = await supabase.auth.getUser()
+        setUser(user)
+        
+        if (user?.email) {
+          if (user.email.includes('admin@')) {
+            setUserType('admin')
+          } else if (user.email.includes('operatore')) {
+            setUserType('operatore')
+          } else {
+            setUserType('anonimo')
+          }
+        } else {
+          setUserType(null)
+        }
       } catch (error) {
-        console.error('Errore nel parsing dell\'utente salvato:', error)
-        localStorage.removeItem('user')
+        console.error('Errore nel controllo utente:', error)
+        setUser(null)
+        setUserType(null)
+      } finally {
+        setLoading(false)
       }
     }
-    setLoading(false)
+
+    checkUser()
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      setUser(session?.user ?? null)
+      if (session?.user?.email) {
+        if (session.user.email.includes('admin@')) {
+          setUserType('admin')
+        } else if (session.user.email.includes('operatore')) {
+          setUserType('operatore')
+        } else {
+          setUserType('anonimo')
+        }
+      } else {
+        setUserType(null)
+      }
+    })
+
+    return () => {
+      subscription.unsubscribe()
+    }
   }, [])
 
   return (
-    <AuthContext.Provider value={{ 
-      user, 
-      userType: user?.type ?? null, 
-      loading,
-      signIn, 
-      signOut 
-    }}>
+    <AuthContext.Provider value={{ user, userType, loading }}>
       {children}
     </AuthContext.Provider>
   )
 }
 
-export const useAuth = () => useContext(AuthContext) 
+export const useAuth = () => {
+  const context = useContext(AuthContext)
+  if (!context) {
+    throw new Error('useAuth deve essere usato all\'interno di AuthProvider')
+  }
+  return context
+}
+

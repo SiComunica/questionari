@@ -38,9 +38,10 @@ export async function middleware(request: NextRequest) {
   const { data: { session } } = await supabase.auth.getSession()
 
   // Verifica il ruolo dall'URL
-  const isAdminRoute = request.nextUrl.pathname.startsWith('/admin');
-  const isOperatoreRoute = request.nextUrl.pathname.startsWith('/operatore');
-  const isAnonimoRoute = request.nextUrl.pathname.startsWith('/anonimo');
+  const path = request.nextUrl.pathname
+  const isAdminRoute = path.startsWith('/admin')
+  const isOperatoreRoute = path.startsWith('/operatore')
+  const isAnonimoRoute = path.startsWith('/anonimo')
 
   if (!session) {
     return NextResponse.redirect(new URL('/login', request.url));
