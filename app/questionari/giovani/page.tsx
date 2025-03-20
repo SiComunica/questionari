@@ -1,27 +1,23 @@
 'use client'
 
+import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
-import { useAuth } from '@/contexts/AuthContext'
 import QuestionarioGiovani from '@/components/questionari/QuestionarioGiovaniNew'
-import { createBrowserClient } from '@supabase/ssr'
 
-export default function QuestionariGiovaniPage() {
-  const { user, userType } = useAuth()
+export default function QuestionarioGiovaniPage() {
+  const { userType, codiceAccesso } = useAuth()
   const router = useRouter()
-  
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
 
   useEffect(() => {
-    if (!user || (userType !== 'anonimo' && userType !== 'operatore')) {
-      router.push('/login')
+    if (!codiceAccesso || !['operatore', 'anonimo'].includes(userType || '')) {
+      router.push('/')
     }
-  }, [user, userType, router])
+  }, [codiceAccesso, userType, router])
 
-  if (!user) return null
+  if (!codiceAccesso || !userType) {
+    return null
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">

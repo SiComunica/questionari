@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 
@@ -8,18 +8,21 @@ type UserType = 'admin' | 'operatore' | 'anonimo' | null
 
 export type AuthContextType = {
   userType: UserType
+  codiceAccesso: string | null
   signIn: (codice: string) => Promise<void>
   signOut: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType>({
   userType: null,
+  codiceAccesso: null,
   signIn: async () => {},
   signOut: async () => {}
 })
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [userType, setUserType] = useState<UserType>(null)
+  const [codiceAccesso, setCodiceAccesso] = useState<string | null>(null)
   const router = useRouter()
 
   const signIn = async (codice: string) => {
@@ -35,8 +38,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error('Codice di accesso non valido')
       }
 
-      // Imposta il tipo utente
+      // Imposta il tipo utente e il codice
       setUserType(data.tipo as UserType)
+      setCodiceAccesso(codice)
 
       // Reindirizza in base al tipo utente
       switch (data.tipo) {
@@ -58,11 +62,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     setUserType(null)
+    setCodiceAccesso(null)
     router.push('/')
   }
 
   return (
-    <AuthContext.Provider value={{ userType, signIn, signOut }}>
+    <AuthContext.Provider value={{ userType, codiceAccesso, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   )
