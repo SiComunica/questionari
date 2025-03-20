@@ -15,7 +15,6 @@ export default function LoginPage() {
     try {
       await signIn(accessCode)
     } catch (err) {
-      console.error('Errore durante il login:', err)
       setError('Codice di accesso non valido')
     }
   }
@@ -25,7 +24,7 @@ export default function LoginPage() {
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Accedi alla tua area riservata
+            Accedi al Sistema
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
             Inserisci il tuo codice di accesso
@@ -33,11 +32,16 @@ export default function LoginPage() {
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div>
+            <label htmlFor="accessCode" className="sr-only">
+              Codice di Accesso
+            </label>
             <input
+              id="accessCode"
+              name="accessCode"
               type="text"
               required
-              className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-              placeholder="Codice di accesso"
+              className="appearance-none rounded relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+              placeholder="Inserisci il codice di accesso"
               value={accessCode}
               onChange={(e) => setAccessCode(e.target.value)}
             />
