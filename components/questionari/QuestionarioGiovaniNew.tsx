@@ -1881,7 +1881,7 @@ export default function QuestionarioGiovaniNew() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)  // Aggiungi questo state
   
-  const { session } = useAuth()
+  const { user, userType } = useAuth() // Usa user invece di session
   const router = useRouter()
 
   const nextStep = () => {
@@ -1902,101 +1902,31 @@ export default function QuestionarioGiovaniNew() {
     setError(null);
 
     try {
-      const session = await supabase.auth.getSession();
-      const userId = session?.data?.session?.user?.id;
-      
-      type DataToInsert = Partial<Record<keyof QuestionarioGiovani, any>>;
-      
-      const dataToInsert: DataToInsert = {
-        // Metadati
-        created_at: new Date().toISOString(),  // Cambiato da creato_a a created_at
-        created_by: userId,                     // Già corretto
-        fonte: userId ? 'operatore' : 'anonimo',
-        stato: 'nuovo',
-
-        // Dati del form - correzione del nome della proprietà
-        percorso_autonomia: formData.percorso_autonomia,
-        tipo_percorso: formData.tipo_percorso,
-        vive_in_struttura: formData.vive_in_struttura,  // Corretto qui
-        collocazione_attuale: formData.collocazione_attuale,
-        fattori_vulnerabilita: Object.entries(formData.fattori_vulnerabilita || {})
-          .filter(([key, value]) => value === true && !key.includes('spec'))
-          .map(([key]) => key),
-      
-        attivita_precedenti: Object.entries(formData.attivita_precedenti || {})
-          .filter(([key, value]) => value === true)
-          .map(([key]) => key),
-      
-        attivita_attuali: Object.entries(formData.attivita_attuali || {})
-          .filter(([key, value]) => value === true)
-          .map(([key]) => key),
-
-        // Altri campi
-        sesso: formData.sesso,
-        classe_eta: formData.classe_eta,
-        luogo_nascita: formData.luogo_nascita,
-        cittadinanza: formData.cittadinanza,
-        permesso_soggiorno: formData.permesso_soggiorno,
-        tempo_in_struttura: formData.tempo_in_struttura,
-        precedenti_strutture: formData.precedenti_strutture,
-        titolo_studio: formData.titolo_studio,
-      
-        ricerca_lavoro: Object.entries(formData.ricerca_lavoro || {})
-          .filter(([key, value]) => value === true)
-          .map(([key]) => key),
-
-        // Campi JSON
-        abitazione_precedente: formData.abitazione_precedente,
-        figura_aiuto: formData.figura_aiuto,
-        emozioni_uscita: formData.emozioni_uscita,
-        preoccupazioni_futuro: formData.preoccupazioni_futuro,
-        obiettivi_realizzabili: formData.obiettivi_realizzabili,
-        pronto_uscita: formData.pronto_uscita,
-        orientamento_lavoro: formData.orientamento_lavoro,
-        aspetti_lavoro: formData.aspetti_lavoro,
-        corso_formazione: formData.corso_formazione,
-        lavoro_attuale: formData.lavoro_attuale,
-        madre: formData.madre,
-        padre: formData.padre,
-        famiglia_origine: formData.famiglia_origine,
-
-        // Altri campi semplici
-        orientamento_luoghi: formData.orientamento_luoghi,
-        aiuto_futuro: formData.aiuto_futuro,
-        desiderio: formData.desiderio,
-        nota_aggiuntiva: formData.nota_aggiuntiva,
-        lavoro_autonomo: formData.lavoro_autonomo,
-        centro_impiego: formData.centro_impiego,
-        curriculum_vitae: formData.curriculum_vitae,
-        condizioni_lavoro: formData.condizioni_lavoro,
-        motivi_non_studio: formData.motivi_non_studio,
-        livelli_utilita: formData.livelli_utilita,
-        livelli_obiettivi: formData.livelli_obiettivi
-      };
-
-      // Rimuovi i campi undefined o null in modo type-safe
-      (Object.keys(dataToInsert) as Array<keyof DataToInsert>).forEach(key => {
-        if (dataToInsert[key] === undefined || dataToInsert[key] === null) {
-          delete dataToInsert[key];
-        }
-      });
-
       const { error } = await supabase
         .from('giovani')
-        .insert(dataToInsert);
+        .insert([
+          {
+            ...formData,
+            created_by: user?.id, // Usa user.id invece di session.user.id
+            stato: 'completato'
+          }
+        ])
 
-      if (error) throw error;
+      if (error) throw error
 
-      toast.success('Questionario salvato con successo!');
-      router.push('/');  // Modifica qui: reindirizza alla home invece che alla pagina success
+      router.push('/dashboard/anonimo?success=true')
     } catch (err: any) {
-      console.error('Errore durante il salvataggio:', err);
-      setError(err.message || 'Errore durante il salvataggio del questionario');
-      toast.error('Errore durante il salvataggio');
+      console.error('Errore nel salvataggio:', err)
+      setError('Errore nel salvataggio del questionario')
     } finally {
       setLoading(false);
     }
   };
+
+  // Se stai controllando il ruolo, usa userType
+  if (!user || userType !== 'anonimo') {
+    return <div>Non autorizzato</div>
+  }
 
   return (
     <div className="container mx-auto p-4">
