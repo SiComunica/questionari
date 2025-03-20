@@ -1,21 +1,29 @@
 'use client'
 // Pagina di login
-import { useAuth } from '@/contexts/AuthContext'
+import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { useAuth } from '@/contexts/AuthContext'
 
-export default function Home() {
-  const router = useRouter()
+export default function HomePage() {
   const { userType } = useAuth()
+  const router = useRouter()
 
-  if (userType) {
-    router.push('/dashboard')
-  }
+  useEffect(() => {
+    if (userType) {
+      switch (userType) {
+        case 'admin':
+          router.push('/admin/questionari/lista')
+          break
+        case 'operatore':
+          router.push('/operatore')
+          break
+        case 'anonimo':
+          router.push('/anonimo')
+          break
+      }
+    }
+  }, [userType, router])
 
-  return (
-    <div>
-      <h1>Login Page</h1>
-      {/* Form di login qui */}
-    </div>
-  )
+  return null
 }
 
