@@ -1,8 +1,6 @@
 "use client"
 
 import { createContext, useContext, useEffect, useState } from 'react'
-import { createBrowserClient } from '@supabase/ssr'
-import { User as SupabaseUser } from '@supabase/supabase-js'
 import { useRouter } from 'next/navigation'
 
 // Prima installa il pacchetto necessario con:
@@ -31,34 +29,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
 
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
-
   const signIn = async (accessCode: string) => {
     try {
+      let userData: AuthUser | null = null;
+      let redirectPath = '';
+
       switch (accessCode) {
         case 'admin2025':
-          setUser({ id: 'admin-id', type: 'admin' })
-          router.push('/admin')
-          break
+          userData = { id: 'admin-id', type: 'admin' };
+          redirectPath = '/admin';
+          break;
         case 'operatore1':
         case 'operatore2':
         case 'operatore3':
-          setUser({ id: `operatore-${accessCode}`, type: 'operatore' })
-          router.push('/operatore')
-          break
+          userData = { id: `operatore-${accessCode}`, type: 'operatore' };
+          redirectPath = '/operatore';
+          break;
         case 'anonimo9999':
-          setUser({ id: 'anonimo-id', type: 'anonimo' })
-          router.push('/dashboard/anonimo')
-          break
+          userData = { id: 'anonimo-id', type: 'anonimo' };
+          redirectPath = '/anonimo';
+          break;
         default:
-          throw new Error('Codice di accesso non valido')
+          throw new Error('Codice di accesso non valido');
       }
+
+      setUser(userData);
+      localStorage.setItem('user', JSON.stringify(userData));
+      
+      // Aggiungi un piccolo ritardo per assicurarti che lo stato sia aggiornato
+      setTimeout(() => {
+        router.push(redirectPath);
+      }, 100);
+
     } catch (err) {
-      setError('Codice di accesso non valido')
-      throw err
+      setError('Codice di accesso non valido');
+      throw err;
     }
   }
 
@@ -75,12 +80,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     setLoading(false)
   }, [])
-
-  useEffect(() => {
-    if (user) {
-      localStorage.setItem('user', JSON.stringify(user))
-    }
-  }, [user])
 
   return (
     <AuthContext.Provider value={{ user, userType: user?.type ?? null, loading, error, signIn, signOut }}>
