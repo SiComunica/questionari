@@ -1,5 +1,9 @@
+"use client"
+
 import React from 'react';
-import { FormData } from '../QuestionarioOperatoriNew';
+import { FormData } from '@/types/questionario-operatori';
+
+type DifficoltaUscitaKey = keyof FormData['difficolta_uscita'];
 
 interface Props {
   formData: FormData;
@@ -11,12 +15,12 @@ const SezioneE: React.FC<Props> = ({ formData, setFormData }) => {
     const { name, value, type } = e.target;
     
     if (name.includes('difficolta_uscita.')) {
-      const [parent, child] = name.split('.');
+      const key = name.split('.')[1] as DifficoltaUscitaKey;
       setFormData(prev => ({
         ...prev,
         difficolta_uscita: {
           ...prev.difficolta_uscita,
-          [child]: parseInt(value) || 1
+          [key]: parseInt(value) || 1
         }
       }));
     } else {
@@ -58,7 +62,7 @@ const SezioneE: React.FC<Props> = ({ formData, setFormData }) => {
                         type="radio"
                         name={`difficolta_uscita.${key}`}
                         value={value}
-                        checked={formData.difficolta_uscita?.[key] === value}
+                        checked={formData.difficolta_uscita[key as DifficoltaUscitaKey] === value}
                         onChange={handleChange}
                         required
                         className="mr-1"

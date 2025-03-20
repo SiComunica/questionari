@@ -1,5 +1,8 @@
+"use client"
+
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
+import { useRouter } from "next/navigation";
 
 interface QuestionarioOperatore {
   id: string;
@@ -20,6 +23,7 @@ const QuestionariOperatoriList: React.FC = () => {
   const [questionari, setQuestionari] = useState<QuestionarioOperatore[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   const fetchQuestionari = async () => {
     try {

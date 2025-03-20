@@ -1,11 +1,14 @@
+"use client"
+
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter, useParams } from 'next/navigation';
 import { supabase } from '../../../lib/supabase';
 import { saveAs } from 'file-saver';
 import * as XLSX from 'xlsx';
 import { PDFDocument, rgb } from 'pdf-lib';
+import { FormData } from '@/types/questionario-operatori';
 
-interface QuestionarioOperatoreDettaglio {
+interface QuestionarioOperatoreDettaglio extends Required<FormData> {
   id: string;
   created_at: string;
   fonte: string;
@@ -45,9 +48,15 @@ interface QuestionarioOperatoreDettaglio {
   difficolta_altro_spec: string;
 }
 
+interface Caratteristica {
+  nome: string;
+  valore: boolean;
+}
+
 const QuestionarioOperatoreDettaglio: React.FC = () => {
   const router = useRouter();
-  const { id } = router.query;
+  const params = useParams();
+  const id = params?.id as string;
   const [questionario, setQuestionario] = useState<QuestionarioOperatoreDettaglio | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -149,6 +158,41 @@ const QuestionarioOperatoreDettaglio: React.FC = () => {
     saveAs(blob, `questionario-operatore-${questionario.id}.pdf`);
   };
 
+  const renderCaratteristiche = (caratteristiche: { nome: string; valore: boolean }[], index: number) => {
+    return caratteristiche.map((car: { nome: string; valore: boolean }, idx: number) => (
+      <span key={idx} className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
+        {car.nome}
+      </span>
+    ))
+  }
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value, type } = e.target;
+    
+    if (!questionario) return;
+
+    if (type === 'checkbox') {
+      const isChecked = (e.target as HTMLInputElement).checked;
+      const arrayField = (questionario[name as keyof QuestionarioOperatoreDettaglio] as string[]) || [];
+      
+      setQuestionario(prev => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          [name]: isChecked ? [...arrayField, value] : arrayField.filter(item => item !== value)
+        } as QuestionarioOperatoreDettaglio;
+      });
+    } else {
+      setQuestionario(prev => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          [name]: value
+        } as QuestionarioOperatoreDettaglio;
+      });
+    }
+  };
+
   if (loading) return <div>Caricamento...</div>;
   if (!questionario) return <div>Questionario non trovato</div>;
 
@@ -214,9 +258,7 @@ const QuestionarioOperatoreDettaglio: React.FC = () => {
         <div className="mb-6">
           <label className="font-semibold">Caratteristiche delle persone</label>
           <ul className="list-disc list-inside mt-2">
-            {questionario.caratteristiche_persone.map((car, index) => (
-              <li key={index}>{car}</li>
-            ))}
+            {renderCaratteristiche(questionario.caratteristiche_persone.map(car => ({ nome: car, valore: true })), 0)}
           </ul>
         </div>
 
@@ -224,8 +266,10 @@ const QuestionarioOperatoreDettaglio: React.FC = () => {
         <div className="grid grid-cols-2 gap-4">
           {Object.entries(questionario.difficolta_uscita).map(([key, value]) => (
             <div key={key}>
-              <label className="font-semibold">{key.replace(/_/g, ' ').charAt(0).toUpperCase() + key.slice(1)}</label>
-              <p>{value}/10</p>
+              <label className="font-semibold">
+                {key.replace(/_/g, ' ').charAt(0).toUpperCase() + key.slice(1)}
+              </label>
+              <p>{String(value)}/10</p>
             </div>
           ))}
         </div>

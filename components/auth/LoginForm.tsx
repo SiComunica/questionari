@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { supabase } from '../../lib/supabase';
 
 const LoginForm: React.FC = () => {
@@ -44,21 +44,13 @@ const LoginForm: React.FC = () => {
         throw signInError;
       }
 
-      // Aggiorna i metadati dell'utente con il ruolo
-      const { error: updateError } = await supabase.auth.updateUser({
-        data: { user_role: role }  // Usiamo user_role invece di role
-      });
-
-      if (updateError) {
-        console.error('Errore aggiornamento:', updateError);
-        throw updateError;
-      }
-
       // Reindirizza in base al ruolo
       if (role === 'admin') {
-        router.push('/admin');
+        router.push('/admin/dashboard');
       } else if (role === 'operatore') {
-        router.push('/operatori');
+        router.push('/operatore/dashboard');
+      } else {
+        router.push('/dashboard/anonimo');
       }
 
     } catch (err: any) {
@@ -70,9 +62,36 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <div>
-      {/* Form submission logic */}
-    </div>
+    <form onSubmit={handleSubmit} className="space-y-4 max-w-md mx-auto p-6">
+      <div>
+        <label htmlFor="code" className="block text-sm font-medium text-gray-700">
+          Codice di accesso
+        </label>
+        <input
+          type="text"
+          id="code"
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+          placeholder="Inserisci il tuo codice"
+          required
+        />
+      </div>
+
+      {error && (
+        <div className="text-red-600 text-sm">
+          {error}
+        </div>
+      )}
+
+      <button
+        type="submit"
+        disabled={loading}
+        className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+      >
+        {loading ? 'Accesso in corso...' : 'Accedi'}
+      </button>
+    </form>
   );
 };
 

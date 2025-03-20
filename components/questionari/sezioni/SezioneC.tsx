@@ -1,5 +1,7 @@
+"use client"
+
 import React from 'react';
-import { FormData } from '../QuestionarioOperatoriNew';
+import { FormData } from '@/types/questionario-operatori';
 
 interface Props {
   formData: FormData;
@@ -12,23 +14,34 @@ const SezioneC: React.FC<Props> = ({ formData, setFormData }) => {
     
     if (type === 'checkbox') {
       const isChecked = (e.target as HTMLInputElement).checked;
-      const arrayField = formData[name as keyof FormData] as string[];
+      const arrayField = formData.caratteristiche_persone || [];
       
       setFormData(prev => ({
         ...prev,
-        [name]: isChecked 
+        caratteristiche_persone: isChecked 
           ? [...arrayField, value]
           : arrayField.filter(item => item !== value)
       }));
     } else if (name.includes('persone_seguite') || name.includes('persone_maggiorenni')) {
       const [parent, child] = name.split('.');
-      setFormData(prev => ({
-        ...prev,
-        [parent]: {
-          ...prev[parent as keyof FormData],
-          [child]: parseInt(value) || 0
-        }
-      }));
+      const parentKey = parent as 'persone_seguite' | 'persone_maggiorenni';
+      const childKey = child as 'uomini' | 'donne' | 'totale';
+      
+      setFormData(prev => {
+        const currentParentValue = prev[parentKey] || {
+          uomini: 0,
+          donne: 0,
+          totale: 0
+        };
+
+        return {
+          ...prev,
+          [parentKey]: {
+            ...currentParentValue,
+            [childKey]: parseInt(value) || 0
+          }
+        };
+      });
     } else {
       setFormData(prev => ({
         ...prev,

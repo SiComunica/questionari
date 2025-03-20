@@ -1,3 +1,5 @@
+"use client"
+
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { supabase } from '../../lib/supabase';
@@ -118,6 +120,7 @@ interface FormData {
 const QuestionarioStruttureNew: React.FC = () => {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
+  const totalSteps = 6;
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     id_struttura: '',

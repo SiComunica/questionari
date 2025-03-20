@@ -12,7 +12,7 @@ export const revalidate = 0
 
 function DashboardContent() {
   const searchParams = useSearchParams()
-  const success = searchParams.get('success')
+  const success = searchParams?.get('success')
 
   if (success) {
     return (

@@ -1,5 +1,7 @@
+"use client"
+
 import React, { useState } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { supabase } from '../../lib/supabase';
 import { useUser } from '../../context/UserContext';
 import SezioneA from './sezioni/SezioneA';
@@ -8,79 +10,7 @@ import SezioneC from './sezioni/SezioneC';
 import SezioneD from './sezioni/SezioneD';
 import SezioneE from './sezioni/SezioneE';
 import SezioneF from './sezioni/SezioneF';
-
-export interface FormData {
-  // Metadati
-  created_at: string;
-  stato: string;
-  fonte: string;
-  created_by?: string;
-
-  // Sezione A
-  nome: string;
-  cognome: string;
-  eta: string;
-  genere: string;
-  titolo_studio: string;
-  anni_esperienza: string;
-  tipo_contratto: string;
-  ruolo_attuale: string;
-
-  // Sezione B
-  id_struttura: string;
-  tipo_struttura: string;
-  professione: string;
-  professione_altro?: string;
-  mansioni_principali: string[];
-  competenze_specifiche: string[];
-  formazione_specialistica?: string;
-  certificazioni: string[];
-  lingue_conosciute: string[];
-
-  // Sezione C
-  esperienza_giovani: string;
-  persone_seguite: {
-    uomini: number;
-    donne: number;
-    totale: number;
-  };
-  persone_maggiorenni: {
-    uomini: number;
-    donne: number;
-    totale: number;
-  };
-  caratteristiche_persone: string[];
-  caratteristiche_altro?: string;
-
-  // Sezione D
-  approccio_educativo: string;
-  tipo_intervento: string[];
-  intervento_altro?: string;
-  sfide_principali: string[];
-  strategie_supporto: string[];
-  casi_successo: string;
-
-  // Sezione E
-  difficolta_uscita: {
-    problemi_economici: number;
-    trovare_lavoro: number;
-    lavori_qualita: number;
-    trovare_casa: number;
-    discriminazioni: number;
-    salute_fisica: number;
-    problemi_psicologici: number;
-    difficolta_linguistiche: number;
-    altro: number;
-  };
-  difficolta_altro_spec?: string;
-
-  // Sezione F
-  punti_forza: string[];
-  aree_miglioramento: string[];
-  obiettivi_professionali: string;
-  formazione_desiderata: string[];
-  suggerimenti?: string;
-}
+import { FormData } from '@/types/questionario-operatori';
 
 const QuestionarioOperatoriNew = () => {
   const router = useRouter();
@@ -88,34 +18,83 @@ const QuestionarioOperatoriNew = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<FormData>({
-    // Inizializzazione dei campi
-    created_at: new Date().toISOString(),
-    stato: 'nuovo',
+    // Metadati
+    stato: 'bozza',
     fonte: 'form_web',
+
+    // SezioneA
     nome: '',
     cognome: '',
+    email: '',
+    telefono: '',
     eta: '',
     genere: '',
     titolo_studio: '',
     anni_esperienza: '',
     tipo_contratto: '',
     ruolo_attuale: '',
+
+    // SezioneB
     id_struttura: '',
     tipo_struttura: '',
     professione: '',
+    professione_altro: '',
     mansioni_principali: [],
     competenze_specifiche: [],
+    formazione_specialistica: '',
     certificazioni: [],
     lingue_conosciute: [],
+
+    // SezioneC
+    ruolo: '',
     esperienza_giovani: '',
-    persone_seguite: { uomini: 0, donne: 0, totale: 0 },
-    persone_maggiorenni: { uomini: 0, donne: 0, totale: 0 },
+    persone_seguite: {
+      uomini: 0,
+      donne: 0,
+      totale: 0
+    },
+    persone_maggiorenni: {
+      uomini: 0,
+      donne: 0,
+      totale: 0
+    },
     caratteristiche_persone: [],
+    caratteristiche_altro: '',
+
+    // SezioneD
     approccio_educativo: '',
-    tipo_intervento: [],
+    metodologie_utilizzate: [],
+    strumenti_lavoro: [],
+    modalita_coinvolgimento: '',
     sfide_principali: [],
+    strategie_motivazionali: '',
+    gestione_conflitti: '',
+    valutazione_impatto: '',
+    tipo_intervento: [],
+    intervento_altro: '',
     strategie_supporto: [],
+    strategie_altro: '',
+    metodi_valutazione: [],
+    metodi_altro: '',
+    risorse_utilizzate: [],
+    risorse_altro: '',
+    frequenza_incontri: '',
+    durata_media_incontri: '',
+    setting_lavoro: [],
+    setting_altro: '',
     casi_successo: '',
+    lezioni_apprese: '',
+    buone_pratiche: [],
+    feedback_giovani: '',
+    risultati_ottenuti: '',
+    indicatori_successo: [],
+    collaborazioni_attive: [],
+    reti_territoriali: [],
+    progetti_futuri: '',
+    innovazioni_introdotte: [],
+
+    // SezioneE
+    difficolta_incontrate: [],
     difficolta_uscita: {
       problemi_economici: 1,
       trovare_lavoro: 1,
@@ -127,10 +106,37 @@ const QuestionarioOperatoriNew = () => {
       difficolta_linguistiche: 1,
       altro: 1
     },
+    difficolta_altro_spec: '',
+    barriere_comunicazione: [],
+    barriere_altro: '',
+    supporto_necessario: [],
+    supporto_altro: '',
+    ostacoli_principali: [],
+    ostacoli_altro: '',
+    risorse_mancanti: [],
+    risorse_mancanti_altro: '',
+    criticita_sistema: [],
+    proposte_miglioramento: [],
+    bisogni_territorio: [],
+
+    // SezioneF
     punti_forza: [],
     aree_miglioramento: [],
     obiettivi_professionali: '',
-    formazione_desiderata: []
+    formazione_desiderata: [],
+    suggerimenti: '',
+    competenze_da_sviluppare: [],
+    competenze_altro: '',
+    bisogni_formativi: [],
+    bisogni_altro: '',
+    feedback_ricevuti: '',
+    impatto_percepito: '',
+    sviluppi_carriera: '',
+    aspettative_professionali: '',
+    disponibilita_formazione: false,
+    aree_interesse: [],
+    mentoring_desiderato: false,
+    networking_interesse: [],
   });
 
   const handleSubmit = async (e: React.FormEvent) => {

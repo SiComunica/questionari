@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormData } from '../QuestionarioOperatoriNew';
+import { FormData } from '@/types/questionario-operatori';
 
 interface Props {
   formData: FormData;
