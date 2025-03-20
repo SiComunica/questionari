@@ -1,31 +1,26 @@
 'use client'
 
-import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 
-export default function ProtectedRoute({
-  children,
-  requiredRole,
-}: {
+interface ProtectedRouteProps {
   children: React.ReactNode
-  requiredRole: string
-}) {
+  allowedTypes: ('admin' | 'operatore' | 'anonimo')[]
+}
+
+export default function ProtectedRoute({ children, allowedTypes }: ProtectedRouteProps) {
+  const { userType, codiceAccesso } = useAuth()
   const router = useRouter()
-  const { user, userType, loading } = useAuth()
 
   useEffect(() => {
-    if (!loading && (!user || userType !== requiredRole)) {
-      router.push('/login')
+    if (!codiceAccesso || !userType || !allowedTypes.includes(userType)) {
+      router.push('/')
     }
-  }, [user, loading, userType, router, requiredRole])
+  }, [codiceAccesso, userType, allowedTypes, router])
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-xl">Caricamento...</div>
-      </div>
-    )
+  if (!codiceAccesso || !userType || !allowedTypes.includes(userType)) {
+    return null
   }
 
   return <>{children}</>
