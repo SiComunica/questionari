@@ -4,32 +4,28 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 
-export default function DashboardRouter() {
-  const { userType, loading } = useAuth()
+export default function Dashboard() {
   const router = useRouter()
+  const { userType } = useAuth()
 
   useEffect(() => {
-    if (loading) return
-
     if (!userType) {
-      router.push('/login')
+      router.push('/')
       return
     }
 
     switch (userType) {
       case 'admin':
-        router.push('/dashboard/admin')
+        router.push('/admin/questionari')
         break
       case 'operatore':
-        router.push('/dashboard/operatore')
+        router.push('/operatore')
         break
       case 'anonimo':
-        router.push('/dashboard/anonimo')
+        router.push('/anonimo')
         break
-      default:
-        router.push('/login')
     }
-  }, [userType, loading, router])
+  }, [userType, router])
 
   return <div>Reindirizzamento...</div>
 } 
