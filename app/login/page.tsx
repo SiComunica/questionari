@@ -1,13 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 
 export default function LoginPage() {
-  const [codiceAccesso, setCodiceAccesso] = useState('')
+  const [accessCode, setAccessCode] = useState('')
   const [error, setError] = useState('')
-  const router = useRouter()
   const { signIn } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -15,8 +13,7 @@ export default function LoginPage() {
     setError('')
 
     try {
-      await signIn(codiceAccesso)
-      router.push('/admin')
+      await signIn(accessCode)
     } catch (err) {
       console.error('Errore durante il login:', err)
       setError('Codice di accesso non valido')
@@ -30,21 +27,19 @@ export default function LoginPage() {
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Accedi alla tua area riservata
           </h2>
+          <p className="mt-2 text-center text-sm text-gray-600">
+            Inserisci il tuo codice di accesso
+          </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div>
-            <label htmlFor="codiceAccesso" className="sr-only">
-              Codice di Accesso
-            </label>
             <input
-              id="codiceAccesso"
-              name="codiceAccesso"
               type="text"
               required
-              className="appearance-none rounded relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-              placeholder="Inserisci il codice di accesso"
-              value={codiceAccesso}
-              onChange={(e) => setCodiceAccesso(e.target.value)}
+              className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+              placeholder="Codice di accesso"
+              value={accessCode}
+              onChange={(e) => setAccessCode(e.target.value)}
             />
           </div>
 
