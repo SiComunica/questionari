@@ -157,7 +157,7 @@ export default function AdminDashboard() {
                   <p>Stato: {questionario.stato}</p>
                 </div>
                 <Link 
-                  href={`/admin/questionari/view/${questionario.tipo}-${questionario.id}`}
+                  href={`/admin/dettaglio-questionario?tipo=${questionario.tipo}&id=${questionario.id}`}
                   className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
                 >
                   Visualizza Dettagli
