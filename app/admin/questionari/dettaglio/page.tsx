@@ -10,13 +10,18 @@ export default function DettaglioQuestionario() {
   const { userType } = useAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
-  const tipo = searchParams.get('tipo') as QuestionarioWithType['tipo'] | null
-  const id = searchParams.get('id')
+  
+  // Gestione sicura dei parametri
+  const tipo = searchParams?.get('tipo') as QuestionarioWithType['tipo'] | null
+  const id = searchParams?.get('id')
   const [questionario, setQuestionario] = useState<QuestionarioWithType | null>(null)
 
   useEffect(() => {
     const fetchQuestionario = async () => {
-      if (!tipo || !id) return
+      if (!tipo || !id) {
+        router.push('/admin/questionari/lista')
+        return
+      }
       
       const { data } = await supabase
         .from(tipo)
@@ -26,13 +31,22 @@ export default function DettaglioQuestionario() {
       
       if (data) {
         setQuestionario({...data, tipo})
+      } else {
+        // Se non troviamo il questionario, torniamo alla lista
+        router.push('/admin/questionari/lista')
       }
     }
 
     fetchQuestionario()
-  }, [tipo, id])
+  }, [tipo, id, router])
 
   if (userType !== 'admin') {
+    router.push('/')
+    return null
+  }
+
+  if (!tipo || !id) {
+    router.push('/admin/questionari/lista')
     return null
   }
 
@@ -45,10 +59,14 @@ export default function DettaglioQuestionario() {
         </Button>
       </div>
       
-      {questionario && (
+      {questionario ? (
         <pre className="bg-gray-100 p-4 rounded">
           {JSON.stringify(questionario, null, 2)}
         </pre>
+      ) : (
+        <div className="text-center py-4">
+          Caricamento...
+        </div>
       )}
     </div>
   )
