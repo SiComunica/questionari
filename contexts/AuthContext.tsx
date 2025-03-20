@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { createBrowserClient } from '@supabase/ssr'
 import { User } from '@supabase/supabase-js'
+import { useRouter } from 'next/navigation'
 
 // Prima installa il pacchetto necessario con:
 // npm install @supabase/auth-helpers-nextjs @supabase/supabase-js
@@ -32,6 +33,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [userType, setUserType] = useState<UserType>(null)
+  const router = useRouter()
 
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
