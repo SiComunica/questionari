@@ -4,34 +4,24 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import QuestionarioGiovani from '@/components/questionari/QuestionarioGiovaniNew'
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
+import { createBrowserClient } from '@supabase/ssr'
 
-export default async function QuestionarioGiovaniPage() {
+export default function QuestionarioGiovaniPage() {
   const router = useRouter()
-  const { userType } = useAuth()
-  const cookieStore = cookies()
+  const { user } = useAuth()
   
-  const supabase = createServerClient(
+  const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value
-        },
-      },
-    }
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   )
 
   useEffect(() => {
-    // Reindirizza alla home se non autenticato
-    if (!userType) {
+    if (!user) {
       router.push('/')
     }
-  }, [userType, router])
+  }, [user, router])
 
-  if (!userType) return null
+  if (!user) return null
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
