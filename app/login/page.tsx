@@ -5,8 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [codiceAccesso, setCodiceAccesso] = useState('')
   const [error, setError] = useState('')
   const router = useRouter()
   const { signIn } = useAuth()
@@ -16,14 +15,11 @@ export default function LoginPage() {
     setError('')
 
     try {
-      const { error } = await signIn(email, password)
-      
-      if (error) throw error
-
+      await signIn(codiceAccesso)
       router.push('/admin')
     } catch (err) {
       console.error('Errore durante il login:', err)
-      setError('Email o password non validi')
+      setError('Codice di accesso non valido')
     }
   }
 
@@ -36,37 +32,20 @@ export default function LoginPage() {
           </h2>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
-              <label htmlFor="email" className="sr-only">
-                Email
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="sr-only">
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
+          <div>
+            <label htmlFor="codiceAccesso" className="sr-only">
+              Codice di Accesso
+            </label>
+            <input
+              id="codiceAccesso"
+              name="codiceAccesso"
+              type="text"
+              required
+              className="appearance-none rounded relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+              placeholder="Inserisci il codice di accesso"
+              value={codiceAccesso}
+              onChange={(e) => setCodiceAccesso(e.target.value)}
+            />
           </div>
 
           {error && (
