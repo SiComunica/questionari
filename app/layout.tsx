@@ -1,3 +1,5 @@
+'use client'
+
 import { Inter } from 'next/font/google'
 import { AuthProvider } from '@/contexts/AuthContext'
 import './globals.css'
@@ -17,7 +19,9 @@ export default function RootLayout({
   return (
     <html lang="it">
       <body className={inter.className}>
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   )

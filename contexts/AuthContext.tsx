@@ -30,40 +30,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter()
 
   const signIn = async (accessCode: string) => {
+    console.log('Tentativo di login con codice:', accessCode) // Debug
+    
     try {
-      let userData: AuthUser | null = null;
-      let redirectPath = '';
-
       switch (accessCode) {
         case 'admin2025':
-          userData = { id: 'admin-id', type: 'admin' };
-          redirectPath = '/admin';
-          break;
+          setUser({ id: 'admin-id', type: 'admin' })
+          router.push('/admin')
+          break
         case 'operatore1':
-        case 'operatore2':
-        case 'operatore3':
-          userData = { id: `operatore-${accessCode}`, type: 'operatore' };
-          redirectPath = '/operatore';
-          break;
+          setUser({ id: 'operatore-id', type: 'operatore' })
+          router.push('/operatore')
+          break
         case 'anonimo9999':
-          userData = { id: 'anonimo-id', type: 'anonimo' };
-          redirectPath = '/anonimo';
-          break;
+          setUser({ id: 'anonimo-id', type: 'anonimo' })
+          router.push('/anonimo')
+          break
         default:
-          throw new Error('Codice di accesso non valido');
+          throw new Error('Codice di accesso non valido')
       }
-
-      setUser(userData);
-      localStorage.setItem('user', JSON.stringify(userData));
-      
-      // Aggiungi un piccolo ritardo per assicurarti che lo stato sia aggiornato
-      setTimeout(() => {
-        router.push(redirectPath);
-      }, 100);
-
     } catch (err) {
-      setError('Codice di accesso non valido');
-      throw err;
+      console.error('Errore nel login:', err) // Debug
+      throw err
     }
   }
 
@@ -80,6 +68,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     setLoading(false)
   }, [])
+
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem('user', JSON.stringify(user))
+    }
+  }, [user])
 
   return (
     <AuthContext.Provider value={{ user, userType: user?.type ?? null, loading, error, signIn, signOut }}>
