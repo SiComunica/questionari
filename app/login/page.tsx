@@ -11,18 +11,15 @@ export default function LoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    switch (code) {
-      case 'admin2025':
-        router.push('/admin')
-        break
-      case 'operatore1':
-        router.push('/operatore')
-        break
-      case 'anonimo9999':
-        router.push('/anonimo')
-        break
-      default:
-        setError('Codice di accesso non valido')
+    if (code === 'admin2025') {
+      router.push('/admin')
+    } else if (code === 'anonimo9999') {
+      router.push('/anonimo')
+    } else if (/^operatore([1-9]|[1-9][0-9]|[1-2][0-9][0-9]|300)$/.test(code)) {
+      // Accetta operatore1 fino a operatore300
+      router.push('/operatore')
+    } else {
+      setError('Codice di accesso non valido')
     }
   }
 
@@ -58,7 +55,7 @@ export default function LoginPage() {
           <p className="text-center">Codici di accesso:</p>
           <ul className="list-disc list-inside mt-2">
             <li>Admin: admin2025</li>
-            <li>Operatore: operatore1</li>
+            <li>Operatore: operatore1 fino a operatore300</li>
             <li>Anonimo: anonimo9999</li>
           </ul>
         </div>
