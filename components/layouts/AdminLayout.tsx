@@ -1,40 +1,28 @@
-import { ReactNode } from 'react'
-import { useAuth } from '@/contexts/AuthContext'
-import { useRouter } from 'next/navigation'
+'use client'
+
+import ProtectedRoute from '@/components/auth/ProtectedRoute'
 
 interface AdminLayoutProps {
-  children: ReactNode
+  children: React.ReactNode
 }
 
-const AdminLayout = ({ children }: AdminLayoutProps) => {
-  const { user, userType, loading } = useAuth()
-  const router = useRouter()
-
-  if (loading) {
-    return <div>Caricamento...</div>
-  }
-
-  if (!user || userType !== 'admin') {
-    router.push('/')
-    return null
-  }
-
+export default function AdminLayout({ children }: AdminLayoutProps) {
   return (
-    <div className="min-h-screen bg-gray-100">
-      <nav className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <h1 className="text-xl font-semibold">Admin Dashboard</h1>
+    <ProtectedRoute allowedTypes={['admin']}>
+      <div className="min-h-screen bg-gray-50">
+        <nav className="bg-white shadow-sm">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between h-16">
+              <div className="flex items-center">
+                <h1 className="text-xl font-semibold">Area Amministratore</h1>
+              </div>
             </div>
           </div>
-        </div>
-      </nav>
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        {children}
-      </main>
-    </div>
+        </nav>
+        <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+          {children}
+        </main>
+      </div>
+    </ProtectedRoute>
   )
-}
-
-export default AdminLayout 
+} 
