@@ -4,63 +4,38 @@ import { useState } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 
 export default function LoginPage() {
-  const [accessCode, setAccessCode] = useState('')
+  const [code, setCode] = useState('')
   const [error, setError] = useState('')
   const { signIn } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError('')
-
     try {
-      await signIn(accessCode)
+      await signIn(code)
     } catch (err) {
-      setError('Codice di accesso non valido')
+      setError('Codice non valido')
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="max-w-md w-full p-6">
+        <h1 className="text-2xl font-bold text-center mb-6">Accesso</h1>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            placeholder="Inserisci il codice di accesso"
+            className="w-full p-2 border rounded mb-4"
+          />
+          {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white p-2 rounded"
+          >
             Accedi
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Inserisci il tuo codice di accesso
-          </p>
-        </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div>
-            <label htmlFor="accessCode" className="sr-only">
-              Codice di accesso
-            </label>
-            <input
-              id="accessCode"
-              name="accessCode"
-              type="text"
-              required
-              className="appearance-none rounded relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              placeholder="Inserisci il codice di accesso"
-              value={accessCode}
-              onChange={(e) => setAccessCode(e.target.value)}
-            />
-          </div>
-
-          {error && (
-            <div className="text-red-500 text-sm text-center">
-              {error}
-            </div>
-          )}
-
-          <div>
-            <button
-              type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-              Accedi
-            </button>
-          </div>
+          </button>
         </form>
       </div>
     </div>
