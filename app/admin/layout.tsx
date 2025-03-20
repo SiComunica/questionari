@@ -3,9 +3,13 @@
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useUser } from "@/context/UserContext"
-import { AdminLayout } from "@/components/layouts/AdminLayout"
+import AdminLayout from '@/components/layouts/AdminLayout'
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function AdminDashboardLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   const { user, loading } = useUser()
   const router = useRouter()
 
