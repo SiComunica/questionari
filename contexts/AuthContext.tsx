@@ -1,86 +1,72 @@
 'use client'
 
 import { createContext, useContext, useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
-import type { User } from '@supabase/supabase-js'
+import { useRouter } from 'next/navigation'
+import { supabase } from '@/lib/supabaseClient'
 
-interface AuthContextType {
-  user: User | null
-  userType: 'admin' | 'operatore' | 'anonimo' | null
-  loading: boolean
+type UserType = 'admin' | 'operatore' | 'anonimo' | null
+
+export type AuthContextType = {
+  userType: UserType
+  signIn: (codice: string) => Promise<void>
+  signOut: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType>({
-  user: null,
   userType: null,
-  loading: true
+  signIn: async () => {},
+  signOut: async () => {}
 })
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
-  const [userType, setUserType] = useState<'admin' | 'operatore' | 'anonimo' | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [userType, setUserType] = useState<UserType>(null)
+  const router = useRouter()
 
-  useEffect(() => {
-    const checkUser = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser()
-        setUser(user)
-        
-        if (user?.email) {
-          if (user.email.includes('admin@')) {
-            setUserType('admin')
-          } else if (user.email.includes('operatore')) {
-            setUserType('operatore')
-          } else {
-            setUserType('anonimo')
-          }
-        } else {
-          setUserType(null)
-        }
-      } catch (error) {
-        console.error('Errore nel controllo utente:', error)
-        setUser(null)
-        setUserType(null)
-      } finally {
-        setLoading(false)
+  const signIn = async (codice: string) => {
+    try {
+      // Verifica il codice di accesso
+      const { data, error } = await supabase
+        .from('utenti')
+        .select('tipo')
+        .eq('codice_accesso', codice)
+        .single()
+
+      if (error || !data) {
+        throw new Error('Codice di accesso non valido')
       }
-    }
 
-    checkUser()
+      // Imposta il tipo utente
+      setUserType(data.tipo as UserType)
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      setUser(session?.user ?? null)
-      if (session?.user?.email) {
-        if (session.user.email.includes('admin@')) {
-          setUserType('admin')
-        } else if (session.user.email.includes('operatore')) {
-          setUserType('operatore')
-        } else {
-          setUserType('anonimo')
-        }
-      } else {
-        setUserType(null)
+      // Reindirizza in base al tipo utente
+      switch (data.tipo) {
+        case 'admin':
+          router.push('/admin/questionari/lista')
+          break
+        case 'operatore':
+          router.push('/operatore')
+          break
+        case 'anonimo':
+          router.push('/anonimo')
+          break
       }
-    })
-
-    return () => {
-      subscription.unsubscribe()
+    } catch (error) {
+      console.error('Errore durante il login:', error)
+      throw error
     }
-  }, [])
+  }
+
+  const signOut = async () => {
+    setUserType(null)
+    router.push('/')
+  }
 
   return (
-    <AuthContext.Provider value={{ user, userType, loading }}>
+    <AuthContext.Provider value={{ userType, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   )
 }
 
-export const useAuth = () => {
-  const context = useContext(AuthContext)
-  if (!context) {
-    throw new Error('useAuth deve essere usato all\'interno di AuthProvider')
-  }
-  return context
-}
+export const useAuth = () => useContext(AuthContext)
 
