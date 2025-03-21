@@ -23,33 +23,30 @@ export default function LoginPage() {
     setError('')
 
     try {
-      let redirectUrl = '/'
-
       // Verifica diretta del codice
       if (codice === 'admin2025') {
-        redirectUrl = '/admin/questionari/lista'
         localStorage.setItem('userType', 'admin')
-      } else if (codice === 'anonimo9999') {
-        redirectUrl = '/anonimo'
+        localStorage.setItem('codiceAccesso', codice)
+        // Usa l'URL completo per il reindirizzamento
+        window.location.href = 'https://questionari-git-main-sicomunica-cf8f98ae.vercel.app/admin/questionari/lista'
+      } 
+      else if (codice === 'anonimo9999') {
         localStorage.setItem('userType', 'anonimo')
-      } else if (codice.startsWith('operatore')) {
+        localStorage.setItem('codiceAccesso', codice)
+        window.location.href = 'https://questionari-git-main-sicomunica-cf8f98ae.vercel.app/anonimo'
+      } 
+      else if (codice.startsWith('operatore')) {
         const num = parseInt(codice.replace('operatore', ''))
         if (!isNaN(num) && num >= 1 && num <= 300) {
-          redirectUrl = '/operatore'
           localStorage.setItem('userType', 'operatore')
+          localStorage.setItem('codiceAccesso', codice)
+          window.location.href = 'https://questionari-git-main-sicomunica-cf8f98ae.vercel.app/operatore'
         } else {
           throw new Error('Codice operatore non valido')
         }
       } else {
         throw new Error('Codice non valido')
       }
-
-      localStorage.setItem('codiceAccesso', codice)
-      console.log('Reindirizzamento a:', redirectUrl)
-      
-      // Forza il reindirizzamento
-      window.location.replace(redirectUrl)
-      
     } catch (err) {
       console.error('Errore login:', err)
       setError('Codice di accesso non valido')
