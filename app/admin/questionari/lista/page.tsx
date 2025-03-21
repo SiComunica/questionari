@@ -39,27 +39,32 @@ export default function AdminListaPage() {
   }
 
   return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold mb-4">Dashboard Admin</h1>
-      <div className="p-6">
-        <h1 className="text-2xl font-bold mb-6">Questionari Compilati</h1>
-        <div className="grid gap-4">
-          {questionari.map((q) => (
-            <Card key={`${q.tipo}-${q.id}`} className="p-4">
-              <div className="flex justify-between items-center">
-                <div>
-                  <h3 className="font-bold">Questionario {q.tipo}</h3>
-                  <p>Compilato il: {new Date(q.created_at).toLocaleDateString()}</p>
-                </div>
-                <Button 
-                  onClick={() => router.push(`/admin/questionari/dettaglio?tipo=${q.tipo}&id=${q.id}`)}
-                >
-                  Visualizza
-                </Button>
-              </div>
-            </Card>
-          ))}
-        </div>
+    <div className="min-h-screen bg-gray-50 p-8">
+      <h1 className="text-2xl font-bold mb-6">Dashboard Amministratore</h1>
+      <div className="grid gap-4">
+        <Card className="p-4">
+          <h2 className="font-semibold">Lista Questionari</h2>
+          <div className="p-6">
+            <h1 className="text-2xl font-bold mb-6">Questionari Compilati</h1>
+            <div className="grid gap-4">
+              {questionari.map((q) => (
+                <Card key={`${q.tipo}-${q.id}`} className="p-4">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <h3 className="font-bold">Questionario {q.tipo}</h3>
+                      <p>Compilato il: {new Date(q.created_at).toLocaleDateString()}</p>
+                    </div>
+                    <Button 
+                      onClick={() => router.push(`/admin/questionari/dettaglio?tipo=${q.tipo}&id=${q.id}`)}
+                    >
+                      Visualizza
+                    </Button>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </Card>
       </div>
     </div>
   )

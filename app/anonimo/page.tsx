@@ -1,40 +1,24 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useAuth } from '@/contexts/AuthContext'
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import Link from 'next/link'
+import { Card } from '@/components/ui/card'
 
-export default function AnonimoPage() {
-  const { userType } = useAuth()
-
+export default function AnonimoDashboard() {
   useEffect(() => {
-    if (!userType || userType !== 'anonimo') {
+    // Verifica che l'utente sia anonimo
+    const userType = localStorage.getItem('userType')
+    if (userType !== 'anonimo') {
       window.location.href = '/'
     }
-  }, [userType])
-
-  if (!userType || userType !== 'anonimo') {
-    return null
-  }
+  }, [])
 
   return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold mb-4">Dashboard Anonimo</h1>
-      <div className="grid gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Questionario Giovani</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="mb-4">Compila il questionario per i giovani</p>
-            <Link 
-              href="/anonimo/questionari-giovani"
-              className="px-4 py-2 bg-blue-600 text-white rounded"
-            >
-              Inizia Questionario
-            </Link>
-          </CardContent>
+    <div className="min-h-screen bg-gray-50 p-8">
+      <h1 className="text-2xl font-bold mb-6">Dashboard Anonimo</h1>
+      <div className="grid gap-4">
+        <Card className="p-4">
+          <h2 className="font-semibold">Questionario Giovani</h2>
+          {/* Contenuto dashboard anonimo */}
         </Card>
       </div>
     </div>

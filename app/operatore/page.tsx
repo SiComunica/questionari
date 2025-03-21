@@ -1,68 +1,24 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useAuth } from '@/contexts/AuthContext'
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import Link from 'next/link'
+import { Card } from '@/components/ui/card'
 
-export default function OperatorePage() {
-  const { userType } = useAuth()
-
+export default function OperatoreDashboard() {
   useEffect(() => {
-    if (!userType || userType !== 'operatore') {
+    // Verifica che l'utente sia operatore
+    const userType = localStorage.getItem('userType')
+    if (userType !== 'operatore') {
       window.location.href = '/'
     }
-  }, [userType])
-
-  if (!userType || userType !== 'operatore') {
-    return null
-  }
+  }, [])
 
   return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold mb-4">Dashboard Operatore</h1>
-      <div className="grid gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Questionario Giovani</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Link 
-              href="/operatore/questionari-giovani"
-              className="px-4 py-2 bg-blue-600 text-white rounded"
-            >
-              Compila Questionario
-            </Link>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Questionario Operatori</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Link 
-              href="/operatore/questionari-operatori"
-              className="px-4 py-2 bg-blue-600 text-white rounded"
-            >
-              Compila Questionario
-            </Link>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Questionario Strutture</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Link 
-              href="/operatore/questionari-strutture"
-              className="px-4 py-2 bg-blue-600 text-white rounded"
-            >
-              Compila Questionario
-            </Link>
-          </CardContent>
+    <div className="min-h-screen bg-gray-50 p-8">
+      <h1 className="text-2xl font-bold mb-6">Dashboard Operatore</h1>
+      <div className="grid gap-4">
+        <Card className="p-4">
+          <h2 className="font-semibold">Questionari Disponibili</h2>
+          {/* Contenuto dashboard operatore */}
         </Card>
       </div>
     </div>
