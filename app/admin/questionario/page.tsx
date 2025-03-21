@@ -10,79 +10,70 @@ interface Questionario {
   tipo: 'giovani' | 'operatori' | 'strutture'
   compilatore: string
   dataCompilazione: string
-  risposte: any // TODO: definire meglio il tipo delle risposte
 }
 
 export default function QuestionarioPage() {
-  const { userType } = useAuth()
+  const { userType, isLoading: authLoading } = useAuth()
   const router = useRouter()
   const [questionari, setQuestionari] = useState<Questionario[]>([])
-  const [loading, setLoading] = useState(true)
+  const [pageLoading, setPageLoading] = useState(true)
+
+  console.log('QuestionarioPage render:', { userType, authLoading, pageLoading })
 
   useEffect(() => {
-    console.log('QuestionarioPage - userType:', userType)
-    
-    if (userType !== 'admin') {
-      console.log('Non sei admin, reindirizzamento...')
-      router.push('/')
-      return
-    }
+    const checkAuth = async () => {
+      console.log('Controllo auth:', { userType, authLoading })
+      
+      if (!authLoading && (!userType || userType !== 'admin')) {
+        console.log('Utente non autorizzato, reindirizzamento...')
+        router.push('/')
+        return
+      }
 
-    // TODO: Sostituire con la vera chiamata API a Supabase
-    const fetchQuestionari = async () => {
-      try {
-        console.log('Caricamento questionari...')
-        // Simula il caricamento dei dati
-        const datiSimulati: Questionario[] = [
-          {
-            id: '1',
-            tipo: 'giovani',
-            compilatore: 'anonimo123',
-            dataCompilazione: '2024-03-20',
-            risposte: {}
-          },
-          {
-            id: '2',
-            tipo: 'operatori',
-            compilatore: 'operatore1',
-            dataCompilazione: '2024-03-19',
-            risposte: {}
-          },
-          {
-            id: '3',
-            tipo: 'strutture',
-            compilatore: 'operatore2',
-            dataCompilazione: '2024-03-18',
-            risposte: {}
-          }
-        ]
-        setQuestionari(datiSimulati)
-        setLoading(false)
-      } catch (error) {
-        console.error('Errore nel caricamento dei questionari:', error)
-        setLoading(false)
+      if (!authLoading && userType === 'admin') {
+        try {
+          // Dati di esempio con tipo corretto
+          const datiQuestionari: Questionario[] = [
+            {
+              id: '1',
+              tipo: 'giovani', // Specificato come literal type
+              compilatore: 'anonimo123',
+              dataCompilazione: '2024-03-20'
+            },
+            {
+              id: '2',
+              tipo: 'operatori', // Specificato come literal type
+              compilatore: 'operatore1',
+              dataCompilazione: '2024-03-19'
+            },
+            {
+              id: '3',
+              tipo: 'strutture', // Specificato come literal type
+              compilatore: 'operatore2',
+              dataCompilazione: '2024-03-18'
+            }
+          ]
+
+          setQuestionari(datiQuestionari)
+          setPageLoading(false)
+          console.log('Questionari caricati:', datiQuestionari)
+        } catch (error) {
+          console.error('Errore caricamento questionari:', error)
+          setPageLoading(false)
+        }
       }
     }
 
-    fetchQuestionari()
-  }, [userType, router])
+    checkAuth()
+  }, [userType, authLoading, router])
 
-  const handleDownloadPDF = (id: string) => {
-    // TODO: Implementare il download PDF
-    console.log('Download PDF per questionario:', id)
-  }
-
-  const handleDownloadExcel = (id: string) => {
-    // TODO: Implementare il download Excel
-    console.log('Download Excel per questionario:', id)
-  }
-
-  if (loading) {
+  if (authLoading || pageLoading) {
     return (
       <div className="min-h-screen bg-gray-100">
-        <Navbar />
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center">Caricamento...</div>
+        <div className="flex items-center justify-center h-screen">
+          <div className="text-xl font-semibold">
+            {authLoading ? 'Verifica accesso...' : 'Caricamento questionari...'}
+          </div>
         </div>
       </div>
     )
@@ -127,17 +118,11 @@ export default function QuestionarioPage() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       {new Date(questionario.dataCompilazione).toLocaleDateString()}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <button
-                        onClick={() => handleDownloadPDF(questionario.id)}
-                        className="bg-blue-500 text-white px-3 py-1 rounded mr-2 hover:bg-blue-600"
-                      >
+                    <td className="px-6 py-4 whitespace-nowrap space-x-2">
+                      <button className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
                         PDF
                       </button>
-                      <button
-                        onClick={() => handleDownloadExcel(questionario.id)}
-                        className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
-                      >
+                      <button className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
                         Excel
                       </button>
                     </td>
