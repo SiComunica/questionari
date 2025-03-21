@@ -1,20 +1,18 @@
 'use client'
 
 import { useState } from 'react'
-import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card } from '@/components/ui/card'
 
 export default function LoginPage() {
-  const { signIn } = useAuth()
   const [codice, setCodice] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log('Form submitted') // Debug
+    console.log('Form submitted')
 
     if (!codice) {
       setError('Inserisci un codice')
@@ -25,14 +23,37 @@ export default function LoginPage() {
     setError('')
 
     try {
-      console.log('Chiamata signIn con:', codice) // Debug
-      await signIn(codice)
-      console.log('SignIn completato') // Debug
+      let redirectUrl = '/'
+
+      // Verifica diretta del codice
+      if (codice === 'admin2025') {
+        redirectUrl = '/admin/questionari/lista'
+        localStorage.setItem('userType', 'admin')
+      } else if (codice === 'anonimo9999') {
+        redirectUrl = '/anonimo'
+        localStorage.setItem('userType', 'anonimo')
+      } else if (codice.startsWith('operatore')) {
+        const num = parseInt(codice.replace('operatore', ''))
+        if (!isNaN(num) && num >= 1 && num <= 300) {
+          redirectUrl = '/operatore'
+          localStorage.setItem('userType', 'operatore')
+        } else {
+          throw new Error('Codice operatore non valido')
+        }
+      } else {
+        throw new Error('Codice non valido')
+      }
+
+      localStorage.setItem('codiceAccesso', codice)
+      console.log('Reindirizzamento a:', redirectUrl)
+      
+      // Forza il reindirizzamento
+      window.location.replace(redirectUrl)
+      
     } catch (err) {
       console.error('Errore login:', err)
       setError('Codice di accesso non valido')
-    } finally {
-      // Non resettiamo loading qui perché verremo reindirizzati
+      setLoading(false)
     }
   }
 
