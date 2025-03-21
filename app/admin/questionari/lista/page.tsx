@@ -1,70 +1,41 @@
 'use client'
 
+import { useEffect } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
-import { supabase, type QuestionarioWithType } from '@/lib/supabaseClient'
-import { Card } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 
-export default function AdminListaPage() {
+export default function ListaQuestionariPage() {
   const { userType } = useAuth()
   const router = useRouter()
-  const [questionari, setQuestionari] = useState<QuestionarioWithType[]>([])
 
   useEffect(() => {
-    if (!userType || userType !== 'admin') {
-      window.location.href = '/'
+    // Verifica se l'utente è autenticato come admin
+    const storedUserType = localStorage.getItem('userType')
+    console.log('UserType corrente:', storedUserType)
+    
+    if (storedUserType !== 'admin') {
+      console.log('Utente non autorizzato, reindirizzamento...')
+      router.push('/')
+      return
     }
-  }, [userType])
-
-  useEffect(() => {
-    const fetchQuestionari = async () => {
-      const { data: giovani } = await supabase.from('giovani').select('*').order('created_at', { ascending: false })
-      const { data: operatori } = await supabase.from('operatori').select('*').order('created_at', { ascending: false })
-      const { data: strutture } = await supabase.from('strutture').select('*').order('created_at', { ascending: false })
-      
-      setQuestionari([
-        ...(giovani || []).map(q => ({...q, tipo: 'giovani' as const})),
-        ...(operatori || []).map(q => ({...q, tipo: 'operatori' as const})),
-        ...(strutture || []).map(q => ({...q, tipo: 'strutture' as const}))
-      ])
-    }
-
-    fetchQuestionari()
-  }, [])
-
-  if (!userType || userType !== 'admin') {
-    return null
-  }
+  }, [router])
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <h1 className="text-2xl font-bold mb-6">Dashboard Amministratore</h1>
-      <div className="grid gap-4">
-        <Card className="p-4">
-          <h2 className="font-semibold">Lista Questionari</h2>
-          <div className="p-6">
-            <h1 className="text-2xl font-bold mb-6">Questionari Compilati</h1>
-            <div className="grid gap-4">
-              {questionari.map((q) => (
-                <Card key={`${q.tipo}-${q.id}`} className="p-4">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <h3 className="font-bold">Questionario {q.tipo}</h3>
-                      <p>Compilato il: {new Date(q.created_at).toLocaleDateString()}</p>
-                    </div>
-                    <Button 
-                      onClick={() => router.push(`/admin/questionari/dettaglio?tipo=${q.tipo}&id=${q.id}`)}
-                    >
-                      Visualizza
-                    </Button>
-                  </div>
-                </Card>
-              ))}
-            </div>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-2xl font-bold mb-4">Lista Questionari</h1>
+      <div className="bg-white shadow rounded-lg p-6">
+        <h2 className="text-xl font-semibold mb-4">Questionari Sottomessi</h2>
+        <div className="space-y-4">
+          {/* Lista questionari qui */}
+          <div className="p-4 border rounded">
+            <p className="font-medium">Questionario Giovani</p>
+            <p className="text-sm text-gray-600">Sottomessi: 10</p>
           </div>
-        </Card>
+          <div className="p-4 border rounded">
+            <p className="font-medium">Questionario Operatori</p>
+            <p className="text-sm text-gray-600">Sottomessi: 5</p>
+          </div>
+        </div>
       </div>
     </div>
   )

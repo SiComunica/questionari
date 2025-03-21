@@ -1,7 +1,6 @@
 'use client'
 
 import { createContext, useContext, useState } from 'react'
-import { useRouter } from 'next/navigation'
 
 type UserType = 'admin' | 'operatore' | 'anonimo' | null
 
@@ -22,7 +21,6 @@ const AuthContext = createContext<AuthContextType>({
 })
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const router = useRouter()
   const [userType, setUserType] = useState<UserType>(null)
   const [codiceAccesso, setCodiceAccesso] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -36,7 +34,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUserType('admin')
         setCodiceAccesso(codice)
         console.log('Login admin riuscito, reindirizzamento...')
-        await router.replace('/admin/questionario')
+        window.location.href = '/admin/questionari/lista'
         return
       } 
       
@@ -44,7 +42,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUserType('anonimo')
         setCodiceAccesso(codice)
         console.log('Login anonimo riuscito, reindirizzamento...')
-        await router.replace('/anonimo')
+        window.location.href = '/anonimo'
         return
       } 
       
@@ -54,7 +52,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUserType('operatore')
           setCodiceAccesso(codice)
           console.log('Login operatore riuscito, reindirizzamento...')
-          await router.replace('/operatore')
+          window.location.href = '/operatore'
           return
         }
       }
@@ -70,7 +68,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = async () => {
     setUserType(null)
     setCodiceAccesso(null)
-    await router.replace('/')
+    window.location.href = '/'
   }
 
   return (
