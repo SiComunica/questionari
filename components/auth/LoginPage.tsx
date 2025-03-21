@@ -7,55 +7,46 @@ export default function LoginPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    
-    setError('')
+  const handleClick = () => {
+    // Log immediato
+    console.log('Click sul bottone')
+    console.log('Codice:', codice)
+
+    // Imposta loading
     setLoading(true)
-    
-    console.log('Form sottomesso')
-    console.log('Tentativo di login con codice:', codice)
 
-    // Verifica del codice e reindirizzamento con timeout
-    setTimeout(() => {
-      try {
-        if (codice === 'admin2025') {
-          console.log('Codice admin valido, reindirizzamento...')
-          localStorage.setItem('userType', 'admin')
-          localStorage.setItem('codiceAccesso', codice)
-          window.location.replace('/admin/questionari/lista')
-          return
-        }
+    // Verifica codice
+    if (codice === 'admin2025') {
+      console.log('Reindirizzamento admin...')
+      // Usa path relativo
+      window.location.href = '/admin/questionari/lista'
+      return
+    }
 
-        if (codice === 'anonimo9999') {
-          console.log('Codice anonimo valido, reindirizzamento...')
-          localStorage.setItem('userType', 'anonimo')
-          localStorage.setItem('codiceAccesso', codice)
-          window.location.replace('/anonimo')
-          return
-        }
+    if (codice === 'anonimo9999') {
+      console.log('Reindirizzamento anonimo...')
+      window.location.href = '/anonimo'
+      return
+    }
 
-        if (codice.startsWith('operatore')) {
-          const num = parseInt(codice.replace('operatore', ''))
-          if (!isNaN(num) && num >= 1 && num <= 300) {
-            console.log('Codice operatore valido, reindirizzamento...')
-            localStorage.setItem('userType', 'operatore')
-            localStorage.setItem('codiceAccesso', codice)
-            window.location.replace('/operatore')
-            return
-          }
-        }
-
-        console.log('Codice non valido')
-        setError('Codice di accesso non valido')
-        setLoading(false)
-      } catch (error) {
-        console.error('Errore durante il login:', error)
-        setError('Errore durante l\'accesso')
-        setLoading(false)
+    if (codice.startsWith('operatore')) {
+      const num = parseInt(codice.replace('operatore', ''))
+      if (!isNaN(num) && num >= 1 && num <= 300) {
+        console.log('Reindirizzamento operatore...')
+        window.location.href = '/operatore'
+        return
       }
-    }, 1000) // Aggiungiamo un delay di 1 secondo
+    }
+
+    // Se arriviamo qui, il codice non è valido
+    console.log('Codice non valido')
+    setError('Codice di accesso non valido')
+    setLoading(false)
+  }
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    handleClick()
   }
 
   return (
@@ -70,41 +61,33 @@ export default function LoginPage() {
           )}
         </div>
         
-        <form className="mt-8 space-y-6" onSubmit={(e) => e.preventDefault()}>
+        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
           <div>
             <input
               type="text"
-              required
-              className="appearance-none rounded relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-              placeholder="Inserisci il codice di accesso"
               value={codice}
               onChange={(e) => setCodice(e.target.value)}
+              className="appearance-none rounded relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+              placeholder="Inserisci il codice di accesso"
               disabled={loading}
             />
           </div>
 
           <div>
             <button
-              type="button"
+              type="submit"
               disabled={loading}
-              onClick={handleLogin}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
-              {loading ? (
-                <span className="flex items-center">
-                  <span className="mr-2">Accesso in corso...</span>
-                </span>
-              ) : (
-                'Accedi'
-              )}
+              {loading ? 'Accesso in corso...' : 'Accedi'}
             </button>
           </div>
         </form>
 
         {/* Debug info */}
         <div className="mt-4 text-sm text-gray-500">
-          Codice inserito: {codice}
-          {loading && <div>Verifica in corso...</div>}
+          <div>Codice inserito: {codice}</div>
+          <div>Stato: {loading ? 'Caricamento...' : 'Pronto'}</div>
         </div>
       </div>
     </div>
