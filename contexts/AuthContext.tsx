@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useState } from 'react'
 
 type UserType = 'admin' | 'operatore' | 'anonimo' | null
 
@@ -17,91 +17,52 @@ const AuthContext = createContext<AuthContextType>({
   codiceAccesso: null,
   signIn: async () => {},
   signOut: async () => {},
-  isLoading: true
+  isLoading: false
 })
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [userType, setUserType] = useState<UserType>(null)
   const [codiceAccesso, setCodiceAccesso] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-
-  const handleRedirect = (tipo: UserType) => {
-    if (!tipo) return
-
-    let path = '/'
-    switch (tipo) {
-      case 'admin':
-        path = '/admin/questionario'
-        break
-      case 'operatore':
-        path = '/operatore'
-        break
-      case 'anonimo':
-        path = '/anonimo'
-        break
-    }
-
-    console.log('Reindirizzamento forzato a:', path)
-    window.location.replace(path)
-  }
-
-  useEffect(() => {
-    try {
-      // Prima pulisci tutto
-      localStorage.removeItem('userType')
-      localStorage.removeItem('codiceAccesso')
-      setUserType(null)
-      setCodiceAccesso(null)
-      setIsLoading(false)
-    } catch (error) {
-      console.error('Errore nel reset:', error)
-      setIsLoading(false)
-    }
-  }, [])
+  const [isLoading, setIsLoading] = useState(false)
 
   const signIn = async (codice: string) => {
+    setIsLoading(true)
     console.log('Tentativo di login con:', codice)
-    
-    let tipo: UserType = null
-
-    if (codice === 'admin2025') {
-      tipo = 'admin'
-    } else if (codice === 'anonimo9999') {
-      tipo = 'anonimo'
-    } else if (codice.startsWith('operatore')) {
-      const num = parseInt(codice.replace('operatore', ''))
-      if (!isNaN(num) && num >= 1 && num <= 300) {
-        tipo = 'operatore'
-      }
-    }
-
-    if (!tipo) {
-      throw new Error('Codice non valido')
-    }
 
     try {
-      // Salva lo stato
-      localStorage.setItem('userType', tipo)
-      localStorage.setItem('codiceAccesso', codice)
-      setUserType(tipo)
-      setCodiceAccesso(codice)
-
-      console.log('Login effettuato come:', tipo)
+      if (codice === 'admin2025') {
+        console.log('Reindirizzamento admin...')
+        window.location.href = '/admin/questionario'
+        return
+      } 
       
-      // Forza il reindirizzamento
-      handleRedirect(tipo)
+      if (codice === 'anonimo9999') {
+        console.log('Reindirizzamento anonimo...')
+        window.location.href = '/anonimo'
+        return
+      } 
+      
+      if (codice.startsWith('operatore')) {
+        const num = parseInt(codice.replace('operatore', ''))
+        if (!isNaN(num) && num >= 1 && num <= 300) {
+          console.log('Reindirizzamento operatore...')
+          window.location.href = '/operatore'
+          return
+        }
+      }
+
+      throw new Error('Codice non valido')
     } catch (error) {
-      console.error('Errore durante il login:', error)
+      console.error('Errore login:', error)
+      setIsLoading(false)
       throw error
     }
   }
 
   const signOut = async () => {
-    localStorage.removeItem('userType')
-    localStorage.removeItem('codiceAccesso')
     setUserType(null)
     setCodiceAccesso(null)
-    window.location.replace('/')
+    window.location.href = '/'
   }
 
   return (
