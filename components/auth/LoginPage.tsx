@@ -27,20 +27,19 @@ export default function LoginPage() {
       if (codice === 'admin2025') {
         localStorage.setItem('userType', 'admin')
         localStorage.setItem('codiceAccesso', codice)
-        // Usa l'URL completo per il reindirizzamento
-        window.location.href = 'https://questionari-git-main-sicomunica-cf8f98ae.vercel.app/admin/questionari/lista'
+        window.location.href = 'https://questionari.vercel.app/admin/questionari/lista'
       } 
       else if (codice === 'anonimo9999') {
         localStorage.setItem('userType', 'anonimo')
         localStorage.setItem('codiceAccesso', codice)
-        window.location.href = 'https://questionari-git-main-sicomunica-cf8f98ae.vercel.app/anonimo'
+        window.location.href = 'https://questionari.vercel.app/anonimo'
       } 
       else if (codice.startsWith('operatore')) {
         const num = parseInt(codice.replace('operatore', ''))
         if (!isNaN(num) && num >= 1 && num <= 300) {
           localStorage.setItem('userType', 'operatore')
           localStorage.setItem('codiceAccesso', codice)
-          window.location.href = 'https://questionari-git-main-sicomunica-cf8f98ae.vercel.app/operatore'
+          window.location.href = 'https://questionari.vercel.app/operatore'
         } else {
           throw new Error('Codice operatore non valido')
         }
