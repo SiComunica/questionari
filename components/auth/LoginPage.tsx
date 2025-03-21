@@ -12,20 +12,17 @@ export default function LoginPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleLogin = async () => {
+    if (!codice) return
+    
     setError('')
     setLoading(true)
+    console.log('Tentativo di login con:', codice) // Debug log
 
     try {
-      if (!codice) {
-        throw new Error('Inserisci un codice di accesso')
-      }
-
       await signIn(codice)
-      console.log('Login effettuato con successo') // Debug log
     } catch (err) {
-      console.error('Errore durante il login:', err) // Debug log
+      console.error('Errore login:', err)
       setError('Codice di accesso non valido')
     } finally {
       setLoading(false)
@@ -44,14 +41,19 @@ export default function LoginPage() {
           </p>
         </div>
         
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        <div className="mt-8 space-y-6">
           <div>
             <Input
               type="text"
               value={codice}
               onChange={(e) => setCodice(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  handleLogin()
+                }
+              }}
               placeholder="Codice di accesso"
-              required
+              disabled={loading}
               className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
             />
           </div>
@@ -64,14 +66,14 @@ export default function LoginPage() {
 
           <div>
             <Button
-              type="submit"
-              disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              onClick={handleLogin}
+              disabled={loading || !codice}
+              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               {loading ? 'Accesso in corso...' : 'Accedi'}
             </Button>
           </div>
-        </form>
+        </div>
       </Card>
     </div>
   )
