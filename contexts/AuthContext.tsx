@@ -30,7 +30,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     if (codice === 'admin2025') {
       tipo = 'admin'
-      redirectPath = '/admin/questionari'
+      redirectPath = '/admin/questionari/lista'
     } else if (codice === 'anonimo9999') {
       tipo = 'anonimo'
       redirectPath = '/anonimo'
@@ -46,26 +46,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       throw new Error('Codice non valido')
     }
 
-    // Debug info
-    console.log('Tipo utente:', tipo)
-    console.log('Percorso di reindirizzamento:', redirectPath)
-    console.log('URL corrente:', window.location.href)
-
-    // Salva lo stato
+    // Prima salviamo lo stato
     localStorage.setItem('userType', tipo)
     localStorage.setItem('codiceAccesso', codice)
     setUserType(tipo)
     setCodiceAccesso(codice)
 
-    // Prova prima con router.push
-    try {
-      router.push(redirectPath)
-      console.log('Router push completato')
-    } catch (error) {
-      console.error('Errore con router.push:', error)
-      // Fallback a location.href
-      window.location.href = redirectPath
-    }
+    // Poi forziamo il reindirizzamento
+    console.log('Reindirizzamento a:', redirectPath)
+    window.location.href = redirectPath
   }
 
   const signOut = async () => {
@@ -73,7 +62,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem('codiceAccesso')
     setUserType(null)
     setCodiceAccesso(null)
-    router.push('/')
+    window.location.href = '/'
   }
 
   return (
