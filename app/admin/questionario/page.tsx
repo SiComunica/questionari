@@ -20,7 +20,10 @@ export default function QuestionarioPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    console.log('QuestionarioPage - userType:', userType)
+    
     if (userType !== 'admin') {
+      console.log('Non sei admin, reindirizzamento...')
       router.push('/')
       return
     }
@@ -28,6 +31,7 @@ export default function QuestionarioPage() {
     // TODO: Sostituire con la vera chiamata API a Supabase
     const fetchQuestionari = async () => {
       try {
+        console.log('Caricamento questionari...')
         // Simula il caricamento dei dati
         const datiSimulati: Questionario[] = [
           {

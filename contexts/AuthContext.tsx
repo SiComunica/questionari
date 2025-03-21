@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Cookies from 'js-cookie'
 
@@ -25,6 +25,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [codiceAccesso, setCodiceAccesso] = useState<string | null>(null)
   const router = useRouter()
 
+  // Carica lo stato iniziale dal localStorage
+  useEffect(() => {
+    const savedUserType = localStorage.getItem('userType') as UserType
+    const savedCodice = localStorage.getItem('codiceAccesso')
+    
+    console.log('Stato iniziale:', { savedUserType, savedCodice })
+    
+    if (savedUserType) {
+      setUserType(savedUserType)
+      setCodiceAccesso(savedCodice)
+      Cookies.set('userType', savedUserType, { path: '/' })
+    }
+  }, [])
+
   const signIn = async (codice: string) => {
     let tipo: UserType = null
     let redirectPath = '/'
@@ -48,26 +62,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
-      // Salviamo lo stato sia in localStorage che nei cookie
+      console.log('Login con:', { tipo, codice })
+      
+      // Salviamo lo stato
       localStorage.setItem('userType', tipo)
       localStorage.setItem('codiceAccesso', codice)
       Cookies.set('userType', tipo, { path: '/' })
       setUserType(tipo)
       setCodiceAccesso(codice)
 
-      // Aspettiamo un attimo per assicurarci che i cookie siano salvati
+      // Aspettiamo un attimo per assicurarci che tutto sia salvato
       await new Promise(resolve => setTimeout(resolve, 100))
 
-      // Usiamo window.location per un reindirizzamento forzato
       console.log('Reindirizzamento a:', redirectPath)
       window.location.href = redirectPath
     } catch (error) {
-      console.error('Errore durante il reindirizzamento:', error)
+      console.error('Errore durante il login:', error)
       throw error
     }
   }
 
   const signOut = async () => {
+    console.log('Logout in corso...')
     localStorage.removeItem('userType')
     localStorage.removeItem('codiceAccesso')
     Cookies.remove('userType', { path: '/' })
