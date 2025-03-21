@@ -15,11 +15,10 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      console.log('Tentativo di login con codice:', codice)
+      console.log('Tentativo di login con:', codice)
       await signIn(codice)
-      // Non facciamo nessun reindirizzamento qui - lo fa l'AuthContext
     } catch (err) {
-      console.error('Errore durante il login:', err)
+      console.error('Errore login:', err)
       setError('Codice di accesso non valido')
     } finally {
       setLoading(false)
