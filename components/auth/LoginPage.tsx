@@ -1,82 +1,66 @@
 'use client'
 
 import { useState } from 'react'
-import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card } from '@/components/ui/card'
 
 export default function LoginPage() {
-  console.log('LoginPage renderizzato') // Debug log
-  
-  const { signIn } = useAuth()
   const [codice, setCodice] = useState('')
   const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('Form submitted, codice:', codice) // Debug log
-    
-    if (!codice) {
-      console.log('Codice vuoto') // Debug log
-      return
-    }
-    
-    setError('')
-    setLoading(true)
-    console.log('Tentativo di login con:', codice) // Debug log
+    console.log('Tentativo login con:', codice)
 
-    // Rimuoviamo async/await per semplificare
-    signIn(codice).catch((err) => {
-      console.error('Errore login:', err)
+    // Login diretto senza context
+    if (codice === 'admin2025') {
+      localStorage.setItem('userType', 'admin')
+      window.location.href = '/admin/questionari/lista'
+    } 
+    else if (codice === 'anonimo9999') {
+      localStorage.setItem('userType', 'anonimo')
+      window.location.href = '/anonimo'
+    }
+    else if (codice.startsWith('operatore')) {
+      const num = parseInt(codice.replace('operatore', ''))
+      if (!isNaN(num) && num >= 1 && num <= 300) {
+        localStorage.setItem('userType', 'operatore')
+        window.location.href = '/operatore'
+      } else {
+        setError('Codice operatore non valido')
+      }
+    }
+    else {
       setError('Codice di accesso non valido')
-    }).finally(() => {
-      setLoading(false)
-    })
+    }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <Card className="max-w-md w-full space-y-8 p-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Accedi
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Inserisci il tuo codice di accesso
-          </p>
-        </div>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4">
+      <Card className="max-w-md w-full p-8">
+        <h2 className="text-center text-3xl font-bold mb-6">
+          Accedi
+        </h2>
         
-        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-          <div>
+        <form onSubmit={handleLogin}>
+          <div className="space-y-4">
             <Input
               type="text"
               value={codice}
-              onChange={(e) => {
-                console.log('Input changed:', e.target.value) // Debug log
-                setCodice(e.target.value)
-              }}
-              placeholder="Codice di accesso"
-              disabled={loading}
+              onChange={(e) => setCodice(e.target.value)}
+              placeholder="Inserisci il codice di accesso"
               required
-              className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
             />
-          </div>
 
-          {error && (
-            <div className="text-red-500 text-sm text-center">
-              {error}
-            </div>
-          )}
+            {error && (
+              <div className="text-red-500 text-sm text-center">
+                {error}
+              </div>
+            )}
 
-          <div>
-            <Button
-              type="submit"
-              disabled={loading || !codice}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-              {loading ? 'Accesso in corso...' : 'Accedi'}
+            <Button type="submit" className="w-full">
+              Accedi
             </Button>
           </div>
         </form>
