@@ -10,87 +10,67 @@ export type AuthContextType = {
   codiceAccesso: string | null
   signIn: (codice: string) => Promise<void>
   signOut: () => Promise<void>
-  isLoading: boolean
 }
 
 const AuthContext = createContext<AuthContextType>({
   userType: null,
   codiceAccesso: null,
   signIn: async () => {},
-  signOut: async () => {},
-  isLoading: true
+  signOut: async () => {}
 })
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [userType, setUserType] = useState<UserType>(null)
   const [codiceAccesso, setCodiceAccesso] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const router = useRouter()
 
+  // Carica lo stato all'avvio
   useEffect(() => {
-    const checkAuth = () => {
-      try {
-        const savedUserType = localStorage.getItem('userType') as UserType
-        const savedCodice = localStorage.getItem('codiceAccesso')
-        
-        if (savedUserType && savedCodice) {
-          setUserType(savedUserType)
-          setCodiceAccesso(savedCodice)
-        }
-      } catch (error) {
-        console.error('Errore nel recupero dello stato:', error)
-      } finally {
-        setIsLoading(false)
-      }
+    const savedType = localStorage.getItem('userType') as UserType
+    const savedCodice = localStorage.getItem('codiceAccesso')
+    if (savedType) {
+      setUserType(savedType)
     }
-
-    checkAuth()
+    if (savedCodice) {
+      setCodiceAccesso(savedCodice)
+    }
   }, [])
 
   const signIn = async (codice: string) => {
-    try {
-      let tipo: UserType = null
+    let tipo: UserType = null
 
-      if (codice === 'admin2025') {
-        tipo = 'admin'
-      } else if (codice === 'anonimo9999') {
-        tipo = 'anonimo'
-      } else if (codice.startsWith('operatore')) {
-        const num = parseInt(codice.replace('operatore', ''))
-        if (!isNaN(num) && num >= 1 && num <= 300) {
-          tipo = 'operatore'
-        }
+    if (codice === 'admin2025') {
+      tipo = 'admin'
+    } else if (codice === 'anonimo9999') {
+      tipo = 'anonimo'
+    } else if (codice.startsWith('operatore')) {
+      const num = parseInt(codice.replace('operatore', ''))
+      if (!isNaN(num) && num >= 1 && num <= 300) {
+        tipo = 'operatore'
       }
+    }
 
-      if (!tipo) {
-        throw new Error('Codice di accesso non valido')
-      }
+    if (!tipo) {
+      throw new Error('Codice non valido')
+    }
 
-      // Salva lo stato
-      localStorage.setItem('userType', tipo)
-      localStorage.setItem('codiceAccesso', codice)
+    // Salva lo stato
+    localStorage.setItem('userType', tipo)
+    localStorage.setItem('codiceAccesso', codice)
+    setUserType(tipo)
+    setCodiceAccesso(codice)
 
-      // Aggiorna lo stato
-      setUserType(tipo)
-      setCodiceAccesso(codice)
-
-      // Reindirizza usando window.location
-      let path = '/'
-      switch (tipo) {
-        case 'admin':
-          path = '/admin/questionari/lista'
-          break
-        case 'operatore':
-          path = '/operatore'
-          break
-        case 'anonimo':
-          path = '/anonimo'
-          break
-      }
-      window.location.href = path
-
-    } catch (error) {
-      console.error('Errore nel login:', error)
-      throw error
+    // Reindirizza
+    switch (tipo) {
+      case 'admin':
+        router.push('/admin/questionari/lista')
+        break
+      case 'operatore':
+        router.push('/operatore')
+        break
+      case 'anonimo':
+        router.push('/anonimo')
+        break
     }
   }
 
@@ -99,11 +79,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem('codiceAccesso')
     setUserType(null)
     setCodiceAccesso(null)
-    window.location.href = '/'
+    router.push('/')
   }
 
   return (
-    <AuthContext.Provider value={{ userType, codiceAccesso, signIn, signOut, isLoading }}>
+    <AuthContext.Provider value={{ userType, codiceAccesso, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   )
