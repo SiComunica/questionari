@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 
 export default function LoginPage() {
   const [codice, setCodice] = useState('')
@@ -25,6 +26,12 @@ export default function LoginPage() {
     }
     setError('Codice di accesso non valido')
     return false
+  }
+
+  const handleRedirect = () => {
+    if (destinationUrl) {
+      window.location.href = destinationUrl
+    }
   }
 
   return (
@@ -52,12 +59,12 @@ export default function LoginPage() {
           />
 
           {destinationUrl ? (
-            <a
-              href={destinationUrl}
-              className="block w-full py-2 px-4 bg-green-600 text-white text-center rounded-md hover:bg-green-700"
+            <button
+              onClick={handleRedirect}
+              className="w-full py-2 px-4 bg-green-600 text-white rounded-md hover:bg-green-700"
             >
               Clicca qui per entrare
-            </a>
+            </button>
           ) : (
             <button
               type="button"
@@ -71,7 +78,17 @@ export default function LoginPage() {
 
         <div className="mt-4 text-sm text-gray-500">
           <div>Codice inserito: {codice}</div>
-          {destinationUrl && <div>URL: {destinationUrl}</div>}
+          {destinationUrl && (
+            <div>
+              URL di destinazione: {destinationUrl}
+              <Link 
+                href={destinationUrl}
+                className="ml-2 text-blue-600 hover:underline"
+              >
+                (link diretto)
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </div>
