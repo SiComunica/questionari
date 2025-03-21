@@ -1,94 +1,74 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Card } from '@/components/ui/card'
 
 export default function LoginPage() {
-  const router = useRouter()
-  const { signIn } = useAuth()
   const [codice, setCodice] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const { signIn } = useAuth()
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('Form submitted')
-
-    if (!codice) {
-      setError('Inserisci un codice')
-      return
-    }
-
-    setLoading(true)
     setError('')
+    setLoading(true)
 
     try {
+      console.log('Tentativo di login con codice:', codice)
       await signIn(codice)
-      
-      // Il reindirizzamento verrà gestito dal context
-      if (codice === 'admin2025') {
-        router.push('/admin/questionari/lista')
-      } else if (codice === 'anonimo9999') {
-        router.push('/anonimo')
-      } else if (codice.startsWith('operatore')) {
-        const num = parseInt(codice.replace('operatore', ''))
-        if (!isNaN(num) && num >= 1 && num <= 300) {
-          router.push('/operatore')
-        } else {
-          throw new Error('Codice operatore non valido')
-        }
-      } else {
-        throw new Error('Codice non valido')
-      }
+      // Non facciamo nessun reindirizzamento qui - lo fa l'AuthContext
     } catch (err) {
-      console.error('Errore login:', err)
+      console.error('Errore durante il login:', err)
       setError('Codice di accesso non valido')
+    } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4">
-      <Card className="max-w-md w-full p-8">
-        <h2 className="text-center text-3xl font-bold mb-6">
-          Accedi
-        </h2>
-        <p className="text-center text-sm text-gray-600 mb-6">
-          Inserisci il tuo codice di accesso
-        </p>
-        
-        <form onSubmit={handleSubmit}>
-          <div className="space-y-4">
-            <Input
-              type="text"
-              value={codice}
-              onChange={(e) => setCodice(e.target.value)}
-              placeholder="Codice di accesso"
-              required
-              disabled={loading}
-              className="w-full"
-            />
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Accedi al questionario
+          </h2>
+        </div>
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div className="rounded-md shadow-sm -space-y-px">
+            <div>
+              <label htmlFor="codice" className="sr-only">
+                Codice di accesso
+              </label>
+              <input
+                id="codice"
+                name="codice"
+                type="text"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Inserisci il codice di accesso"
+                value={codice}
+                onChange={(e) => setCodice(e.target.value)}
+                disabled={loading}
+              />
+            </div>
+          </div>
 
-            {error && (
-              <div className="text-red-500 text-sm text-center">
-                {error}
-              </div>
-            )}
+          {error && (
+            <div className="text-red-500 text-sm text-center">{error}</div>
+          )}
 
-            <Button 
-              type="submit" 
+          <div>
+            <button
+              type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
               {loading ? 'Accesso in corso...' : 'Accedi'}
-            </Button>
+            </button>
           </div>
         </form>
-      </Card>
+      </div>
     </div>
   )
 } 
