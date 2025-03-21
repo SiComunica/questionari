@@ -46,15 +46,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       throw new Error('Codice non valido')
     }
 
-    // Prima salviamo lo stato
-    localStorage.setItem('userType', tipo)
-    localStorage.setItem('codiceAccesso', codice)
-    setUserType(tipo)
-    setCodiceAccesso(codice)
+    try {
+      // Salviamo lo stato
+      localStorage.setItem('userType', tipo)
+      localStorage.setItem('codiceAccesso', codice)
+      setUserType(tipo)
+      setCodiceAccesso(codice)
 
-    // Poi forziamo il reindirizzamento
-    console.log('Reindirizzamento a:', redirectPath)
-    window.location.href = redirectPath
+      // Usiamo il router di Next.js per il reindirizzamento
+      console.log('Reindirizzamento a:', redirectPath)
+      router.push(redirectPath)
+      
+      // Forziamo un refresh della pagina
+      router.refresh()
+    } catch (error) {
+      console.error('Errore durante il reindirizzamento:', error)
+      throw error
+    }
   }
 
   const signOut = async () => {
@@ -62,7 +70,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem('codiceAccesso')
     setUserType(null)
     setCodiceAccesso(null)
-    window.location.href = '/'
+    router.push('/')
+    router.refresh()
   }
 
   return (
