@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
 type UserType = 'admin' | 'operatore' | 'anonimo' | null
@@ -24,22 +24,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [codiceAccesso, setCodiceAccesso] = useState<string | null>(null)
   const router = useRouter()
 
+  // Carica lo stato salvato all'avvio
+  useEffect(() => {
+    const savedUserType = localStorage.getItem('userType') as UserType
+    const savedCodice = localStorage.getItem('codiceAccesso')
+    
+    if (savedUserType && savedCodice) {
+      setUserType(savedUserType)
+      setCodiceAccesso(savedCodice)
+    }
+  }, [])
+
   const signIn = async (codice: string) => {
-    console.log('Verifica codice:', codice) // Debug log
+    console.log('Verifica codice:', codice)
 
     try {
       let tipo: UserType = null
 
-      // Verifica codice admin
       if (codice === 'admin2025') {
         tipo = 'admin'
-      }
-      // Verifica codice anonimo
-      else if (codice === 'anonimo9999') {
+      } else if (codice === 'anonimo9999') {
         tipo = 'anonimo'
-      }
-      // Verifica codice operatore
-      else if (codice.startsWith('operatore')) {
+      } else if (codice.startsWith('operatore')) {
         const num = parseInt(codice.replace('operatore', ''))
         if (!isNaN(num) && num >= 1 && num <= 300) {
           tipo = 'operatore'
@@ -50,7 +56,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error('Codice di accesso non valido')
       }
 
-      console.log('Tipo utente rilevato:', tipo) // Debug log
+      console.log('Tipo utente rilevato:', tipo)
+
+      // Salva lo stato nel localStorage
+      localStorage.setItem('userType', tipo)
+      localStorage.setItem('codiceAccesso', codice)
 
       setUserType(tipo)
       setCodiceAccesso(codice)
@@ -68,7 +78,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           break
       }
 
-      console.log('Reindirizzamento completato') // Debug log
+      console.log('Reindirizzamento completato')
     } catch (error) {
       console.error('Errore nel signIn:', error)
       throw error
@@ -76,6 +86,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signOut = async () => {
+    // Rimuovi lo stato dal localStorage
+    localStorage.removeItem('userType')
+    localStorage.removeItem('codiceAccesso')
+    
     setUserType(null)
     setCodiceAccesso(null)
     router.push('/')
