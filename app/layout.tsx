@@ -1,5 +1,3 @@
-'use client'
-
 import { Inter } from 'next/font/google'
 import { AuthProvider } from '@/contexts/AuthContext'
 import './globals.css'
@@ -16,8 +14,6 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  console.log('RootLayout renderizzato') // Debug log
-
   return (
     <html lang="it">
       <body className={inter.className}>
