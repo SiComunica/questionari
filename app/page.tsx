@@ -15,20 +15,24 @@ export default function HomePage() {
 
   useEffect(() => {
     if (!isLoading && userType) {
-      console.log('Reindirizzamento in corso per:', userType)
+      let path = '/'
+      
       switch (userType) {
         case 'admin':
-          router.replace('/admin/questionari/lista')
+          path = '/admin/questionari/lista'
           break
         case 'operatore':
-          router.replace('/operatore')
+          path = '/operatore'
           break
         case 'anonimo':
-          router.replace('/anonimo')
+          path = '/anonimo'
           break
       }
+
+      // Forza il reindirizzamento con window.location
+      window.location.href = path
     }
-  }, [userType, isLoading, router])
+  }, [userType, isLoading])
 
   if (isLoading) {
     return (

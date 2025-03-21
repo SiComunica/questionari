@@ -25,27 +25,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [userType, setUserType] = useState<UserType>(null)
   const [codiceAccesso, setCodiceAccesso] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const router = useRouter()
 
   useEffect(() => {
-    try {
-      const savedUserType = localStorage.getItem('userType') as UserType
-      const savedCodice = localStorage.getItem('codiceAccesso')
-      
-      if (savedUserType && savedCodice) {
-        console.log('Stato recuperato:', savedUserType)
-        setUserType(savedUserType)
-        setCodiceAccesso(savedCodice)
+    const checkAuth = () => {
+      try {
+        const savedUserType = localStorage.getItem('userType') as UserType
+        const savedCodice = localStorage.getItem('codiceAccesso')
+        
+        if (savedUserType && savedCodice) {
+          setUserType(savedUserType)
+          setCodiceAccesso(savedCodice)
+        }
+      } catch (error) {
+        console.error('Errore nel recupero dello stato:', error)
+      } finally {
+        setIsLoading(false)
       }
-    } catch (error) {
-      console.error('Errore nel recupero dello stato:', error)
-    } finally {
-      setIsLoading(false)
     }
+
+    checkAuth()
   }, [])
 
   const signIn = async (codice: string) => {
-    console.log('Tentativo di login con codice:', codice)
     try {
       let tipo: UserType = null
 
@@ -64,12 +65,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error('Codice di accesso non valido')
       }
 
-      console.log('Login effettuato come:', tipo)
+      // Salva lo stato
       localStorage.setItem('userType', tipo)
       localStorage.setItem('codiceAccesso', codice)
 
+      // Aggiorna lo stato
       setUserType(tipo)
       setCodiceAccesso(codice)
+
+      // Reindirizza usando window.location
+      let path = '/'
+      switch (tipo) {
+        case 'admin':
+          path = '/admin/questionari/lista'
+          break
+        case 'operatore':
+          path = '/operatore'
+          break
+        case 'anonimo':
+          path = '/anonimo'
+          break
+      }
+      window.location.href = path
+
     } catch (error) {
       console.error('Errore nel login:', error)
       throw error
@@ -81,7 +99,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem('codiceAccesso')
     setUserType(null)
     setCodiceAccesso(null)
-    router.replace('/')
+    window.location.href = '/'
   }
 
   return (
