@@ -30,7 +30,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     if (codice === 'admin2025') {
       tipo = 'admin'
-      redirectPath = '/admin/questionari/lista'
+      redirectPath = '/admin/questionari-list'
     } else if (codice === 'anonimo9999') {
       tipo = 'anonimo'
       redirectPath = '/anonimo'
