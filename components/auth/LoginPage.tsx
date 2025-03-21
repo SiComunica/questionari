@@ -7,29 +7,33 @@ import { Input } from '@/components/ui/input'
 import { Card } from '@/components/ui/card'
 
 export default function LoginPage() {
+  console.log('LoginPage renderizzato') // Debug log
+  
   const { signIn } = useAuth()
   const [codice, setCodice] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log('Form submitted') // Debug log
+    console.log('Form submitted, codice:', codice) // Debug log
     
-    if (!codice) return
+    if (!codice) {
+      console.log('Codice vuoto') // Debug log
+      return
+    }
     
     setError('')
     setLoading(true)
     console.log('Tentativo di login con:', codice) // Debug log
 
-    try {
-      await signIn(codice)
-    } catch (err) {
+    // Rimuoviamo async/await per semplificare
+    signIn(codice).catch((err) => {
       console.error('Errore login:', err)
       setError('Codice di accesso non valido')
-    } finally {
+    }).finally(() => {
       setLoading(false)
-    }
+    })
   }
 
   return (
@@ -49,7 +53,10 @@ export default function LoginPage() {
             <Input
               type="text"
               value={codice}
-              onChange={(e) => setCodice(e.target.value)}
+              onChange={(e) => {
+                console.log('Input changed:', e.target.value) // Debug log
+                setCodice(e.target.value)
+              }}
               placeholder="Codice di accesso"
               disabled={loading}
               required
