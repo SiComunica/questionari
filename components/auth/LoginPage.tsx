@@ -18,9 +18,24 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
+      console.log('Tentativo di login con codice:', codice) // Debug log
+      
+      if (!codice) {
+        throw new Error('Inserisci un codice di accesso')
+      }
+
+      // Per operatore, verifichiamo che il formato sia corretto
+      if (codice.startsWith('operatore')) {
+        const num = parseInt(codice.replace('operatore', ''))
+        if (isNaN(num) || num < 1 || num > 300) {
+          throw new Error('Codice operatore non valido')
+        }
+      }
+
       await signIn(codice)
     } catch (err) {
-      setError('Codice di accesso non valido')
+      console.error('Errore durante il login:', err) // Debug log
+      setError(err instanceof Error ? err.message : 'Codice di accesso non valido')
     } finally {
       setLoading(false)
     }
@@ -36,6 +51,12 @@ export default function LoginPage() {
           <p className="mt-2 text-center text-sm text-gray-600">
             Inserisci il tuo codice di accesso
           </p>
+          <div className="mt-2 text-center text-xs text-gray-500">
+            Codici validi:<br />
+            - admin2025 (per amministratori)<br />
+            - anonimo9999 (per accesso anonimo)<br />
+            - operatore1 fino a operatore300 (per operatori)
+          </div>
         </div>
         
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
