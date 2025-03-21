@@ -24,6 +24,7 @@
     "exceljs": "^4.4.0",
     "file-saver": "^2.0.5",
     "glob": "^11.0.1",
+    "js-cookie": "^3.0.5",
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.8.1",
     "lucide-react": "^0.344.0",
@@ -41,6 +42,7 @@
   "devDependencies": {
     "@next/env": "^15.2.3",
     "@types/file-saver": "^2.0.5",
+    "@types/js-cookie": "^3.0.6",
     "@types/json5": "^0.0.30",
     "@types/node": "^20.17.24",
     "@types/phoenix": "^1.6.6",

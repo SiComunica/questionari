@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Cookies from 'js-cookie'
 
 type UserType = 'admin' | 'operatore' | 'anonimo' | null
 
@@ -47,18 +48,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
-      // Salviamo lo stato
+      // Salviamo lo stato sia in localStorage che nei cookie
       localStorage.setItem('userType', tipo)
       localStorage.setItem('codiceAccesso', codice)
+      Cookies.set('userType', tipo, { path: '/' })
       setUserType(tipo)
       setCodiceAccesso(codice)
 
-      // Usiamo il router di Next.js per il reindirizzamento
+      // Aspettiamo un attimo per assicurarci che i cookie siano salvati
+      await new Promise(resolve => setTimeout(resolve, 100))
+
+      // Usiamo window.location per un reindirizzamento forzato
       console.log('Reindirizzamento a:', redirectPath)
-      router.push(redirectPath)
-      
-      // Forziamo un refresh della pagina
-      router.refresh()
+      window.location.href = redirectPath
     } catch (error) {
       console.error('Errore durante il reindirizzamento:', error)
       throw error
@@ -68,10 +70,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = async () => {
     localStorage.removeItem('userType')
     localStorage.removeItem('codiceAccesso')
+    Cookies.remove('userType', { path: '/' })
     setUserType(null)
     setCodiceAccesso(null)
-    router.push('/')
-    router.refresh()
+    window.location.href = '/'
   }
 
   return (
