@@ -1,44 +1,31 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card } from '@/components/ui/card'
 
 export default function LoginPage() {
-  const router = useRouter()
+  const { signIn } = useAuth()
   const [codice, setCodice] = useState('')
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log('Tentativo di login con codice:', codice)
+    if (!codice) return
+
+    setLoading(true)
+    setError('')
 
     try {
-      if (codice === 'admin2025') {
-        console.log('Login come admin')
-        await router.push('/admin/questionari/lista')
-      } 
-      else if (codice === 'anonimo9999') {
-        console.log('Login come anonimo')
-        await router.push('/anonimo')
-      }
-      else if (codice.startsWith('operatore')) {
-        const num = parseInt(codice.replace('operatore', ''))
-        if (!isNaN(num) && num >= 1 && num <= 300) {
-          console.log('Login come operatore')
-          await router.push('/operatore')
-        } else {
-          setError('Codice operatore non valido')
-        }
-      }
-      else {
-        setError('Codice di accesso non valido')
-      }
+      await signIn(codice)
+      // Il reindirizzamento viene gestito nel signIn
     } catch (err) {
-      console.error('Errore durante il reindirizzamento:', err)
-      setError('Errore durante il login')
+      console.error('Errore login:', err)
+      setError('Codice di accesso non valido')
+      setLoading(false)
     }
   }
 
@@ -48,6 +35,9 @@ export default function LoginPage() {
         <h2 className="text-center text-3xl font-bold mb-6">
           Accedi
         </h2>
+        <p className="text-center text-sm text-gray-600 mb-6">
+          Inserisci il tuo codice di accesso
+        </p>
         
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
@@ -55,9 +45,10 @@ export default function LoginPage() {
               type="text"
               value={codice}
               onChange={(e) => setCodice(e.target.value)}
-              placeholder="Inserisci il codice di accesso"
+              placeholder="Codice di accesso"
               required
-              className="w-full p-2 border rounded"
+              disabled={loading}
+              className="w-full"
             />
 
             {error && (
@@ -68,9 +59,10 @@ export default function LoginPage() {
 
             <Button 
               type="submit" 
-              className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+              disabled={loading || !codice}
+              className="w-full bg-blue-600 hover:bg-blue-700"
             >
-              Accedi
+              {loading ? 'Accesso in corso...' : 'Accedi'}
             </Button>
           </div>
         </form>
