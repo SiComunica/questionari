@@ -33,28 +33,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const savedCodice = localStorage.getItem('codiceAccesso')
       
       if (savedUserType && savedCodice) {
+        console.log('Stato recuperato:', savedUserType)
         setUserType(savedUserType)
         setCodiceAccesso(savedCodice)
-        
-        // Reindirizza in base al tipo salvato
-        switch (savedUserType) {
-          case 'admin':
-            router.replace('/admin/questionari/lista')
-            break
-          case 'operatore':
-            router.replace('/operatore')
-            break
-          case 'anonimo':
-            router.replace('/anonimo')
-            break
-        }
       }
+    } catch (error) {
+      console.error('Errore nel recupero dello stato:', error)
     } finally {
       setIsLoading(false)
     }
-  }, [router])
+  }, [])
 
   const signIn = async (codice: string) => {
+    console.log('Tentativo di login con codice:', codice)
     try {
       let tipo: UserType = null
 
@@ -73,27 +64,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error('Codice di accesso non valido')
       }
 
-      // Salva lo stato nel localStorage
+      console.log('Login effettuato come:', tipo)
       localStorage.setItem('userType', tipo)
       localStorage.setItem('codiceAccesso', codice)
 
       setUserType(tipo)
       setCodiceAccesso(codice)
-
-      // Usa replace invece di push
-      switch (tipo) {
-        case 'admin':
-          router.replace('/admin/questionari/lista')
-          break
-        case 'operatore':
-          router.replace('/operatore')
-          break
-        case 'anonimo':
-          router.replace('/anonimo')
-          break
-      }
     } catch (error) {
-      console.error('Errore nel signIn:', error)
+      console.error('Errore nel login:', error)
       throw error
     }
   }
