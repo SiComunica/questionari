@@ -1,69 +1,42 @@
-import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-export async function middleware(request: NextRequest) {
-  let response = NextResponse.next({
-    request: {
-      headers: request.headers,
-    },
-  })
-
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return request.cookies.get(name)?.value
-        },
-        set(name: string, value: string, options: any) {
-          response.cookies.set({
-            name,
-            value,
-            ...options,
-          })
-        },
-        remove(name: string, options: any) {
-          response.cookies.set({
-            name,
-            value: '',
-            ...options,
-          })
-        },
-      },
-    }
-  )
-
-  const { data: { session } } = await supabase.auth.getSession()
-
-  // Verifica il ruolo dall'URL
+export function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname
-  const isAdminRoute = path.startsWith('/admin')
-  const isOperatoreRoute = path.startsWith('/operatore')
-  const isAnonimoRoute = path.startsWith('/anonimo')
-
-  if (!session) {
-    return NextResponse.redirect(new URL('/login', request.url));
+  
+  // Se siamo già sulla home page, non fare nulla
+  if (path === '/') {
+    return NextResponse.next()
   }
 
-  const userRole = session.user.user_metadata.role;
-
-  if (isAdminRoute && userRole !== 'admin') {
-    return NextResponse.redirect(new URL('/unauthorized', request.url));
+  // Se l'utente sta cercando di accedere a /login, reindirizza alla home
+  if (path === '/login') {
+    return NextResponse.redirect(new URL('/', request.url))
   }
 
-  if (isOperatoreRoute && userRole !== 'operatore') {
-    return NextResponse.redirect(new URL('/unauthorized', request.url));
+  // Per tutte le altre rotte protette, verifica l'autenticazione
+  const userType = request.cookies.get('userType')?.value
+
+  if (!userType) {
+    return NextResponse.redirect(new URL('/', request.url))
   }
 
-  if (isAnonimoRoute && userRole !== 'anonimo') {
-    return NextResponse.redirect(new URL('/unauthorized', request.url));
+  // Verifica i permessi in base al percorso
+  if (path.startsWith('/admin') && userType !== 'admin') {
+    return NextResponse.redirect(new URL('/', request.url))
   }
 
-  return response
+  if (path.startsWith('/operatore') && userType !== 'operatore') {
+    return NextResponse.redirect(new URL('/', request.url))
+  }
+
+  if (path.startsWith('/anonimo') && userType !== 'anonimo') {
+    return NextResponse.redirect(new URL('/', request.url))
+  }
+
+  return NextResponse.next()
 }
 
 export const config = {
   matcher: ['/login', '/admin/:path*', '/operatore/:path*', '/anonimo/:path*']
-}; 
+} 
