@@ -28,10 +28,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const savedType = localStorage.getItem('userType') as UserType
     const savedCodice = localStorage.getItem('codiceAccesso')
-    if (savedType) {
+    if (savedType && savedCodice) {
       setUserType(savedType)
-    }
-    if (savedCodice) {
       setCodiceAccesso(savedCodice)
     }
   }, [])
@@ -60,16 +58,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUserType(tipo)
     setCodiceAccesso(codice)
 
-    // Reindirizza
+    // Forza il reindirizzamento con window.location
     switch (tipo) {
       case 'admin':
-        router.push('/admin/questionari/lista')
+        window.location.href = '/admin/questionari/lista'
         break
       case 'operatore':
-        router.push('/operatore')
+        window.location.href = '/operatore'
         break
       case 'anonimo':
-        router.push('/anonimo')
+        window.location.href = '/anonimo'
         break
     }
   }
@@ -79,7 +77,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem('codiceAccesso')
     setUserType(null)
     setCodiceAccesso(null)
-    router.push('/')
+    window.location.href = '/'
   }
 
   return (

@@ -13,6 +13,12 @@ export default function AdminListaPage() {
   const [questionari, setQuestionari] = useState<QuestionarioWithType[]>([])
 
   useEffect(() => {
+    if (!userType || userType !== 'admin') {
+      window.location.href = '/'
+    }
+  }, [userType])
+
+  useEffect(() => {
     const fetchQuestionari = async () => {
       const { data: giovani } = await supabase.from('giovani').select('*').order('created_at', { ascending: false })
       const { data: operatori } = await supabase.from('operatori').select('*').order('created_at', { ascending: false })
@@ -28,7 +34,7 @@ export default function AdminListaPage() {
     fetchQuestionari()
   }, [])
 
-  if (userType !== 'admin') {
+  if (!userType || userType !== 'admin') {
     return null
   }
 

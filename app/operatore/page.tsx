@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -9,7 +9,13 @@ import Link from 'next/link'
 export default function OperatorePage() {
   const { userType } = useAuth()
 
-  if (userType !== 'operatore') {
+  useEffect(() => {
+    if (!userType || userType !== 'operatore') {
+      window.location.href = '/'
+    }
+  }, [userType])
+
+  if (!userType || userType !== 'operatore') {
     return null
   }
 

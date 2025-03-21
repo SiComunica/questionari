@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import Link from 'next/link'
@@ -7,7 +8,13 @@ import Link from 'next/link'
 export default function AnonimoPage() {
   const { userType } = useAuth()
 
-  if (userType !== 'anonimo') {
+  useEffect(() => {
+    if (!userType || userType !== 'anonimo') {
+      window.location.href = '/'
+    }
+  }, [userType])
+
+  if (!userType || userType !== 'anonimo') {
     return null
   }
 
