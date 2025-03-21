@@ -1,15 +1,9 @@
 'use client'
 
-import Link from 'next/link'
-import { useAuth } from '@/contexts/AuthContext'
-import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-} from "@/components/ui/card"
+import { useAuth } from '../contexts/AuthContext'
 
 export default function Navbar() {
-  const { userType, signOut } = useAuth()
+  const { signOut } = useAuth()
 
   return (
     <nav className="bg-white shadow">

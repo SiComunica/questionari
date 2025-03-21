@@ -1,12 +1,11 @@
 'use client'
 
 import { createContext, useContext, useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import Cookies from 'js-cookie'
 
 type UserType = 'admin' | 'operatore' | 'anonimo' | null
 
-export type AuthContextType = {
+type AuthContextType = {
   userType: UserType
   codiceAccesso: string | null
   signIn: (codice: string) => Promise<void>
@@ -26,19 +25,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [userType, setUserType] = useState<UserType>(null)
   const [codiceAccesso, setCodiceAccesso] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const router = useRouter()
 
-  // Carica lo stato iniziale dal localStorage
   useEffect(() => {
     const savedUserType = localStorage.getItem('userType') as UserType
     const savedCodice = localStorage.getItem('codiceAccesso')
     
-    console.log('Stato iniziale:', { savedUserType, savedCodice })
-    
-    if (savedUserType) {
+    if (savedUserType && savedCodice) {
       setUserType(savedUserType)
       setCodiceAccesso(savedCodice)
-      Cookies.set('userType', savedUserType, { path: '/' })
     }
     
     setIsLoading(false)
@@ -66,32 +60,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       throw new Error('Codice non valido')
     }
 
-    try {
-      console.log('Login con:', { tipo, codice })
-      
-      // Salviamo lo stato
-      localStorage.setItem('userType', tipo)
-      localStorage.setItem('codiceAccesso', codice)
-      Cookies.set('userType', tipo, { path: '/' })
-      setUserType(tipo)
-      setCodiceAccesso(codice)
+    localStorage.setItem('userType', tipo)
+    localStorage.setItem('codiceAccesso', codice)
+    setUserType(tipo)
+    setCodiceAccesso(codice)
 
-      // Aspettiamo un attimo per assicurarci che tutto sia salvato
-      await new Promise(resolve => setTimeout(resolve, 100))
-
-      console.log('Reindirizzamento a:', redirectPath)
-      window.location.href = redirectPath
-    } catch (error) {
-      console.error('Errore durante il login:', error)
-      throw error
-    }
+    await new Promise(resolve => setTimeout(resolve, 100))
+    window.location.href = redirectPath
   }
 
   const signOut = async () => {
-    console.log('Logout in corso...')
     localStorage.removeItem('userType')
     localStorage.removeItem('codiceAccesso')
-    Cookies.remove('userType', { path: '/' })
     setUserType(null)
     setCodiceAccesso(null)
     window.location.href = '/'
@@ -105,3 +85,5 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 }
 
 export const useAuth = () => useContext(AuthContext)
+
+export default AuthContext
