@@ -11,29 +11,46 @@ export default function LoginPage() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('Tentativo login con:', codice)
+    console.log('Form submitted')
+    console.log('Codice inserito:', codice)
 
-    // Login diretto senza context
-    if (codice === 'admin2025') {
-      localStorage.setItem('userType', 'admin')
-      window.location.href = '/admin/questionari/lista'
-    } 
-    else if (codice === 'anonimo9999') {
-      localStorage.setItem('userType', 'anonimo')
-      window.location.href = '/anonimo'
-    }
-    else if (codice.startsWith('operatore')) {
-      const num = parseInt(codice.replace('operatore', ''))
-      if (!isNaN(num) && num >= 1 && num <= 300) {
-        localStorage.setItem('userType', 'operatore')
-        window.location.href = '/operatore'
-      } else {
-        setError('Codice operatore non valido')
+    try {
+      if (codice === 'admin2025') {
+        console.log('Login come admin')
+        localStorage.setItem('userType', 'admin')
+        window.location.replace('/admin/questionari/lista')
+        return
+      } 
+      
+      if (codice === 'anonimo9999') {
+        console.log('Login come anonimo')
+        localStorage.setItem('userType', 'anonimo')
+        window.location.replace('/anonimo')
+        return
       }
-    }
-    else {
+      
+      if (codice.startsWith('operatore')) {
+        const num = parseInt(codice.replace('operatore', ''))
+        if (!isNaN(num) && num >= 1 && num <= 300) {
+          console.log('Login come operatore')
+          localStorage.setItem('userType', 'operatore')
+          window.location.replace('/operatore')
+          return
+        }
+      }
+
+      console.log('Codice non valido')
       setError('Codice di accesso non valido')
+    } catch (err) {
+      console.error('Errore durante il login:', err)
+      setError('Errore durante il login')
     }
+  }
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('Input cambiato:', e.target.value)
+    setCodice(e.target.value)
+    setError('') // Pulisce l'errore quando l'utente inizia a digitare
   }
 
   return (
@@ -48,9 +65,10 @@ export default function LoginPage() {
             <Input
               type="text"
               value={codice}
-              onChange={(e) => setCodice(e.target.value)}
+              onChange={handleInputChange}
               placeholder="Inserisci il codice di accesso"
               required
+              className="w-full p-2 border rounded"
             />
 
             {error && (
@@ -59,11 +77,19 @@ export default function LoginPage() {
               </div>
             )}
 
-            <Button type="submit" className="w-full">
+            <Button 
+              type="submit" 
+              className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+              onClick={() => console.log('Button clicked')}
+            >
               Accedi
             </Button>
           </div>
         </form>
+
+        <div className="mt-4 text-sm text-gray-500 text-center">
+          Stato corrente: {localStorage.getItem('userType') || 'non autenticato'}
+        </div>
       </Card>
     </div>
   )
