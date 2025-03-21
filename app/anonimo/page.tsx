@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import Link from 'next/link'
 
-export default function AnonimoDashboard() {
+export default function AnonimoPage() {
   const { userType } = useAuth()
 
   if (userType !== 'anonimo') {
@@ -12,8 +12,8 @@ export default function AnonimoDashboard() {
   }
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Area Questionari</h1>
+    <div className="p-8">
+      <h1 className="text-2xl font-bold mb-4">Dashboard Anonimo</h1>
       <div className="grid gap-6">
         <Card>
           <CardHeader>

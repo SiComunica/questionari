@@ -1,38 +1,44 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card } from '@/components/ui/card'
 
 export default function LoginPage() {
+  const router = useRouter()
   const [codice, setCodice] = useState('')
   const [error, setError] = useState('')
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    alert('Tentativo di login con codice: ' + codice) // Debug con alert
+    console.log('Tentativo di login con codice:', codice)
 
-    // Verifica il codice e reindirizza
-    if (codice === 'admin2025') {
-      alert('Login come admin') // Debug
-      window.location.href = '/admin/questionari/lista'
-    } 
-    else if (codice === 'anonimo9999') {
-      alert('Login come anonimo') // Debug
-      window.location.href = '/anonimo'
-    }
-    else if (codice.startsWith('operatore')) {
-      const num = parseInt(codice.replace('operatore', ''))
-      if (!isNaN(num) && num >= 1 && num <= 300) {
-        alert('Login come operatore') // Debug
-        window.location.href = '/operatore'
-      } else {
-        setError('Codice operatore non valido')
+    try {
+      if (codice === 'admin2025') {
+        console.log('Login come admin')
+        await router.push('/admin/questionari/lista')
+      } 
+      else if (codice === 'anonimo9999') {
+        console.log('Login come anonimo')
+        await router.push('/anonimo')
       }
-    }
-    else {
-      setError('Codice di accesso non valido')
+      else if (codice.startsWith('operatore')) {
+        const num = parseInt(codice.replace('operatore', ''))
+        if (!isNaN(num) && num >= 1 && num <= 300) {
+          console.log('Login come operatore')
+          await router.push('/operatore')
+        } else {
+          setError('Codice operatore non valido')
+        }
+      }
+      else {
+        setError('Codice di accesso non valido')
+      }
+    } catch (err) {
+      console.error('Errore durante il reindirizzamento:', err)
+      setError('Errore durante il login')
     }
   }
 

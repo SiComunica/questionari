@@ -7,7 +7,7 @@ import { supabase, type QuestionarioWithType } from '@/lib/supabaseClient'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 
-export default function ListaQuestionari() {
+export default function AdminListaPage() {
   const { userType } = useAuth()
   const router = useRouter()
   const [questionari, setQuestionari] = useState<QuestionarioWithType[]>([])
@@ -33,24 +33,27 @@ export default function ListaQuestionari() {
   }
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Questionari Compilati</h1>
-      <div className="grid gap-4">
-        {questionari.map((q) => (
-          <Card key={`${q.tipo}-${q.id}`} className="p-4">
-            <div className="flex justify-between items-center">
-              <div>
-                <h3 className="font-bold">Questionario {q.tipo}</h3>
-                <p>Compilato il: {new Date(q.created_at).toLocaleDateString()}</p>
+    <div className="p-8">
+      <h1 className="text-2xl font-bold mb-4">Dashboard Admin</h1>
+      <div className="p-6">
+        <h1 className="text-2xl font-bold mb-6">Questionari Compilati</h1>
+        <div className="grid gap-4">
+          {questionari.map((q) => (
+            <Card key={`${q.tipo}-${q.id}`} className="p-4">
+              <div className="flex justify-between items-center">
+                <div>
+                  <h3 className="font-bold">Questionario {q.tipo}</h3>
+                  <p>Compilato il: {new Date(q.created_at).toLocaleDateString()}</p>
+                </div>
+                <Button 
+                  onClick={() => router.push(`/admin/questionari/dettaglio?tipo=${q.tipo}&id=${q.id}`)}
+                >
+                  Visualizza
+                </Button>
               </div>
-              <Button 
-                onClick={() => router.push(`/admin/questionari/dettaglio?tipo=${q.tipo}&id=${q.id}`)}
-              >
-                Visualizza
-              </Button>
-            </div>
-          </Card>
-        ))}
+            </Card>
+          ))}
+        </div>
       </div>
     </div>
   )
