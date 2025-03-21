@@ -26,19 +26,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (codice: string) => {
     let tipo: UserType = null
-    let redirectUrl = 'https://questionari.vercel.app'
+    let redirectPath = '/'
 
     if (codice === 'admin2025') {
       tipo = 'admin'
-      redirectUrl = 'https://questionari.vercel.app/admin/questionari/lista'
+      redirectPath = '/admin/questionari'
     } else if (codice === 'anonimo9999') {
       tipo = 'anonimo'
-      redirectUrl = 'https://questionari.vercel.app/anonimo'
+      redirectPath = '/anonimo'
     } else if (codice.startsWith('operatore')) {
       const num = parseInt(codice.replace('operatore', ''))
       if (!isNaN(num) && num >= 1 && num <= 300) {
         tipo = 'operatore'
-        redirectUrl = 'https://questionari.vercel.app/operatore'
+        redirectPath = '/operatore'
       }
     }
 
@@ -46,15 +46,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       throw new Error('Codice non valido')
     }
 
-    // Prima salviamo lo stato
+    // Debug info
+    console.log('Tipo utente:', tipo)
+    console.log('Percorso di reindirizzamento:', redirectPath)
+    console.log('URL corrente:', window.location.href)
+
+    // Salva lo stato
     localStorage.setItem('userType', tipo)
     localStorage.setItem('codiceAccesso', codice)
     setUserType(tipo)
     setCodiceAccesso(codice)
 
-    // Poi forziamo il reindirizzamento
-    console.log('Reindirizzamento a:', redirectUrl)
-    window.location.replace(redirectUrl)
+    // Prova prima con router.push
+    try {
+      router.push(redirectPath)
+      console.log('Router push completato')
+    } catch (error) {
+      console.error('Errore con router.push:', error)
+      // Fallback a location.href
+      window.location.href = redirectPath
+    }
   }
 
   const signOut = async () => {
@@ -62,7 +73,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem('codiceAccesso')
     setUserType(null)
     setCodiceAccesso(null)
-    window.location.replace('https://questionari.vercel.app')
+    router.push('/')
   }
 
   return (
