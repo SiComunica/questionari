@@ -14,18 +14,25 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (!codice) return
+    console.log('Form submitted') // Debug
+
+    if (!codice) {
+      setError('Inserisci un codice')
+      return
+    }
 
     setLoading(true)
     setError('')
 
     try {
+      console.log('Chiamata signIn con:', codice) // Debug
       await signIn(codice)
-      // Il reindirizzamento viene gestito nel signIn
+      console.log('SignIn completato') // Debug
     } catch (err) {
       console.error('Errore login:', err)
       setError('Codice di accesso non valido')
-      setLoading(false)
+    } finally {
+      // Non resettiamo loading qui perché verremo reindirizzati
     }
   }
 
@@ -59,8 +66,8 @@ export default function LoginPage() {
 
             <Button 
               type="submit" 
-              disabled={loading || !codice}
-              className="w-full bg-blue-600 hover:bg-blue-700"
+              disabled={loading}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white"
             >
               {loading ? 'Accesso in corso...' : 'Accedi'}
             </Button>

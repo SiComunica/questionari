@@ -35,40 +35,50 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const signIn = async (codice: string) => {
-    let tipo: UserType = null
+    console.log('Tentativo di login con:', codice) // Debug
 
-    if (codice === 'admin2025') {
-      tipo = 'admin'
-    } else if (codice === 'anonimo9999') {
-      tipo = 'anonimo'
-    } else if (codice.startsWith('operatore')) {
-      const num = parseInt(codice.replace('operatore', ''))
-      if (!isNaN(num) && num >= 1 && num <= 300) {
-        tipo = 'operatore'
+    try {
+      let tipo: UserType = null
+      let redirectUrl = '/'
+
+      if (codice === 'admin2025') {
+        tipo = 'admin'
+        redirectUrl = '/admin/questionari/lista'
+      } else if (codice === 'anonimo9999') {
+        tipo = 'anonimo'
+        redirectUrl = '/anonimo'
+      } else if (codice.startsWith('operatore')) {
+        const num = parseInt(codice.replace('operatore', ''))
+        if (!isNaN(num) && num >= 1 && num <= 300) {
+          tipo = 'operatore'
+          redirectUrl = '/operatore'
+        }
       }
-    }
 
-    if (!tipo) {
-      throw new Error('Codice non valido')
-    }
+      if (!tipo) {
+        console.log('Codice non valido') // Debug
+        throw new Error('Codice non valido')
+      }
 
-    // Salva lo stato
-    localStorage.setItem('userType', tipo)
-    localStorage.setItem('codiceAccesso', codice)
-    setUserType(tipo)
-    setCodiceAccesso(codice)
+      console.log('Tipo utente rilevato:', tipo) // Debug
 
-    // Forza il reindirizzamento con window.location
-    switch (tipo) {
-      case 'admin':
-        window.location.href = '/admin/questionari/lista'
-        break
-      case 'operatore':
-        window.location.href = '/operatore'
-        break
-      case 'anonimo':
-        window.location.href = '/anonimo'
-        break
+      // Salva lo stato
+      localStorage.setItem('userType', tipo)
+      localStorage.setItem('codiceAccesso', codice)
+      
+      setUserType(tipo)
+      setCodiceAccesso(codice)
+
+      console.log('Reindirizzamento a:', redirectUrl) // Debug
+      
+      // Forza il reindirizzamento
+      setTimeout(() => {
+        window.location.href = redirectUrl
+      }, 100)
+
+    } catch (error) {
+      console.error('Errore nel signIn:', error)
+      throw error
     }
   }
 
