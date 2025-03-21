@@ -25,34 +25,52 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter()
 
   const signIn = async (codice: string) => {
+    console.log('Verifica codice:', codice) // Debug log
+
     try {
-      // Verifica il codice di accesso
+      let tipo: UserType = null
+
+      // Verifica codice admin
       if (codice === 'admin2025') {
-        setUserType('admin')
-        setCodiceAccesso(codice)
-        router.push('/admin/questionari/lista')
-        return
+        tipo = 'admin'
+      }
+      // Verifica codice anonimo
+      else if (codice === 'anonimo9999') {
+        tipo = 'anonimo'
+      }
+      // Verifica codice operatore
+      else if (codice.startsWith('operatore')) {
+        const num = parseInt(codice.replace('operatore', ''))
+        if (!isNaN(num) && num >= 1 && num <= 300) {
+          tipo = 'operatore'
+        }
       }
 
-      if (codice === 'anonimo9999') {
-        setUserType('anonimo')
-        setCodiceAccesso(codice)
-        router.push('/anonimo')
-        return
+      if (!tipo) {
+        throw new Error('Codice di accesso non valido')
       }
 
-      // Verifica se è un codice operatore (da 1 a 300)
-      const operatoreNum = parseInt(codice.replace('operatore', ''))
-      if (codice.startsWith('operatore') && operatoreNum >= 1 && operatoreNum <= 300) {
-        setUserType('operatore')
-        setCodiceAccesso(codice)
-        router.push('/operatore')
-        return
+      console.log('Tipo utente rilevato:', tipo) // Debug log
+
+      setUserType(tipo)
+      setCodiceAccesso(codice)
+
+      // Reindirizzamento
+      switch (tipo) {
+        case 'admin':
+          router.push('/admin/questionari/lista')
+          break
+        case 'operatore':
+          router.push('/operatore')
+          break
+        case 'anonimo':
+          router.push('/anonimo')
+          break
       }
 
-      throw new Error('Codice di accesso non valido')
+      console.log('Reindirizzamento completato') // Debug log
     } catch (error) {
-      console.error('Errore durante il login:', error)
+      console.error('Errore nel signIn:', error)
       throw error
     }
   }
