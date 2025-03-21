@@ -21,64 +21,70 @@ export default function QuestionarioPage() {
   console.log('QuestionarioPage render:', { userType, authLoading, pageLoading })
 
   useEffect(() => {
-    const checkAuth = async () => {
-      console.log('Controllo auth:', { userType, authLoading })
-      
-      if (!authLoading && (!userType || userType !== 'admin')) {
-        console.log('Utente non autorizzato, reindirizzamento...')
-        router.push('/')
-        return
-      }
-
-      if (!authLoading && userType === 'admin') {
-        try {
-          // Dati di esempio con tipo corretto
-          const datiQuestionari: Questionario[] = [
-            {
-              id: '1',
-              tipo: 'giovani', // Specificato come literal type
-              compilatore: 'anonimo123',
-              dataCompilazione: '2024-03-20'
-            },
-            {
-              id: '2',
-              tipo: 'operatori', // Specificato come literal type
-              compilatore: 'operatore1',
-              dataCompilazione: '2024-03-19'
-            },
-            {
-              id: '3',
-              tipo: 'strutture', // Specificato come literal type
-              compilatore: 'operatore2',
-              dataCompilazione: '2024-03-18'
-            }
-          ]
-
-          setQuestionari(datiQuestionari)
-          setPageLoading(false)
-          console.log('Questionari caricati:', datiQuestionari)
-        } catch (error) {
-          console.error('Errore caricamento questionari:', error)
-          setPageLoading(false)
-        }
-      }
+    // Verifica immediata se l'utente non è admin
+    if (!authLoading && userType !== 'admin') {
+      console.log('Accesso non autorizzato, reindirizzamento...')
+      router.replace('/') // Usiamo replace invece di push
+      return
     }
 
-    checkAuth()
+    // Carica i dati solo se l'utente è admin
+    if (!authLoading && userType === 'admin') {
+      console.log('Caricamento dati per admin...')
+      
+      // Dati di esempio
+      const datiQuestionari: Questionario[] = [
+        {
+          id: '1',
+          tipo: 'giovani',
+          compilatore: 'anonimo123',
+          dataCompilazione: '2024-03-20'
+        },
+        {
+          id: '2',
+          tipo: 'operatori',
+          compilatore: 'operatore1',
+          dataCompilazione: '2024-03-19'
+        },
+        {
+          id: '3',
+          tipo: 'strutture',
+          compilatore: 'operatore2',
+          dataCompilazione: '2024-03-18'
+        }
+      ]
+
+      setQuestionari(datiQuestionari)
+      setPageLoading(false)
+      console.log('Dati caricati con successo')
+    }
   }, [userType, authLoading, router])
 
+  // Mostra un messaggio di caricamento più informativo
   if (authLoading || pageLoading) {
     return (
       <div className="min-h-screen bg-gray-100">
         <div className="flex items-center justify-center h-screen">
-          <div className="text-xl font-semibold">
-            {authLoading ? 'Verifica accesso...' : 'Caricamento questionari...'}
+          <div className="text-center">
+            <div className="text-xl font-semibold mb-2">
+              {authLoading ? 'Verifica accesso in corso...' : 'Caricamento dashboard admin...'}
+            </div>
+            <div className="text-gray-500">
+              {userType ? `Utente: ${userType}` : 'Verifica credenziali...'}
+            </div>
           </div>
         </div>
       </div>
     )
   }
 
+  // Se non siamo in loading ma non siamo admin, reindirizza
+  if (!authLoading && userType !== 'admin') {
+    router.replace('/')
+    return null
+  }
+
+  // Rendering della dashboard solo per admin
   return (
     <div className="min-h-screen bg-gray-100">
       <Navbar />
