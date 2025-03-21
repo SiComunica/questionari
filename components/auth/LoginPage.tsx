@@ -1,13 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { useAuth } from '@/contexts/AuthContext'
 
 export default function LoginPage() {
   const [codice, setCodice] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const { signIn } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -15,12 +13,35 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      console.log('Tentativo di login con codice:', codice)
-      await signIn(codice)
-      // Rimuoviamo il reindirizzamento da qui, lo fa già l'AuthContext
+      console.log('Tentativo di login con:', codice)
+
+      // Gestione diretta del login
+      if (codice === 'admin2025') {
+        console.log('Login admin, reindirizzamento...')
+        window.location.href = '/admin/questionari/lista'
+        return
+      }
+
+      if (codice === 'anonimo9999') {
+        console.log('Login anonimo, reindirizzamento...')
+        window.location.href = '/anonimo'
+        return
+      }
+
+      if (codice.startsWith('operatore')) {
+        const num = parseInt(codice.replace('operatore', ''))
+        if (!isNaN(num) && num >= 1 && num <= 300) {
+          console.log('Login operatore, reindirizzamento...')
+          window.location.href = '/operatore'
+          return
+        }
+      }
+
+      throw new Error('Codice non valido')
     } catch (err) {
-      console.error('Errore durante il login:', err)
+      console.error('Errore:', err)
       setError('Codice di accesso non valido')
+    } finally {
       setLoading(false)
     }
   }
