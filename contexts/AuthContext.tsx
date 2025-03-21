@@ -2,7 +2,6 @@
 
 import { createContext, useContext, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabaseClient'
 
 type UserType = 'admin' | 'operatore' | 'anonimo' | null
 
@@ -28,32 +27,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signIn = async (codice: string) => {
     try {
       // Verifica il codice di accesso
-      const { data, error } = await supabase
-        .from('utenti')
-        .select('tipo')
-        .eq('codice_accesso', codice)
-        .single()
-
-      if (error || !data) {
-        throw new Error('Codice di accesso non valido')
+      if (codice === 'admin2025') {
+        setUserType('admin')
+        setCodiceAccesso(codice)
+        router.push('/admin/questionari/lista')
+        return
       }
 
-      // Imposta il tipo utente e il codice
-      setUserType(data.tipo as UserType)
-      setCodiceAccesso(codice)
-
-      // Reindirizza in base al tipo utente
-      switch (data.tipo) {
-        case 'admin':
-          router.push('/admin/questionari/lista')
-          break
-        case 'operatore':
-          router.push('/operatore')
-          break
-        case 'anonimo':
-          router.push('/anonimo')
-          break
+      if (codice === 'anonimo9999') {
+        setUserType('anonimo')
+        setCodiceAccesso(codice)
+        router.push('/anonimo')
+        return
       }
+
+      // Verifica se è un codice operatore (da 1 a 300)
+      const operatoreNum = parseInt(codice.replace('operatore', ''))
+      if (codice.startsWith('operatore') && operatoreNum >= 1 && operatoreNum <= 300) {
+        setUserType('operatore')
+        setCodiceAccesso(codice)
+        router.push('/operatore')
+        return
+      }
+
+      throw new Error('Codice di accesso non valido')
     } catch (error) {
       console.error('Errore durante il login:', error)
       throw error
