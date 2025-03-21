@@ -2,12 +2,14 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card } from '@/components/ui/card'
 
 export default function LoginPage() {
   const router = useRouter()
+  const { signIn } = useAuth()
   const [codice, setCodice] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -25,22 +27,16 @@ export default function LoginPage() {
     setError('')
 
     try {
-      // Verifica diretta del codice
+      await signIn(codice)
+      
+      // Il reindirizzamento verrà gestito dal context
       if (codice === 'admin2025') {
-        localStorage.setItem('userType', 'admin')
-        localStorage.setItem('codiceAccesso', codice)
         router.push('/admin/questionari/lista')
-      } 
-      else if (codice === 'anonimo9999') {
-        localStorage.setItem('userType', 'anonimo')
-        localStorage.setItem('codiceAccesso', codice)
+      } else if (codice === 'anonimo9999') {
         router.push('/anonimo')
-      } 
-      else if (codice.startsWith('operatore')) {
+      } else if (codice.startsWith('operatore')) {
         const num = parseInt(codice.replace('operatore', ''))
         if (!isNaN(num) && num >= 1 && num <= 300) {
-          localStorage.setItem('userType', 'operatore')
-          localStorage.setItem('codiceAccesso', codice)
           router.push('/operatore')
         } else {
           throw new Error('Codice operatore non valido')
