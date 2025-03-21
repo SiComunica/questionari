@@ -1,11 +1,13 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card } from '@/components/ui/card'
 
 export default function LoginPage() {
+  const router = useRouter()
   const [codice, setCodice] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -27,19 +29,19 @@ export default function LoginPage() {
       if (codice === 'admin2025') {
         localStorage.setItem('userType', 'admin')
         localStorage.setItem('codiceAccesso', codice)
-        window.location.href = 'https://questionari.vercel.app/admin/questionari/lista'
+        router.push('/admin/questionari/lista')
       } 
       else if (codice === 'anonimo9999') {
         localStorage.setItem('userType', 'anonimo')
         localStorage.setItem('codiceAccesso', codice)
-        window.location.href = 'https://questionari.vercel.app/anonimo'
+        router.push('/anonimo')
       } 
       else if (codice.startsWith('operatore')) {
         const num = parseInt(codice.replace('operatore', ''))
         if (!isNaN(num) && num >= 1 && num <= 300) {
           localStorage.setItem('userType', 'operatore')
           localStorage.setItem('codiceAccesso', codice)
-          window.location.href = 'https://questionari.vercel.app/operatore'
+          router.push('/operatore')
         } else {
           throw new Error('Codice operatore non valido')
         }
