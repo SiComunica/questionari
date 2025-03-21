@@ -1,37 +1,49 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
 
 export default function LoginPage() {
   const [codice, setCodice] = useState('')
   const [error, setError] = useState('')
-  const [destinationUrl, setDestinationUrl] = useState('')
 
-  const checkCode = () => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    // Verifica il codice e reindirizza
     if (codice === 'admin2025') {
-      setDestinationUrl('/admin/questionari/lista')
-      return true
+      // Crea e invia un form
+      const form = document.createElement('form')
+      form.style.display = 'none'
+      form.method = 'GET'
+      form.action = '/admin/questionari/lista'
+      
+      // Aggiungi il codice come parametro
+      const input = document.createElement('input')
+      input.type = 'hidden'
+      input.name = 'code'
+      input.value = codice
+      form.appendChild(input)
+      
+      // Invia il form
+      document.body.appendChild(form)
+      form.submit()
+      return
     }
+    
     if (codice === 'anonimo9999') {
-      setDestinationUrl('/anonimo')
-      return true
+      window.location.replace('/anonimo')
+      return
     }
+    
     if (codice.startsWith('operatore')) {
       const num = parseInt(codice.replace('operatore', ''))
       if (!isNaN(num) && num >= 1 && num <= 300) {
-        setDestinationUrl('/operatore')
-        return true
+        window.location.replace('/operatore')
+        return
       }
     }
+    
     setError('Codice di accesso non valido')
-    return false
-  }
-
-  const handleRedirect = () => {
-    if (destinationUrl) {
-      window.location.href = destinationUrl
-    }
   }
 
   return (
@@ -46,7 +58,7 @@ export default function LoginPage() {
           )}
         </div>
         
-        <div className="mt-8 space-y-6">
+        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
           <input
             type="text"
             value={codice}
@@ -58,37 +70,21 @@ export default function LoginPage() {
             placeholder="Inserisci il codice di accesso"
           />
 
-          {destinationUrl ? (
-            <button
-              onClick={handleRedirect}
-              className="w-full py-2 px-4 bg-green-600 text-white rounded-md hover:bg-green-700"
-            >
-              Clicca qui per entrare
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={checkCode}
-              className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-            >
-              Verifica codice
-            </button>
-          )}
-        </div>
+          <button
+            type="submit"
+            className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          >
+            Accedi
+          </button>
+        </form>
 
         <div className="mt-4 text-sm text-gray-500">
           <div>Codice inserito: {codice}</div>
-          {destinationUrl && (
-            <div>
-              URL di destinazione: {destinationUrl}
-              <Link 
-                href={destinationUrl}
-                className="ml-2 text-blue-600 hover:underline"
-              >
-                (link diretto)
-              </Link>
-            </div>
-          )}
+          <div>
+            <a href="/admin/questionari/lista" className="text-blue-600 hover:underline">
+              Vai direttamente alla dashboard
+            </a>
+          </div>
         </div>
       </div>
     </div>
