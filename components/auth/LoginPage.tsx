@@ -11,34 +11,25 @@ export default function LoginPage() {
     
     // Verifica il codice e reindirizza
     if (codice === 'admin2025') {
-      // Crea e invia un form
-      const form = document.createElement('form')
-      form.style.display = 'none'
-      form.method = 'GET'
-      form.action = '/admin/questionari/lista'
-      
-      // Aggiungi il codice come parametro
-      const input = document.createElement('input')
-      input.type = 'hidden'
-      input.name = 'code'
-      input.value = codice
-      form.appendChild(input)
-      
-      // Invia il form
-      document.body.appendChild(form)
-      form.submit()
+      try {
+        // Reindirizzamento diretto
+        window.location.href = '/admin/questionari/lista'
+      } catch (e) {
+        console.error('Errore durante il reindirizzamento:', e)
+        setError('Errore durante l\'accesso')
+      }
       return
     }
     
     if (codice === 'anonimo9999') {
-      window.location.replace('/anonimo')
+      window.location.href = '/anonimo'
       return
     }
     
     if (codice.startsWith('operatore')) {
       const num = parseInt(codice.replace('operatore', ''))
       if (!isNaN(num) && num >= 1 && num <= 300) {
-        window.location.replace('/operatore')
+        window.location.href = '/operatore'
         return
       }
     }
@@ -54,24 +45,46 @@ export default function LoginPage() {
             Accedi al questionario
           </h2>
           {error && (
-            <div className="mt-3 text-red-500 text-center">{error}</div>
+            <div className="mt-3 text-red-500 text-center" role="alert">
+              {error}
+            </div>
           )}
         </div>
         
-        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-          <input
-            type="text"
-            value={codice}
-            onChange={(e) => {
-              setCodice(e.target.value)
-              setError('')
-            }}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
-            placeholder="Inserisci il codice di accesso"
-          />
+        <form 
+          onSubmit={handleSubmit} 
+          className="mt-8 space-y-6"
+          name="loginForm"
+          id="loginForm"
+        >
+          <div>
+            <label 
+              htmlFor="codiceAccesso" 
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
+              Codice di accesso
+            </label>
+            <input
+              id="codiceAccesso"
+              name="codiceAccesso"
+              type="text"
+              value={codice}
+              onChange={(e) => {
+                setCodice(e.target.value)
+                setError('')
+              }}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              placeholder="Inserisci il codice di accesso"
+              required
+              aria-required="true"
+              aria-describedby={error ? "error-message" : undefined}
+            />
+          </div>
 
           <button
             type="submit"
+            name="submit"
+            id="submit-button"
             className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700"
           >
             Accedi
@@ -80,11 +93,11 @@ export default function LoginPage() {
 
         <div className="mt-4 text-sm text-gray-500">
           <div>Codice inserito: {codice}</div>
-          <div>
-            <a href="/admin/questionari/lista" className="text-blue-600 hover:underline">
-              Vai direttamente alla dashboard
-            </a>
-          </div>
+          {error && (
+            <div id="error-message" className="text-red-500">
+              {error}
+            </div>
+          )}
         </div>
       </div>
     </div>
