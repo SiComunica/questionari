@@ -57,15 +57,17 @@ export default function VisualizzaQuestionarioPage() {
     )
   }
 
-  if (!questionario) {
+  if (!questionario || !tipo) {
     return null
   }
+
+  const tipoCapitalized = tipo.charAt(0).toUpperCase() + tipo.slice(1)
 
   return (
     <div className="container mx-auto p-4">
       <Card className="p-6">
         <h1 className="text-2xl font-bold mb-6">
-          Visualizza Questionario {tipo.charAt(0).toUpperCase() + tipo.slice(1)}
+          Visualizza Questionario {tipoCapitalized}
         </h1>
         
         {tipo === 'giovani' && (
