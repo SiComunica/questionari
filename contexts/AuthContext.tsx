@@ -11,18 +11,21 @@ export type AuthContextType = {
   codiceAccesso: string | null
   signIn: (codice: string) => Promise<void>
   signOut: () => Promise<void>
+  isLoading: boolean
 }
 
 const AuthContext = createContext<AuthContextType>({
   userType: null,
   codiceAccesso: null,
   signIn: async () => {},
-  signOut: async () => {}
+  signOut: async () => {},
+  isLoading: true
 })
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [userType, setUserType] = useState<UserType>(null)
   const [codiceAccesso, setCodiceAccesso] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
 
   // Carica lo stato iniziale dal localStorage
@@ -37,6 +40,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setCodiceAccesso(savedCodice)
       Cookies.set('userType', savedUserType, { path: '/' })
     }
+    
+    setIsLoading(false)
   }, [])
 
   const signIn = async (codice: string) => {
@@ -93,7 +98,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ userType, codiceAccesso, signIn, signOut }}>
+    <AuthContext.Provider value={{ userType, codiceAccesso, signIn, signOut, isLoading }}>
       {children}
     </AuthContext.Provider>
   )
