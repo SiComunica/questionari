@@ -7,7 +7,8 @@ import { supabase } from '@/lib/supabaseClient'
 import { Card } from '@/components/ui/card'
 import QuestionarioGiovaniNew from '@/components/questionari/QuestionarioGiovaniNew'
 
-export default function VisualizzaQuestionarioPage() {
+// Creiamo un componente client separato per la logica
+function QuestionarioViewer() {
   const { userType, codiceAccesso } = useAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -76,9 +77,22 @@ export default function VisualizzaQuestionarioPage() {
             initialData={questionario} 
           />
         )}
-        
-        {/* Aggiungi altri tipi di questionari qui */}
       </Card>
     </div>
   )
+}
+
+// Componente principale che fa da wrapper
+export default function VisualizzaQuestionarioPage() {
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  if (!isMounted) {
+    return null
+  }
+
+  return <QuestionarioViewer />
 } 
