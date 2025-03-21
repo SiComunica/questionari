@@ -15,12 +15,12 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      console.log('Tentativo di login con:', codice)
+      console.log('Tentativo di login con codice:', codice)
       await signIn(codice)
+      console.log('Login completato, reindirizzamento in corso...')
     } catch (err) {
-      console.error('Errore login:', err)
+      console.error('Errore durante il login:', err)
       setError('Codice di accesso non valido')
-    } finally {
       setLoading(false)
     }
   }
@@ -32,6 +32,9 @@ export default function LoginPage() {
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Accedi al questionario
           </h2>
+          {error && (
+            <div className="mt-3 text-red-500 text-sm text-center">{error}</div>
+          )}
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">
@@ -52,10 +55,6 @@ export default function LoginPage() {
               />
             </div>
           </div>
-
-          {error && (
-            <div className="text-red-500 text-sm text-center">{error}</div>
-          )}
 
           <div>
             <button
