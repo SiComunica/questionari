@@ -9,37 +9,40 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError('')
-    setLoading(true)
-
+    console.log('Form sottomesso')
+    
     try {
-      console.log('Tentativo di login con:', codice)
+      setError('')
+      setLoading(true)
+      console.log('Tentativo di login con codice:', codice)
 
-      // Gestione diretta del login
+      // Verifica del codice
       if (codice === 'admin2025') {
-        console.log('Login admin, reindirizzamento...')
-        window.location.href = '/admin/questionari/lista'
+        console.log('Codice admin valido, reindirizzamento...')
+        // Forza il reindirizzamento
+        document.location.replace('/admin/questionari/lista')
         return
       }
 
       if (codice === 'anonimo9999') {
-        console.log('Login anonimo, reindirizzamento...')
-        window.location.href = '/anonimo'
+        console.log('Codice anonimo valido, reindirizzamento...')
+        document.location.replace('/anonimo')
         return
       }
 
       if (codice.startsWith('operatore')) {
         const num = parseInt(codice.replace('operatore', ''))
         if (!isNaN(num) && num >= 1 && num <= 300) {
-          console.log('Login operatore, reindirizzamento...')
-          window.location.href = '/operatore'
+          console.log('Codice operatore valido, reindirizzamento...')
+          document.location.replace('/operatore')
           return
         }
       }
 
+      console.log('Codice non valido')
       throw new Error('Codice non valido')
     } catch (err) {
-      console.error('Errore:', err)
+      console.error('Errore durante il login:', err)
       setError('Codice di accesso non valido')
     } finally {
       setLoading(false)
@@ -75,11 +78,17 @@ export default function LoginPage() {
               type="submit"
               disabled={loading}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              onClick={() => console.log('Button clicked')}
             >
               {loading ? 'Accesso in corso...' : 'Accedi'}
             </button>
           </div>
         </form>
+
+        {/* Debug info */}
+        <div className="mt-4 text-sm text-gray-500">
+          Codice inserito: {codice}
+        </div>
       </div>
     </div>
   )
