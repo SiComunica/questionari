@@ -36,7 +36,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUserType('admin')
         setCodiceAccesso(codice)
         console.log('Login admin riuscito, reindirizzamento...')
-        router.push('/admin/questionario')
+        await router.replace('/admin/questionario')
         return
       } 
       
@@ -44,7 +44,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUserType('anonimo')
         setCodiceAccesso(codice)
         console.log('Login anonimo riuscito, reindirizzamento...')
-        router.push('/anonimo')
+        await router.replace('/anonimo')
         return
       } 
       
@@ -54,7 +54,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUserType('operatore')
           setCodiceAccesso(codice)
           console.log('Login operatore riuscito, reindirizzamento...')
-          router.push('/operatore')
+          await router.replace('/operatore')
           return
         }
       }
@@ -70,7 +70,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = async () => {
     setUserType(null)
     setCodiceAccesso(null)
-    router.push('/')
+    await router.replace('/')
   }
 
   return (

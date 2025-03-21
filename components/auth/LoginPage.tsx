@@ -2,10 +2,8 @@
 
 import { useState } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
-import { useRouter } from 'next/navigation'
 
 export default function LoginPage() {
-  const router = useRouter()
   const [codice, setCodice] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -19,15 +17,7 @@ export default function LoginPage() {
     try {
       console.log('Tentativo di login con codice:', codice)
       await signIn(codice)
-      
-      // Forza il reindirizzamento in base al codice
-      if (codice === 'admin2025') {
-        router.push('/admin/questionario')
-      } else if (codice === 'anonimo9999') {
-        router.push('/anonimo')
-      } else if (codice.startsWith('operatore')) {
-        router.push('/operatore')
-      }
+      // Rimuoviamo il reindirizzamento da qui, lo fa già l'AuthContext
     } catch (err) {
       console.error('Errore durante il login:', err)
       setError('Codice di accesso non valido')
