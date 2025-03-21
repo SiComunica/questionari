@@ -12,7 +12,10 @@ export default function LoginPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const handleLogin = async () => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    console.log('Form submitted') // Debug log
+    
     if (!codice) return
     
     setError('')
@@ -41,19 +44,15 @@ export default function LoginPage() {
           </p>
         </div>
         
-        <div className="mt-8 space-y-6">
+        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
           <div>
             <Input
               type="text"
               value={codice}
               onChange={(e) => setCodice(e.target.value)}
-              onKeyPress={(e) => {
-                if (e.key === 'Enter') {
-                  handleLogin()
-                }
-              }}
               placeholder="Codice di accesso"
               disabled={loading}
+              required
               className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
             />
           </div>
@@ -66,14 +65,14 @@ export default function LoginPage() {
 
           <div>
             <Button
-              onClick={handleLogin}
+              type="submit"
               disabled={loading || !codice}
               className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               {loading ? 'Accesso in corso...' : 'Accedi'}
             </Button>
           </div>
-        </div>
+        </form>
       </Card>
     </div>
   )
