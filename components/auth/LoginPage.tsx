@@ -12,73 +12,46 @@ export default function LoginPage() {
     console.log('LoginPage montato')
   }, [])
 
-  const redirect = (path: string) => {
-    console.log('Tentativo di reindirizzamento a:', path)
-    try {
-      // Prova tutti i metodi di reindirizzamento possibili
-      window.location.assign(path)
-      console.log('Reindirizzamento con assign')
-    } catch (e) {
-      console.error('Errore con assign:', e)
-      try {
-        window.location.href = path
-        console.log('Reindirizzamento con href')
-      } catch (e) {
-        console.error('Errore con href:', e)
-        try {
-          window.location.replace(path)
-          console.log('Reindirizzamento con replace')
-        } catch (e) {
-          console.error('Errore con replace:', e)
-        }
-      }
-    }
-  }
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log('Form sottomesso')
+  const handleClick = () => {
+    console.log('Bottone cliccato')
+    console.log('Codice:', codice)
     
-    if (loading) {
-      console.log('Già in caricamento, ignoro')
+    if (loading) return
+    setLoading(true)
+    
+    // Verifica diretta del codice
+    if (codice === 'admin2025') {
+      console.log('Codice admin valido')
+      // Prova tutti i metodi di reindirizzamento
+      try {
+        const baseUrl = window.location.origin
+        const targetUrl = `${baseUrl}/admin/questionari/lista`
+        console.log('Reindirizzamento a:', targetUrl)
+        window.location.href = targetUrl
+      } catch (e) {
+        console.error('Errore reindirizzamento:', e)
+      }
       return
     }
     
-    setLoading(true)
-    setError('')
-    
-    console.log('Verifica codice:', codice)
-
-    try {
-      if (codice === 'admin2025') {
-        console.log('Codice admin valido')
-        redirect('/admin/questionari/lista')
-        return
-      } 
-      
-      if (codice === 'anonimo9999') {
-        console.log('Codice anonimo valido')
-        redirect('/anonimo')
-        return
-      } 
-      
-      if (codice.startsWith('operatore')) {
-        const num = parseInt(codice.replace('operatore', ''))
-        if (!isNaN(num) && num >= 1 && num <= 300) {
-          console.log('Codice operatore valido')
-          redirect('/operatore')
-          return
-        }
-      }
-
-      console.log('Codice non valido')
-      setError('Codice di accesso non valido')
-    } catch (e) {
-      console.error('Errore durante la verifica:', e)
-      setError('Errore durante la verifica del codice')
-    } finally {
-      setLoading(false)
+    if (codice === 'anonimo9999') {
+      const baseUrl = window.location.origin
+      window.location.href = `${baseUrl}/anonimo`
+      return
     }
+    
+    if (codice.startsWith('operatore')) {
+      const num = parseInt(codice.replace('operatore', ''))
+      if (!isNaN(num) && num >= 1 && num <= 300) {
+        const baseUrl = window.location.origin
+        window.location.href = `${baseUrl}/operatore`
+        return
+      }
+    }
+
+    console.log('Codice non valido')
+    setError('Codice di accesso non valido')
+    setLoading(false)
   }
 
   // Log quando il componente viene aggiornato
@@ -98,7 +71,7 @@ export default function LoginPage() {
           )}
         </div>
         
-        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+        <div className="mt-8 space-y-6">
           <input
             type="text"
             value={codice}
@@ -109,14 +82,14 @@ export default function LoginPage() {
           />
 
           <button
-            type="submit"
+            type="button"
             disabled={loading}
+            onClick={handleClick}
             className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-            onClick={() => console.log('Click sul bottone')}
           >
             {loading ? 'Accesso in corso...' : 'Accedi'}
           </button>
-        </form>
+        </div>
 
         <div className="mt-4 text-sm text-gray-500">
           <div>Codice inserito: {codice}</div>
