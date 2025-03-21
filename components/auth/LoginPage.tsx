@@ -18,14 +18,14 @@ export default function LoginPage() {
     // Verifica codice
     if (codice === 'admin2025') {
       console.log('Reindirizzamento admin...')
-      // Usa path relativo
-      window.location.href = '/admin/questionari/lista'
+      // Forza il reindirizzamento
+      window.location.assign('/admin/questionari/lista')
       return
     }
 
     if (codice === 'anonimo9999') {
       console.log('Reindirizzamento anonimo...')
-      window.location.href = '/anonimo'
+      window.location.assign('/anonimo')
       return
     }
 
@@ -33,7 +33,7 @@ export default function LoginPage() {
       const num = parseInt(codice.replace('operatore', ''))
       if (!isNaN(num) && num >= 1 && num <= 300) {
         console.log('Reindirizzamento operatore...')
-        window.location.href = '/operatore'
+        window.location.assign('/operatore')
         return
       }
     }
@@ -78,6 +78,7 @@ export default function LoginPage() {
               type="submit"
               disabled={loading}
               className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              onClick={handleClick}
             >
               {loading ? 'Accesso in corso...' : 'Accedi'}
             </button>
@@ -88,6 +89,7 @@ export default function LoginPage() {
         <div className="mt-4 text-sm text-gray-500">
           <div>Codice inserito: {codice}</div>
           <div>Stato: {loading ? 'Caricamento...' : 'Pronto'}</div>
+          <div>URL corrente: {typeof window !== 'undefined' ? window.location.pathname : ''}</div>
         </div>
       </div>
     </div>
