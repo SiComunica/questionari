@@ -1,6 +1,7 @@
 'use client'
 
 import { createContext, useContext, useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 type UserType = 'admin' | 'operatore' | 'anonimo' | null
 
@@ -21,6 +22,7 @@ const AuthContext = createContext<AuthContextType>({
 })
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const router = useRouter()
   const [userType, setUserType] = useState<UserType>(null)
   const [codiceAccesso, setCodiceAccesso] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -31,22 +33,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     try {
       if (codice === 'admin2025') {
-        console.log('Reindirizzamento admin...')
-        window.location.href = '/admin/questionario'
+        setUserType('admin')
+        setCodiceAccesso(codice)
+        console.log('Login admin riuscito, reindirizzamento...')
+        router.push('/admin/questionario')
         return
       } 
       
       if (codice === 'anonimo9999') {
-        console.log('Reindirizzamento anonimo...')
-        window.location.href = '/anonimo'
+        setUserType('anonimo')
+        setCodiceAccesso(codice)
+        console.log('Login anonimo riuscito, reindirizzamento...')
+        router.push('/anonimo')
         return
       } 
       
       if (codice.startsWith('operatore')) {
         const num = parseInt(codice.replace('operatore', ''))
         if (!isNaN(num) && num >= 1 && num <= 300) {
-          console.log('Reindirizzamento operatore...')
-          window.location.href = '/operatore'
+          setUserType('operatore')
+          setCodiceAccesso(codice)
+          console.log('Login operatore riuscito, reindirizzamento...')
+          router.push('/operatore')
           return
         }
       }
@@ -62,7 +70,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = async () => {
     setUserType(null)
     setCodiceAccesso(null)
-    window.location.href = '/'
+    router.push('/')
   }
 
   return (
