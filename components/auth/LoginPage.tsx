@@ -5,45 +5,26 @@ import { useState } from 'react'
 export default function LoginPage() {
   const [codice, setCodice] = useState('')
   const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [destinationUrl, setDestinationUrl] = useState('')
 
-  const handleLogin = (e: React.MouseEvent) => {
-    e.preventDefault()
-    console.log('Click sul bottone')
-    
-    if (loading) {
-      console.log('Già in caricamento')
-      return
-    }
-    
-    console.log('Tentativo login con codice:', codice)
-    setLoading(true)
-
-    // Determina l'URL di destinazione
-    let destinationUrl = ''
-    
+  const checkCode = () => {
     if (codice === 'admin2025') {
-      destinationUrl = '/admin/questionari/lista'
-    } else if (codice === 'anonimo9999') {
-      destinationUrl = '/anonimo'
-    } else if (codice.startsWith('operatore')) {
+      setDestinationUrl('/admin/questionari/lista')
+      return true
+    }
+    if (codice === 'anonimo9999') {
+      setDestinationUrl('/anonimo')
+      return true
+    }
+    if (codice.startsWith('operatore')) {
       const num = parseInt(codice.replace('operatore', ''))
       if (!isNaN(num) && num >= 1 && num <= 300) {
-        destinationUrl = '/operatore'
+        setDestinationUrl('/operatore')
+        return true
       }
     }
-
-    if (destinationUrl) {
-      console.log('Reindirizzamento a:', destinationUrl)
-      // Crea un link e fai click
-      const link = document.createElement('a')
-      link.href = destinationUrl
-      link.click()
-    } else {
-      console.log('Codice non valido')
-      setError('Codice di accesso non valido')
-      setLoading(false)
-    }
+    setError('Codice di accesso non valido')
+    return false
   }
 
   return (
@@ -58,30 +39,39 @@ export default function LoginPage() {
           )}
         </div>
         
-        <form className="mt-8 space-y-6" onSubmit={(e) => e.preventDefault()}>
+        <div className="mt-8 space-y-6">
           <input
             type="text"
             value={codice}
-            onChange={(e) => setCodice(e.target.value)}
+            onChange={(e) => {
+              setCodice(e.target.value)
+              setError('')
+            }}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
             placeholder="Inserisci il codice di accesso"
-            disabled={loading}
           />
 
-          <button
-            type="submit"
-            disabled={loading}
-            onClick={handleLogin}
-            className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            {loading ? 'Accesso in corso...' : 'Accedi'}
-          </button>
-        </form>
+          {destinationUrl ? (
+            <a
+              href={destinationUrl}
+              className="block w-full py-2 px-4 bg-green-600 text-white text-center rounded-md hover:bg-green-700"
+            >
+              Clicca qui per entrare
+            </a>
+          ) : (
+            <button
+              type="button"
+              onClick={checkCode}
+              className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            >
+              Verifica codice
+            </button>
+          )}
+        </div>
 
         <div className="mt-4 text-sm text-gray-500">
           <div>Codice inserito: {codice}</div>
-          <div>Stato: {loading ? 'In caricamento' : 'Pronto'}</div>
-          <div>URL corrente: {typeof window !== 'undefined' ? window.location.pathname : ''}</div>
+          {destinationUrl && <div>URL: {destinationUrl}</div>}
         </div>
       </div>
     </div>
