@@ -7,46 +7,41 @@ export default function LoginPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('Form sottomesso')
+    e.stopPropagation()
     
-    try {
-      setError('')
-      setLoading(true)
-      console.log('Tentativo di login con codice:', codice)
+    setError('')
+    setLoading(true)
+    
+    console.log('Form sottomesso')
+    console.log('Tentativo di login con codice:', codice)
 
-      // Verifica del codice
-      if (codice === 'admin2025') {
-        console.log('Codice admin valido, reindirizzamento...')
-        // Forza il reindirizzamento
-        document.location.replace('/admin/questionari/lista')
-        return
-      }
-
-      if (codice === 'anonimo9999') {
-        console.log('Codice anonimo valido, reindirizzamento...')
-        document.location.replace('/anonimo')
-        return
-      }
-
-      if (codice.startsWith('operatore')) {
-        const num = parseInt(codice.replace('operatore', ''))
-        if (!isNaN(num) && num >= 1 && num <= 300) {
-          console.log('Codice operatore valido, reindirizzamento...')
-          document.location.replace('/operatore')
-          return
-        }
-      }
-
-      console.log('Codice non valido')
-      throw new Error('Codice non valido')
-    } catch (err) {
-      console.error('Errore durante il login:', err)
-      setError('Codice di accesso non valido')
-    } finally {
-      setLoading(false)
+    // Verifica del codice
+    if (codice === 'admin2025') {
+      console.log('Codice admin valido')
+      window.location.href = '/admin/questionari/lista'
+      return
     }
+
+    if (codice === 'anonimo9999') {
+      console.log('Codice anonimo valido')
+      window.location.href = '/anonimo'
+      return
+    }
+
+    if (codice.startsWith('operatore')) {
+      const num = parseInt(codice.replace('operatore', ''))
+      if (!isNaN(num) && num >= 1 && num <= 300) {
+        console.log('Codice operatore valido')
+        window.location.href = '/operatore'
+        return
+      }
+    }
+
+    console.log('Codice non valido')
+    setError('Codice di accesso non valido')
+    setLoading(false)
   }
 
   return (
@@ -60,7 +55,8 @@ export default function LoginPage() {
             <div className="mt-3 text-red-500 text-sm text-center">{error}</div>
           )}
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        
+        <form className="mt-8 space-y-6">
           <div>
             <input
               type="text"
@@ -75,10 +71,10 @@ export default function LoginPage() {
 
           <div>
             <button
-              type="submit"
+              type="button"
               disabled={loading}
+              onClick={handleLogin}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              onClick={() => console.log('Button clicked')}
             >
               {loading ? 'Accesso in corso...' : 'Accedi'}
             </button>
