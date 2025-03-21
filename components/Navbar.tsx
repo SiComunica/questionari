@@ -12,50 +12,24 @@ export default function Navbar() {
   const { userType, signOut } = useAuth()
 
   return (
-    <Card className="rounded-none border-b">
-      <CardContent className="p-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <Link href="/" className="text-2xl font-bold">
-              Questionari
-            </Link>
-            {userType && (
-              <nav className="hidden md:flex space-x-4">
-                <Link href={`/dashboard/${userType}`}>
-                  <Button variant="ghost">Dashboard</Button>
-                </Link>
-                {userType === 'operatore' && (
-                  <>
-                    <Link href="/questionari/strutture">
-                      <Button variant="ghost">Strutture</Button>
-                    </Link>
-                    <Link href="/questionari/operatori">
-                      <Button variant="ghost">Operatori</Button>
-                    </Link>
-                    <Link href="/questionari/giovani">
-                      <Button variant="ghost">Giovani</Button>
-                    </Link>
-                  </>
-                )}
-              </nav>
-            )}
+    <nav className="bg-white shadow">
+      <div className="container mx-auto px-4">
+        <div className="flex justify-between h-16">
+          <div className="flex items-center">
+            <span className="text-xl font-semibold">
+              Gestione Questionari
+            </span>
           </div>
-          <div className="flex items-center space-x-4">
-            {userType ? (
-              <Button 
-                variant="outline" 
-                onClick={signOut}
-              >
-                Logout
-              </Button>
-            ) : (
-              <Link href="/login">
-                <Button>Login</Button>
-              </Link>
-            )}
+          <div className="flex items-center">
+            <button
+              onClick={signOut}
+              className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+            >
+              Logout
+            </button>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </nav>
   )
 } 
