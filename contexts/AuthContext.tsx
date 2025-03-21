@@ -26,19 +26,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (codice: string) => {
     let tipo: UserType = null
-    let redirectUrl = '/'
+    let redirectUrl = 'https://questionari.vercel.app'
 
     if (codice === 'admin2025') {
       tipo = 'admin'
-      redirectUrl = '/admin/questionari/lista'
+      redirectUrl = 'https://questionari.vercel.app/admin/questionari/lista'
     } else if (codice === 'anonimo9999') {
       tipo = 'anonimo'
-      redirectUrl = '/anonimo'
+      redirectUrl = 'https://questionari.vercel.app/anonimo'
     } else if (codice.startsWith('operatore')) {
       const num = parseInt(codice.replace('operatore', ''))
       if (!isNaN(num) && num >= 1 && num <= 300) {
         tipo = 'operatore'
-        redirectUrl = '/operatore'
+        redirectUrl = 'https://questionari.vercel.app/operatore'
       }
     }
 
@@ -46,13 +46,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       throw new Error('Codice non valido')
     }
 
+    // Prima salviamo lo stato
     localStorage.setItem('userType', tipo)
     localStorage.setItem('codiceAccesso', codice)
     setUserType(tipo)
     setCodiceAccesso(codice)
 
-    // Forza il reindirizzamento con window.location
-    window.location.href = redirectUrl
+    // Poi forziamo il reindirizzamento
+    console.log('Reindirizzamento a:', redirectUrl)
+    window.location.replace(redirectUrl)
   }
 
   const signOut = async () => {
@@ -60,7 +62,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem('codiceAccesso')
     setUserType(null)
     setCodiceAccesso(null)
-    window.location.href = '/'
+    window.location.replace('https://questionari.vercel.app')
   }
 
   return (
