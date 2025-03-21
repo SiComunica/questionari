@@ -1887,7 +1887,7 @@ export default function QuestionarioGiovaniNew({ readOnly, initialData }: Props)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)  // Aggiungi questo state
   
-  const { user, userType } = useAuth() // Usa user invece di session
+  const { userType, codiceAccesso } = useAuth() // Usa user invece di session
   const router = useRouter()
 
   const nextStep = () => {
@@ -1908,12 +1908,13 @@ export default function QuestionarioGiovaniNew({ readOnly, initialData }: Props)
     setError(null);
 
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('giovani')
         .insert([
           {
             ...formData,
-            created_by: user?.id, // Usa user.id invece di session.user.id
+            created_by: userType,
+            codice_accesso: codiceAccesso,
             stato: 'completato'
           }
         ])
@@ -1930,7 +1931,7 @@ export default function QuestionarioGiovaniNew({ readOnly, initialData }: Props)
   };
 
   // Se stai controllando il ruolo, usa userType
-  if (!user || userType !== 'anonimo') {
+  if (!userType || userType !== 'anonimo') {
     return <div>Non autorizzato</div>
   }
 
