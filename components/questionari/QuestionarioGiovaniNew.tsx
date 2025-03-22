@@ -1885,59 +1885,16 @@ export default function QuestionarioGiovaniNew({ readOnly, initialData }: Props)
   
   const [formData, setFormData] = useState<QuestionarioGiovani>(initialFormData)
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)  // Aggiungi questo state
+  const [error, setError] = useState<string | null>(null)
   
-  const { userType, codiceAccesso } = useAuth() // Usa user invece di session
-  const router = useRouter()
-
-  const nextStep = () => {
-    if (currentStep < totalSteps) {
-      setCurrentStep(prev => prev + 1)
-    }
-  }
-
-  const prevStep = () => {
-    if (currentStep > 1) {
-      setCurrentStep(prev => prev - 1)
-    }
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-
-    try {
-      const { data, error } = await supabase
-        .from('giovani')
-        .insert([
-          {
-            ...formData,
-            created_by: userType,
-            fonte: codiceAccesso, // Aggiungi la fonte
-            stato: 'completato'
-          }
-        ])
-
-      if (error) throw error
-
-      router.push('/anonimo?success=true')
-    } catch (err: any) {
-      console.error('Errore nel salvataggio:', err)
-      setError('Errore nel salvataggio del questionario')
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Se stai controllando il ruolo, usa userType
-  if (!userType || userType !== 'anonimo') {
+  // Rimuovi questo controllo che blocca il rendering
+  /* if (!userType || userType !== 'anonimo') {
     return <div>Non autorizzato</div>
-  }
+  } */
 
   return (
     <div className="container mx-auto p-4">
-      {error && (  // Aggiungi questo blocco per mostrare l'errore
+      {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
           {error}
         </div>
