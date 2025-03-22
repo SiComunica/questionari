@@ -28,17 +28,20 @@ export default function LoginPage() {
   }
 
   const verificaCodice = () => {
+    console.log('1. Login - Inizio verifica codice:', codice)
+    
     if (typeof window === 'undefined') return
 
     setError('')
     window.localStorage.clear()
+    console.log('2. Login - localStorage pulito')
 
     try {
       // Verifica codice admin
       if (codice === 'admin2025') {
         window.localStorage.setItem('userType', 'admin')
         window.localStorage.setItem('codice', codice)
-        console.log('Admin storage set:', {
+        console.log('3. Login - Dati admin salvati:', {
           userType: window.localStorage.getItem('userType'),
           codice: window.localStorage.getItem('codice')
         })
@@ -81,7 +84,7 @@ export default function LoginPage() {
 
       setError('Codice non valido')
     } catch (error) {
-      console.error('Errore:', error)
+      console.error('Login - Errore:', error)
       setError('Errore durante la verifica')
     }
   }
