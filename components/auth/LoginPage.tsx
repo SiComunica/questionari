@@ -5,71 +5,64 @@ import { useState } from 'react'
 export default function LoginPage() {
   const [codice, setCodice] = useState('')
 
-  const redirect = (path: string) => {
-    console.log('Tentativo reindirizzamento a:', path)
+  const handleLogin = (e: React.MouseEvent) => {
+    e.preventDefault()
     
-    // Prova tutti i metodi possibili di reindirizzamento
-    try {
-      window.location.replace(path)
-    } catch (e) {
-      console.log('Replace fallito, provo href')
-      try {
-        window.location.href = path
-      } catch (e) {
-        console.log('Href fallito, provo assign')
-        try {
-          window.location.assign(path)
-        } catch (e) {
-          console.log('Assign fallito, ultimo tentativo')
-          document.location.href = path
-        }
-      }
-    }
-  }
+    // Pulisci localStorage
+    localStorage.clear()
 
-  const handleLogin = () => {
-    console.log('Tentativo login con:', codice)
+    // Costruisci l'URL base
+    const baseUrl = window.location.protocol + '//' + window.location.host
 
-    // Admin
+    // Verifica il codice e reindirizza
+    let targetUrl = ''
+    let userType = ''
+
     if (codice === 'admin2025') {
-      console.log('Login admin...')
-      localStorage.setItem('userType', 'admin')
-      localStorage.setItem('codice', codice)
-      
-      const fullUrl = window.location.origin + '/admin/questionari/lista'
-      console.log('URL completo:', fullUrl)
-      
-      // Forza il reindirizzamento
-      redirect(fullUrl)
-      return
+      targetUrl = baseUrl + '/admin/questionari/lista'
+      userType = 'admin'
+    } 
+    else if (codice === 'anonimo9999') {
+      targetUrl = baseUrl + '/anonimo'
+      userType = 'anonimo'
     }
-
-    // Anonimo
-    if (codice === 'anonimo9999') {
-      console.log('Login anonimo...')
-      localStorage.setItem('userType', 'anonimo')
-      localStorage.setItem('codice', codice)
-      
-      const fullUrl = window.location.origin + '/anonimo'
-      redirect(fullUrl)
-      return
-    }
-
-    // Operatore
-    if (codice.startsWith('operatore')) {
+    else if (codice.startsWith('operatore')) {
       const num = parseInt(codice.replace('operatore', ''))
       if (num >= 1 && num <= 300) {
-        console.log('Login operatore...')
-        localStorage.setItem('userType', 'operatore')
-        localStorage.setItem('codice', codice)
-        
-        const fullUrl = window.location.origin + '/operatore'
-        redirect(fullUrl)
-        return
+        targetUrl = baseUrl + '/operatore'
+        userType = 'operatore'
       }
     }
 
-    alert('Codice non valido')
+    if (targetUrl && userType) {
+      // Salva i dati
+      localStorage.setItem('userType', userType)
+      localStorage.setItem('codice', codice)
+
+      // Crea un form e forzane l'invio
+      const form = document.createElement('form')
+      form.method = 'GET'
+      form.action = targetUrl
+
+      // Aggiungi i dati come campi nascosti
+      const typeInput = document.createElement('input')
+      typeInput.type = 'hidden'
+      typeInput.name = 'userType'
+      typeInput.value = userType
+      form.appendChild(typeInput)
+
+      const codeInput = document.createElement('input')
+      codeInput.type = 'hidden'
+      codeInput.name = 'code'
+      codeInput.value = codice
+      form.appendChild(codeInput)
+
+      // Aggiungi il form al documento e invialo
+      document.body.appendChild(form)
+      form.submit()
+    } else {
+      alert('Codice non valido')
+    }
   }
 
   return (
@@ -95,10 +88,6 @@ export default function LoginPage() {
           >
             Accedi
           </button>
-        </div>
-
-        <div className="mt-4 text-sm text-gray-500">
-          URL corrente: {typeof window !== 'undefined' ? window.location.href : ''}
         </div>
       </div>
     </div>
