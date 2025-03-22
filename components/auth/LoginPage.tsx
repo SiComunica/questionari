@@ -6,48 +6,35 @@ export default function LoginPage() {
   const [codice, setCodice] = useState('')
 
   const handleLogin = () => {
-    // Verifica il codice
-    let path = ''
-    
-    switch(codice) {
-      case 'admin2025':
-        path = '/admin/questionari/lista'
-        break
-      case 'anonimo9999':
-        path = '/anonimo'
-        break
-      default:
-        if (codice.startsWith('operatore')) {
-          const num = parseInt(codice.replace('operatore', ''))
-          if (num >= 1 && num <= 300) {
-            path = '/operatore'
-          }
-        }
-    }
+    // Pulisci localStorage
+    localStorage.clear()
 
-    if (!path) {
-      alert('Codice non valido')
+    // Verifica codice e reindirizza
+    if (codice === 'admin2025') {
+      localStorage.setItem('userType', 'admin')
+      localStorage.setItem('codice', codice)
+      window.open('/admin/questionari/lista', '_self')
       return
     }
 
-    // Salva i dati
-    try {
-      localStorage.clear()
+    if (codice === 'anonimo9999') {
+      localStorage.setItem('userType', 'anonimo')
       localStorage.setItem('codice', codice)
-      localStorage.setItem('userType', path.includes('admin') ? 'admin' : path.includes('operatore') ? 'operatore' : 'anonimo')
-    } catch (e) {
-      console.error('Errore localStorage:', e)
+      window.open('/anonimo', '_self')
+      return
     }
 
-    // Reindirizza
-    try {
-      const a = document.createElement('a')
-      a.href = path
-      a.click()
-    } catch (e) {
-      console.error('Errore reindirizzamento:', e)
-      window.location.href = path
+    if (codice.startsWith('operatore')) {
+      const num = parseInt(codice.replace('operatore', ''))
+      if (num >= 1 && num <= 300) {
+        localStorage.setItem('userType', 'operatore')
+        localStorage.setItem('codice', codice)
+        window.open('/operatore', '_self')
+        return
+      }
     }
+
+    alert('Codice non valido')
   }
 
   return (
