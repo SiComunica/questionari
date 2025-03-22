@@ -3,27 +3,45 @@
 import { useEffect, useState } from 'react'
 
 export default function AdminDashboard() {
-  const [isAuthorized, setIsAuthorized] = useState(false)
+  const [status, setStatus] = useState('loading')
 
   useEffect(() => {
-    const userType = sessionStorage.getItem('userType')
-    const codice = sessionStorage.getItem('codice')
-    
-    console.log('Admin Check:', { userType, codice })
-    
-    if (userType === 'admin' && codice === 'admin2025') {
-      setIsAuthorized(true)
-    } else {
-      window.location.href = '/'
+    let mounted = true
+
+    const checkAuth = () => {
+      try {
+        if (typeof window === 'undefined') return
+
+        const userType = window.sessionStorage.getItem('userType')
+        const codice = window.sessionStorage.getItem('codice')
+        
+        console.log('Admin Check:', { userType, codice })
+
+        if (userType === 'admin' && codice === 'admin2025') {
+          if (mounted) setStatus('authorized')
+        } else {
+          window.location.href = '/'
+        }
+      } catch (error) {
+        console.error('Errore admin:', error)
+        if (mounted) setStatus('error')
+      }
+    }
+
+    // Piccolo delay per assicurarsi che sessionStorage sia disponibile
+    setTimeout(checkAuth, 100)
+
+    return () => {
+      mounted = false
     }
   }, [])
 
-  if (!isAuthorized) {
+  if (status === 'loading' || status === 'error') {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p>Verifica accesso...</p>
+          <p>{status === 'error' ? 'Errore di accesso' : 'Verifica accesso...'}</p>
         </div>
       </div>
     )
