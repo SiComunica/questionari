@@ -2,17 +2,11 @@
 
 import { useEffect } from 'react'
 
-export default function Operatore() {
-  useEffect(() => {
-    const userType = localStorage.getItem('userType')
-    if (userType !== 'operatore') {
-      window.location.href = '/'
-    }
-  }, [])
-
+export default function OperatoreDashboard() {
   return (
-    <div>
-      <h1>Area Operatore</h1>
+    <div className="p-8">
+      <h1 className="text-2xl font-bold mb-4">Dashboard Operatore</h1>
+      <p>Benvenuto nella dashboard operatore</p>
     </div>
   )
 } 

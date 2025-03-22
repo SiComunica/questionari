@@ -1,25 +1,40 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 
 export default function LoginPage() {
   const [codice, setCodice] = useState('')
+  const [url, setUrl] = useState('')
+  const [error, setError] = useState('')
 
-  const handleLogin = () => {
-    // Salva il codice in sessionStorage
-    sessionStorage.setItem('accessCode', codice)
+  const verificaCodice = () => {
+    setError('')
+    setUrl('')
 
-    // Reindirizza in base al codice
+    // Verifica codice admin
     if (codice === 'admin2025') {
-      window.location.replace('/admin/questionari/lista')
-    } else if (codice === 'anonimo9999') {
-      window.location.replace('/anonimo')
-    } else if (codice.startsWith('operatore')) {
+      setUrl('/admin/questionari/lista')
+      return
+    }
+
+    // Verifica codice anonimo
+    if (codice === 'anonimo9999') {
+      setUrl('/anonimo')
+      return
+    }
+
+    // Verifica codice operatore
+    if (codice.startsWith('operatore')) {
       const num = parseInt(codice.replace('operatore', ''))
       if (num >= 1 && num <= 300) {
-        window.location.replace('/operatore')
+        setUrl('/operatore')
+        return
       }
     }
+
+    // Se arriviamo qui, il codice non è valido
+    setError('Codice non valido')
   }
 
   return (
@@ -38,11 +53,32 @@ export default function LoginPage() {
         />
 
         <button
-          onClick={handleLogin}
-          className="w-full py-3 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          onClick={verificaCodice}
+          className="w-full py-3 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 mb-4"
         >
-          Accedi
+          Verifica codice
         </button>
+
+        {error && (
+          <div className="text-red-500 text-center mb-4">
+            {error}
+          </div>
+        )}
+
+        {url && (
+          <Link 
+            href={url}
+            className="block w-full py-3 px-4 bg-green-600 text-white text-center rounded-md hover:bg-green-700"
+          >
+            Accedi alla dashboard
+          </Link>
+        )}
+
+        {/* Debug info */}
+        <div className="mt-4 text-sm text-gray-500">
+          Codice inserito: {codice}<br />
+          URL generato: {url}
+        </div>
       </div>
     </div>
   )
