@@ -11,13 +11,9 @@ import SezioneD from './sezioni/SezioneD';
 import SezioneE from './sezioni/SezioneE';
 import SezioneF from './sezioni/SezioneF';
 import { FormData } from '@/types/questionario-operatori';
+import { QuestionarioProps } from '@/types/questionari';
 
-interface Props {
-  readOnly?: boolean;
-  initialData?: any;
-}
-
-const QuestionarioOperatoriNew: React.FC<Props> = ({ readOnly, initialData }) => {
+const QuestionarioOperatoriNew: React.FC<QuestionarioProps> = ({ fonte, readOnly, initialData }) => {
   const router = useRouter();
   const { user } = useUser();
   const [currentStep, setCurrentStep] = useState(1);
@@ -154,6 +150,7 @@ const QuestionarioOperatoriNew: React.FC<Props> = ({ readOnly, initialData }) =>
         .insert([
           {
             ...formData,
+            fonte: fonte || 'form_web',
             created_by: user?.id
           }
         ]);

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import QuestionarioGiovaniNew from '@/components/questionari/QuestionarioGiovaniNew'
 import QuestionarioOperatoriNew from '@/components/questionari/QuestionarioOperatoriNew'
 import QuestionarioStruttureNew from '@/components/questionari/QuestionarioStruttureNew'
+import { QuestionarioProps } from '@/types/questionari'
 
 export default function OperatoreDashboard() {
   const router = useRouter()
@@ -30,14 +31,15 @@ export default function OperatoreDashboard() {
 
   const renderQuestionario = () => {
     const fonte = `operatore${operatoreNumber}`
+    const props: QuestionarioProps = { fonte }
     
     switch (selectedQuestionario) {
       case 'giovani':
-        return <QuestionarioGiovaniNew fonte={fonte} />
+        return <QuestionarioGiovaniNew {...props} />
       case 'operatori':
-        return <QuestionarioOperatoriNew />
+        return <QuestionarioOperatoriNew {...props} />
       case 'strutture':
-        return <QuestionarioStruttureNew />
+        return <QuestionarioStruttureNew {...props} />
       default:
         return null
     }

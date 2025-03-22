@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { supabase } from '../../lib/supabase';
 import { toast } from 'react-hot-toast';
+import { QuestionarioProps } from '@/types/questionari'
 
 interface PersonePerGenere {
   uomini: number;
@@ -117,12 +118,7 @@ interface FormData {
   fonte: string;
 }
 
-interface Props {
-  readOnly?: boolean;
-  initialData?: any;
-}
-
-const QuestionarioStruttureNew: React.FC<Props> = ({ readOnly, initialData }) => {
+const QuestionarioStruttureNew: React.FC<QuestionarioProps> = ({ fonte, readOnly, initialData }) => {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 6;
@@ -210,13 +206,9 @@ const QuestionarioStruttureNew: React.FC<Props> = ({ readOnly, initialData }) =>
 
     setLoading(true);
     try {
-      const session = await supabase.auth.getSession();
-      const userEmail = session?.data?.session?.user?.email;
-      const operatorNumber = userEmail?.match(/operatore(\d+)@ferro\.com/)?.[1];
-      
       const dataToInsert = {
         ...formData,
-        fonte: operatorNumber ? `operatore ${operatorNumber}` : 'anonimo'
+        fonte: fonte || 'form_web'
       };
 
       const { error } = await supabase
@@ -226,7 +218,7 @@ const QuestionarioStruttureNew: React.FC<Props> = ({ readOnly, initialData }) =>
       if (error) throw error;
 
       toast.success('Questionario struttura salvato con successo!');
-      router.push('/');
+      router.push('/operatore/dashboard');
     } catch (err) {
       console.error('Errore durante il salvataggio:', err);
       toast.error('Errore durante il salvataggio');

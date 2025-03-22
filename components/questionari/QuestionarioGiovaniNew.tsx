@@ -31,6 +31,7 @@ import {
   AspettiLavoro
 } from '@/types/questionario-giovani'
 import { v4 as uuidv4 } from 'uuid' // Aggiungi questo import in cima al file
+import { QuestionarioProps } from '@/types/questionari'
 
 // Costanti per le opzioni
 const TIPI_PERCORSO = [
@@ -1873,13 +1874,7 @@ const SectionE = ({ formData, setFormData }: {
   )
 }
 
-// Aggiungi all'interfaccia delle props
-interface Props {
-  readOnly?: boolean;
-  initialData?: any;
-}
-
-export default function QuestionarioGiovaniNew({ readOnly, initialData }: Props) {
+export default function QuestionarioGiovaniNew({ fonte, readOnly, initialData }: QuestionarioProps) {
   const [currentStep, setCurrentStep] = useState(1)
   const totalSteps = 5 // A, B, C, D, E
   const progress = (currentStep / totalSteps) * 100

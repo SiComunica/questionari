@@ -531,4 +531,11 @@ export type QuestionarioGiovani = {
   }
   desiderio?: string
   note_aggiuntive?: string
+}
+
+// Creiamo un nuovo file per i tipi condivisi
+export interface QuestionarioProps {
+  fonte?: string;
+  readOnly?: boolean;
+  initialData?: any;
 } 
