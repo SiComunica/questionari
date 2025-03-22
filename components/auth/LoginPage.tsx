@@ -16,7 +16,6 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      window.localStorage.clear()
       updateStorage()
     }
   }, [])
@@ -36,11 +35,17 @@ export default function LoginPage() {
     setError('')
     setUrl('')
 
+    window.localStorage.clear()
+
     try {
       // Verifica codice admin
       if (codice === 'admin2025') {
         window.localStorage.setItem('userType', 'admin')
         window.localStorage.setItem('codice', codice)
+        console.log('Admin storage set:', {
+          userType: window.localStorage.getItem('userType'),
+          codice: window.localStorage.getItem('codice')
+        })
         setUrl('/admin')
         updateStorage()
         return
@@ -50,6 +55,10 @@ export default function LoginPage() {
       if (codice === 'anonimo9999') {
         window.localStorage.setItem('userType', 'anonimo')
         window.localStorage.setItem('codice', codice)
+        console.log('Anonimo storage set:', {
+          userType: window.localStorage.getItem('userType'),
+          codice: window.localStorage.getItem('codice')
+        })
         setUrl('/anonimo')
         updateStorage()
         return
@@ -61,6 +70,10 @@ export default function LoginPage() {
         if (num >= 1 && num <= 300) {
           window.localStorage.setItem('userType', 'operatore')
           window.localStorage.setItem('codice', codice)
+          console.log('Operatore storage set:', {
+            userType: window.localStorage.getItem('userType'),
+            codice: window.localStorage.getItem('codice')
+          })
           setUrl('/operatore')
           updateStorage()
           return
@@ -115,7 +128,11 @@ export default function LoginPage() {
         <div className="mt-4 text-sm text-gray-500">
           Codice: {codice}<br />
           URL: {url}<br />
-          Storage: {JSON.stringify(storage)}
+          Storage: {JSON.stringify(storage)}<br />
+          LocalStorage: {typeof window !== 'undefined' ? JSON.stringify({
+            userType: window.localStorage.getItem('userType'),
+            codice: window.localStorage.getItem('codice')
+          }) : 'non disponibile'}
         </div>
       </div>
     </div>
