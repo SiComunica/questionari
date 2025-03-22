@@ -22,10 +22,13 @@ export default function AmministratoriDashboard() {
     const fetchQuestionari = async () => {
       try {
         console.log('Fetching questionari...')
+        
+        // Modifichiamo la query per usare l'autenticazione anonima
         const { data, error } = await supabase
           .from('giovani')
-          .select('*') // Selezioniamo tutti i campi
+          .select('*')
           .order('created_at', { ascending: false })
+          .throwOnError() // Questo ci aiuta a vedere errori più dettagliati
 
         if (error) {
           console.error('Errore nel caricamento questionari:', error)
@@ -36,22 +39,32 @@ export default function AmministratoriDashboard() {
         setQuestionari(data || [])
       } catch (err) {
         console.error('Errore:', err)
+        setQuestionari([]) // In caso di errore, mostriamo una lista vuota
       } finally {
         setLoading(false)
       }
     }
 
-    fetchQuestionari()
+    // Verifichiamo prima l'autenticazione
+    if (typeof window !== 'undefined') {
+      const userType = localStorage.getItem('userType')
+      const codice = localStorage.getItem('codice')
+      
+      if (userType === 'admin' && codice === 'admin2025') {
+        fetchQuestionari()
+      }
+    }
   }, [])
 
-  if (typeof window === 'undefined') return null
+  // Controllo lato client per l'autenticazione
+  if (typeof window !== 'undefined') {
+    const userType = localStorage.getItem('userType')
+    const codice = localStorage.getItem('codice')
 
-  const userType = localStorage.getItem('userType')
-  const codice = localStorage.getItem('codice')
-
-  if (userType !== 'admin' || codice !== 'admin2025') {
-    window.location.replace('/')
-    return null
+    if (userType !== 'admin' || codice !== 'admin2025') {
+      window.location.replace('/')
+      return null
+    }
   }
 
   return (
