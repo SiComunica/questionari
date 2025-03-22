@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
+import QuestionarioView from '@/components/questionari/QuestionarioView'
 
 // Definiamo il tipo per il questionario
 interface Questionario {
@@ -9,11 +10,13 @@ interface Questionario {
   created_at: string
   fonte: string
   stato: string
+  [key: string]: any // per altri campi
 }
 
 export default function AmministratoriDashboard() {
   const [questionari, setQuestionari] = useState<Questionario[]>([])
   const [loading, setLoading] = useState(true)
+  const [selectedQuestionario, setSelectedQuestionario] = useState<Questionario | null>(null)
   
   useEffect(() => {
     const fetchQuestionari = async () => {
@@ -21,7 +24,7 @@ export default function AmministratoriDashboard() {
         console.log('Fetching questionari...')
         const { data, error } = await supabase
           .from('giovani')
-          .select('id, created_at, fonte, stato')
+          .select('*') // Selezioniamo tutti i campi
           .order('created_at', { ascending: false })
 
         if (error) {
@@ -66,7 +69,11 @@ export default function AmministratoriDashboard() {
           ) : (
             <div className="grid gap-4">
               {questionari.map((q) => (
-                <div key={q.id} className="border p-4 rounded-lg bg-white shadow">
+                <div 
+                  key={q.id} 
+                  className="border p-4 rounded-lg bg-white shadow cursor-pointer hover:bg-gray-50"
+                  onClick={() => setSelectedQuestionario(q)}
+                >
                   <div className="flex justify-between items-center">
                     <div>
                       <p className="font-medium">ID: {q.id}</p>
@@ -82,6 +89,13 @@ export default function AmministratoriDashboard() {
                 </div>
               ))}
             </div>
+          )}
+
+          {selectedQuestionario && (
+            <QuestionarioView 
+              questionario={selectedQuestionario}
+              onClose={() => setSelectedQuestionario(null)}
+            />
           )}
         </div>
       )}
