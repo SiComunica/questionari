@@ -1,7 +1,5 @@
 'use client'
 
-import { useEffect } from 'react'
-
 export default function OperatoreDashboard() {
   return (
     <div className="p-8">

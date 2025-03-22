@@ -14,12 +14,16 @@ export default function LoginPage() {
 
     // Verifica codice admin
     if (codice === 'admin2025') {
+      sessionStorage.setItem('userType', 'admin')
+      sessionStorage.setItem('codice', codice)
       setUrl('/admin/questionari/lista')
       return
     }
 
     // Verifica codice anonimo
     if (codice === 'anonimo9999') {
+      sessionStorage.setItem('userType', 'anonimo')
+      sessionStorage.setItem('codice', codice)
       setUrl('/anonimo')
       return
     }
@@ -28,6 +32,8 @@ export default function LoginPage() {
     if (codice.startsWith('operatore')) {
       const num = parseInt(codice.replace('operatore', ''))
       if (num >= 1 && num <= 300) {
+        sessionStorage.setItem('userType', 'operatore')
+        sessionStorage.setItem('codice', codice)
         setUrl('/operatore')
         return
       }
@@ -77,7 +83,8 @@ export default function LoginPage() {
         {/* Debug info */}
         <div className="mt-4 text-sm text-gray-500">
           Codice inserito: {codice}<br />
-          URL generato: {url}
+          URL generato: {url}<br />
+          Tipo utente: {sessionStorage.getItem('userType')}
         </div>
       </div>
     </div>
