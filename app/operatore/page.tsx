@@ -2,115 +2,143 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import QuestionarioGiovaniNew from '@/components/questionari/QuestionarioGiovaniNew'
-import QuestionarioOperatoriNew from '@/components/questionari/QuestionarioOperatoriNew'
-import QuestionarioStruttureNew from '@/components/questionari/QuestionarioStruttureNew'
-import { QuestionarioProps } from '@/types/questionari'
+import dynamic from 'next/dynamic'
+
+// Importiamo i componenti in modo dinamico
+const QuestionarioGiovaniNew = dynamic(() => import('@/components/questionari/QuestionarioGiovaniNew'), {
+  loading: () => <p>Caricamento questionario...</p>
+})
+
+const QuestionarioOperatoriNew = dynamic(() => import('@/components/questionari/QuestionarioOperatoriNew'), {
+  loading: () => <p>Caricamento questionario...</p>
+})
+
+const QuestionarioStruttureNew = dynamic(() => import('@/components/questionari/QuestionarioStruttureNew'), {
+  loading: () => <p>Caricamento questionario...</p>
+})
 
 export default function OperatoreDashboard() {
   const router = useRouter()
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [selectedQuestionario, setSelectedQuestionario] = useState<string | null>(null)
   const [operatoreNumber, setOperatoreNumber] = useState<string | null>(null)
 
   useEffect(() => {
-    // Aggiungiamo log per debug
-    console.log('Checking authentication...')
-    const userType = localStorage.getItem('userType')
-    const codice = localStorage.getItem('codice')
-    
-    console.log('userType:', userType)
-    console.log('codice:', codice)
+    try {
+      const userType = localStorage.getItem('userType')
+      const codice = localStorage.getItem('codice')
+      
+      console.log('Auth check:', { userType, codice })
 
-    if (userType !== 'operatore' || !codice?.startsWith('operatore')) {
-      console.log('Authentication failed, redirecting...')
-      router.push('/')
-      return
-    }
+      if (userType !== 'operatore' || !codice?.startsWith('operatore')) {
+        router.push('/')
+        return
+      }
 
-    const match = codice.match(/operatore(\d+)/)
-    if (match) {
-      console.log('Operatore number:', match[1])
-      setOperatoreNumber(match[1])
+      const match = codice.match(/operatore(\d+)/)
+      if (match) {
+        setOperatoreNumber(match[1])
+      }
+    } catch (err) {
+      console.error('Error in auth check:', err)
+      setError('Errore durante la verifica dell\'autenticazione')
+    } finally {
+      setIsLoading(false)
     }
   }, [router])
 
-  const renderQuestionario = () => {
-    const fonte = `operatore${operatoreNumber}`
-    const props: QuestionarioProps = { fonte }
-    
-    switch (selectedQuestionario) {
-      case 'giovani':
-        return <QuestionarioGiovaniNew {...props} />
-      case 'operatori':
-        return <QuestionarioOperatoriNew {...props} />
-      case 'strutture':
-        return <QuestionarioStruttureNew {...props} />
-      default:
-        return null
-    }
-  }
-
-  // Se non c'è il numero operatore, mostriamo un messaggio invece di null
-  if (!operatoreNumber) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 p-8">
-        <h1 className="text-3xl font-bold mb-8 text-gray-800">
-          Verifica accesso in corso...
-        </h1>
+        <h1 className="text-2xl">Caricamento...</h1>
       </div>
     )
   }
 
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-8">
+        <h1 className="text-2xl text-red-600">Errore</h1>
+        <p>{error}</p>
+      </div>
+    )
+  }
+
+  if (!operatoreNumber) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-8">
+        <h1 className="text-2xl">Accesso non autorizzato</h1>
+      </div>
+    )
+  }
+
+  const handleQuestionarioSelect = (tipo: string) => {
+    try {
+      setSelectedQuestionario(tipo)
+    } catch (err) {
+      console.error('Error selecting questionario:', err)
+      setError('Errore nella selezione del questionario')
+    }
+  }
+
+  const renderQuestionario = () => {
+    const fonte = `operatore${operatoreNumber}`
+    
+    try {
+      switch (selectedQuestionario) {
+        case 'giovani':
+          return <QuestionarioGiovaniNew fonte={fonte} />
+        case 'operatori':
+          return <QuestionarioOperatoriNew fonte={fonte} />
+        case 'strutture':
+          return <QuestionarioStruttureNew fonte={fonte} />
+        default:
+          return null
+      }
+    } catch (err) {
+      console.error('Error rendering questionario:', err)
+      return <p className="text-red-600">Errore nel caricamento del questionario</p>
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 p-8">
-      <h1 className="text-3xl font-bold mb-8 text-gray-800">
-        Dashboard Operatore {operatoreNumber}
-      </h1>
+      <h1 className="text-2xl font-bold mb-6">Dashboard Operatore {operatoreNumber}</h1>
 
       {!selectedQuestionario ? (
-        <>
-          <p className="mb-6 text-gray-600">
-            Seleziona il tipo di questionario che desideri compilare:
-          </p>
-          <div className="grid gap-6 md:grid-cols-3">
-            <div 
-              onClick={() => setSelectedQuestionario('giovani')}
-              className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer border border-gray-200 hover:border-blue-500"
-            >
-              <h2 className="text-xl font-semibold mb-3 text-blue-600">Questionario Giovani</h2>
-              <p className="text-gray-600">
-                Compila un nuovo questionario per raccogliere informazioni sui giovani seguiti
-              </p>
-            </div>
+        <div className="grid gap-4 md:grid-cols-3">
+          <button
+            onClick={() => handleQuestionarioSelect('giovani')}
+            className="p-6 bg-white rounded-lg shadow hover:shadow-md"
+          >
+            <h2 className="text-xl font-bold text-blue-600">Questionario Giovani</h2>
+            <p className="mt-2 text-gray-600">Compila questionario per i giovani</p>
+          </button>
 
-            <div 
-              onClick={() => setSelectedQuestionario('operatori')}
-              className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer border border-gray-200 hover:border-green-500"
-            >
-              <h2 className="text-xl font-semibold mb-3 text-green-600">Questionario Operatori</h2>
-              <p className="text-gray-600">
-                Compila un nuovo questionario per condividere la tua esperienza come operatore
-              </p>
-            </div>
+          <button
+            onClick={() => handleQuestionarioSelect('operatori')}
+            className="p-6 bg-white rounded-lg shadow hover:shadow-md"
+          >
+            <h2 className="text-xl font-bold text-green-600">Questionario Operatori</h2>
+            <p className="mt-2 text-gray-600">Compila questionario per gli operatori</p>
+          </button>
 
-            <div 
-              onClick={() => setSelectedQuestionario('strutture')}
-              className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer border border-gray-200 hover:border-purple-500"
-            >
-              <h2 className="text-xl font-semibold mb-3 text-purple-600">Questionario Strutture</h2>
-              <p className="text-gray-600">
-                Compila un nuovo questionario per descrivere la struttura in cui operi
-              </p>
-            </div>
-          </div>
-        </>
+          <button
+            onClick={() => handleQuestionarioSelect('strutture')}
+            className="p-6 bg-white rounded-lg shadow hover:shadow-md"
+          >
+            <h2 className="text-xl font-bold text-purple-600">Questionario Strutture</h2>
+            <p className="mt-2 text-gray-600">Compila questionario per le strutture</p>
+          </button>
+        </div>
       ) : (
         <div>
-          <button 
+          <button
             onClick={() => setSelectedQuestionario(null)}
-            className="mb-6 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors flex items-center"
+            className="mb-4 px-4 py-2 bg-gray-500 text-white rounded"
           >
-            <span className="mr-2">←</span> Torna alla selezione
+            ← Torna indietro
           </button>
           {renderQuestionario()}
         </div>
