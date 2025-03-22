@@ -23,12 +23,11 @@ export default function AmministratoriDashboard() {
       try {
         console.log('Fetching questionari...')
         
-        // Modifichiamo la query per usare l'autenticazione anonima
+        // Query semplificata
         const { data, error } = await supabase
           .from('giovani')
           .select('*')
           .order('created_at', { ascending: false })
-          .throwOnError() // Questo ci aiuta a vedere errori più dettagliati
 
         if (error) {
           console.error('Errore nel caricamento questionari:', error)
@@ -39,13 +38,13 @@ export default function AmministratoriDashboard() {
         setQuestionari(data || [])
       } catch (err) {
         console.error('Errore:', err)
-        setQuestionari([]) // In caso di errore, mostriamo una lista vuota
+        setQuestionari([])
       } finally {
         setLoading(false)
       }
     }
 
-    // Verifichiamo prima l'autenticazione
+    // Verifichiamo l'autenticazione e facciamo la fetch
     if (typeof window !== 'undefined') {
       const userType = localStorage.getItem('userType')
       const codice = localStorage.getItem('codice')
@@ -56,7 +55,7 @@ export default function AmministratoriDashboard() {
     }
   }, [])
 
-  // Controllo lato client per l'autenticazione
+  // Controllo autenticazione
   if (typeof window !== 'undefined') {
     const userType = localStorage.getItem('userType')
     const codice = localStorage.getItem('codice')
