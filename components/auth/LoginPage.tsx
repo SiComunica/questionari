@@ -1,20 +1,35 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 export default function LoginPage() {
+  const router = useRouter()
   const [codice, setCodice] = useState('')
 
   const handleLogin = () => {
-    if (codice === 'admin2025') {
-      window.location.href = '/admin/questionari/lista'
-    } else if (codice === 'anonimo9999') {
-      window.location.href = '/anonimo'
-    } else if (codice.startsWith('operatore')) {
-      const num = parseInt(codice.replace('operatore', ''))
-      if (num >= 1 && num <= 300) {
-        window.location.href = '/operatore'
-      }
+    let path = ''
+
+    switch (codice) {
+      case 'admin2025':
+        path = '/admin/questionari/lista'
+        break
+      case 'anonimo9999':
+        path = '/anonimo'
+        break
+      default:
+        if (codice.startsWith('operatore')) {
+          const num = parseInt(codice.replace('operatore', ''))
+          if (num >= 1 && num <= 300) {
+            path = '/operatore'
+          }
+        }
+    }
+
+    if (path) {
+      // Salva il codice prima di reindirizzare
+      sessionStorage.setItem('accessCode', codice)
+      router.push(path)
     }
   }
 
