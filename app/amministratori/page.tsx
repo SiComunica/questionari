@@ -9,7 +9,6 @@ interface Questionario {
   created_at: string
   fonte: string
   stato: string
-  created_by: string
 }
 
 export default function AmministratoriDashboard() {
@@ -18,17 +17,25 @@ export default function AmministratoriDashboard() {
   
   useEffect(() => {
     const fetchQuestionari = async () => {
-      const { data, error } = await supabase
-        .from('giovani')
-        .select('id, created_at, fonte, stato, created_by')
-        .order('created_at', { ascending: false })
+      try {
+        console.log('Fetching questionari...')
+        const { data, error } = await supabase
+          .from('giovani')
+          .select('id, created_at, fonte, stato')
+          .order('created_at', { ascending: false })
 
-      if (error) {
-        console.error('Errore nel caricamento questionari:', error)
-      } else {
+        if (error) {
+          console.error('Errore nel caricamento questionari:', error)
+          throw error
+        }
+
+        console.log('Questionari ricevuti:', data)
         setQuestionari(data || [])
+      } catch (err) {
+        console.error('Errore:', err)
+      } finally {
+        setLoading(false)
       }
-      setLoading(false)
     }
 
     fetchQuestionari()
@@ -52,24 +59,30 @@ export default function AmministratoriDashboard() {
         <p>Caricamento questionari...</p>
       ) : (
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold">Questionari Ricevuti</h2>
-          <div className="grid gap-4">
-            {questionari.map((q) => (
-              <div key={q.id} className="border p-4 rounded-lg">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <p className="font-medium">Fonte: {q.fonte || 'Non specificata'}</p>
-                    <p className="text-sm text-gray-500">
-                      Data: {new Date(q.created_at).toLocaleString()}
-                    </p>
-                  </div>
-                  <div className="text-sm">
-                    Stato: <span className="font-medium">{q.stato}</span>
+          <h2 className="text-xl font-semibold">Questionari Ricevuti ({questionari.length})</h2>
+          
+          {questionari.length === 0 ? (
+            <p className="text-gray-500">Nessun questionario ricevuto</p>
+          ) : (
+            <div className="grid gap-4">
+              {questionari.map((q) => (
+                <div key={q.id} className="border p-4 rounded-lg bg-white shadow">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <p className="font-medium">ID: {q.id}</p>
+                      <p className="text-sm text-gray-500">
+                        Data: {new Date(q.created_at).toLocaleString('it-IT')}
+                      </p>
+                      <p className="text-sm">Fonte: {q.fonte}</p>
+                    </div>
+                    <div className="text-sm">
+                      Stato: <span className="font-medium">{q.stato}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>
