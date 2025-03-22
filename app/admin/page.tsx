@@ -1,39 +1,15 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-
 export default function AdminDashboard() {
-  const [isAuthorized, setIsAuthorized] = useState(false)
-
-  useEffect(() => {
-    try {
-      const userType = localStorage.getItem('userType')
-      const codice = localStorage.getItem('codice')
-      
-      console.log('Admin Check:', { userType, codice })
-
-      if (userType === 'admin' && codice === 'admin2025') {
-        console.log('Admin: Autorizzazione confermata')
-        setIsAuthorized(true)
-      } else {
-        console.log('Admin: Credenziali non valide')
-        window.location.href = '/'
-      }
-    } catch (error) {
-      console.error('Admin Error:', error)
+  // Verifica accesso
+  if (typeof window !== 'undefined') {
+    const userType = localStorage.getItem('userType')
+    const codice = localStorage.getItem('codice')
+    
+    if (userType !== 'admin' || codice !== 'admin2025') {
       window.location.href = '/'
+      return null
     }
-  }, [])
-
-  if (!isAuthorized) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p>Verifica accesso admin...</p>
-        </div>
-      </div>
-    )
   }
 
   return (

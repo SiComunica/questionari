@@ -1,25 +1,15 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-
 export default function AnonimoDashboard() {
-  const [isAuthorized, setIsAuthorized] = useState(false)
-
-  useEffect(() => {
-    const userType = sessionStorage.getItem('userType')
-    const codice = sessionStorage.getItem('codice')
+  // Verifica accesso
+  if (typeof window !== 'undefined') {
+    const userType = localStorage.getItem('userType')
+    const codice = localStorage.getItem('codice')
     
-    if (userType === 'anonimo' && codice === 'anonimo9999') {
-      setIsAuthorized(true)
+    if (userType !== 'anonimo' || codice !== 'anonimo9999') {
+      window.location.href = '/'
+      return null
     }
-  }, [])
-
-  if (!isAuthorized) {
-    return (
-      <div className="p-8">
-        <p>Verifica accesso...</p>
-      </div>
-    )
   }
 
   return (
