@@ -14,14 +14,6 @@ export default function LoginPage() {
       // Pulisci localStorage
       window.localStorage.clear()
 
-      // Test code
-      if (codice === 'test1234') {
-        window.localStorage.setItem('userType', 'test')
-        window.localStorage.setItem('codice', codice)
-        window.location.replace('/test')
-        return
-      }
-
       // Verifica codice admin
       if (codice === 'admin2025') {
         window.localStorage.setItem('userType', 'admin')
