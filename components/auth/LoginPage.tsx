@@ -8,30 +8,49 @@ export default function LoginPage() {
   const [url, setUrl] = useState('')
 
   const verificaCodice = () => {
-    // Resetta
     setError('')
     setUrl('')
     
-    // Verifica e imposta URL
+    // Verifica e imposta URL con path assoluto
     if (codice === 'admin2025') {
       localStorage.setItem('userType', 'admin')
-      setUrl('/admin/questionari/lista')
+      localStorage.setItem('codice', codice)
+      const baseUrl = window.location.origin
+      setUrl(`${baseUrl}/admin/questionari/lista`)
     } 
     else if (codice === 'anonimo9999') {
       localStorage.setItem('userType', 'anonimo')
-      setUrl('/anonimo')
+      localStorage.setItem('codice', codice)
+      const baseUrl = window.location.origin
+      setUrl(`${baseUrl}/anonimo`)
     }
     else if (codice.startsWith('operatore')) {
       const num = parseInt(codice.replace('operatore', ''))
       if (!isNaN(num) && num >= 1 && num <= 300) {
         localStorage.setItem('userType', 'operatore')
-        setUrl('/operatore')
+        localStorage.setItem('codice', codice)
+        const baseUrl = window.location.origin
+        setUrl(`${baseUrl}/operatore`)
       } else {
         setError('Codice operatore non valido')
       }
     } 
     else {
       setError('Codice non valido')
+    }
+  }
+
+  const handleRedirect = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault()
+    console.log('Reindirizzamento a:', url)
+    
+    // Forza il reindirizzamento
+    try {
+      window.location.href = url
+    } catch (err) {
+      console.error('Errore nel reindirizzamento:', err)
+      // Fallback
+      window.location.replace(url)
     }
   }
 
@@ -72,10 +91,14 @@ export default function LoginPage() {
               <p className="text-green-600 mb-4">Codice valido!</p>
               <a 
                 href={url}
+                onClick={handleRedirect}
                 className="inline-block bg-green-500 text-white px-6 py-2 rounded-md hover:bg-green-600"
               >
                 Clicca qui per entrare
               </a>
+              <div className="mt-2 text-sm text-gray-500">
+                URL: {url}
+              </div>
             </div>
           )}
         </div>
