@@ -3,25 +3,36 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 
+type StorageData = {
+  userType: string | null
+  codice: string | null
+}
+
 export default function LoginPage() {
   const [codice, setCodice] = useState('')
   const [url, setUrl] = useState('')
   const [error, setError] = useState('')
-  const [storage, setStorage] = useState<{userType?: string, codice?: string}>({})
+  const [storage, setStorage] = useState<StorageData>({ userType: null, codice: null })
 
-  // Gestisci localStorage solo dopo il mount del componente
   useEffect(() => {
-    // Pulisci localStorage all'avvio
-    window.localStorage.clear()
-    
-    // Aggiorna lo stato dello storage per il debug
-    setStorage({
-      userType: window.localStorage.getItem('userType') || undefined,
-      codice: window.localStorage.getItem('codice') || undefined
-    })
+    if (typeof window !== 'undefined') {
+      window.localStorage.clear()
+      updateStorage()
+    }
   }, [])
 
+  const updateStorage = () => {
+    if (typeof window !== 'undefined') {
+      setStorage({
+        userType: window.localStorage.getItem('userType'),
+        codice: window.localStorage.getItem('codice')
+      })
+    }
+  }
+
   const verificaCodice = () => {
+    if (typeof window === 'undefined') return
+
     setError('')
     setUrl('')
 
@@ -61,14 +72,6 @@ export default function LoginPage() {
       console.error('Errore:', error)
       setError('Errore durante la verifica')
     }
-  }
-
-  // Funzione per aggiornare lo stato dello storage
-  const updateStorage = () => {
-    setStorage({
-      userType: window.localStorage.getItem('userType'),
-      codice: window.localStorage.getItem('codice')
-    })
   }
 
   return (
