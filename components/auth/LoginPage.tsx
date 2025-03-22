@@ -1,53 +1,24 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-
-type StorageData = {
-  userType: string | null
-  codice: string | null
-}
+import { useState } from 'react'
 
 export default function LoginPage() {
   const [codice, setCodice] = useState('')
   const [error, setError] = useState('')
-  const [storage, setStorage] = useState<StorageData>({ userType: null, codice: null })
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      updateStorage()
-    }
-  }, [])
-
-  const updateStorage = () => {
-    if (typeof window !== 'undefined') {
-      setStorage({
-        userType: window.localStorage.getItem('userType'),
-        codice: window.localStorage.getItem('codice')
-      })
-    }
-  }
 
   const verificaCodice = () => {
-    console.log('1. Login - Inizio verifica codice:', codice)
-    
     if (typeof window === 'undefined') return
-
     setError('')
-    window.localStorage.clear()
-    console.log('2. Login - localStorage pulito')
 
     try {
+      // Pulisci localStorage
+      window.localStorage.clear()
+
       // Verifica codice admin
       if (codice === 'admin2025') {
         window.localStorage.setItem('userType', 'admin')
         window.localStorage.setItem('codice', codice)
-        console.log('3. Login - Dati admin salvati:', {
-          userType: window.localStorage.getItem('userType'),
-          codice: window.localStorage.getItem('codice')
-        })
-        setTimeout(() => {
-          window.location.replace('/admin')
-        }, 100)
+        window.location.replace('/admin')
         return
       }
 
@@ -55,13 +26,7 @@ export default function LoginPage() {
       if (codice === 'anonimo9999') {
         window.localStorage.setItem('userType', 'anonimo')
         window.localStorage.setItem('codice', codice)
-        console.log('Anonimo storage set:', {
-          userType: window.localStorage.getItem('userType'),
-          codice: window.localStorage.getItem('codice')
-        })
-        setTimeout(() => {
-          window.location.replace('/anonimo')
-        }, 100)
+        window.location.replace('/anonimo')
         return
       }
 
@@ -71,20 +36,14 @@ export default function LoginPage() {
         if (num >= 1 && num <= 300) {
           window.localStorage.setItem('userType', 'operatore')
           window.localStorage.setItem('codice', codice)
-          console.log('Operatore storage set:', {
-            userType: window.localStorage.getItem('userType'),
-            codice: window.localStorage.getItem('codice')
-          })
-          setTimeout(() => {
-            window.location.replace('/operatore')
-          }, 100)
+          window.location.replace('/operatore')
           return
         }
       }
 
       setError('Codice non valido')
     } catch (error) {
-      console.error('Login - Errore:', error)
+      console.error('Errore:', error)
       setError('Errore durante la verifica')
     }
   }
@@ -116,16 +75,6 @@ export default function LoginPage() {
             {error}
           </div>
         )}
-
-        {/* Debug info */}
-        <div className="mt-4 text-sm text-gray-500">
-          Codice: {codice}<br />
-          Storage: {JSON.stringify(storage)}<br />
-          LocalStorage: {typeof window !== 'undefined' ? JSON.stringify({
-            userType: window.localStorage.getItem('userType'),
-            codice: window.localStorage.getItem('codice')
-          }) : 'non disponibile'}
-        </div>
       </div>
     </div>
   )
