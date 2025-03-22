@@ -1,3 +1,15 @@
+export interface QuestionarioData {
+  id: string
+  created_at: string
+  fonte: string
+  stato: string
+  sesso: string
+  classe_eta: string
+  cittadinanza: string
+  titolo_studio: string
+  [key: string]: any
+}
+
 type MappingValue = {
   [key: string]: string
 }
@@ -43,21 +55,12 @@ export const MAPPINGS: Mappings = {
   }
 }
 
-interface QuestionarioData {
-  sesso: string
-  classe_eta: string
-  cittadinanza: string
-  titolo_studio: string
-  [key: string]: any
-}
-
-export const formatQuestionarioData = (questionario: QuestionarioData) => {
+export const formatQuestionarioData = (questionario: QuestionarioData): QuestionarioData => {
   return {
     ...questionario,
     sesso: MAPPINGS.sesso[questionario.sesso] || questionario.sesso,
     classe_eta: MAPPINGS.classe_eta[questionario.classe_eta] || questionario.classe_eta,
     cittadinanza: MAPPINGS.cittadinanza[questionario.cittadinanza] || questionario.cittadinanza,
     titolo_studio: MAPPINGS.titolo_studio[questionario.titolo_studio] || questionario.titolo_studio,
-    // ... altri mapping simili
   }
 } 

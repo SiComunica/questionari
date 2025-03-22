@@ -3,31 +3,21 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import QuestionarioView from '@/components/questionari/QuestionarioView'
-import { formatQuestionarioData } from '@/utils/questionarioMappings'
+import { formatQuestionarioData, QuestionarioData } from '@/utils/questionarioMappings'
 import * as XLSX from 'xlsx'
 import { jsPDF } from 'jspdf'
 import 'jspdf-autotable'
 
-// Definiamo il tipo per il questionario
-interface Questionario {
-  id: string
-  created_at: string
-  fonte: string
-  stato: string
-  [key: string]: any // per altri campi
-}
-
 export default function AmministratoriDashboard() {
-  const [questionari, setQuestionari] = useState<Questionario[]>([])
+  const [questionari, setQuestionari] = useState<QuestionarioData[]>([])
   const [loading, setLoading] = useState(true)
-  const [selectedQuestionario, setSelectedQuestionario] = useState<Questionario | null>(null)
+  const [selectedQuestionario, setSelectedQuestionario] = useState<QuestionarioData | null>(null)
   
   useEffect(() => {
     const fetchQuestionari = async () => {
       try {
         console.log('Fetching questionari...')
         
-        // Query semplificata
         const { data, error } = await supabase
           .from('giovani')
           .select('*')
@@ -48,7 +38,6 @@ export default function AmministratoriDashboard() {
       }
     }
 
-    // Verifichiamo l'autenticazione e facciamo la fetch
     if (typeof window !== 'undefined') {
       const userType = localStorage.getItem('userType')
       const codice = localStorage.getItem('codice')
@@ -93,8 +82,6 @@ export default function AmministratoriDashboard() {
       doc.text(`Data: ${new Date(q.created_at).toLocaleString('it-IT')}`, 14, 40)
       doc.text(`Fonte: ${q.fonte}`, 14, 50)
       doc.text(`Stato: ${q.stato}`, 14, 60)
-      
-      // Aggiungi altri dati del questionario...
     })
     
     doc.save("questionari.pdf")
