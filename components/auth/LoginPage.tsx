@@ -26,7 +26,7 @@ export default function LoginPage() {
         sessionStorage.setItem('codice', codice)
       }
       setUserType('admin')
-      setUrl('/admin/questionari/lista')
+      setUrl('/admin')
       return
     }
 
