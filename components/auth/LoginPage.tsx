@@ -23,7 +23,7 @@ export default function LoginPage() {
         window.localStorage.setItem('userType', 'admin')
         window.localStorage.setItem('codice', codice)
         console.log('Accesso admin valido, reindirizzamento...')
-        window.location.replace('/admin')
+        window.location.replace('/amministratori')
         return
       }
 
@@ -43,7 +43,7 @@ export default function LoginPage() {
           window.localStorage.setItem('userType', 'operatore')
           window.localStorage.setItem('codice', codice)
           console.log('Accesso operatore valido, reindirizzamento...')
-          window.location.replace('/operatore')
+          window.location.replace('/operatori')
           return
         }
       }
