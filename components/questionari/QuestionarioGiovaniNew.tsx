@@ -1887,10 +1887,47 @@ export default function QuestionarioGiovaniNew({ readOnly, initialData }: Props)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   
-  // Rimuovi questo controllo che blocca il rendering
-  /* if (!userType || userType !== 'anonimo') {
-    return <div>Non autorizzato</div>
-  } */
+  const router = useRouter()
+
+  const handleNext = () => {
+    if (currentStep < totalSteps) {
+      setCurrentStep(prev => prev + 1)
+    }
+  }
+
+  const handlePrev = () => {
+    if (currentStep > 1) {
+      setCurrentStep(prev => prev - 1)
+    }
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    setError(null)
+
+    try {
+      const { data, error } = await supabase
+        .from('giovani')
+        .insert([
+          {
+            ...formData,
+            created_by: 'anonimo',
+            fonte: 'anonimo9999',
+            stato: 'completato'
+          }
+        ])
+
+      if (error) throw error
+
+      router.push('/anonimo?success=true')
+    } catch (err: any) {
+      console.error('Errore nel salvataggio:', err)
+      setError('Errore nel salvataggio del questionario')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <div className="container mx-auto p-4">
@@ -1935,17 +1972,21 @@ export default function QuestionarioGiovaniNew({ readOnly, initialData }: Props)
           {/* Pulsanti navigazione */}
           <div className="flex justify-between mt-6">
             {currentStep > 1 && (
-              <Button onClick={prevStep} variant="outline">
+              <Button onClick={handlePrev} variant="outline">
                 Indietro
               </Button>
             )}
             {currentStep < totalSteps ? (
-              <Button onClick={nextStep} className="ml-auto">
+              <Button onClick={handleNext} className="ml-auto">
                 Avanti
               </Button>
             ) : (
-              <Button onClick={handleSubmit} className="ml-auto">
-                Invia Questionario
+              <Button 
+                onClick={handleSubmit} 
+                className="ml-auto"
+                disabled={loading}
+              >
+                {loading ? 'Invio in corso...' : 'Invia Questionario'}
               </Button>
             )}
           </div>
