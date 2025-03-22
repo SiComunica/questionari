@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { supabase } from '../../lib/supabase';
 import { toast } from 'react-hot-toast';
 import { QuestionarioProps } from '@/types/questionari'
@@ -127,7 +127,7 @@ const QuestionarioStruttureNew: React.FC<Props> = ({ fonte }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 6;
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState<FormData>(initialData || {
+  const [formData, setFormData] = useState<FormData>({
     id_struttura: '',
     forma_giuridica: '',
     forma_giuridica_altro: '',
@@ -332,18 +332,34 @@ const QuestionarioStruttureNew: React.FC<Props> = ({ fonte }) => {
       <form onSubmit={handleSubmit}>
         {renderStep1()}
 
-        {!readOnly && (
-          <div className="flex justify-between mt-6">
-            {currentStep > 1 && (
-              <button type="button" onClick={() => setCurrentStep(prev => prev - 1)}>Indietro</button>
-            )}
-            {currentStep < totalSteps ? (
-              <button type="button" onClick={() => setCurrentStep(prev => prev + 1)}>Avanti</button>
-            ) : (
-              <button type="submit">Invia</button>
-            )}
-          </div>
-        )}
+        <div className="flex justify-between mt-6">
+          {currentStep > 1 && (
+            <button 
+              type="button" 
+              onClick={() => setCurrentStep(prev => prev - 1)}
+              className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+            >
+              Indietro
+            </button>
+          )}
+          {currentStep < totalSteps ? (
+            <button 
+              type="button" 
+              onClick={() => setCurrentStep(prev => prev + 1)}
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 ml-auto"
+            >
+              Avanti
+            </button>
+          ) : (
+            <button 
+              type="submit"
+              disabled={loading}
+              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:bg-green-300 ml-auto"
+            >
+              {loading ? 'Salvataggio...' : 'Invia Questionario'}
+            </button>
+          )}
+        </div>
       </form>
     </div>
   );
