@@ -118,7 +118,11 @@ interface FormData {
   fonte: string;
 }
 
-const QuestionarioStruttureNew: React.FC<QuestionarioProps> = ({ fonte, readOnly, initialData }) => {
+interface Props {
+  fonte: string;
+}
+
+const QuestionarioStruttureNew: React.FC<Props> = ({ fonte }) => {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 6;
@@ -238,8 +242,7 @@ const QuestionarioStruttureNew: React.FC<QuestionarioProps> = ({ fonte, readOnly
           name="id_struttura"
           value={formData.id_struttura}
           onChange={handleChange}
-          readOnly={readOnly}
-          className={`w-full p-2 border rounded ${readOnly ? 'bg-gray-100' : ''}`}
+          className="w-full p-2 border rounded"
           required
         />
       </div>

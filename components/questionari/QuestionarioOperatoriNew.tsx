@@ -13,12 +13,16 @@ import SezioneF from './sezioni/SezioneF';
 import { FormData } from '@/types/questionario-operatori';
 import { QuestionarioProps } from '@/types/questionari';
 
-const QuestionarioOperatoriNew: React.FC<QuestionarioProps> = ({ fonte, readOnly, initialData }) => {
+interface Props {
+  fonte: string;
+}
+
+const QuestionarioOperatoriNew: React.FC<Props> = ({ fonte }) => {
   const router = useRouter();
   const { user } = useUser();
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState<FormData>(initialData || {
+  const [formData, setFormData] = useState<FormData>({
     // Metadati
     stato: 'bozza',
     fonte: 'form_web',
@@ -177,7 +181,7 @@ const QuestionarioOperatoriNew: React.FC<QuestionarioProps> = ({ fonte, readOnly
 
   return (
     <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Questionario Operatori</h1>
+      <h2 className="text-2xl font-bold mb-4">Questionario Operatori</h2>
       
       {/* Progress bar */}
       <div className="mb-8">
