@@ -2,30 +2,37 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
-  // Ottieni il path corrente
   const path = request.nextUrl.pathname
+  const userType = request.cookies.get('userType')
+  
+  console.log('Middleware - Path:', path)
+  console.log('Middleware - UserType:', userType?.value)
 
-  // Se siamo già nella home, non fare nulla
+  // Permetti sempre l'accesso alla home
   if (path === '/') {
     return NextResponse.next()
   }
 
-  // Controlla le rotte protette
-  if (path.startsWith('/admin') || path === '/operatore' || path === '/anonimo') {
-    // Reindirizza alla home se non c'è userType
-    const userType = request.cookies.get('userType')
-    if (!userType) {
-      return NextResponse.redirect(new URL('/', request.url))
-    }
+  // Se non c'è userType, reindirizza alla home
+  if (!userType) {
+    console.log('Middleware - No userType, redirecting to home')
+    return NextResponse.redirect(new URL('/', request.url))
+  }
 
-    // Verifica che il tipo utente corrisponda al path
-    if (path.startsWith('/admin') && userType.value !== 'admin') {
+  // Verifica accesso alle rotte protette
+  if (path.startsWith('/admin')) {
+    if (userType.value !== 'admin') {
+      console.log('Middleware - Invalid admin access')
       return NextResponse.redirect(new URL('/', request.url))
     }
-    if (path === '/operatore' && userType.value !== 'operatore') {
+  } else if (path === '/operatore') {
+    if (userType.value !== 'operatore') {
+      console.log('Middleware - Invalid operator access')
       return NextResponse.redirect(new URL('/', request.url))
     }
-    if (path === '/anonimo' && userType.value !== 'anonimo') {
+  } else if (path === '/anonimo') {
+    if (userType.value !== 'anonimo') {
+      console.log('Middleware - Invalid anonymous access')
       return NextResponse.redirect(new URL('/', request.url))
     }
   }
