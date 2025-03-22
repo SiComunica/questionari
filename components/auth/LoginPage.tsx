@@ -4,23 +4,25 @@ import { useState } from 'react'
 
 export default function LoginPage() {
   const [codice, setCodice] = useState('')
+  const [validUrl, setValidUrl] = useState('')
 
-  const handleLogin = () => {
-    // Pulisci localStorage
+  const verificaCodice = () => {
+    // Pulisci stato
     localStorage.clear()
+    setValidUrl('')
 
-    // Verifica codice e reindirizza
+    // Verifica codice
     if (codice === 'admin2025') {
       localStorage.setItem('userType', 'admin')
       localStorage.setItem('codice', codice)
-      window.open('/admin/questionari/lista', '_self')
+      setValidUrl('/admin/questionari/lista')
       return
     }
 
     if (codice === 'anonimo9999') {
       localStorage.setItem('userType', 'anonimo')
       localStorage.setItem('codice', codice)
-      window.open('/anonimo', '_self')
+      setValidUrl('/anonimo')
       return
     }
 
@@ -29,7 +31,7 @@ export default function LoginPage() {
       if (num >= 1 && num <= 300) {
         localStorage.setItem('userType', 'operatore')
         localStorage.setItem('codice', codice)
-        window.open('/operatore', '_self')
+        setValidUrl('/operatore')
         return
       }
     }
@@ -55,11 +57,44 @@ export default function LoginPage() {
 
           <button
             type="button"
-            onClick={handleLogin}
+            onClick={verificaCodice}
             className="w-full py-3 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700"
           >
-            Accedi
+            Verifica codice
           </button>
+
+          {validUrl && (
+            <div className="text-center space-y-4">
+              <p className="text-green-600">Codice valido! Scegli come accedere:</p>
+              
+              <a 
+                href={validUrl}
+                className="block w-full py-2 px-4 bg-green-500 text-white rounded hover:bg-green-600"
+              >
+                Link diretto
+              </a>
+              
+              <button
+                onClick={() => window.location.href = validUrl}
+                className="w-full py-2 px-4 bg-green-500 text-white rounded hover:bg-green-600"
+              >
+                Bottone window.location
+              </button>
+              
+              <button
+                onClick={() => window.open(validUrl, '_self')}
+                className="w-full py-2 px-4 bg-green-500 text-white rounded hover:bg-green-600"
+              >
+                Bottone window.open
+              </button>
+
+              <div className="mt-4 text-sm text-gray-500">
+                <p>UserType: {localStorage.getItem('userType')}</p>
+                <p>Codice: {localStorage.getItem('codice')}</p>
+                <p>URL: {validUrl}</p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
