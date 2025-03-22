@@ -6,34 +6,22 @@ export default function AdminDashboard() {
   const [isAuthorized, setIsAuthorized] = useState(false)
 
   useEffect(() => {
-    // Verifica se siamo nel browser
-    if (typeof window === 'undefined') {
-      console.log('Admin: Non siamo nel browser')
-      return
-    }
-
     try {
-      const userType = sessionStorage.getItem('userType')
-      const codice = sessionStorage.getItem('codice')
+      const userType = localStorage.getItem('userType')
+      const codice = localStorage.getItem('codice')
       
       console.log('Admin Check:', { userType, codice })
-
-      if (!userType || !codice) {
-        console.log('Admin: Credenziali mancanti')
-        window.location.replace('/')
-        return
-      }
 
       if (userType === 'admin' && codice === 'admin2025') {
         console.log('Admin: Autorizzazione confermata')
         setIsAuthorized(true)
       } else {
         console.log('Admin: Credenziali non valide')
-        window.location.replace('/')
+        window.location.href = '/'
       }
     } catch (error) {
       console.error('Admin Error:', error)
-      window.location.replace('/')
+      window.location.href = '/'
     }
   }, [])
 

@@ -6,23 +6,11 @@ export default function OperatoreDashboard() {
   const [isAuthorized, setIsAuthorized] = useState(false)
 
   useEffect(() => {
-    // Verifica se siamo nel browser
-    if (typeof window === 'undefined') {
-      console.log('Operatore: Non siamo nel browser')
-      return
-    }
-
     try {
-      const userType = sessionStorage.getItem('userType')
-      const codice = sessionStorage.getItem('codice')
+      const userType = localStorage.getItem('userType')
+      const codice = localStorage.getItem('codice')
       
       console.log('Operatore Check:', { userType, codice })
-
-      if (!userType || !codice) {
-        console.log('Operatore: Credenziali mancanti')
-        window.location.replace('/')
-        return
-      }
 
       if (userType === 'operatore' && codice?.startsWith('operatore')) {
         const num = parseInt(codice.replace('operatore', ''))
@@ -30,16 +18,14 @@ export default function OperatoreDashboard() {
           console.log('Operatore: Autorizzazione confermata')
           setIsAuthorized(true)
         } else {
-          console.log('Operatore: Numero non valido')
-          window.location.replace('/')
+          window.location.href = '/'
         }
       } else {
-        console.log('Operatore: Credenziali non valide')
-        window.location.replace('/')
+        window.location.href = '/'
       }
     } catch (error) {
       console.error('Operatore Error:', error)
-      window.location.replace('/')
+      window.location.href = '/'
     }
   }, [])
 
