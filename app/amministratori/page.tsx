@@ -3,6 +3,10 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import QuestionarioView from '@/components/questionari/QuestionarioView'
+import { formatQuestionarioData } from '@/utils/questionarioMappings'
+import * as XLSX from 'xlsx'
+import { jsPDF } from 'jspdf'
+import 'jspdf-autotable'
 
 // Definiamo il tipo per il questionario
 interface Questionario {
@@ -66,9 +70,56 @@ export default function AmministratoriDashboard() {
     }
   }
 
+  const exportToExcel = () => {
+    const formattedData = questionari.map(formatQuestionarioData)
+    const ws = XLSX.utils.json_to_sheet(formattedData)
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, "Questionari")
+    XLSX.writeFile(wb, "questionari.xlsx")
+  }
+
+  const exportToPDF = () => {
+    const doc = new jsPDF()
+    const formattedData = questionari.map(formatQuestionarioData)
+    
+    formattedData.forEach((q, index) => {
+      if (index > 0) doc.addPage()
+      
+      doc.setFontSize(16)
+      doc.text("Questionario", 14, 20)
+      
+      doc.setFontSize(12)
+      doc.text(`ID: ${q.id}`, 14, 30)
+      doc.text(`Data: ${new Date(q.created_at).toLocaleString('it-IT')}`, 14, 40)
+      doc.text(`Fonte: ${q.fonte}`, 14, 50)
+      doc.text(`Stato: ${q.stato}`, 14, 60)
+      
+      // Aggiungi altri dati del questionario...
+    })
+    
+    doc.save("questionari.pdf")
+  }
+
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold mb-4">Dashboard Amministratori</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Dashboard Amministratori</h1>
+        
+        <div className="space-x-4">
+          <button
+            onClick={exportToExcel}
+            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+          >
+            Esporta Excel
+          </button>
+          <button
+            onClick={exportToPDF}
+            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+          >
+            Esporta PDF
+          </button>
+        </div>
+      </div>
       
       {loading ? (
         <p>Caricamento questionari...</p>
