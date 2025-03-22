@@ -30,6 +30,7 @@ import {
   LivelliUtilita,
   AspettiLavoro
 } from '@/types/questionario-giovani'
+import { v4 as uuidv4 } from 'uuid' // Aggiungi questo import in cima al file
 
 // Costanti per le opzioni
 const TIPI_PERCORSO = [
@@ -1931,11 +1932,12 @@ export default function QuestionarioGiovaniNew({ readOnly, initialData }: Props)
         .from('giovani')
         .insert([
           {
+            id: uuidv4(), // Genera un nuovo UUID
             ...formattedData,
             fonte: 'anonimo9999',
             stato: 'completato',
-            created_at: new Date().toISOString(), // Aggiungiamo il timestamp
-            ultima_modifica: new Date().toISOString() // Aggiungiamo anche questo
+            created_at: new Date().toISOString(),
+            ultima_modifica: new Date().toISOString()
           }
         ])
 
