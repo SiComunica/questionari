@@ -1,4 +1,16 @@
-export const MAPPINGS = {
+type MappingValue = {
+  [key: string]: string
+}
+
+type Mappings = {
+  sesso: MappingValue
+  classe_eta: MappingValue
+  cittadinanza: MappingValue
+  titolo_studio: MappingValue
+  valutazione: MappingValue
+}
+
+export const MAPPINGS: Mappings = {
   sesso: {
     "1": "Maschio",
     "2": "Femmina",
@@ -31,7 +43,15 @@ export const MAPPINGS = {
   }
 }
 
-export const formatQuestionarioData = (questionario: any) => {
+interface QuestionarioData {
+  sesso: string
+  classe_eta: string
+  cittadinanza: string
+  titolo_studio: string
+  [key: string]: any
+}
+
+export const formatQuestionarioData = (questionario: QuestionarioData) => {
   return {
     ...questionario,
     sesso: MAPPINGS.sesso[questionario.sesso] || questionario.sesso,
