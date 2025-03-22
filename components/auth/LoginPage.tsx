@@ -5,63 +5,48 @@ import { useState } from 'react'
 export default function LoginPage() {
   const [codice, setCodice] = useState('')
 
-  const handleLogin = (e: React.MouseEvent) => {
-    e.preventDefault()
+  const handleLogin = () => {
+    // Verifica il codice
+    let path = ''
     
-    // Pulisci localStorage
-    localStorage.clear()
-
-    // Costruisci l'URL base
-    const baseUrl = window.location.protocol + '//' + window.location.host
-
-    // Verifica il codice e reindirizza
-    let targetUrl = ''
-    let userType = ''
-
-    if (codice === 'admin2025') {
-      targetUrl = baseUrl + '/admin/questionari/lista'
-      userType = 'admin'
-    } 
-    else if (codice === 'anonimo9999') {
-      targetUrl = baseUrl + '/anonimo'
-      userType = 'anonimo'
-    }
-    else if (codice.startsWith('operatore')) {
-      const num = parseInt(codice.replace('operatore', ''))
-      if (num >= 1 && num <= 300) {
-        targetUrl = baseUrl + '/operatore'
-        userType = 'operatore'
-      }
+    switch(codice) {
+      case 'admin2025':
+        path = '/admin/questionari/lista'
+        break
+      case 'anonimo9999':
+        path = '/anonimo'
+        break
+      default:
+        if (codice.startsWith('operatore')) {
+          const num = parseInt(codice.replace('operatore', ''))
+          if (num >= 1 && num <= 300) {
+            path = '/operatore'
+          }
+        }
     }
 
-    if (targetUrl && userType) {
-      // Salva i dati
-      localStorage.setItem('userType', userType)
-      localStorage.setItem('codice', codice)
-
-      // Crea un form e forzane l'invio
-      const form = document.createElement('form')
-      form.method = 'GET'
-      form.action = targetUrl
-
-      // Aggiungi i dati come campi nascosti
-      const typeInput = document.createElement('input')
-      typeInput.type = 'hidden'
-      typeInput.name = 'userType'
-      typeInput.value = userType
-      form.appendChild(typeInput)
-
-      const codeInput = document.createElement('input')
-      codeInput.type = 'hidden'
-      codeInput.name = 'code'
-      codeInput.value = codice
-      form.appendChild(codeInput)
-
-      // Aggiungi il form al documento e invialo
-      document.body.appendChild(form)
-      form.submit()
-    } else {
+    if (!path) {
       alert('Codice non valido')
+      return
+    }
+
+    // Salva i dati
+    try {
+      localStorage.clear()
+      localStorage.setItem('codice', codice)
+      localStorage.setItem('userType', path.includes('admin') ? 'admin' : path.includes('operatore') ? 'operatore' : 'anonimo')
+    } catch (e) {
+      console.error('Errore localStorage:', e)
+    }
+
+    // Reindirizza
+    try {
+      const a = document.createElement('a')
+      a.href = path
+      a.click()
+    } catch (e) {
+      console.error('Errore reindirizzamento:', e)
+      window.location.href = path
     }
   }
 
