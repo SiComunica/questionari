@@ -14,23 +14,19 @@ export default function LoginPage() {
     
     try {
       if (codice === 'admin2025') {
-        console.log('Codice admin valido, reindirizzamento...')
-        // Prova tutti i metodi di reindirizzamento
-        try {
-          await router.push('/admin/questionari/lista')
-        } catch (e) {
-          console.error('Errore con router.push:', e)
-          try {
-            window.location.href = '/admin/questionari/lista'
-          } catch (e) {
-            console.error('Errore con location.href:', e)
-            document.location.href = '/admin/questionari/lista'
-          }
-        }
+        console.log('Codice admin valido, salvo userType...')
+        // Salva il tipo utente prima del reindirizzamento
+        localStorage.setItem('userType', 'admin')
+        console.log('UserType salvato:', localStorage.getItem('userType'))
+        
+        // Reindirizza
+        console.log('Reindirizzamento alla dashboard...')
+        router.push('/admin/questionari/lista')
         return
       }
       
       if (codice === 'anonimo9999') {
+        localStorage.setItem('userType', 'anonimo')
         router.push('/anonimo')
         return
       }
@@ -38,6 +34,7 @@ export default function LoginPage() {
       if (codice.startsWith('operatore')) {
         const num = parseInt(codice.replace('operatore', ''))
         if (!isNaN(num) && num >= 1 && num <= 300) {
+          localStorage.setItem('userType', 'operatore')
           router.push('/operatore')
           return
         }
@@ -100,7 +97,7 @@ export default function LoginPage() {
 
         <div className="mt-4 text-sm text-gray-500">
           <div>Codice inserito: {codice}</div>
-          <div>Path corrente: {typeof window !== 'undefined' ? window.location.pathname : ''}</div>
+          <div>UserType: {typeof window !== 'undefined' ? localStorage.getItem('userType') : ''}</div>
         </div>
       </div>
     </div>
