@@ -1932,8 +1932,7 @@ export default function QuestionarioGiovaniNew({ readOnly, initialData }: Props)
         .insert([
           {
             ...formattedData,
-            created_by: 'anonimo',
-            fonte: 'anonimo9999',
+            fonte: 'anonimo9999',  // Solo fonte, non created_by
             stato: 'completato'
           }
         ])
