@@ -55,10 +55,10 @@ export const MAPPINGS: Mappings = {
     "6": "Laurea"
   },
   valutazione: {
-    "0": "Per niente",
-    "1": "Poco",
-    "2": "Abbastanza",
-    "3": "Molto"
+    1: "Per niente",
+    2: "Poco",
+    3: "Abbastanza",
+    4: "Molto"
   }
 }
 
