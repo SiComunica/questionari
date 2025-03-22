@@ -5,6 +5,28 @@ import { useState } from 'react'
 export default function LoginPage() {
   const [codice, setCodice] = useState('')
 
+  const redirect = (path: string) => {
+    console.log('Tentativo reindirizzamento a:', path)
+    
+    // Prova tutti i metodi possibili di reindirizzamento
+    try {
+      window.location.replace(path)
+    } catch (e) {
+      console.log('Replace fallito, provo href')
+      try {
+        window.location.href = path
+      } catch (e) {
+        console.log('Href fallito, provo assign')
+        try {
+          window.location.assign(path)
+        } catch (e) {
+          console.log('Assign fallito, ultimo tentativo')
+          document.location.href = path
+        }
+      }
+    }
+  }
+
   const handleLogin = () => {
     console.log('Tentativo login con:', codice)
 
@@ -13,17 +35,12 @@ export default function LoginPage() {
       console.log('Login admin...')
       localStorage.setItem('userType', 'admin')
       localStorage.setItem('codice', codice)
+      
+      const fullUrl = window.location.origin + '/admin/questionari/lista'
+      console.log('URL completo:', fullUrl)
+      
       // Forza il reindirizzamento
-      const url = '/admin/questionari/lista'
-      console.log('Reindirizzamento a:', url)
-      setTimeout(() => {
-        try {
-          window.location.replace(url)
-        } catch (e) {
-          console.error('Errore replace:', e)
-          window.location.href = url
-        }
-      }, 100)
+      redirect(fullUrl)
       return
     }
 
@@ -32,9 +49,9 @@ export default function LoginPage() {
       console.log('Login anonimo...')
       localStorage.setItem('userType', 'anonimo')
       localStorage.setItem('codice', codice)
-      setTimeout(() => {
-        window.location.replace('/anonimo')
-      }, 100)
+      
+      const fullUrl = window.location.origin + '/anonimo'
+      redirect(fullUrl)
       return
     }
 
@@ -45,9 +62,9 @@ export default function LoginPage() {
         console.log('Login operatore...')
         localStorage.setItem('userType', 'operatore')
         localStorage.setItem('codice', codice)
-        setTimeout(() => {
-          window.location.replace('/operatore')
-        }, 100)
+        
+        const fullUrl = window.location.origin + '/operatore'
+        redirect(fullUrl)
         return
       }
     }
@@ -78,6 +95,10 @@ export default function LoginPage() {
           >
             Accedi
           </button>
+        </div>
+
+        <div className="mt-4 text-sm text-gray-500">
+          URL corrente: {typeof window !== 'undefined' ? window.location.href : ''}
         </div>
       </div>
     </div>
