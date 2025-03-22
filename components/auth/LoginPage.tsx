@@ -1,29 +1,42 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 
 export default function LoginPage() {
   const [codice, setCodice] = useState('')
   const [url, setUrl] = useState('')
   const [error, setError] = useState('')
+  const [userType, setUserType] = useState('')
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const verificaCodice = () => {
     setError('')
     setUrl('')
+    setUserType('')
 
     // Verifica codice admin
     if (codice === 'admin2025') {
-      sessionStorage.setItem('userType', 'admin')
-      sessionStorage.setItem('codice', codice)
+      if (mounted) {
+        sessionStorage.setItem('userType', 'admin')
+        sessionStorage.setItem('codice', codice)
+      }
+      setUserType('admin')
       setUrl('/admin/questionari/lista')
       return
     }
 
     // Verifica codice anonimo
     if (codice === 'anonimo9999') {
-      sessionStorage.setItem('userType', 'anonimo')
-      sessionStorage.setItem('codice', codice)
+      if (mounted) {
+        sessionStorage.setItem('userType', 'anonimo')
+        sessionStorage.setItem('codice', codice)
+      }
+      setUserType('anonimo')
       setUrl('/anonimo')
       return
     }
@@ -32,8 +45,11 @@ export default function LoginPage() {
     if (codice.startsWith('operatore')) {
       const num = parseInt(codice.replace('operatore', ''))
       if (num >= 1 && num <= 300) {
-        sessionStorage.setItem('userType', 'operatore')
-        sessionStorage.setItem('codice', codice)
+        if (mounted) {
+          sessionStorage.setItem('userType', 'operatore')
+          sessionStorage.setItem('codice', codice)
+        }
+        setUserType('operatore')
         setUrl('/operatore')
         return
       }
@@ -81,11 +97,13 @@ export default function LoginPage() {
         )}
 
         {/* Debug info */}
-        <div className="mt-4 text-sm text-gray-500">
-          Codice inserito: {codice}<br />
-          URL generato: {url}<br />
-          Tipo utente: {sessionStorage.getItem('userType')}
-        </div>
+        {mounted && (
+          <div className="mt-4 text-sm text-gray-500">
+            Codice inserito: {codice}<br />
+            URL generato: {url}<br />
+            Tipo utente: {userType}
+          </div>
+        )}
       </div>
     </div>
   )
