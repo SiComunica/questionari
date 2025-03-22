@@ -7,45 +7,31 @@ export default function LoginPage() {
   const [error, setError] = useState('')
 
   const handleLogin = () => {
-    // Pulisci localStorage
-    localStorage.clear()
-    
-    try {
-      if (codice === 'admin2025') {
-        // Salva i dati
-        localStorage.setItem('userType', 'admin')
-        localStorage.setItem('codice', codice)
-        
-        // Reindirizza
-        console.log('Reindirizzamento admin...')
-        window.location.assign('/admin/questionari/lista')
-        return
-      }
-      
-      if (codice === 'anonimo9999') {
-        localStorage.setItem('userType', 'anonimo')
-        localStorage.setItem('codice', codice)
-        console.log('Reindirizzamento anonimo...')
-        window.location.assign('/anonimo')
-        return
-      }
-      
-      if (codice.startsWith('operatore')) {
-        const num = parseInt(codice.replace('operatore', ''))
-        if (!isNaN(num) && num >= 1 && num <= 300) {
-          localStorage.setItem('userType', 'operatore')
-          localStorage.setItem('codice', codice)
-          console.log('Reindirizzamento operatore...')
-          window.location.assign('/operatore')
-          return
-        }
-      }
-      
-      setError('Codice non valido')
-    } catch (e) {
-      console.error('Errore:', e)
-      setError('Errore durante l\'accesso')
+    // Admin
+    if (codice === 'admin2025') {
+      localStorage.setItem('userType', 'admin')
+      document.location.href = '/admin/questionari/lista'
+      return
     }
+
+    // Anonimo
+    if (codice === 'anonimo9999') {
+      localStorage.setItem('userType', 'anonimo')
+      document.location.href = '/anonimo'
+      return
+    }
+
+    // Operatore
+    if (codice.startsWith('operatore')) {
+      const num = parseInt(codice.replace('operatore', ''))
+      if (num >= 1 && num <= 300) {
+        localStorage.setItem('userType', 'operatore')
+        document.location.href = '/operatore'
+        return
+      }
+    }
+
+    setError('Codice non valido')
   }
 
   return (
@@ -61,8 +47,8 @@ export default function LoginPage() {
             </div>
           )}
         </div>
-        
-        <div className="mt-8 space-y-6">
+
+        <div className="mt-8 space-y-4">
           <input
             type="text"
             value={codice}
@@ -76,16 +62,19 @@ export default function LoginPage() {
 
           <button
             onClick={handleLogin}
-            className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            className="w-full py-3 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700"
           >
             Accedi
           </button>
         </div>
 
         <div className="mt-4 text-sm text-gray-500">
-          <div>Codice: {codice}</div>
-          <div>UserType: {typeof window !== 'undefined' ? localStorage.getItem('userType') : ''}</div>
-          <div>Path: {typeof window !== 'undefined' ? window.location.pathname : ''}</div>
+          <p>Codici di accesso:</p>
+          <ul className="list-disc pl-5 mt-2">
+            <li>Admin: admin2025</li>
+            <li>Operatore: operatore1 fino a operatore300</li>
+            <li>Anonimo: anonimo9999</li>
+          </ul>
         </div>
       </div>
     </div>
