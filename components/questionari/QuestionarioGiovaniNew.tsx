@@ -1914,14 +1914,14 @@ export default function QuestionarioGiovaniNew({ readOnly, initialData }: Props)
           {
             ...formData,
             created_by: userType,
-            codice_accesso: codiceAccesso,
+            fonte: codiceAccesso, // Aggiungi la fonte
             stato: 'completato'
           }
         ])
 
       if (error) throw error
 
-      router.push('/dashboard/anonimo?success=true')
+      router.push('/anonimo?success=true')
     } catch (err: any) {
       console.error('Errore nel salvataggio:', err)
       setError('Errore nel salvataggio del questionario')
