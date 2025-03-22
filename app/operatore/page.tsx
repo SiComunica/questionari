@@ -1,12 +1,9 @@
 'use client'
 
-export default function OperatorePage() {
+export default function Operatore() {
   return (
-    <div className="container mx-auto p-8">
-      <h1 className="text-2xl font-bold mb-6">Area Operatore</h1>
-      <div className="bg-white rounded-lg shadow p-6">
-        <p>Benvenuto nell'area operatore</p>
-      </div>
+    <div>
+      <h1>Area Operatore</h1>
     </div>
   )
 } 
