@@ -2,12 +2,17 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
-  const path = request.nextUrl.pathname
   const userType = request.cookies.get('userType')?.value
+  const path = request.nextUrl.pathname
 
   // Permetti sempre l'accesso alla home
   if (path === '/') {
     return NextResponse.next()
+  }
+
+  // Se non c'è userType, reindirizza alla home
+  if (!userType) {
+    return NextResponse.redirect(new URL('/', request.url))
   }
 
   // Verifica le rotte protette
@@ -27,10 +32,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    '/',
-    '/admin/:path*',
-    '/operatore',
-    '/anonimo'
-  ]
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)']
 } 

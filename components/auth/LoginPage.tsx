@@ -15,6 +15,7 @@ export default function LoginPage() {
       let userType = ''
       let targetUrl = ''
 
+      // Verifica il codice
       if (codice === 'admin2025') {
         userType = 'admin'
         targetUrl = '/admin/questionari/lista'
@@ -30,15 +31,14 @@ export default function LoginPage() {
       }
 
       if (userType && targetUrl) {
-        // Pulisci localStorage
-        localStorage.clear()
-        
-        // Salva nel localStorage
-        localStorage.setItem('userType', userType)
-        localStorage.setItem('codice', codice)
+        // Imposta i cookie direttamente
+        document.cookie = `userType=${userType}; path=/; max-age=604800`
+        document.cookie = `codice=${codice}; path=/; max-age=604800`
 
-        // Reindirizza alla pagina di verifica
-        window.location.href = '/verifica-accesso?redirect=' + encodeURIComponent(targetUrl)
+        // Reindirizza dopo un breve delay
+        setTimeout(() => {
+          window.location.href = targetUrl
+        }, 500)
       } else {
         setError('Codice non valido')
         setLoading(false)
@@ -78,6 +78,12 @@ export default function LoginPage() {
           {error && (
             <div className="text-red-500 text-center mt-2">
               {error}
+            </div>
+          )}
+
+          {loading && (
+            <div className="text-center mt-4">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
             </div>
           )}
         </div>
