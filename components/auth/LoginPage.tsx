@@ -1,33 +1,46 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
 export default function LoginPage() {
   const router = useRouter()
   const [codice, setCodice] = useState('')
   const [error, setError] = useState('')
+  const [isRedirecting, setIsRedirecting] = useState(false)
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Gestisce il reindirizzamento in modo sicuro
+  useEffect(() => {
+    if (isRedirecting) {
+      const userType = localStorage.getItem('userType')
+      if (userType === 'admin') {
+        window.location.href = '/admin/questionari/lista'
+      } else if (userType === 'anonimo') {
+        window.location.href = '/anonimo'
+      } else if (userType === 'operatore') {
+        window.location.href = '/operatore'
+      }
+    }
+  }, [isRedirecting])
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('Tentativo di login con codice:', codice)
+    e.stopPropagation() // Previene la propagazione dell'evento
+    
+    if (isRedirecting) return
     
     try {
       if (codice === 'admin2025') {
-        console.log('Codice admin valido, salvo userType...')
-        // Salva il tipo utente prima del reindirizzamento
         localStorage.setItem('userType', 'admin')
-        console.log('UserType salvato:', localStorage.getItem('userType'))
-        
-        // Reindirizza
-        console.log('Reindirizzamento alla dashboard...')
-        router.push('/admin/questionari/lista')
+        localStorage.setItem('codice', codice)
+        setIsRedirecting(true)
         return
       }
       
       if (codice === 'anonimo9999') {
         localStorage.setItem('userType', 'anonimo')
-        router.push('/anonimo')
+        localStorage.setItem('codice', codice)
+        setIsRedirecting(true)
         return
       }
       
@@ -35,7 +48,8 @@ export default function LoginPage() {
         const num = parseInt(codice.replace('operatore', ''))
         if (!isNaN(num) && num >= 1 && num <= 300) {
           localStorage.setItem('userType', 'operatore')
-          router.push('/operatore')
+          localStorage.setItem('codice', codice)
+          setIsRedirecting(true)
           return
         }
       }
@@ -84,19 +98,22 @@ export default function LoginPage() {
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
               placeholder="Inserisci il codice di accesso"
               required
+              disabled={isRedirecting}
             />
           </div>
 
           <button
             type="submit"
-            className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            disabled={isRedirecting}
+            className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400"
           >
-            Accedi
+            {isRedirecting ? 'Reindirizzamento...' : 'Accedi'}
           </button>
         </form>
 
         <div className="mt-4 text-sm text-gray-500">
           <div>Codice inserito: {codice}</div>
+          <div>Stato: {isRedirecting ? 'Reindirizzamento in corso...' : 'Pronto'}</div>
           <div>UserType: {typeof window !== 'undefined' ? localStorage.getItem('userType') : ''}</div>
         </div>
       </div>
