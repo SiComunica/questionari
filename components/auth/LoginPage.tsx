@@ -5,52 +5,57 @@ import { useState } from 'react'
 export default function LoginPage() {
   const [codice, setCodice] = useState('')
   const [error, setError] = useState('')
-  const [url, setUrl] = useState('')
 
   const verificaCodice = () => {
     setError('')
-    setUrl('')
     
-    // Verifica e imposta URL con path assoluto
+    // Verifica e reindirizza direttamente
     if (codice === 'admin2025') {
-      localStorage.setItem('userType', 'admin')
-      localStorage.setItem('codice', codice)
-      const baseUrl = window.location.origin
-      setUrl(`${baseUrl}/admin/questionari/lista`)
+      try {
+        // Salva i dati
+        localStorage.setItem('userType', 'admin')
+        localStorage.setItem('codice', codice)
+        
+        // Reindirizza
+        const path = '/admin/questionari/lista'
+        console.log('Reindirizzamento admin a:', path)
+        
+        // Forza il reload completo
+        window.top.location.href = path
+      } catch (err) {
+        console.error('Errore reindirizzamento admin:', err)
+        setError('Errore durante l\'accesso')
+      }
     } 
     else if (codice === 'anonimo9999') {
-      localStorage.setItem('userType', 'anonimo')
-      localStorage.setItem('codice', codice)
-      const baseUrl = window.location.origin
-      setUrl(`${baseUrl}/anonimo`)
+      try {
+        localStorage.setItem('userType', 'anonimo')
+        localStorage.setItem('codice', codice)
+        console.log('Reindirizzamento anonimo a: /anonimo')
+        window.top.location.href = '/anonimo'
+      } catch (err) {
+        console.error('Errore reindirizzamento anonimo:', err)
+        setError('Errore durante l\'accesso')
+      }
     }
     else if (codice.startsWith('operatore')) {
       const num = parseInt(codice.replace('operatore', ''))
       if (!isNaN(num) && num >= 1 && num <= 300) {
-        localStorage.setItem('userType', 'operatore')
-        localStorage.setItem('codice', codice)
-        const baseUrl = window.location.origin
-        setUrl(`${baseUrl}/operatore`)
+        try {
+          localStorage.setItem('userType', 'operatore')
+          localStorage.setItem('codice', codice)
+          console.log('Reindirizzamento operatore a: /operatore')
+          window.top.location.href = '/operatore'
+        } catch (err) {
+          console.error('Errore reindirizzamento operatore:', err)
+          setError('Errore durante l\'accesso')
+        }
       } else {
         setError('Codice operatore non valido')
       }
     } 
     else {
       setError('Codice non valido')
-    }
-  }
-
-  const handleRedirect = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault()
-    console.log('Reindirizzamento a:', url)
-    
-    // Forza il reindirizzamento
-    try {
-      window.location.href = url
-    } catch (err) {
-      console.error('Errore nel reindirizzamento:', err)
-      // Fallback
-      window.location.replace(url)
     }
   }
 
@@ -77,28 +82,12 @@ export default function LoginPage() {
             onClick={verificaCodice}
             className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700"
           >
-            Verifica codice
+            Accedi
           </button>
 
           {error && (
             <div className="text-red-500 text-center">
               {error}
-            </div>
-          )}
-
-          {url && (
-            <div className="text-center">
-              <p className="text-green-600 mb-4">Codice valido!</p>
-              <a 
-                href={url}
-                onClick={handleRedirect}
-                className="inline-block bg-green-500 text-white px-6 py-2 rounded-md hover:bg-green-600"
-              >
-                Clicca qui per entrare
-              </a>
-              <div className="mt-2 text-sm text-gray-500">
-                URL: {url}
-              </div>
             </div>
           )}
         </div>
