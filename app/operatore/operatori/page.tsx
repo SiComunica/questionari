@@ -1,10 +1,17 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import AuthCheck from '@/components/AuthCheck'
 import QuestionarioOperatoriNew from '@/components/questionari/QuestionarioOperatoriNew'
 
 export default function QuestionarioOperatoriPage() {
+  const [fonte, setFonte] = useState('')
+
+  useEffect(() => {
+    setFonte(localStorage.getItem('codice') || '')
+  }, [])
+
   return (
     <AuthCheck>
       <div className="p-8">
@@ -14,7 +21,7 @@ export default function QuestionarioOperatoriPage() {
         >
           ← Torna alla dashboard
         </Link>
-        <QuestionarioOperatoriNew fonte={localStorage.getItem('codice') || ''} />
+        {fonte && <QuestionarioOperatoriNew fonte={fonte} />}
       </div>
     </AuthCheck>
   )

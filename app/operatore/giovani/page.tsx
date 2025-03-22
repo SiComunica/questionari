@@ -1,10 +1,17 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import AuthCheck from '@/components/AuthCheck'
 import QuestionarioGiovaniNew from '@/components/questionari/QuestionarioGiovaniNew'
 
 export default function QuestionarioGiovaniPage() {
+  const [fonte, setFonte] = useState('')
+
+  useEffect(() => {
+    setFonte(localStorage.getItem('codice') || '')
+  }, [])
+
   return (
     <AuthCheck>
       <div className="p-8">
@@ -14,7 +21,7 @@ export default function QuestionarioGiovaniPage() {
         >
           ← Torna alla dashboard
         </Link>
-        <QuestionarioGiovaniNew fonte={localStorage.getItem('codice') || ''} />
+        {fonte && <QuestionarioGiovaniNew fonte={fonte} />}
       </div>
     </AuthCheck>
   )

@@ -9,15 +9,21 @@ export default function AuthCheck({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const userType = localStorage.getItem('userType')
-    const codice = localStorage.getItem('codice')
-    
-    if (userType === 'operatore' && codice?.startsWith('operatore')) {
-      setIsAuthorized(true)
-    } else {
+    try {
+      const userType = localStorage.getItem('userType')
+      const codice = localStorage.getItem('codice')
+      
+      if (userType === 'operatore' && codice?.startsWith('operatore')) {
+        setIsAuthorized(true)
+      } else {
+        router.push('/')
+      }
+    } catch (error) {
+      console.error('Error checking auth:', error)
       router.push('/')
+    } finally {
+      setIsLoading(false)
     }
-    setIsLoading(false)
   }, [router])
 
   if (isLoading) {
