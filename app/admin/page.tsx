@@ -2,12 +2,14 @@
 
 export default function AdminDashboard() {
   if (typeof window !== 'undefined') {
-    const userType = localStorage.getItem('userType')
-    const codice = localStorage.getItem('codice')
+    const userType = window.localStorage.getItem('userType')
+    const codice = window.localStorage.getItem('codice')
+    
+    console.log('Admin check:', { userType, codice })
     
     if (userType !== 'admin' || codice !== 'admin2025') {
-      window.location.href = '/'
-      return null
+      window.location.replace('/')
+      return <div>Reindirizzamento...</div>
     }
   }
 

@@ -2,23 +2,20 @@
 
 export default function OperatoreDashboard() {
   if (typeof window !== 'undefined') {
-    const userType = localStorage.getItem('userType')
-    const codice = localStorage.getItem('codice')
+    const userType = window.localStorage.getItem('userType')
+    const codice = window.localStorage.getItem('codice')
     
-    if (userType !== 'operatore') {
-      window.location.href = '/'
-      return null
-    }
-
-    if (!codice?.startsWith('operatore')) {
-      window.location.href = '/'
-      return null
+    console.log('Operatore check:', { userType, codice })
+    
+    if (userType !== 'operatore' || !codice?.startsWith('operatore')) {
+      window.location.replace('/')
+      return <div>Reindirizzamento...</div>
     }
 
     const num = parseInt(codice.replace('operatore', ''))
-    if (isNaN(num) || num < 1 || num > 300) {
-      window.location.href = '/'
-      return null
+    if (num < 1 || num > 300) {
+      window.location.replace('/')
+      return <div>Reindirizzamento...</div>
     }
   }
 
