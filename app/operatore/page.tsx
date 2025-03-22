@@ -6,29 +6,35 @@ import Link from 'next/link'
 
 export default function OperatorePage() {
   const router = useRouter()
+  const [isLoading, setIsLoading] = useState(true)
   const [operatoreNumber, setOperatoreNumber] = useState<string | null>(null)
 
   useEffect(() => {
-    const userType = localStorage.getItem('userType')
-    const codice = localStorage.getItem('codice')
-    
-    if (userType !== 'operatore' || !codice?.startsWith('operatore')) {
-      router.push('/')
-      return
+    const checkAuth = () => {
+      const userType = localStorage.getItem('userType')
+      const codice = localStorage.getItem('codice')
+      
+      if (userType !== 'operatore' || !codice?.startsWith('operatore')) {
+        router.push('/')
+        return
+      }
+
+      const match = codice.match(/operatore(\d+)/)
+      if (match) {
+        setOperatoreNumber(match[1])
+      }
+      setIsLoading(false)
     }
 
-    const match = codice.match(/operatore(\d+)/)
-    if (match) {
-      setOperatoreNumber(match[1])
-    }
+    checkAuth()
   }, [router])
 
+  if (isLoading) {
+    return <div className="p-8">Caricamento...</div>
+  }
+
   if (!operatoreNumber) {
-    return (
-      <div className="p-8">
-        <h1 className="text-2xl">Verifica accesso...</h1>
-      </div>
-    )
+    return <div className="p-8">Accesso non autorizzato</div>
   }
 
   return (
@@ -40,7 +46,7 @@ export default function OperatorePage() {
       <div className="grid gap-6 md:grid-cols-3">
         <Link 
           href="/operatore/giovani"
-          className="p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow text-left"
+          className="block p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow"
         >
           <h2 className="text-xl font-bold text-blue-600 mb-2">
             Questionario Giovani
@@ -52,7 +58,7 @@ export default function OperatorePage() {
 
         <Link 
           href="/operatore/operatori"
-          className="p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow text-left"
+          className="block p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow"
         >
           <h2 className="text-xl font-bold text-green-600 mb-2">
             Questionario Operatori
@@ -64,7 +70,7 @@ export default function OperatorePage() {
 
         <Link 
           href="/operatore/strutture"
-          className="p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow text-left"
+          className="block p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow"
         >
           <h2 className="text-xl font-bold text-purple-600 mb-2">
             Questionario Strutture
