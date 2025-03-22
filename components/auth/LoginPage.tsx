@@ -13,17 +13,15 @@ export default function LoginPage() {
     
     // Admin
     if (codice === 'admin2025') {
-      const baseUrl = window.location.origin
       localStorage.setItem('userType', 'admin')
-      window.open(baseUrl + '/admin/questionari/lista', '_self')
+      window.location.href = 'https://questionari-git-main-sicomunica-cf8f98ae.vercel.app/admin/questionari/lista'
       return
     }
 
     // Anonimo
     if (codice === 'anonimo9999') {
-      const baseUrl = window.location.origin
-      localStorage.setItem('userType', 'anonimo') 
-      window.open(baseUrl + '/anonimo', '_self')
+      localStorage.setItem('userType', 'anonimo')
+      window.location.href = 'https://questionari-git-main-sicomunica-cf8f98ae.vercel.app/anonimo'
       return
     }
 
@@ -31,9 +29,8 @@ export default function LoginPage() {
     if (codice.startsWith('operatore')) {
       const num = parseInt(codice.replace('operatore', ''))
       if (num >= 1 && num <= 300) {
-        const baseUrl = window.location.origin
         localStorage.setItem('userType', 'operatore')
-        window.open(baseUrl + '/operatore', '_self')
+        window.location.href = 'https://questionari-git-main-sicomunica-cf8f98ae.vercel.app/operatore'
         return
       }
     }
@@ -66,6 +63,10 @@ export default function LoginPage() {
         >
           Accedi
         </button>
+
+        <div className="mt-4 text-sm text-gray-500">
+          URL Dashboard: https://questionari-git-main-sicomunica-cf8f98ae.vercel.app/admin/questionari/lista
+        </div>
       </form>
     </div>
   )
