@@ -1907,11 +1907,31 @@ export default function QuestionarioGiovaniNew({ readOnly, initialData }: Props)
     setError(null)
 
     try {
+      // Convertiamo gli oggetti in array dove necessario
+      const formattedData = {
+        ...formData,
+        attivita_attuali: Object.entries(formData.attivita_attuali)
+          .filter(([_, value]) => value === true)
+          .map(([key]) => key),
+        attivita_precedenti: Object.entries(formData.attivita_precedenti)
+          .filter(([key, value]) => value === true && key !== 'altro_specificare')
+          .map(([key]) => key),
+        ricerca_lavoro: Object.entries(formData.ricerca_lavoro)
+          .filter(([key, value]) => value === true && key !== 'altro_specificare')
+          .map(([key]) => key),
+        orientamento_luoghi: Object.entries(formData.orientamento_lavoro.dove)
+          .filter(([_, value]) => value === true)
+          .map(([key]) => key),
+        fattori_vulnerabilita: Object.entries(formData.fattori_vulnerabilita)
+          .filter(([key, value]) => value === true && key !== 'fv16_spec')
+          .map(([key]) => key)
+      }
+
       const { data, error } = await supabase
         .from('giovani')
         .insert([
           {
-            ...formData,
+            ...formattedData,
             created_by: 'anonimo',
             fonte: 'anonimo9999',
             stato: 'completato'
@@ -1923,7 +1943,7 @@ export default function QuestionarioGiovaniNew({ readOnly, initialData }: Props)
       router.push('/anonimo?success=true')
     } catch (err: any) {
       console.error('Errore nel salvataggio:', err)
-      setError('Errore nel salvataggio del questionario')
+      setError('Errore nel salvataggio del questionario: ' + err.message)
     } finally {
       setLoading(false)
     }
