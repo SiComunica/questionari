@@ -12,33 +12,29 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      let userType = ''
       let targetUrl = ''
 
       // Verifica il codice
       if (codice === 'admin2025') {
-        userType = 'admin'
         targetUrl = '/admin/questionari/lista'
       } else if (codice === 'anonimo9999') {
-        userType = 'anonimo'
         targetUrl = '/anonimo'
       } else if (codice.startsWith('operatore')) {
         const num = parseInt(codice.replace('operatore', ''))
         if (num >= 1 && num <= 300) {
-          userType = 'operatore'
           targetUrl = '/operatore'
         }
       }
 
-      if (userType && targetUrl) {
-        // Imposta i cookie direttamente
-        document.cookie = `userType=${userType}; path=/; max-age=604800`
-        document.cookie = `codice=${codice}; path=/; max-age=604800`
-
-        // Reindirizza dopo un breve delay
-        setTimeout(() => {
-          window.location.href = targetUrl
-        }, 500)
+      if (targetUrl) {
+        // Salva in localStorage
+        localStorage.setItem('codice', codice)
+        
+        // Log per debug
+        console.log('Reindirizzamento a:', targetUrl)
+        
+        // Reindirizza
+        window.location.href = targetUrl
       } else {
         setError('Codice non valido')
         setLoading(false)
@@ -68,6 +64,7 @@ export default function LoginPage() {
           />
 
           <button
+            type="button"
             onClick={handleLogin}
             disabled={loading || !codice}
             className="w-full py-3 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-300"
@@ -78,12 +75,6 @@ export default function LoginPage() {
           {error && (
             <div className="text-red-500 text-center mt-2">
               {error}
-            </div>
-          )}
-
-          {loading && (
-            <div className="text-center mt-4">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
             </div>
           )}
         </div>
