@@ -7,6 +7,13 @@ export interface QuestionarioData {
   classe_eta: string
   cittadinanza: string
   titolo_studio: string
+  percorso_autonomia: boolean
+  tipo_percorso: string
+  vive_in_struttura: boolean
+  collocazione_attuale: string
+  fattori_vulnerabilita: string[]
+  attivita_precedenti: string[]
+  attivita_attuali: string[]
   [key: string]: any
 }
 
