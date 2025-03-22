@@ -39,12 +39,4 @@ export default function ListaQuestionariPage() {
       </div>
     </div>
   )
-}
-
-export function AdminPage() {
-  return (
-    <div className="p-8">
-      <h1>Dashboard Admin</h1>
-    </div>
-  )
 } 
