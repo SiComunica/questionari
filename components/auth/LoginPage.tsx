@@ -11,11 +11,9 @@ export default function LoginPage() {
   const verificaCodice = () => {
     setError('')
     setUrl('')
+    localStorage.clear() // Pulisci sempre prima
 
     try {
-      // Pulisci localStorage
-      localStorage.clear()
-
       // Verifica codice admin
       if (codice === 'admin2025') {
         localStorage.setItem('userType', 'admin')
@@ -86,6 +84,16 @@ export default function LoginPage() {
             Accedi alla dashboard
           </Link>
         )}
+
+        {/* Debug info */}
+        <div className="mt-4 text-sm text-gray-500">
+          Codice: {codice}<br />
+          URL: {url}<br />
+          Storage: {JSON.stringify({
+            userType: localStorage.getItem('userType'),
+            codice: localStorage.getItem('codice')
+          })}
+        </div>
       </div>
     </div>
   )

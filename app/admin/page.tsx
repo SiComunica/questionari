@@ -6,9 +6,11 @@ export default function AdminDashboard() {
     const userType = localStorage.getItem('userType')
     const codice = localStorage.getItem('codice')
     
+    console.log('Admin check:', { userType, codice }) // Debug log
+    
     if (userType !== 'admin' || codice !== 'admin2025') {
-      window.location.href = '/'
-      return null
+      window.location.replace('/')
+      return <div>Reindirizzamento...</div>
     }
   }
 
