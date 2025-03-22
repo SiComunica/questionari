@@ -13,18 +13,23 @@ export default function OperatoreDashboard() {
   const [operatoreNumber, setOperatoreNumber] = useState<string | null>(null)
 
   useEffect(() => {
-    // Verifica autenticazione
+    // Aggiungiamo log per debug
+    console.log('Checking authentication...')
     const userType = localStorage.getItem('userType')
     const codice = localStorage.getItem('codice')
     
+    console.log('userType:', userType)
+    console.log('codice:', codice)
+
     if (userType !== 'operatore' || !codice?.startsWith('operatore')) {
+      console.log('Authentication failed, redirecting...')
       router.push('/')
       return
     }
 
-    // Estrai il numero operatore
     const match = codice.match(/operatore(\d+)/)
     if (match) {
+      console.log('Operatore number:', match[1])
       setOperatoreNumber(match[1])
     }
   }, [router])
@@ -45,7 +50,16 @@ export default function OperatoreDashboard() {
     }
   }
 
-  if (!operatoreNumber) return null
+  // Se non c'è il numero operatore, mostriamo un messaggio invece di null
+  if (!operatoreNumber) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-8">
+        <h1 className="text-3xl font-bold mb-8 text-gray-800">
+          Verifica accesso in corso...
+        </h1>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
@@ -54,37 +68,42 @@ export default function OperatoreDashboard() {
       </h1>
 
       {!selectedQuestionario ? (
-        <div className="grid gap-6 md:grid-cols-3">
-          <div 
-            onClick={() => setSelectedQuestionario('giovani')}
-            className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer border border-gray-200"
-          >
-            <h2 className="text-xl font-semibold mb-3 text-blue-600">Questionario Giovani</h2>
-            <p className="text-gray-600">
-              Compila un nuovo questionario per raccogliere informazioni sui giovani seguiti
-            </p>
-          </div>
+        <>
+          <p className="mb-6 text-gray-600">
+            Seleziona il tipo di questionario che desideri compilare:
+          </p>
+          <div className="grid gap-6 md:grid-cols-3">
+            <div 
+              onClick={() => setSelectedQuestionario('giovani')}
+              className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer border border-gray-200 hover:border-blue-500"
+            >
+              <h2 className="text-xl font-semibold mb-3 text-blue-600">Questionario Giovani</h2>
+              <p className="text-gray-600">
+                Compila un nuovo questionario per raccogliere informazioni sui giovani seguiti
+              </p>
+            </div>
 
-          <div 
-            onClick={() => setSelectedQuestionario('operatori')}
-            className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer border border-gray-200"
-          >
-            <h2 className="text-xl font-semibold mb-3 text-green-600">Questionario Operatori</h2>
-            <p className="text-gray-600">
-              Compila un nuovo questionario per condividere la tua esperienza come operatore
-            </p>
-          </div>
+            <div 
+              onClick={() => setSelectedQuestionario('operatori')}
+              className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer border border-gray-200 hover:border-green-500"
+            >
+              <h2 className="text-xl font-semibold mb-3 text-green-600">Questionario Operatori</h2>
+              <p className="text-gray-600">
+                Compila un nuovo questionario per condividere la tua esperienza come operatore
+              </p>
+            </div>
 
-          <div 
-            onClick={() => setSelectedQuestionario('strutture')}
-            className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer border border-gray-200"
-          >
-            <h2 className="text-xl font-semibold mb-3 text-purple-600">Questionario Strutture</h2>
-            <p className="text-gray-600">
-              Compila un nuovo questionario per descrivere la struttura in cui operi
-            </p>
+            <div 
+              onClick={() => setSelectedQuestionario('strutture')}
+              className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer border border-gray-200 hover:border-purple-500"
+            >
+              <h2 className="text-xl font-semibold mb-3 text-purple-600">Questionario Strutture</h2>
+              <p className="text-gray-600">
+                Compila un nuovo questionario per descrivere la struttura in cui operi
+              </p>
+            </div>
           </div>
-        </div>
+        </>
       ) : (
         <div>
           <button 
