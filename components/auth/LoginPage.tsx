@@ -1,70 +1,67 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Cookies from 'js-cookie'
 
 export default function LoginPage() {
   const [codice, setCodice] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [mounted, setMounted] = useState(false)
 
-  const setCookieWithOptions = (name: string, value: string) => {
-    Cookies.set(name, value, {
-      expires: 7, // 7 giorni
-      path: '/',
-      secure: true,
-      sameSite: 'strict'
-    })
-  }
+  useEffect(() => {
+    // Pulisci i cookie all'avvio
+    Cookies.remove('userType', { path: '/' })
+    Cookies.remove('codice', { path: '/' })
+    setMounted(true)
+  }, [])
 
-  const handleLogin = async () => {
+  const handleLogin = () => {
+    if (!mounted) return
     setError('')
     setLoading(true)
 
     try {
-      // Rimuovi i cookie esistenti
-      Cookies.remove('userType', { path: '/' })
-      Cookies.remove('codice', { path: '/' })
-
+      let userType = ''
       let targetUrl = ''
 
+      // Determina il tipo utente e URL
       if (codice === 'admin2025') {
-        setCookieWithOptions('userType', 'admin')
-        setCookieWithOptions('codice', codice)
+        userType = 'admin'
         targetUrl = '/admin/questionari/lista'
       } else if (codice === 'anonimo9999') {
-        setCookieWithOptions('userType', 'anonimo')
-        setCookieWithOptions('codice', codice)
+        userType = 'anonimo'
         targetUrl = '/anonimo'
       } else if (codice.startsWith('operatore')) {
         const num = parseInt(codice.replace('operatore', ''))
         if (num >= 1 && num <= 300) {
-          setCookieWithOptions('userType', 'operatore')
-          setCookieWithOptions('codice', codice)
+          userType = 'operatore'
           targetUrl = '/operatore'
         }
       }
 
-      if (targetUrl) {
-        // Verifica che i cookie siano stati impostati
-        const userType = Cookies.get('userType')
-        const savedCodice = Cookies.get('codice')
-        
-        console.log('Cookie impostati:', { userType, savedCodice })
-        
-        // Attendi un momento per assicurarsi che i cookie siano salvati
-        await new Promise(resolve => setTimeout(resolve, 500))
-        
-        window.location.href = targetUrl
+      if (userType && targetUrl) {
+        // Imposta i cookie
+        document.cookie = `userType=${userType}; path=/; max-age=604800; secure; samesite=strict`
+        document.cookie = `codice=${codice}; path=/; max-age=604800; secure; samesite=strict`
+
+        // Reindirizza dopo un breve delay
+        setTimeout(() => {
+          window.location.replace(targetUrl)
+        }, 100)
       } else {
         setError('Codice non valido')
+        setLoading(false)
       }
     } catch (e) {
-      console.error('Errore durante il login:', e)
+      console.error('Errore:', e)
       setError('Errore durante l\'accesso')
-    } finally {
       setLoading(false)
     }
+  }
+
+  if (!mounted) {
+    return <div>Caricamento...</div>
   }
 
   return (
@@ -73,12 +70,6 @@ export default function LoginPage() {
         <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">
           Accedi al questionario
         </h2>
-
-        {error && (
-          <div className="text-red-500 text-center">
-            {error}
-          </div>
-        )}
 
         <div className="mt-8 space-y-6">
           <input
@@ -91,17 +82,18 @@ export default function LoginPage() {
           />
 
           <button
-            type="button"
             onClick={handleLogin}
+            disabled={loading || !codice}
             className="w-full py-3 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-300"
-            disabled={loading}
           >
             {loading ? 'Accesso in corso...' : 'Accedi'}
           </button>
 
-          <div className="text-sm text-gray-500 text-center">
-            {Cookies.get('userType') && `Tipo utente: ${Cookies.get('userType')}`}
-          </div>
+          {error && (
+            <div className="text-red-500 text-center mt-2">
+              {error}
+            </div>
+          )}
         </div>
       </div>
     </div>
