@@ -1908,8 +1908,7 @@ export default function QuestionarioGiovaniNew({ readOnly, initialData }: Props)
     setError(null)
 
     try {
-      // Convertiamo gli oggetti in array dove necessario
-      const { id, created_at, created_by, ...restFormData } = formData // Rimuoviamo i campi che non vogliamo
+      const { id, created_at, created_by, ...restFormData } = formData
 
       const formattedData = {
         ...restFormData,
@@ -1930,13 +1929,23 @@ export default function QuestionarioGiovaniNew({ readOnly, initialData }: Props)
           .map(([key]) => key)
       }
 
+      // Log dei dati prima dell'invio
+      console.log('Dati da salvare:', {
+        id: uuidv4(),
+        ...formattedData,
+        fonte: 'anonimo',  // Cambiato da 'anonimo9999' a 'anonimo'
+        stato: 'completato',
+        created_at: new Date().toISOString(),
+        ultima_modifica: new Date().toISOString()
+      })
+
       const { data, error } = await supabase
         .from('giovani')
         .insert([
           {
             id: uuidv4(),
             ...formattedData,
-            fonte: 'anonimo9999',
+            fonte: 'anonimo',  // Cambiato da 'anonimo9999' a 'anonimo'
             stato: 'completato',
             created_at: new Date().toISOString(),
             ultima_modifica: new Date().toISOString()
