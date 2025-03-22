@@ -1,23 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import Cookies from 'js-cookie'
+import { useState } from 'react'
 
 export default function LoginPage() {
   const [codice, setCodice] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    // Pulisci i cookie all'avvio
-    Cookies.remove('userType', { path: '/' })
-    Cookies.remove('codice', { path: '/' })
-    setMounted(true)
-  }, [])
 
   const handleLogin = () => {
-    if (!mounted) return
     setError('')
     setLoading(true)
 
@@ -25,7 +15,6 @@ export default function LoginPage() {
       let userType = ''
       let targetUrl = ''
 
-      // Determina il tipo utente e URL
       if (codice === 'admin2025') {
         userType = 'admin'
         targetUrl = '/admin/questionari/lista'
@@ -41,14 +30,15 @@ export default function LoginPage() {
       }
 
       if (userType && targetUrl) {
-        // Imposta i cookie
-        document.cookie = `userType=${userType}; path=/; max-age=604800; secure; samesite=strict`
-        document.cookie = `codice=${codice}; path=/; max-age=604800; secure; samesite=strict`
+        // Pulisci localStorage
+        localStorage.clear()
+        
+        // Salva nel localStorage
+        localStorage.setItem('userType', userType)
+        localStorage.setItem('codice', codice)
 
-        // Reindirizza dopo un breve delay
-        setTimeout(() => {
-          window.location.replace(targetUrl)
-        }, 100)
+        // Reindirizza alla pagina di verifica
+        window.location.href = '/verifica-accesso?redirect=' + encodeURIComponent(targetUrl)
       } else {
         setError('Codice non valido')
         setLoading(false)
@@ -58,10 +48,6 @@ export default function LoginPage() {
       setError('Errore durante l\'accesso')
       setLoading(false)
     }
-  }
-
-  if (!mounted) {
-    return <div>Caricamento...</div>
   }
 
   return (
