@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
 
 type StorageData = {
   userType: string | null
@@ -10,7 +9,6 @@ type StorageData = {
 
 export default function LoginPage() {
   const [codice, setCodice] = useState('')
-  const [url, setUrl] = useState('')
   const [error, setError] = useState('')
   const [storage, setStorage] = useState<StorageData>({ userType: null, codice: null })
 
@@ -33,8 +31,6 @@ export default function LoginPage() {
     if (typeof window === 'undefined') return
 
     setError('')
-    setUrl('')
-
     window.localStorage.clear()
 
     try {
@@ -46,8 +42,7 @@ export default function LoginPage() {
           userType: window.localStorage.getItem('userType'),
           codice: window.localStorage.getItem('codice')
         })
-        setUrl('/admin')
-        updateStorage()
+        window.location.href = '/admin'
         return
       }
 
@@ -59,8 +54,7 @@ export default function LoginPage() {
           userType: window.localStorage.getItem('userType'),
           codice: window.localStorage.getItem('codice')
         })
-        setUrl('/anonimo')
-        updateStorage()
+        window.location.href = '/anonimo'
         return
       }
 
@@ -74,8 +68,7 @@ export default function LoginPage() {
             userType: window.localStorage.getItem('userType'),
             codice: window.localStorage.getItem('codice')
           })
-          setUrl('/operatore')
-          updateStorage()
+          window.location.href = '/operatore'
           return
         }
       }
@@ -106,7 +99,7 @@ export default function LoginPage() {
           onClick={verificaCodice}
           className="w-full py-3 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 mb-4"
         >
-          Verifica codice
+          Accedi
         </button>
 
         {error && (
@@ -115,19 +108,9 @@ export default function LoginPage() {
           </div>
         )}
 
-        {url && (
-          <Link 
-            href={url}
-            className="block w-full py-3 px-4 bg-green-600 text-white text-center rounded-md hover:bg-green-700"
-          >
-            Accedi alla dashboard
-          </Link>
-        )}
-
         {/* Debug info */}
         <div className="mt-4 text-sm text-gray-500">
           Codice: {codice}<br />
-          URL: {url}<br />
           Storage: {JSON.stringify(storage)}<br />
           LocalStorage: {typeof window !== 'undefined' ? JSON.stringify({
             userType: window.localStorage.getItem('userType'),
