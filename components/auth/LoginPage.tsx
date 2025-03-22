@@ -8,34 +8,36 @@ export default function LoginPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     
-    // Pulisci storage
-    localStorage.clear()
-    
-    // Admin
-    if (codice === 'admin2025') {
-      localStorage.setItem('userType', 'admin')
-      window.location.href = 'https://questionari-git-main-sicomunica-cf8f98ae.vercel.app/admin/questionari/lista'
-      return
-    }
-
-    // Anonimo
-    if (codice === 'anonimo9999') {
-      localStorage.setItem('userType', 'anonimo')
-      window.location.href = 'https://questionari-git-main-sicomunica-cf8f98ae.vercel.app/anonimo'
-      return
-    }
-
-    // Operatore
-    if (codice.startsWith('operatore')) {
-      const num = parseInt(codice.replace('operatore', ''))
-      if (num >= 1 && num <= 300) {
-        localStorage.setItem('userType', 'operatore')
-        window.location.href = 'https://questionari-git-main-sicomunica-cf8f98ae.vercel.app/operatore'
+    try {
+      // Admin
+      if (codice === 'admin2025') {
+        localStorage.setItem('userType', 'admin')
+        window.location.href = '/admin/questionari/lista'
         return
       }
-    }
 
-    alert('Codice non valido')
+      // Anonimo
+      if (codice === 'anonimo9999') {
+        localStorage.setItem('userType', 'anonimo')
+        window.location.href = '/anonimo'
+        return
+      }
+
+      // Operatore
+      if (codice.startsWith('operatore')) {
+        const num = parseInt(codice.replace('operatore', ''))
+        if (num >= 1 && num <= 300) {
+          localStorage.setItem('userType', 'operatore')
+          window.location.href = '/operatore'
+          return
+        }
+      }
+
+      alert('Codice non valido')
+    } catch (e) {
+      console.error('Errore:', e)
+      alert('Errore durante l\'accesso')
+    }
   }
 
   return (
@@ -63,10 +65,6 @@ export default function LoginPage() {
         >
           Accedi
         </button>
-
-        <div className="mt-4 text-sm text-gray-500">
-          URL Dashboard: https://questionari-git-main-sicomunica-cf8f98ae.vercel.app/admin/questionari/lista
-        </div>
       </form>
     </div>
   )
