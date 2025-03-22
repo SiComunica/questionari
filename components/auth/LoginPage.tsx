@@ -42,7 +42,9 @@ export default function LoginPage() {
           userType: window.localStorage.getItem('userType'),
           codice: window.localStorage.getItem('codice')
         })
-        window.location.href = '/admin'
+        setTimeout(() => {
+          window.location.replace('/admin')
+        }, 100)
         return
       }
 
@@ -54,7 +56,9 @@ export default function LoginPage() {
           userType: window.localStorage.getItem('userType'),
           codice: window.localStorage.getItem('codice')
         })
-        window.location.href = '/anonimo'
+        setTimeout(() => {
+          window.location.replace('/anonimo')
+        }, 100)
         return
       }
 
@@ -68,7 +72,9 @@ export default function LoginPage() {
             userType: window.localStorage.getItem('userType'),
             codice: window.localStorage.getItem('codice')
           })
-          window.location.href = '/operatore'
+          setTimeout(() => {
+            window.location.replace('/operatore')
+          }, 100)
           return
         }
       }

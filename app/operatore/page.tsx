@@ -1,28 +1,37 @@
 'use client'
 
+import { useEffect } from 'react'
+
 export default function OperatoreDashboard() {
-  if (typeof window !== 'undefined') {
-    const userType = window.localStorage.getItem('userType')
-    const codice = window.localStorage.getItem('codice')
-    
-    console.log('Operatore check:', { userType, codice })
+  useEffect(() => {
+    const checkAuth = () => {
+      const userType = localStorage.getItem('userType')
+      const codice = localStorage.getItem('codice')
+      
+      console.log('Operatore Dashboard Check:', { userType, codice })
 
-    if (userType !== 'operatore') {
-      window.location.replace('/')
-      return <div>Reindirizzamento...</div>
+      if (userType !== 'operatore') {
+        console.log('Operatore: Tipo utente non valido')
+        window.location.replace('/')
+        return
+      }
+
+      if (!codice?.startsWith('operatore')) {
+        console.log('Operatore: Codice formato non valido')
+        window.location.replace('/')
+        return
+      }
+
+      const num = parseInt(codice.replace('operatore', ''))
+      if (isNaN(num) || num < 1 || num > 300) {
+        console.log('Operatore: Numero non valido')
+        window.location.replace('/')
+      }
     }
 
-    if (!codice?.startsWith('operatore')) {
-      window.location.replace('/')
-      return <div>Reindirizzamento...</div>
-    }
-
-    const num = parseInt(codice.replace('operatore', ''))
-    if (isNaN(num) || num < 1 || num > 300) {
-      window.location.replace('/')
-      return <div>Reindirizzamento...</div>
-    }
-  }
+    // Piccolo delay per assicurarsi che localStorage sia disponibile
+    setTimeout(checkAuth, 100)
+  }, [])
 
   return (
     <div className="p-8">

@@ -1,18 +1,24 @@
 'use client'
 
+import { useEffect } from 'react'
+
 export default function AdminDashboard() {
-  // Verifica accesso
-  if (typeof window !== 'undefined') {
-    const userType = window.localStorage.getItem('userType')
-    const codice = window.localStorage.getItem('codice')
-    
-    console.log('Admin check:', { userType, codice }) // Debug log
-    
-    if (userType !== 'admin' || codice !== 'admin2025') {
-      window.location.replace('/')
-      return <div>Reindirizzamento...</div>
+  useEffect(() => {
+    const checkAuth = () => {
+      const userType = localStorage.getItem('userType')
+      const codice = localStorage.getItem('codice')
+      
+      console.log('Admin Dashboard Check:', { userType, codice })
+      
+      if (userType !== 'admin' || codice !== 'admin2025') {
+        console.log('Admin: Accesso non autorizzato')
+        window.location.replace('/')
+      }
     }
-  }
+
+    // Piccolo delay per assicurarsi che localStorage sia disponibile
+    setTimeout(checkAuth, 100)
+  }, [])
 
   return (
     <div className="p-8">
