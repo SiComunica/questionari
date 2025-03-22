@@ -1,14 +1,15 @@
 'use client'
 
 export default function AnonimoDashboard() {
-  // Verifica accesso
   if (typeof window !== 'undefined') {
-    const userType = localStorage.getItem('userType')
-    const codice = localStorage.getItem('codice')
+    const userType = window.localStorage.getItem('userType')
+    const codice = window.localStorage.getItem('codice')
+    
+    console.log('Anonimo check:', { userType, codice })
     
     if (userType !== 'anonimo' || codice !== 'anonimo9999') {
-      window.location.href = '/'
-      return null
+      window.location.replace('/')
+      return <div>Reindirizzamento...</div>
     }
   }
 
