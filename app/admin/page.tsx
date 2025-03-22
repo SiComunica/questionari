@@ -3,8 +3,8 @@
 export default function AdminDashboard() {
   // Verifica accesso
   if (typeof window !== 'undefined') {
-    const userType = localStorage.getItem('userType')
-    const codice = localStorage.getItem('codice')
+    const userType = window.localStorage.getItem('userType')
+    const codice = window.localStorage.getItem('codice')
     
     console.log('Admin check:', { userType, codice }) // Debug log
     

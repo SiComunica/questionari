@@ -2,24 +2,21 @@
 
 export default function OperatoreDashboard() {
   if (typeof window !== 'undefined') {
-    const userType = localStorage.getItem('userType')
-    const codice = localStorage.getItem('codice')
+    const userType = window.localStorage.getItem('userType')
+    const codice = window.localStorage.getItem('codice')
     
-    console.log('Operatore check:', { userType, codice }) // Debug log
+    console.log('Operatore check:', { userType, codice })
 
-    // Prima verifica il tipo utente
     if (userType !== 'operatore') {
       window.location.replace('/')
       return <div>Reindirizzamento...</div>
     }
 
-    // Poi verifica il formato del codice
     if (!codice?.startsWith('operatore')) {
       window.location.replace('/')
       return <div>Reindirizzamento...</div>
     }
 
-    // Infine verifica il numero
     const num = parseInt(codice.replace('operatore', ''))
     if (isNaN(num) || num < 1 || num > 300) {
       window.location.replace('/')

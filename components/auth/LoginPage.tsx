@@ -1,32 +1,46 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 
 export default function LoginPage() {
   const [codice, setCodice] = useState('')
   const [url, setUrl] = useState('')
   const [error, setError] = useState('')
+  const [storage, setStorage] = useState<{userType?: string, codice?: string}>({})
+
+  // Gestisci localStorage solo dopo il mount del componente
+  useEffect(() => {
+    // Pulisci localStorage all'avvio
+    window.localStorage.clear()
+    
+    // Aggiorna lo stato dello storage per il debug
+    setStorage({
+      userType: window.localStorage.getItem('userType') || undefined,
+      codice: window.localStorage.getItem('codice') || undefined
+    })
+  }, [])
 
   const verificaCodice = () => {
     setError('')
     setUrl('')
-    localStorage.clear() // Pulisci sempre prima
 
     try {
       // Verifica codice admin
       if (codice === 'admin2025') {
-        localStorage.setItem('userType', 'admin')
-        localStorage.setItem('codice', codice)
+        window.localStorage.setItem('userType', 'admin')
+        window.localStorage.setItem('codice', codice)
         setUrl('/admin')
+        updateStorage()
         return
       }
 
       // Verifica codice anonimo
       if (codice === 'anonimo9999') {
-        localStorage.setItem('userType', 'anonimo')
-        localStorage.setItem('codice', codice)
+        window.localStorage.setItem('userType', 'anonimo')
+        window.localStorage.setItem('codice', codice)
         setUrl('/anonimo')
+        updateStorage()
         return
       }
 
@@ -34,9 +48,10 @@ export default function LoginPage() {
       if (codice.startsWith('operatore')) {
         const num = parseInt(codice.replace('operatore', ''))
         if (num >= 1 && num <= 300) {
-          localStorage.setItem('userType', 'operatore')
-          localStorage.setItem('codice', codice)
+          window.localStorage.setItem('userType', 'operatore')
+          window.localStorage.setItem('codice', codice)
           setUrl('/operatore')
+          updateStorage()
           return
         }
       }
@@ -46,6 +61,14 @@ export default function LoginPage() {
       console.error('Errore:', error)
       setError('Errore durante la verifica')
     }
+  }
+
+  // Funzione per aggiornare lo stato dello storage
+  const updateStorage = () => {
+    setStorage({
+      userType: window.localStorage.getItem('userType'),
+      codice: window.localStorage.getItem('codice')
+    })
   }
 
   return (
@@ -89,10 +112,7 @@ export default function LoginPage() {
         <div className="mt-4 text-sm text-gray-500">
           Codice: {codice}<br />
           URL: {url}<br />
-          Storage: {JSON.stringify({
-            userType: localStorage.getItem('userType'),
-            codice: localStorage.getItem('codice')
-          })}
+          Storage: {JSON.stringify(storage)}
         </div>
       </div>
     </div>
