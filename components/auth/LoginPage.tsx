@@ -5,33 +5,48 @@ import { useState } from 'react'
 export default function LoginPage() {
   const [codice, setCodice] = useState('')
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const handleLogin = () => {
-    // Admin
-    if (codice === 'admin2025') {
-      localStorage.setItem('userType', 'admin')
-      document.location.href = '/admin/questionari/lista'
-      return
-    }
+    setLoading(true)
+    setError('')
 
-    // Anonimo
-    if (codice === 'anonimo9999') {
-      localStorage.setItem('userType', 'anonimo')
-      document.location.href = '/anonimo'
-      return
-    }
-
-    // Operatore
-    if (codice.startsWith('operatore')) {
-      const num = parseInt(codice.replace('operatore', ''))
-      if (num >= 1 && num <= 300) {
-        localStorage.setItem('userType', 'operatore')
-        document.location.href = '/operatore'
+    try {
+      // Admin
+      if (codice === 'admin2025') {
+        localStorage.setItem('userType', 'admin')
+        localStorage.setItem('codice', codice)
+        // Forza il reindirizzamento con reload
+        window.location.replace('/admin/questionari/lista')
         return
       }
-    }
 
-    setError('Codice non valido')
+      // Anonimo
+      if (codice === 'anonimo9999') {
+        localStorage.setItem('userType', 'anonimo')
+        localStorage.setItem('codice', codice)
+        window.location.replace('/anonimo')
+        return
+      }
+
+      // Operatore
+      if (codice.startsWith('operatore')) {
+        const num = parseInt(codice.replace('operatore', ''))
+        if (num >= 1 && num <= 300) {
+          localStorage.setItem('userType', 'operatore')
+          localStorage.setItem('codice', codice)
+          window.location.replace('/operatore')
+          return
+        }
+      }
+
+      setError('Codice di accesso non valido')
+    } catch (e) {
+      console.error('Errore durante il login:', e)
+      setError('Errore durante l\'accesso')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -58,23 +73,16 @@ export default function LoginPage() {
             }}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
             placeholder="Inserisci il codice di accesso"
+            disabled={loading}
           />
 
           <button
             onClick={handleLogin}
-            className="w-full py-3 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            disabled={loading}
+            className="w-full py-3 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-400"
           >
-            Accedi
+            {loading ? 'Accesso in corso...' : 'Accedi'}
           </button>
-        </div>
-
-        <div className="mt-4 text-sm text-gray-500">
-          <p>Codici di accesso:</p>
-          <ul className="list-disc pl-5 mt-2">
-            <li>Admin: admin2025</li>
-            <li>Operatore: operatore1 fino a operatore300</li>
-            <li>Anonimo: anonimo9999</li>
-          </ul>
         </div>
       </div>
     </div>
