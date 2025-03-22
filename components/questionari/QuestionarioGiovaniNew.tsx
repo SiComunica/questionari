@@ -1909,8 +1909,10 @@ export default function QuestionarioGiovaniNew({ readOnly, initialData }: Props)
 
     try {
       // Convertiamo gli oggetti in array dove necessario
+      const { id, created_at, created_by, ...restFormData } = formData // Rimuoviamo i campi che non vogliamo
+
       const formattedData = {
-        ...formData,
+        ...restFormData,
         attivita_attuali: Object.entries(formData.attivita_attuali)
           .filter(([_, value]) => value === true)
           .map(([key]) => key),
@@ -1932,7 +1934,7 @@ export default function QuestionarioGiovaniNew({ readOnly, initialData }: Props)
         .from('giovani')
         .insert([
           {
-            id: uuidv4(), // Genera un nuovo UUID
+            id: uuidv4(),
             ...formattedData,
             fonte: 'anonimo9999',
             stato: 'completato',
