@@ -7,9 +7,9 @@ import { v4 as uuidv4 } from 'uuid';
 import SezioneAStruttureNew from './sezioni/SezioneAStruttureNew';
 import SezioneBStruttureNew from './sezioni/SezioneBStruttureNew';
 import SezioneCStruttureNew from './sezioni/SezioneCStruttureNew';
-import SezioneDStrutture from './sezioni/SezioneDStrutture';
-import SezioneEStrutture from './sezioni/SezioneEStrutture';
-import SezioneFStrutture from './sezioni/SezioneFStrutture';
+import SezioneDStruttureNew from './sezioni/SezioneDStruttureNew';
+import SezioneEStruttureNew from './sezioni/SezioneEStruttureNew';
+import SezioneFStruttureNew from './sezioni/SezioneFStruttureNew';
 import type { QuestionarioStruttureNew } from '@/types/questionari';
 
 export interface Props {
@@ -118,11 +118,11 @@ export default function QuestionarioStruttureNew({ initialData, readOnly }: Prop
       case 3:
         return <SezioneCStruttureNew formData={formData} setFormData={setFormData} />;
       case 4:
-        return <SezioneDStrutture formData={formData} setFormData={setFormData} />;
+        return <SezioneDStruttureNew formData={formData} setFormData={setFormData} />;
       case 5:
-        return <SezioneEStrutture formData={formData} setFormData={setFormData} />;
+        return <SezioneEStruttureNew formData={formData} setFormData={setFormData} />;
       case 6:
-        return <SezioneFStrutture formData={formData} setFormData={setFormData} />;
+        return <SezioneFStruttureNew formData={formData} setFormData={setFormData} />;
       default:
         return null;
     }
