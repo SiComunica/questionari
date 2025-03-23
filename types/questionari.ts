@@ -13,12 +13,12 @@ export interface QuestionarioStrutture {
   personale_retribuito: {
     uomini: number;
     donne: number;
-    totale: number; // Calcolato automaticamente
+    totale: number;
   };
   personale_volontario: {
     uomini: number;
     donne: number;
-    totale: number; // Calcolato automaticamente
+    totale: number;
   };
   figure_professionali: {
     psicologi: boolean;
@@ -42,96 +42,27 @@ export interface QuestionarioStrutture {
     fino_16_anni: {
       uomini: number;
       donne: number;
-      totale: number; // Calcolato
+      totale: number;
     };
     da_16_a_18: {
       uomini: number;
       donne: number;
-      totale: number; // Calcolato
+      totale: number;
     };
     maggiorenni: {
       uomini: number;
       donne: number;
-      totale: number; // Calcolato
+      totale: number;
     };
     totali: {
-      uomini: number; // Calcolato
-      donne: number; // Calcolato
-      totale: number; // Calcolato
+      uomini: number;
+      donne: number;
+      totale: number;
     };
   };
 
-  // Caratteristiche persone ospitate (C2)
   caratteristiche_ospiti: {
-    adolescenti: { // 16-18 anni
-      stranieri_migranti: boolean;
-      vittime_tratta: boolean;
-      vittime_violenza: boolean;
-      allontanati_famiglia: boolean;
-      detenuti: boolean;
-      ex_detenuti: boolean;
-      misure_alternative: boolean;
-      indigenti_senzatetto: boolean;
-      rom_sinti: boolean;
-      disabilita_fisica: boolean;
-      disabilita_cognitiva: boolean;
-      disturbi_psichiatrici: boolean;
-      dipendenze: boolean;
-      genitori_precoci: boolean;
-      problemi_orientamento: boolean;
-      altro: boolean;
-      altro_specificare?: string;
-    };
-    giovani_adulti: { // 18-25 anni
-      // stessi campi di adolescenti
-      stranieri_migranti: boolean;
-      vittime_tratta: boolean;
-      vittime_violenza: boolean;
-      allontanati_famiglia: boolean;
-      detenuti: boolean;
-      ex_detenuti: boolean;
-      misure_alternative: boolean;
-      indigenti_senzatetto: boolean;
-      rom_sinti: boolean;
-      disabilita_fisica: boolean;
-      disabilita_cognitiva: boolean;
-      disturbi_psichiatrici: boolean;
-      dipendenze: boolean;
-      genitori_precoci: boolean;
-      problemi_orientamento: boolean;
-      altro: boolean;
-      altro_specificare?: string;
-    };
-  };
-
-  // Persone non ospitate (C3)
-  persone_non_ospitate: {
-    fino_16_anni: {
-      uomini: number;
-      donne: number;
-      totale: number; // Calcolato
-    };
-    da_16_a_18: {
-      uomini: number;
-      donne: number;
-      totale: number; // Calcolato
-    };
-    maggiorenni: {
-      uomini: number;
-      donne: number;
-      totale: number; // Calcolato
-    };
-    totali: {
-      uomini: number; // Calcolato
-      donne: number; // Calcolato
-      totale: number; // Calcolato
-    };
-  };
-
-  // Caratteristiche persone non ospitate (C4)
-  caratteristiche_non_ospiti: {
     adolescenti: {
-      // stessi campi di caratteristiche_ospiti.adolescenti
       stranieri_migranti: boolean;
       vittime_tratta: boolean;
       vittime_violenza: boolean;
@@ -151,7 +82,7 @@ export interface QuestionarioStrutture {
       altro_specificare?: string;
     };
     giovani_adulti: {
-      // stessi campi di caratteristiche_ospiti.giovani_adulti
+      // stessi campi di adolescenti
       stranieri_migranti: boolean;
       vittime_tratta: boolean;
       vittime_violenza: boolean;
@@ -218,7 +149,6 @@ export interface QuestionarioStrutture {
     };
   };
 
-  // Esperienze significative ultimi 3 anni
   esperienze_inserimento: {
     presenti: boolean;
     attivita?: Array<{
@@ -229,14 +159,6 @@ export interface QuestionarioStrutture {
       attori: string;
       punti_forza: string;
       criticita: string;
-    }>;
-  };
-
-  // Attività future
-  attivita_future: {
-    previste: boolean;
-    attivita?: Array<{
-      descrizione: string;
     }>;
   };
 
@@ -251,6 +173,17 @@ export interface QuestionarioStrutture {
     punti_forza: string;
     criticita: string;
   };
+
+  // Metadati
+  id?: string;
+  created_at: string;
+  stato: string;
+  fonte: string;
+}
+
+export interface QuestionarioStruttureProps {
+  formData: QuestionarioStrutture;
+  setFormData: React.Dispatch<React.SetStateAction<QuestionarioStrutture>>;
 }
 
 export type QuestionarioOperatori = {
