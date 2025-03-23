@@ -64,10 +64,10 @@ export default function SezioneBStrutture({ formData, setFormData }: Props) {
       <h2 className="text-xl font-semibold">Sezione B: Informazioni sulla struttura</h2>
 
       <div>
-        <h3 className="text-lg font-medium mb-4">B1. Tipologia struttura</h3>
+        <h3 className="text-lg font-medium mb-4">B1. Tipo struttura</h3>
         <select
-          name="tipologia_struttura"
-          value={formData.tipologia_struttura || ''}
+          name="tipo_struttura"
+          value={formData.tipo_struttura || ''}
           onChange={handleChange}
           className="w-full p-2 border rounded"
         >
@@ -78,11 +78,11 @@ export default function SezioneBStrutture({ formData, setFormData }: Props) {
           <option value="altro">Altro</option>
         </select>
         
-        {formData.tipologia_struttura === 'altro' && (
+        {formData.tipo_struttura === 'altro' && (
           <input
             type="text"
-            name="tipologia_struttura_altro"
-            value={formData.tipologia_struttura_altro || ''}
+            name="tipo_struttura_altro"
+            value={formData.tipo_struttura_altro || ''}
             onChange={handleChange}
             className="mt-2 w-full p-2 border rounded"
             placeholder="Specificare altra tipologia..."
