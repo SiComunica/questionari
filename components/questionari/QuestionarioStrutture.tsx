@@ -219,6 +219,13 @@ export default function QuestionarioStruttureForm() {
       attivita: []
     },
     attivita_future: [],
+    finanziamenti: {
+      pubblici: 0,
+      privati: 0
+    },
+    fonti_finanziamento_pubblico: '',
+    fonti_finanziamento_privato: '',
+    fornitori: [],
     collaborazioni: [],
     network: {
       punti_forza: '',
