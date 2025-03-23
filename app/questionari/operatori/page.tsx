@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
-import QuestionarioOperatori from '@/components/questionari/QuestionarioOperatori'
+import QuestionarioOperatoriNew from '@/components/questionari/QuestionarioOperatoriNew'
 
 export default function QuestionarioOperatoriPage() {
   const router = useRouter()
@@ -21,7 +21,7 @@ export default function QuestionarioOperatoriPage() {
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <QuestionarioOperatori />
+        <QuestionarioOperatoriNew fonte="operatore" />
       </div>
     </div>
   )
