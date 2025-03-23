@@ -43,7 +43,7 @@ export default function QuestionarioOperatoriNew({ fonte }: Props) {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState<QuestionarioOperatori>({
+  const [formData, setFormData] = useState({
     nome: '',
     cognome: '',
     eta: 0,
@@ -51,9 +51,6 @@ export default function QuestionarioOperatoriNew({ fonte }: Props) {
     titolo_studio: '',
     anni_esperienza: 0,
     tipo_contratto: '',
-    email: '',
-    telefono: '',
-    ruolo_attuale: '',
     created_at: new Date().toISOString(),
     stato: 'bozza',
     fonte: fonte
@@ -84,17 +81,15 @@ export default function QuestionarioOperatoriNew({ fonte }: Props) {
   };
 
   const renderStep = () => {
-    const props: SezioneProps = { formData, setFormData };
-    
     switch (currentStep) {
       case 1:
-        return <SezioneA {...props} />;
+        return <SezioneA formData={formData} setFormData={setFormData} />;
       case 2:
-        return <SezioneB {...props} />;
+        return <SezioneB formData={formData} setFormData={setFormData} />;
       case 3:
-        return <SezioneC {...props} />;
+        return <SezioneC formData={formData} setFormData={setFormData} />;
       case 4:
-        return <SezioneD {...props} />;
+        return <SezioneD formData={formData} setFormData={setFormData} />;
       default:
         return null;
     }
