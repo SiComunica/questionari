@@ -168,52 +168,21 @@ export interface QuestionarioStrutture {
     };
   };
 
-  // Sezione D: Attività
+  // Sezione D: Attività e Servizi
   attivita_servizi: {
-    alloggio: boolean;
-    vitto: boolean;
-    servizi_bassa_soglia: {
-      attivo: boolean;
-      descrizione?: string;
-    };
-    ospitalita_diurna: {
-      attivo: boolean;
-      descrizione?: string;
-    };
-    supporto_psicologico: {
-      attivo: boolean;
-      descrizione?: string;
-    };
-    sostegno_autonomia: {
-      attivo: boolean;
-      descrizione?: string;
-    };
-    orientamento_lavoro: {
-      attivo: boolean;
-      descrizione?: string;
-    };
-    orientamento_formazione: {
-      attivo: boolean;
-      descrizione?: string;
-    };
-    istruzione: {
-      attivo: boolean;
-      descrizione?: string;
-    };
-    formazione_professionale: {
-      attivo: boolean;
-      descrizione?: string;
-    };
-    attivita_socializzazione: {
-      attivo: boolean;
-      descrizione?: string;
-    };
-    altro: {
-      attivo: boolean;
-      descrizione?: string;
-    };
+    alloggio: { attivo: boolean; descrizione: string; };
+    vitto: { attivo: boolean; descrizione: string; };
+    servizi_bassa_soglia: { attivo: boolean; descrizione: string; };
+    ospitalita_diurna: { attivo: boolean; descrizione: string; };
+    supporto_psicologico: { attivo: boolean; descrizione: string; };
+    sostegno_autonomia: { attivo: boolean; descrizione: string; };
+    orientamento_lavoro: { attivo: boolean; descrizione: string; };
+    orientamento_formazione: { attivo: boolean; descrizione: string; };
+    istruzione: { attivo: boolean; descrizione: string; };
+    formazione_professionale: { attivo: boolean; descrizione: string; };
+    attivita_socializzazione: { attivo: boolean; descrizione: string; };
+    altro: { attivo: boolean; descrizione: string; };
   };
-
   esperienze_inserimento: {
     presenti: boolean;
     attivita?: Array<{
@@ -226,6 +195,7 @@ export interface QuestionarioStrutture {
       criticita: string;
     }>;
   };
+  attivita_future: string[];
 
   // Sezione E: Reti/collaborazioni
   collaborazioni: Array<{
