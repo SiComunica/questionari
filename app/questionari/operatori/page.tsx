@@ -1,28 +1,12 @@
-'use client'
+"use client"
 
-import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { useAuth } from '@/contexts/AuthContext'
-import QuestionarioOperatoriNuovo from '@/components/questionari/QuestionarioOperatoriNuovo'
+import React from 'react';
+import QuestionarioOperatoriNuovo from '@/components/questionari/QuestionarioOperatoriNuovo';
 
 export default function QuestionariOperatoriPage() {
-  const router = useRouter()
-  const { userType } = useAuth()
-
-  useEffect(() => {
-    // Reindirizza alla home se non autenticato
-    if (!userType) {
-      router.push('/')
-    }
-  }, [userType, router])
-
-  if (!userType) return null
-
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <QuestionarioOperatoriNuovo fonte="operatore" />
-      </div>
+    <div className="container mx-auto p-4">
+      <QuestionarioOperatoriNuovo />
     </div>
-  )
+  );
 } 
