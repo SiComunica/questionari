@@ -233,88 +233,28 @@ export interface QuestionarioStruttureProps {
   setFormData: React.Dispatch<React.SetStateAction<QuestionarioStrutture>>;
 }
 
-export type QuestionarioOperatori = {
-  // Sezione A
-  id_struttura: string
-  tipo_struttura: string
-  professione: {
-    tipo: string
-    altro_specificare?: string
-  }
+export interface QuestionarioOperatori {
+  nome: string;
+  cognome: string;
+  eta: number;
+  genere: string;
+  titolo_studio: string;
+  anni_esperienza: number;
+  tipo_contratto: string;
+  email: string;
+  telefono: string;
+  ruolo_attuale: string;
+  // ... altri campi specifici per operatori
 
-  // Sezione B
-  persone_seguite: {
-    totali: {
-      uomini: number
-      donne: number
-      totale: number
-    }
-    maggiorenni: {
-      uomini: number
-      donne: number
-      totale: number
-    }
-  }
-  caratteristiche_persone: {
-    stranieri_migranti: boolean
-    vittime_tratta: boolean
-    vittime_violenza: boolean
-    allontanati_famiglia: boolean
-    detenuti: boolean
-    ex_detenuti: boolean
-    misure_alternative: boolean
-    indigenti_senzatetto: boolean
-    rom_sinti: boolean
-    disabilita_fisica: boolean
-    disabilita_cognitiva: boolean
-    disturbi_psichiatrici: boolean
-    dipendenze: boolean
-    genitori_precoci: boolean
-    problemi_orientamento: boolean
-    altro: boolean
-    altro_specificare?: string
-  }
-  tipo_intervento: {
-    formazione_istruzione: boolean
-    ricerca_lavoro: boolean
-    autonomia_abitativa: boolean
-    rapporto_famiglia: boolean
-    relazioni_coetanei: boolean
-    valorizzazione_competenze: boolean
-    sostegno_legale: boolean
-    sostegno_sociosanitario: boolean
-    mediazione_interculturale: boolean
-    altro: boolean
-    altro_specificare?: string
-  }
-  interventi_potenziare: {
-    formazione_istruzione: boolean
-    ricerca_lavoro: boolean
-    autonomia_abitativa: boolean
-    rapporto_famiglia: boolean
-    relazioni_coetanei: boolean
-    valorizzazione_competenze: boolean
-    sostegno_legale: boolean
-    sostegno_sociosanitario: boolean
-    mediazione_interculturale: boolean
-    nessuno: boolean
-    altro: boolean
-    altro_specificare?: string
-  }
+  id?: string;
+  created_at: string;
+  stato: string;
+  fonte: string;
+}
 
-  // Sezione C
-  difficolta_uscita: {
-    problemi_economici: number
-    trovare_lavoro: number
-    lavori_qualita: number
-    trovare_casa: number
-    discriminazioni: number
-    salute_fisica: number
-    problemi_psicologici: number
-    difficolta_linguistiche: number
-    altro: number
-    altro_specificare?: string
-  }
+export interface QuestionarioOperatoriProps {
+  formData: QuestionarioOperatori;
+  setFormData: React.Dispatch<React.SetStateAction<QuestionarioOperatori>>;
 }
 
 export type QuestionarioGiovani = {

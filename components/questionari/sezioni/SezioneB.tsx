@@ -1,20 +1,15 @@
 "use client"
 
 import React from 'react';
-import { FormData } from '@/types/questionario-operatori';
+import type { QuestionarioOperatoriProps } from '@/types/questionari';
 
-interface Props {
-  formData: FormData;
-  setFormData: React.Dispatch<React.SetStateAction<FormData>>;
-}
-
-const SezioneB: React.FC<Props> = ({ formData, setFormData }) => {
+export default function SezioneB({ formData, setFormData }: QuestionarioOperatoriProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
     
     if (type === 'checkbox') {
       const isChecked = (e.target as HTMLInputElement).checked;
-      const arrayField = formData[name as keyof FormData] as string[];
+      const arrayField = formData[name as keyof typeof formData] as string[];
       
       setFormData(prev => ({
         ...prev,
@@ -220,6 +215,4 @@ const SezioneB: React.FC<Props> = ({ formData, setFormData }) => {
       </div>
     </div>
   );
-};
-
-export default SezioneB; 
+} 

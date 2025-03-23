@@ -1,14 +1,9 @@
 "use client"
 
 import React from 'react';
-import { FormData } from '@/types/questionario-operatori';
+import type { QuestionarioOperatoriProps } from '@/types/questionari';
 
-interface Props {
-  formData: FormData;
-  setFormData: React.Dispatch<React.SetStateAction<FormData>>;
-}
-
-const SezioneA: React.FC<Props> = ({ formData, setFormData }) => {
+export default function SezioneA({ formData, setFormData }: QuestionarioOperatoriProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -151,6 +146,4 @@ const SezioneA: React.FC<Props> = ({ formData, setFormData }) => {
       </div>
     </div>
   );
-};
-
-export default SezioneA; 
+} 
