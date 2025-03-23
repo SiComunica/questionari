@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import QuestionarioGiovaniNew from '@/components/questionari/QuestionarioGiovaniNew'
-import QuestionarioOperatoriNew from '@/components/questionari/QuestionarioOperatoriNew'
+import QuestionarioOperatoriNuovo from '@/components/questionari/QuestionarioOperatoriNuovo'
 import QuestionarioStruttureNew from '@/components/questionari/QuestionarioStruttureNew'
 
 type QuestionarioType = 'giovani' | 'operatori' | 'strutture'
@@ -48,7 +48,7 @@ export default function OperatoriPage() {
       case 'giovani':
         return <QuestionarioGiovaniNew fonte={fonte} />
       case 'operatori':
-        return <QuestionarioOperatoriNew fonte={fonte} />
+        return <QuestionarioOperatoriNuovo fonte={fonte} />
       case 'strutture':
         return <QuestionarioStruttureNew fonte={fonte} />
     }
