@@ -14,7 +14,9 @@ export default function SezioneBStruttureNew({ formData, setFormData }: Props) {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: name === 'capacita_totale' || name === 'posti_occupati' ? 
+        parseInt(value) || 0 : 
+        value
     }));
   };
 
@@ -30,6 +32,7 @@ export default function SezioneBStruttureNew({ formData, setFormData }: Props) {
             value={formData.tipo_struttura}
             onValueChange={(value) => setFormData(prev => ({ ...prev, tipo_struttura: value }))}
           >
+            <option value="">Seleziona tipo struttura</option>
             <option value="casa_accoglienza">Casa di accoglienza</option>
             <option value="comunita_alloggio">Comunità alloggio</option>
             <option value="centro_diurno">Centro diurno</option>
