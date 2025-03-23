@@ -232,8 +232,8 @@ export interface QuestionarioStruttureProps {
   setFormData: React.Dispatch<React.SetStateAction<QuestionarioStrutture>>;
 }
 
+// Tipo per il questionario operatori (solo i campi che usiamo effettivamente)
 export interface QuestionarioOperatori {
-  // Sezione A
   nome: string;
   cognome: string;
   eta: number;
@@ -241,44 +241,6 @@ export interface QuestionarioOperatori {
   titolo_studio: string;
   anni_esperienza: number;
   tipo_contratto: string;
-  ruolo_attuale: string;
-
-  // Sezione B
-  id_struttura: string;
-  tipo_struttura: string;
-  professione: string;
-  professione_altro?: string;
-  mansioni_principali: string[];
-  competenze_specifiche: string[];
-  formazione_specialistica?: string;
-  certificazioni: string[];
-  lingue_conosciute: string[];
-
-  // Sezione C
-  esperienza_giovani: string;
-  persone_seguite: {
-    uomini: number;
-    donne: number;
-    totale: number;
-  };
-  persone_maggiorenni: {
-    uomini: number;
-    donne: number;
-    totale: number;
-  };
-  caratteristiche_persone: string[];
-  caratteristiche_altro?: string;
-
-  // Sezione D
-  approccio_educativo: string;
-  tipo_intervento: string[];
-  intervento_altro?: string;
-  sfide_principali: string[];
-  strategie_supporto: string[];
-  casi_successo: string;
-
-  // Metadati
-  id?: string;
   created_at: string;
   stato: string;
   fonte: string;
