@@ -6,7 +6,7 @@ import { supabase } from '@/lib/supabase';
 import { toast } from 'react-hot-toast';
 import { QuestionarioStrutture } from '@/types/questionari';
 import { v4 as uuidv4 } from 'uuid';
-import SezioneA from './sezioni/SezioneA';
+import SezioneAStrutture from './sezioni/SezioneAStrutture';
 import SezioneBStrutture from './sezioni/SezioneBStrutture';
 import SezioneCStrutture from './sezioni/SezioneCStrutture';
 import SezioneDStrutture from './sezioni/SezioneDStrutture';
@@ -184,6 +184,15 @@ const QuestionarioStruttureNew: React.FC<Props> = ({ fonte }) => {
       criticita: ''
     },
 
+    // Sezione F
+    finanziamenti: {
+      pubblici: 0,
+      privati: 0
+    },
+    fonti_finanziamento_pubblico: '',
+    fonti_finanziamento_privato: '',
+    fornitori: [],
+
     // Metadati
     created_at: new Date().toISOString(),
     stato: 'nuovo',
@@ -199,28 +208,25 @@ const QuestionarioStruttureNew: React.FC<Props> = ({ fonte }) => {
 
     setLoading(true);
     try {
+      console.log('Saving questionnaire:', formData);
       const id = uuidv4();
-      console.log('Saving data:', { ...formData, id, fonte });
-
       const { error } = await supabase
         .from('strutture')
-        .insert([
-          {
-            id,
-            ...formData,
-            fonte,
-            stato: 'nuovo',
-            created_at: new Date().toISOString()
-          }
-        ]);
+        .insert({
+          id,
+          ...formData,
+          fonte,
+          stato: 'nuovo',
+          created_at: new Date().toISOString()
+        });
 
       if (error) throw error;
 
       toast.success('Questionario struttura salvato con successo!');
-      router.push('/operatore/dashboard');
-    } catch (err) {
-      console.error('Errore durante il salvataggio:', err);
-      toast.error('Errore durante il salvataggio');
+      router.push('/operatori');
+    } catch (error) {
+      console.error('Errore nel salvataggio:', error);
+      toast.error('Errore nel salvataggio del questionario');
     } finally {
       setLoading(false);
     }
@@ -229,7 +235,7 @@ const QuestionarioStruttureNew: React.FC<Props> = ({ fonte }) => {
   const renderStep = () => {
     switch (currentStep) {
       case 1:
-        return <SezioneA formData={formData} setFormData={setFormData} />;
+        return <SezioneAStrutture formData={formData} setFormData={setFormData} />;
       case 2:
         return <SezioneBStrutture formData={formData} setFormData={setFormData} />;
       case 3:

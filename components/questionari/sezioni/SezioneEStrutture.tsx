@@ -17,13 +17,13 @@ const SezioneEStrutture: React.FC<QuestionarioStruttureProps> = ({ formData, set
         }
       }));
     } else if (name.startsWith('collaborazioni')) {
-      const index = parseInt(name.split('.')[1]);
-      const campo = name.split('.')[2];
+      const [_, index, campo] = name.split('.');
+      const indexNum = parseInt(index);
       
       setFormData(prev => ({
         ...prev,
         collaborazioni: prev.collaborazioni.map((collab, i) => 
-          i === index ? { ...collab, [campo]: value } : collab
+          i === indexNum ? { ...collab, [campo]: value } : collab
         )
       }));
     }

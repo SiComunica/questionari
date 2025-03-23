@@ -5,7 +5,8 @@ import { QuestionarioStruttureProps } from '@/types/questionari';
 
 const SezioneBStrutture: React.FC<QuestionarioStruttureProps> = ({ formData, setFormData }) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value, type } = e.target;
+    const checked = (e.target as HTMLInputElement).checked;
     
     if (name.startsWith('personale_')) {
       const [categoria, campo] = name.split('.');

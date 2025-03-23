@@ -5,29 +5,30 @@ import { QuestionarioStruttureProps } from '@/types/questionari';
 
 const SezioneCStrutture: React.FC<QuestionarioStruttureProps> = ({ formData, setFormData }) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value, type } = e.target;
+    const checked = (e.target as HTMLInputElement).checked;
     
     if (name.includes('.')) {
       const [categoria, subcategoria, campo] = name.split('.');
       
-      if (categoria === 'persone_ospitate') {
+      if (categoria === 'persone_ospitate' || categoria === 'persone_non_ospitate') {
         setFormData(prev => ({
           ...prev,
-          persone_ospitate: {
-            ...prev.persone_ospitate,
+          [categoria]: {
+            ...prev[categoria],
             [subcategoria]: {
-              ...prev.persone_ospitate[subcategoria as keyof typeof prev.persone_ospitate],
+              ...prev[categoria][subcategoria as keyof typeof prev[typeof categoria]],
               [campo]: parseInt(value) || 0
             }
           }
         }));
-      } else if (categoria === 'caratteristiche_ospiti') {
+      } else if (categoria === 'caratteristiche_ospiti' || categoria === 'caratteristiche_non_ospiti') {
         setFormData(prev => ({
           ...prev,
-          caratteristiche_ospiti: {
-            ...prev.caratteristiche_ospiti,
+          [categoria]: {
+            ...prev[categoria],
             [subcategoria]: {
-              ...prev.caratteristiche_ospiti[subcategoria as 'adolescenti' | 'giovani_adulti'],
+              ...prev[categoria][subcategoria as 'adolescenti' | 'giovani_adulti'],
               [campo]: type === 'checkbox' ? checked : value
             }
           }

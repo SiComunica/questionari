@@ -126,7 +126,7 @@ export interface QuestionarioStrutture {
     };
   };
 
-  // Aggiungiamo la proprietà mancante
+  // Aggiungiamo caratteristiche_non_ospiti con la stessa struttura di caratteristiche_ospiti
   caratteristiche_non_ospiti: {
     adolescenti: {
       stranieri_migranti: boolean;
@@ -148,7 +148,6 @@ export interface QuestionarioStrutture {
       altro_specificare?: string;
     };
     giovani_adulti: {
-      // ... stessa struttura di adolescenti
       stranieri_migranti: boolean;
       vittime_tratta: boolean;
       vittime_violenza: boolean;
@@ -239,6 +238,18 @@ export interface QuestionarioStrutture {
     punti_forza: string;
     criticita: string;
   };
+
+  // Sezione F: Finanziamenti
+  finanziamenti: {
+    pubblici: number;
+    privati: number;
+  };
+  fonti_finanziamento_pubblico: string;
+  fonti_finanziamento_privato: string;
+  fornitori: Array<{
+    nome: string;
+    tipo_sostegno: string;
+  }>;
 
   // Metadati
   id?: string;

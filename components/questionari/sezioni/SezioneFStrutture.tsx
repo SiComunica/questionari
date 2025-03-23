@@ -17,13 +17,13 @@ const SezioneFStrutture: React.FC<QuestionarioStruttureProps> = ({ formData, set
         }
       }));
     } else if (name.startsWith('fornitori')) {
-      const index = parseInt(name.split('.')[1]);
-      const campo = name.split('.')[2];
+      const [_, index, campo] = name.split('.');
+      const indexNum = parseInt(index);
       
       setFormData(prev => ({
         ...prev,
         fornitori: prev.fornitori.map((f, i) => 
-          i === index ? { ...f, [campo]: value } : f
+          i === indexNum ? { ...f, [campo]: value } : f
         )
       }));
     } else {
