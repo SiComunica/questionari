@@ -1,21 +1,22 @@
 "use client"
 
 import React from 'react';
-import type { QuestionarioOperatoriProps } from '@/types/questionari';
+import type { QuestionarioOperatori } from '@/types/questionari';
 
-export default function SezioneB({ formData, setFormData }: QuestionarioOperatoriProps) {
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value, type } = e.target;
+interface Props {
+  formData: QuestionarioOperatori;
+  setFormData: React.Dispatch<React.SetStateAction<QuestionarioOperatori>>;
+}
+
+export default function SezioneB({ formData, setFormData }: Props) {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
     
-    if (type === 'checkbox') {
-      const isChecked = (e.target as HTMLInputElement).checked;
-      const arrayField = formData[name as keyof typeof formData] as string[];
-      
+    // Se il campo dovrebbe essere un array, lo gestiamo diversamente
+    if (name === 'mansioni_principali' || name === 'competenze_specifiche' || name === 'certificazioni' || name === 'lingue_conosciute') {
       setFormData(prev => ({
         ...prev,
-        [name]: isChecked 
-          ? [...arrayField, value]
-          : arrayField.filter(item => item !== value)
+        [name]: value.split(',').map(item => item.trim()) // Convertiamo la stringa in array
       }));
     } else {
       setFormData(prev => ({
