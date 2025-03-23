@@ -69,6 +69,12 @@ const QuestionarioStruttureNew: React.FC<Props> = ({ fonte }) => {
       maggiorenni: { uomini: 0, donne: 0, totale: 0 },
       totali: { uomini: 0, donne: 0, totale: 0 }
     },
+    persone_non_ospitate: {
+      fino_16_anni: { uomini: 0, donne: 0, totale: 0 },
+      da_16_a_18: { uomini: 0, donne: 0, totale: 0 },
+      maggiorenni: { uomini: 0, donne: 0, totale: 0 },
+      totali: { uomini: 0, donne: 0, totale: 0 }
+    },
     caratteristiche_ospiti: {
       adolescenti: {
         stranieri_migranti: false,

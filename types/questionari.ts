@@ -60,6 +60,30 @@ export interface QuestionarioStrutture {
       totale: number;
     };
   };
+  
+  // Aggiungiamo la proprietà mancante
+  persone_non_ospitate: {
+    fino_16_anni: {
+      uomini: number;
+      donne: number;
+      totale: number;
+    };
+    da_16_a_18: {
+      uomini: number;
+      donne: number;
+      totale: number;
+    };
+    maggiorenni: {
+      uomini: number;
+      donne: number;
+      totale: number;
+    };
+    totali: {
+      uomini: number;
+      donne: number;
+      totale: number;
+    };
+  };
 
   caratteristiche_ospiti: {
     adolescenti: {
