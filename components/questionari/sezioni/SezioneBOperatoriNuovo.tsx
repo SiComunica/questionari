@@ -6,6 +6,10 @@ interface Props {
   setFormData: React.Dispatch<React.SetStateAction<QuestionarioOperatoriNuovo>>;
 }
 
+type CaratteristicaKey = keyof QuestionarioOperatoriNuovo['caratteristiche_persone'];
+type InterventoKey = keyof QuestionarioOperatoriNuovo['tipo_intervento'];
+type InterventoPotKey = keyof QuestionarioOperatoriNuovo['interventi_potenziare'];
+
 export default function SezioneBOperatoriNuovo({ formData, setFormData }: Props) {
   const handleNumericChange = (e: React.ChangeEvent<HTMLInputElement>, section: 'persone_seguite' | 'persone_maggiorenni') => {
     const { name, value } = e.target;
@@ -34,23 +38,46 @@ export default function SezioneBOperatoriNuovo({ formData, setFormData }: Props)
     }));
   };
 
+  const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>, section: 'caratteristiche_persone' | 'tipo_intervento' | 'interventi_potenziare') => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        [name]: value
+      }
+    }));
+  };
+
   const caratteristiche = [
-    { key: 'stranieri_migranti', label: 'Stranieri con problemi legati alla condizione migratoria' },
-    { key: 'vittime_tratta', label: 'Vittime di tratta' },
-    { key: 'vittime_violenza', label: 'Vittime di violenza domestica' },
-    { key: 'allontanati_famiglia', label: 'Persone allontanate dalla famiglia' },
-    { key: 'detenuti', label: 'Detenuti' },
-    { key: 'ex_detenuti', label: 'Ex detenuti' },
-    { key: 'misure_alternative', label: 'Persone in esecuzione penale esterna' },
-    { key: 'indigenti_senzatetto', label: 'Indigenti e/o senza dimora' },
-    { key: 'rom_sinti', label: 'Rom e Sinti' },
-    { key: 'disabilita_fisica', label: 'Persone con disabilità fisica' },
-    { key: 'disabilita_cognitiva', label: 'Persone con disabilità cognitiva' },
-    { key: 'disturbi_psichiatrici', label: 'Persone con disturbi psichiatrici' },
-    { key: 'dipendenze', label: 'Persone con dipendenze' },
-    { key: 'genitori_precoci', label: 'Genitori precoci' },
-    { key: 'problemi_orientamento', label: 'Persone con problemi legati all\'orientamento sessuale' }
-  ] as const;
+    { key: 'stranieri_migranti' as CaratteristicaKey, label: 'Stranieri con problemi legati alla condizione migratoria' },
+    { key: 'vittime_tratta' as CaratteristicaKey, label: 'Vittime di tratta' },
+    { key: 'vittime_violenza' as CaratteristicaKey, label: 'Vittime di violenza domestica' },
+    { key: 'allontanati_famiglia' as CaratteristicaKey, label: 'Persone allontanate dalla famiglia' },
+    { key: 'detenuti' as CaratteristicaKey, label: 'Detenuti' },
+    { key: 'ex_detenuti' as CaratteristicaKey, label: 'Ex detenuti' },
+    { key: 'misure_alternative' as CaratteristicaKey, label: 'Persone in esecuzione penale esterna' },
+    { key: 'indigenti_senzatetto' as CaratteristicaKey, label: 'Indigenti e/o senza dimora' },
+    { key: 'rom_sinti' as CaratteristicaKey, label: 'Rom e Sinti' },
+    { key: 'disabilita_fisica' as CaratteristicaKey, label: 'Persone con disabilità fisica' },
+    { key: 'disabilita_cognitiva' as CaratteristicaKey, label: 'Persone con disabilità cognitiva' },
+    { key: 'disturbi_psichiatrici' as CaratteristicaKey, label: 'Persone con disturbi psichiatrici' },
+    { key: 'dipendenze' as CaratteristicaKey, label: 'Persone con dipendenze' },
+    { key: 'genitori_precoci' as CaratteristicaKey, label: 'Genitori precoci' },
+    { key: 'problemi_orientamento' as CaratteristicaKey, label: 'Persone con problemi legati all\'orientamento sessuale' }
+  ];
+
+  const interventi = [
+    { key: 'sostegno_formazione' as InterventoKey, label: 'Sostegno per formazione e istruzione' },
+    { key: 'sostegno_lavoro' as InterventoKey, label: 'Sostegno nella ricerca di lavoro' },
+    { key: 'sostegno_abitativo' as InterventoKey, label: 'Sostegno all\'autonomia abitativa' },
+    { key: 'sostegno_famiglia' as InterventoKey, label: 'Sostegno nel rapporto con la famiglia' },
+    { key: 'sostegno_coetanei' as InterventoKey, label: 'Sostegno nelle relazioni con coetanei' },
+    { key: 'sostegno_competenze' as InterventoKey, label: 'Sostegno alla valorizzazione delle competenze' },
+    { key: 'sostegno_legale' as InterventoKey, label: 'Sostegno legale' },
+    { key: 'sostegno_sociosanitario' as InterventoKey, label: 'Sostegno socio-sanitario' },
+    { key: 'mediazione_interculturale' as InterventoKey, label: 'Mediazione linguistica e interculturale' }
+  ];
 
   return (
     <div className="space-y-6">
@@ -139,7 +166,7 @@ export default function SezioneBOperatoriNuovo({ formData, setFormData }: Props)
                 <input
                   type="checkbox"
                   name={key}
-                  checked={formData.caratteristiche_persone[key as keyof typeof formData.caratteristiche_persone]}
+                  checked={!!formData.caratteristiche_persone[key]}
                   onChange={(e) => handleCheckboxChange(e, 'caratteristiche_persone')}
                   className="mr-2"
                 />
@@ -150,7 +177,7 @@ export default function SezioneBOperatoriNuovo({ formData, setFormData }: Props)
               <input
                 type="checkbox"
                 name="altro"
-                checked={formData.caratteristiche_persone.altro}
+                checked={!!formData.caratteristiche_persone.altro}
                 onChange={(e) => handleCheckboxChange(e, 'caratteristiche_persone')}
                 className="mr-2"
               />
@@ -161,7 +188,7 @@ export default function SezioneBOperatoriNuovo({ formData, setFormData }: Props)
                 type="text"
                 name="altro_specificare"
                 value={formData.caratteristiche_persone.altro_specificare || ''}
-                onChange={(e) => handleCheckboxChange(e, 'caratteristiche_persone')}
+                onChange={(e) => handleTextChange(e, 'caratteristiche_persone')}
                 className="w-full mt-2 p-2 border rounded"
                 placeholder="Specificare altro..."
               />
@@ -174,16 +201,18 @@ export default function SezioneBOperatoriNuovo({ formData, setFormData }: Props)
         <h3 className="text-lg font-medium mb-4">B4. Il suo intervento riguarda</h3>
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <label className="flex items-center">
-              <input
-                type="checkbox"
-                name="sostegno_formazione"
-                checked={formData.tipo_intervento.sostegno_formazione}
-                onChange={(e) => handleCheckboxChange(e, 'tipo_intervento')}
-                className="mr-2"
-              />
-              Sostegno per formazione e istruzione
-            </label>
+            {interventi.map(({ key, label }) => (
+              <label key={key} className="flex items-center">
+                <input
+                  type="checkbox"
+                  name={key}
+                  checked={!!formData.tipo_intervento[key]}
+                  onChange={(e) => handleCheckboxChange(e, 'tipo_intervento')}
+                  className="mr-2"
+                />
+                {label}
+              </label>
+            ))}
           </div>
         </div>
       </div>
@@ -192,16 +221,18 @@ export default function SezioneBOperatoriNuovo({ formData, setFormData }: Props)
         <h3 className="text-lg font-medium mb-4">B5. Interventi da realizzare o potenziare</h3>
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <label className="flex items-center">
-              <input
-                type="checkbox"
-                name="sostegno_formazione"
-                checked={formData.interventi_potenziare.sostegno_formazione}
-                onChange={(e) => handleCheckboxChange(e, 'interventi_potenziare')}
-                className="mr-2"
-              />
-              Sostegno per formazione e istruzione
-            </label>
+            {interventi.map(({ key, label }) => (
+              <label key={key} className="flex items-center">
+                <input
+                  type="checkbox"
+                  name={key}
+                  checked={!!formData.interventi_potenziare[key]}
+                  onChange={(e) => handleCheckboxChange(e, 'interventi_potenziare')}
+                  className="mr-2"
+                />
+                {label}
+              </label>
+            ))}
           </div>
         </div>
       </div>
