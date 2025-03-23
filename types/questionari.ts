@@ -3,7 +3,7 @@ export interface QuestionarioStrutture {
   id_struttura: string;
   forma_giuridica: {
     tipo: '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10';
-    altro_specificare?: string;
+    altro_specificare: string;
   };
   tipo_struttura: string;
   anno_inizio: number;
@@ -34,7 +34,7 @@ export interface QuestionarioStrutture {
     operatori_multifunzionali: boolean;
     amministrativi: boolean;
     altro: boolean;
-    altro_specificare?: string;
+    altro_specificare: string;
   };
 
   // Sezione C: Persone assistite
@@ -102,10 +102,9 @@ export interface QuestionarioStrutture {
       genitori_precoci: boolean;
       problemi_orientamento: boolean;
       altro: boolean;
-      altro_specificare?: string;
+      altro_specificare: string;
     };
     giovani_adulti: {
-      // stessi campi di adolescenti
       stranieri_migranti: boolean;
       vittime_tratta: boolean;
       vittime_violenza: boolean;
@@ -122,7 +121,7 @@ export interface QuestionarioStrutture {
       genitori_precoci: boolean;
       problemi_orientamento: boolean;
       altro: boolean;
-      altro_specificare?: string;
+      altro_specificare: string;
     };
   };
 
@@ -145,7 +144,7 @@ export interface QuestionarioStrutture {
       genitori_precoci: boolean;
       problemi_orientamento: boolean;
       altro: boolean;
-      altro_specificare?: string;
+      altro_specificare: string;
     };
     giovani_adulti: {
       stranieri_migranti: boolean;
@@ -164,7 +163,7 @@ export interface QuestionarioStrutture {
       genitori_precoci: boolean;
       problemi_orientamento: boolean;
       altro: boolean;
-      altro_specificare?: string;
+      altro_specificare: string;
     };
   };
 
@@ -185,7 +184,7 @@ export interface QuestionarioStrutture {
   };
   esperienze_inserimento: {
     presenti: boolean;
-    attivita?: Array<{
+    attivita: Array<{
       nome: string;
       periodo: string;
       contenuto: string;
