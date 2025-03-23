@@ -34,6 +34,24 @@ export default function SezioneBOperatoriNuovo({ formData, setFormData }: Props)
     }));
   };
 
+  const caratteristiche = [
+    { key: 'stranieri_migranti', label: 'Stranieri con problemi legati alla condizione migratoria' },
+    { key: 'vittime_tratta', label: 'Vittime di tratta' },
+    { key: 'vittime_violenza', label: 'Vittime di violenza domestica' },
+    { key: 'allontanati_famiglia', label: 'Persone allontanate dalla famiglia' },
+    { key: 'detenuti', label: 'Detenuti' },
+    { key: 'ex_detenuti', label: 'Ex detenuti' },
+    { key: 'misure_alternative', label: 'Persone in esecuzione penale esterna' },
+    { key: 'indigenti_senzatetto', label: 'Indigenti e/o senza dimora' },
+    { key: 'rom_sinti', label: 'Rom e Sinti' },
+    { key: 'disabilita_fisica', label: 'Persone con disabilità fisica' },
+    { key: 'disabilita_cognitiva', label: 'Persone con disabilità cognitiva' },
+    { key: 'disturbi_psichiatrici', label: 'Persone con disturbi psichiatrici' },
+    { key: 'dipendenze', label: 'Persone con dipendenze' },
+    { key: 'genitori_precoci', label: 'Genitori precoci' },
+    { key: 'problemi_orientamento', label: 'Persone con problemi legati all\'orientamento sessuale' }
+  ] as const;
+
   return (
     <div className="space-y-6">
       <h2 className="text-xl font-semibold">Sezione B: Informazioni sulle persone seguite</h2>
@@ -116,23 +134,38 @@ export default function SezioneBOperatoriNuovo({ formData, setFormData }: Props)
         <h3 className="text-lg font-medium mb-4">B3. Caratteristiche delle persone seguite direttamente</h3>
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            {Object.entries(formData.caratteristiche_persone).map(([key, value]) => {
-              if (key !== 'altro_specificare') {
-                return (
-                  <label key={key} className="flex items-center">
-                    <input
-                      type="checkbox"
-                      name={key}
-                      checked={value}
-                      onChange={(e) => handleCheckboxChange(e, 'caratteristiche_persone')}
-                      className="mr-2"
-                    />
-                    {key.replace(/_/g, ' ')}
-                  </label>
-                );
-              }
-              return null;
-            })}
+            {caratteristiche.map(({ key, label }) => (
+              <label key={key} className="flex items-center">
+                <input
+                  type="checkbox"
+                  name={key}
+                  checked={formData.caratteristiche_persone[key as keyof typeof formData.caratteristiche_persone]}
+                  onChange={(e) => handleCheckboxChange(e, 'caratteristiche_persone')}
+                  className="mr-2"
+                />
+                {label}
+              </label>
+            ))}
+            <label className="flex items-center">
+              <input
+                type="checkbox"
+                name="altro"
+                checked={formData.caratteristiche_persone.altro}
+                onChange={(e) => handleCheckboxChange(e, 'caratteristiche_persone')}
+                className="mr-2"
+              />
+              Altro
+            </label>
+            {formData.caratteristiche_persone.altro && (
+              <input
+                type="text"
+                name="altro_specificare"
+                value={formData.caratteristiche_persone.altro_specificare || ''}
+                onChange={(e) => handleCheckboxChange(e, 'caratteristiche_persone')}
+                className="w-full mt-2 p-2 border rounded"
+                placeholder="Specificare altro..."
+              />
+            )}
           </div>
         </div>
       </div>
