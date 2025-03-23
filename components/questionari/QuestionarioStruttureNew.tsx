@@ -12,82 +12,77 @@ import SezioneEStrutture from './sezioni/SezioneEStrutture';
 import SezioneFStrutture from './sezioni/SezioneFStrutture';
 import type { QuestionarioStruttureNew } from '@/types/questionari';
 
-interface Props {
-  fonte?: string;
-  readOnly?: boolean;
+export interface Props {
   initialData?: QuestionarioStruttureNew;
+  readOnly?: boolean;
 }
 
-export default function QuestionarioStruttureNew({ fonte, readOnly, initialData }: Props) {
+export default function QuestionarioStruttureNew({ initialData, readOnly }: Props) {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState<QuestionarioStruttureNew>(() => {
-    if (initialData) return initialData;
-    
-    return {
-      // Sezione A
-      nome_struttura: '',
-      indirizzo: '',
-      comune: '',
-      provincia: '',
-      cap: '',
-      telefono: '',
-      email: '',
-      referente: '',
+  const [formData, setFormData] = useState<QuestionarioStruttureNew>(() => initialData || {
+    // Sezione A
+    nome_struttura: '',
+    indirizzo: '',
+    comune: '',
+    provincia: '',
+    cap: '',
+    telefono: '',
+    email: '',
+    referente: '',
 
-      // Sezione B
-      tipo_struttura: '',
-      capacita_totale: 0,
-      posti_occupati: 0,
+    // Sezione B
+    tipo_struttura: '',
+    capacita_totale: 0,
+    posti_occupati: 0,
 
-      // Sezione C
-      servizi_offerti: {
-        accoglienza: false,
-        orientamento: false,
-        formazione: false,
-        inserimento_lavorativo: false,
-        assistenza_legale: false,
-        assistenza_sanitaria: false,
-        mediazione_culturale: false,
-        supporto_psicologico: false,
-        altro: false,
-        altro_specificare: ''
-      },
+    // Sezione C
+    servizi_offerti: {
+      accoglienza: false,
+      orientamento: false,
+      formazione: false,
+      inserimento_lavorativo: false,
+      assistenza_legale: false,
+      assistenza_sanitaria: false,
+      mediazione_culturale: false,
+      supporto_psicologico: false,
+      altro: false,
+      altro_specificare: ''
+    },
 
-      // Sezione D
-      caratteristiche_utenti: {
-        minori: false,
-        donne: false,
-        famiglie: false,
-        disabili: false,
-        anziani: false,
-        migranti: false,
-        dipendenze: false,
-        altro: false,
-        altro_specificare: ''
-      },
+    // Sezione D
+    caratteristiche_utenti: {
+      minori: false,
+      donne: false,
+      famiglie: false,
+      disabili: false,
+      anziani: false,
+      migranti: false,
+      dipendenze: false,
+      altro: false,
+      altro_specificare: ''
+    },
 
-      // Sezione E
-      risorse_umane: {
-        operatori_totali: 0,
-        operatori_part_time: 0,
-        operatori_full_time: 0,
-        volontari: 0
-      },
+    // Sezione E
+    risorse_umane: {
+      operatori_totali: 0,
+      operatori_part_time: 0,
+      operatori_full_time: 0,
+      volontari: 0
+    },
 
-      // Sezione F
-      criticita: {
-        finanziarie: false,
-        personale: false,
-        spazi: false,
-        attrezzature: false,
-        utenza: false,
-        rete_servizi: false,
-        altro: false,
-        altro_specificare: ''
-      }
-    };
+    // Sezione F
+    criticita: {
+      finanziarie: false,
+      personale: false,
+      spazi: false,
+      attrezzature: false,
+      utenza: false,
+      rete_servizi: false,
+      altro: false,
+      altro_specificare: ''
+    }
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
