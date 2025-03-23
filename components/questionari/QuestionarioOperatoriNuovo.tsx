@@ -1,3 +1,5 @@
+"use client"
+
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
@@ -8,15 +10,16 @@ import SezioneBOperatoriNuovo from './sezioni/SezioneBOperatoriNuovo';
 import SezioneCOperatoriNuovo from './sezioni/SezioneCOperatoriNuovo';
 
 interface Props {
-  fonte: string;
+  initialData?: QuestionarioOperatoriNuovo;
+  readOnly?: boolean;
 }
 
-export default function QuestionarioOperatoriNuovo({ fonte }: Props) {
+export default function QuestionarioOperatoriNuovo({ initialData, readOnly }: Props) {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
 
-  const [formData, setFormData] = useState<QuestionarioOperatoriNuovo>({
+  const [formData, setFormData] = useState<QuestionarioOperatoriNuovo>(() => initialData || {
     // Sezione A
     id_struttura: '',
     tipo_struttura: '',
@@ -100,7 +103,7 @@ export default function QuestionarioOperatoriNuovo({ fonte }: Props) {
     // Metadati
     created_at: new Date().toISOString(),
     stato: 'bozza',
-    fonte: fonte
+    fonte: ''
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
