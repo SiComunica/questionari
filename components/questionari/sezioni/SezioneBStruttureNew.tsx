@@ -1,3 +1,5 @@
+"use client"
+
 import React from 'react';
 import type { QuestionarioStruttureNew } from '@/types/questionari';
 import { Label } from "@/components/ui/label";
@@ -27,16 +29,17 @@ export default function SezioneBStruttureNew({ formData, setFormData }: Props) {
       <div className="space-y-4">
         <div>
           <Label>Tipo di struttura</Label>
-          <Select 
+          <select
             name="tipo_struttura"
             value={formData.tipo_struttura}
-            onValueChange={(value) => setFormData(prev => ({ ...prev, tipo_struttura: value }))}
+            onChange={handleChange}
+            className="w-full p-2 border rounded"
           >
             <option value="">Seleziona tipo struttura</option>
             <option value="casa_accoglienza">Casa di accoglienza</option>
             <option value="comunita_alloggio">Comunità alloggio</option>
             <option value="centro_diurno">Centro diurno</option>
-          </Select>
+          </select>
         </div>
 
         <div>
