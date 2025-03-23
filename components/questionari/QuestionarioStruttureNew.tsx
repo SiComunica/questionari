@@ -115,6 +115,46 @@ const QuestionarioStruttureNew: React.FC<Props> = ({ fonte }) => {
         altro_specificare: ''
       }
     },
+    caratteristiche_non_ospiti: {
+      adolescenti: {
+        stranieri_migranti: false,
+        vittime_tratta: false,
+        vittime_violenza: false,
+        allontanati_famiglia: false,
+        detenuti: false,
+        ex_detenuti: false,
+        misure_alternative: false,
+        indigenti_senzatetto: false,
+        rom_sinti: false,
+        disabilita_fisica: false,
+        disabilita_cognitiva: false,
+        disturbi_psichiatrici: false,
+        dipendenze: false,
+        genitori_precoci: false,
+        problemi_orientamento: false,
+        altro: false,
+        altro_specificare: ''
+      },
+      giovani_adulti: {
+        stranieri_migranti: false,
+        vittime_tratta: false,
+        vittime_violenza: false,
+        allontanati_famiglia: false,
+        detenuti: false,
+        ex_detenuti: false,
+        misure_alternative: false,
+        indigenti_senzatetto: false,
+        rom_sinti: false,
+        disabilita_fisica: false,
+        disabilita_cognitiva: false,
+        disturbi_psichiatrici: false,
+        dipendenze: false,
+        genitori_precoci: false,
+        problemi_orientamento: false,
+        altro: false,
+        altro_specificare: ''
+      }
+    },
 
     // Sezione D
     attivita_servizi: {

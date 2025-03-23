@@ -61,7 +61,6 @@ export interface QuestionarioStrutture {
     };
   };
   
-  // Aggiungiamo la proprietà mancante
   persone_non_ospitate: {
     fino_16_anni: {
       uomini: number;
@@ -107,6 +106,49 @@ export interface QuestionarioStrutture {
     };
     giovani_adulti: {
       // stessi campi di adolescenti
+      stranieri_migranti: boolean;
+      vittime_tratta: boolean;
+      vittime_violenza: boolean;
+      allontanati_famiglia: boolean;
+      detenuti: boolean;
+      ex_detenuti: boolean;
+      misure_alternative: boolean;
+      indigenti_senzatetto: boolean;
+      rom_sinti: boolean;
+      disabilita_fisica: boolean;
+      disabilita_cognitiva: boolean;
+      disturbi_psichiatrici: boolean;
+      dipendenze: boolean;
+      genitori_precoci: boolean;
+      problemi_orientamento: boolean;
+      altro: boolean;
+      altro_specificare?: string;
+    };
+  };
+
+  // Aggiungiamo la proprietà mancante
+  caratteristiche_non_ospiti: {
+    adolescenti: {
+      stranieri_migranti: boolean;
+      vittime_tratta: boolean;
+      vittime_violenza: boolean;
+      allontanati_famiglia: boolean;
+      detenuti: boolean;
+      ex_detenuti: boolean;
+      misure_alternative: boolean;
+      indigenti_senzatetto: boolean;
+      rom_sinti: boolean;
+      disabilita_fisica: boolean;
+      disabilita_cognitiva: boolean;
+      disturbi_psichiatrici: boolean;
+      dipendenze: boolean;
+      genitori_precoci: boolean;
+      problemi_orientamento: boolean;
+      altro: boolean;
+      altro_specificare?: string;
+    };
+    giovani_adulti: {
+      // ... stessa struttura di adolescenti
       stranieri_migranti: boolean;
       vittime_tratta: boolean;
       vittime_violenza: boolean;
