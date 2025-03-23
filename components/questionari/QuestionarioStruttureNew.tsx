@@ -158,8 +158,8 @@ const QuestionarioStruttureNew: React.FC<Props> = ({ fonte }) => {
 
     // Sezione D
     attivita_servizi: {
-      alloggio: false,
-      vitto: false,
+      alloggio: { attivo: false, descrizione: '' },
+      vitto: { attivo: false, descrizione: '' },
       servizi_bassa_soglia: { attivo: false, descrizione: '' },
       ospitalita_diurna: { attivo: false, descrizione: '' },
       supporto_psicologico: { attivo: false, descrizione: '' },
@@ -196,7 +196,9 @@ const QuestionarioStruttureNew: React.FC<Props> = ({ fonte }) => {
     // Metadati
     created_at: new Date().toISOString(),
     stato: 'nuovo',
-    fonte: fonte || ''
+    fonte: fonte || '',
+
+    attivita_future: [],
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
