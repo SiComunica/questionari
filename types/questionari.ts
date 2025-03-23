@@ -452,4 +452,92 @@ export interface QuestionarioProps {
   fonte?: string;
   readOnly?: boolean;
   initialData?: any;
+}
+
+export interface QuestionarioOperatoriNuovo {
+  // Sezione A
+  id_struttura: string;
+  tipo_struttura: string;
+  professione: {
+    tipo: '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13';
+    altro_specificare?: string;
+  };
+
+  // Sezione B
+  persone_seguite: {
+    uomini: number;
+    donne: number;
+    totale: number;
+  };
+  persone_maggiorenni: {
+    uomini: number;
+    donne: number;
+    totale: number;
+  };
+  caratteristiche_persone: {
+    stranieri_migranti: boolean;
+    vittime_tratta: boolean;
+    vittime_violenza: boolean;
+    allontanati_famiglia: boolean;
+    detenuti: boolean;
+    ex_detenuti: boolean;
+    misure_alternative: boolean;
+    indigenti_senzatetto: boolean;
+    rom_sinti: boolean;
+    disabilita_fisica: boolean;
+    disabilita_cognitiva: boolean;
+    disturbi_psichiatrici: boolean;
+    dipendenze: boolean;
+    genitori_precoci: boolean;
+    problemi_orientamento: boolean;
+    altro: boolean;
+    altro_specificare?: string;
+  };
+  tipo_intervento: {
+    sostegno_formazione: boolean;
+    sostegno_lavoro: boolean;
+    sostegno_abitativo: boolean;
+    sostegno_famiglia: boolean;
+    sostegno_coetanei: boolean;
+    sostegno_competenze: boolean;
+    sostegno_legale: boolean;
+    sostegno_sociosanitario: boolean;
+    mediazione_interculturale: boolean;
+    altro: boolean;
+    altro_specificare?: string;
+  };
+  interventi_potenziare: {
+    sostegno_formazione: boolean;
+    sostegno_lavoro: boolean;
+    sostegno_abitativo: boolean;
+    sostegno_famiglia: boolean;
+    sostegno_coetanei: boolean;
+    sostegno_competenze: boolean;
+    sostegno_legale: boolean;
+    sostegno_sociosanitario: boolean;
+    mediazione_interculturale: boolean;
+    nessuno: boolean;
+    altro: boolean;
+    altro_specificare?: string;
+  };
+
+  // Sezione C
+  difficolta_uscita: {
+    problemi_economici: number;
+    trovare_lavoro: number;
+    lavori_qualita: number;
+    trovare_casa: number;
+    discriminazioni: number;
+    salute_fisica: number;
+    problemi_psicologici: number;
+    difficolta_linguistiche: number;
+    altro: number;
+    altro_specificare?: string;
+  };
+
+  // Metadati
+  id?: string;
+  created_at: string;
+  stato: string;
+  fonte: string;
 } 
