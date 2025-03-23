@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import AuthCheck from '@/components/AuthCheck'
-import QuestionarioOperatoriNew from '@/components/questionari/QuestionarioOperatoriNew'
+import QuestionarioOperatoriNuovo from '@/components/questionari/QuestionarioOperatoriNuovo'
 
 export default function QuestionarioOperatoriPage() {
   const [fonte, setFonte] = useState('')
@@ -21,7 +21,7 @@ export default function QuestionarioOperatoriPage() {
         >
           ← Torna alla dashboard
         </Link>
-        {fonte && <QuestionarioOperatoriNew fonte={fonte} />}
+        {fonte && <QuestionarioOperatoriNuovo fonte={fonte} />}
       </div>
     </AuthCheck>
   )
