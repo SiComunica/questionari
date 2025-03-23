@@ -77,6 +77,7 @@ export default function QuestionarioStruttureForm() {
     id_struttura: '',
     forma_giuridica: {
       tipo: '1',
+      altro_specificare: ''
     },
     tipo_struttura: '',
     anno_inizio: new Date().getFullYear(),
@@ -104,9 +105,16 @@ export default function QuestionarioStruttureForm() {
       operatori_legali: false,
       operatori_multifunzionali: false,
       amministrativi: false,
-      altro: false
+      altro: false,
+      altro_specificare: ''
     },
     persone_ospitate: {
+      fino_16_anni: { uomini: 0, donne: 0, totale: 0 },
+      da_16_a_18: { uomini: 0, donne: 0, totale: 0 },
+      maggiorenni: { uomini: 0, donne: 0, totale: 0 },
+      totali: { uomini: 0, donne: 0, totale: 0 }
+    },
+    persone_non_ospitate: {
       fino_16_anni: { uomini: 0, donne: 0, totale: 0 },
       da_16_a_18: { uomini: 0, donne: 0, totale: 0 },
       maggiorenni: { uomini: 0, donne: 0, totale: 0 },
@@ -129,7 +137,8 @@ export default function QuestionarioStruttureForm() {
         dipendenze: false,
         genitori_precoci: false,
         problemi_orientamento: false,
-        altro: false
+        altro: false,
+        altro_specificare: ''
       },
       giovani_adulti: {
         stranieri_migranti: false,
@@ -147,14 +156,9 @@ export default function QuestionarioStruttureForm() {
         dipendenze: false,
         genitori_precoci: false,
         problemi_orientamento: false,
-        altro: false
+        altro: false,
+        altro_specificare: ''
       }
-    },
-    persone_non_ospitate: {
-      fino_16_anni: { uomini: 0, donne: 0, totale: 0 },
-      da_16_a_18: { uomini: 0, donne: 0, totale: 0 },
-      maggiorenni: { uomini: 0, donne: 0, totale: 0 },
-      totali: { uomini: 0, donne: 0, totale: 0 }
     },
     caratteristiche_non_ospiti: {
       adolescenti: {
@@ -173,7 +177,8 @@ export default function QuestionarioStruttureForm() {
         dipendenze: false,
         genitori_precoci: false,
         problemi_orientamento: false,
-        altro: false
+        altro: false,
+        altro_specificare: ''
       },
       giovani_adulti: {
         stranieri_migranti: false,
@@ -191,7 +196,8 @@ export default function QuestionarioStruttureForm() {
         dipendenze: false,
         genitori_precoci: false,
         problemi_orientamento: false,
-        altro: false
+        altro: false,
+        altro_specificare: ''
       }
     },
     attivita_servizi: {
@@ -217,7 +223,10 @@ export default function QuestionarioStruttureForm() {
     network: {
       punti_forza: '',
       criticita: ''
-    }
+    },
+    created_at: new Date().toISOString(),
+    stato: 'bozza',
+    fonte: 'operatore'
   })
 
   const updateTotali = (data: typeof formData) => {
