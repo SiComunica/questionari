@@ -195,27 +195,24 @@ export default function QuestionarioStruttureForm() {
       }
     },
     attivita_servizi: {
-      alloggio: false,
-      vitto: false,
-      servizi_bassa_soglia: { attivo: false },
-      ospitalita_diurna: { attivo: false },
-      supporto_psicologico: { attivo: false },
-      sostegno_autonomia: { attivo: false },
-      orientamento_lavoro: { attivo: false },
-      orientamento_formazione: { attivo: false },
-      istruzione: { attivo: false },
-      formazione_professionale: { attivo: false },
-      attivita_socializzazione: { attivo: false },
-      altro: { attivo: false }
+      alloggio: { attivo: false, descrizione: '' },
+      vitto: { attivo: false, descrizione: '' },
+      servizi_bassa_soglia: { attivo: false, descrizione: '' },
+      ospitalita_diurna: { attivo: false, descrizione: '' },
+      supporto_psicologico: { attivo: false, descrizione: '' },
+      sostegno_autonomia: { attivo: false, descrizione: '' },
+      orientamento_lavoro: { attivo: false, descrizione: '' },
+      orientamento_formazione: { attivo: false, descrizione: '' },
+      istruzione: { attivo: false, descrizione: '' },
+      formazione_professionale: { attivo: false, descrizione: '' },
+      attivita_socializzazione: { attivo: false, descrizione: '' },
+      altro: { attivo: false, descrizione: '' }
     },
     esperienze_inserimento: {
       presenti: false,
       attivita: []
     },
-    attivita_future: {
-      previste: false,
-      attivita: []
-    },
+    attivita_future: [],
     collaborazioni: [],
     network: {
       punti_forza: '',
@@ -702,12 +699,15 @@ export default function QuestionarioStruttureForm() {
                 <input
                   type="checkbox"
                   id="servizio_alloggio"
-                  checked={Boolean(formData.attivita_servizi.alloggio)}
+                  checked={Boolean(formData.attivita_servizi.alloggio.attivo)}
                   onChange={() => setFormData(prev => ({
                     ...prev,
                     attivita_servizi: {
                       ...prev.attivita_servizi,
-                      alloggio: !prev.attivita_servizi.alloggio
+                      alloggio: {
+                        ...prev.attivita_servizi.alloggio,
+                        attivo: !prev.attivita_servizi.alloggio.attivo
+                      }
                     }
                   }))}
                   className="h-4 w-4 rounded border-gray-300"
@@ -718,12 +718,15 @@ export default function QuestionarioStruttureForm() {
                 <input
                   type="checkbox"
                   id="servizio_vitto"
-                  checked={Boolean(formData.attivita_servizi.vitto)}
+                  checked={Boolean(formData.attivita_servizi.vitto.attivo)}
                   onChange={() => setFormData(prev => ({
                     ...prev,
                     attivita_servizi: {
                       ...prev.attivita_servizi,
-                      vitto: !prev.attivita_servizi.vitto
+                      vitto: {
+                        ...prev.attivita_servizi.vitto,
+                        attivo: !prev.attivita_servizi.vitto.attivo
+                      }
                     }
                   }))}
                   className="h-4 w-4 rounded border-gray-300"
