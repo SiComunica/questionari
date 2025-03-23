@@ -241,6 +241,10 @@ export interface QuestionarioOperatori {
   titolo_studio: string;
   anni_esperienza: number;
   tipo_contratto: string;
+  ruolo_attuale: string;
+  email: string;
+  telefono: string;
+  id?: string;
   created_at: string;
   stato: string;
   fonte: string;
