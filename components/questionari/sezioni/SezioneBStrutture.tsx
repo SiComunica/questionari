@@ -1,32 +1,23 @@
 "use client"
 
 import React from 'react';
-import type { QuestionarioStrutture } from '@/types/questionari';
+import type { QuestionarioStruttureNew } from '@/types/questionari';
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 
 interface Props {
-  formData: QuestionarioStrutture;
-  setFormData: React.Dispatch<React.SetStateAction<QuestionarioStrutture>>;
+  formData: QuestionarioStruttureNew;
+  setFormData: React.Dispatch<React.SetStateAction<QuestionarioStruttureNew>>;
 }
 
 export default function SezioneBStrutture({ formData, setFormData }: Props) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     
-    setFormData(prev => {
-      if (!prev) {
-        return {
-          ...formData,
-          [name]: value
-        };
-      }
-      
-      return {
-        ...prev,
-        [name]: value
-      };
-    });
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
   const handlePersonaleChange = (
@@ -34,20 +25,20 @@ export default function SezioneBStrutture({ formData, setFormData }: Props) {
     genere: 'uomini' | 'donne',
     value: number
   ) => {
-    setFormData(prev => {
-      const newData = {
-        ...prev,
-        [`personale_${tipo}`]: {
-          ...prev[`personale_${tipo}`],
+    setFormData(prev => ({
+      ...prev,
+      personale: {
+        ...prev.personale,
+        [`${tipo}`]: {
+          ...prev.personale[tipo],
           [genere]: value,
           totale: tipo === 'retribuito' 
-            ? (genere === 'uomini' ? value + prev.personale_retribuito.donne : prev.personale_retribuito.uomini + value)
-            : (genere === 'uomini' ? value + prev.personale_volontario.donne : prev.personale_volontario.uomini + value)
+            ? (genere === 'uomini' ? value + prev.personale.retribuito.donne : prev.personale.retribuito.uomini + value)
+            : (genere === 'uomini' ? value + prev.personale.volontario.donne : prev.personale.volontario.uomini + value)
         }
       }
-      return newData
-    })
-  }
+    }));
+  };
 
   const handleFiguraProfessionaleChange = (figura: keyof typeof formData.figure_professionali) => {
     setFormData(prev => ({
@@ -66,8 +57,8 @@ export default function SezioneBStrutture({ formData, setFormData }: Props) {
       <div>
         <h3 className="text-lg font-medium mb-4">B1. Tipo struttura</h3>
         <select
-          name="tipo_struttura"
-          value={formData.tipo_struttura || ''}
+          name="tipo"
+          value={formData.tipo || ''}
           onChange={handleChange}
           className="w-full p-2 border rounded"
         >
@@ -78,11 +69,11 @@ export default function SezioneBStrutture({ formData, setFormData }: Props) {
           <option value="altro">Altro</option>
         </select>
         
-        {formData.tipo_struttura === 'altro' && (
+        {formData.tipo === 'altro' && (
           <input
             type="text"
-            name="tipo_struttura_altro"
-            value={formData.tipo_struttura_altro || ''}
+            name="tipo_altro"
+            value={formData.tipo_altro || ''}
             onChange={handleChange}
             className="mt-2 w-full p-2 border rounded"
             placeholder="Specificare altra tipologia..."
@@ -91,11 +82,11 @@ export default function SezioneBStrutture({ formData, setFormData }: Props) {
       </div>
 
       <div>
-        <h3 className="text-lg font-medium mb-4">B2. Capacità ricettiva</h3>
+        <h3 className="text-lg font-medium mb-4">B2. Capacità ricettiva massima</h3>
         <input
           type="number"
-          name="capacita_ricettiva"
-          value={formData.capacita_ricettiva || ''}
+          name="capacita_massima"
+          value={formData.capacita_massima || ''}
           onChange={handleChange}
           min="0"
           className="w-full p-2 border rounded"
@@ -103,81 +94,71 @@ export default function SezioneBStrutture({ formData, setFormData }: Props) {
       </div>
 
       <div>
-        <h3 className="text-lg font-medium mb-4">B3. Numero di persone attualmente ospitate</h3>
-        <input
-          type="number"
-          name="persone_ospitate"
-          value={formData.persone_ospitate || ''}
-          onChange={handleChange}
-          min="0"
-          className="w-full p-2 border rounded"
-        />
-      </div>
-
-      <h2 className="text-xl font-semibold mt-6">Sezione B: Informazioni sul Personale</h2>
-
-      {/* Personale Retribuito */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-medium">Personale Retribuito</h3>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="personale_retribuito_uomini">Uomini</Label>
-            <Input
-              id="personale_retribuito_uomini"
-              type="number"
-              min={0}
-              value={formData.personale_retribuito.uomini}
-              onChange={(e) => handlePersonaleChange('retribuito', 'uomini', parseInt(e.target.value) || 0)}
-            />
+        <h3 className="text-lg font-medium mb-4">B3. Personale della struttura</h3>
+        
+        {/* Personale Retribuito */}
+        <div className="space-y-4">
+          <h4 className="text-md font-medium">Personale Retribuito</h4>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="personale_retribuito_uomini">Uomini</Label>
+              <Input
+                id="personale_retribuito_uomini"
+                type="number"
+                min={0}
+                value={formData.personale.retribuito.uomini}
+                onChange={(e) => handlePersonaleChange('retribuito', 'uomini', parseInt(e.target.value) || 0)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="personale_retribuito_donne">Donne</Label>
+              <Input
+                id="personale_retribuito_donne"
+                type="number"
+                min={0}
+                value={formData.personale.retribuito.donne}
+                onChange={(e) => handlePersonaleChange('retribuito', 'donne', parseInt(e.target.value) || 0)}
+              />
+            </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="personale_retribuito_donne">Donne</Label>
-            <Input
-              id="personale_retribuito_donne"
-              type="number"
-              min={0}
-              value={formData.personale_retribuito.donne}
-              onChange={(e) => handlePersonaleChange('retribuito', 'donne', parseInt(e.target.value) || 0)}
-            />
+            <Label>Totale personale retribuito</Label>
+            <div className="text-lg font-medium">
+              {formData.personale.retribuito.totale}
+            </div>
           </div>
         </div>
-        <div className="space-y-2">
-          <Label>Totale personale retribuito</Label>
-          <div className="text-lg font-medium">
-            {formData.personale_retribuito.totale}
-          </div>
-        </div>
-      </div>
 
-      {/* Personale Volontario */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-medium">Personale Volontario</h3>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="personale_volontario_uomini">Uomini</Label>
-            <Input
-              id="personale_volontario_uomini"
-              type="number"
-              min={0}
-              value={formData.personale_volontario.uomini}
-              onChange={(e) => handlePersonaleChange('volontario', 'uomini', parseInt(e.target.value) || 0)}
-            />
+        {/* Personale Volontario */}
+        <div className="space-y-4 mt-6">
+          <h4 className="text-md font-medium">Personale Volontario</h4>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="personale_volontario_uomini">Uomini</Label>
+              <Input
+                id="personale_volontario_uomini"
+                type="number"
+                min={0}
+                value={formData.personale.volontario.uomini}
+                onChange={(e) => handlePersonaleChange('volontario', 'uomini', parseInt(e.target.value) || 0)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="personale_volontario_donne">Donne</Label>
+              <Input
+                id="personale_volontario_donne"
+                type="number"
+                min={0}
+                value={formData.personale.volontario.donne}
+                onChange={(e) => handlePersonaleChange('volontario', 'donne', parseInt(e.target.value) || 0)}
+              />
+            </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="personale_volontario_donne">Donne</Label>
-            <Input
-              id="personale_volontario_donne"
-              type="number"
-              min={0}
-              value={formData.personale_volontario.donne}
-              onChange={(e) => handlePersonaleChange('volontario', 'donne', parseInt(e.target.value) || 0)}
-            />
-          </div>
-        </div>
-        <div className="space-y-2">
-          <Label>Totale personale volontario</Label>
-          <div className="text-lg font-medium">
-            {formData.personale_volontario.totale}
+            <Label>Totale personale volontario</Label>
+            <div className="text-lg font-medium">
+              {formData.personale.volontario.totale}
+            </div>
           </div>
         </div>
       </div>
