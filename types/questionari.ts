@@ -544,4 +544,68 @@ export interface QuestionarioOperatoriNuovo {
   created_at: string;
   stato: string;
   fonte: string;
+}
+
+export interface QuestionarioStruttureNew {
+  // Sezione A
+  nome_struttura: string;
+  indirizzo: string;
+  comune: string;
+  provincia: string;
+  cap: string;
+  telefono: string;
+  email: string;
+  referente: string;
+
+  // Sezione B
+  tipo_struttura: string;
+  capacita_totale: number;
+  posti_occupati: number;
+
+  // Sezione C
+  servizi_offerti: {
+    accoglienza: boolean;
+    orientamento: boolean;
+    formazione: boolean;
+    inserimento_lavorativo: boolean;
+    assistenza_legale: boolean;
+    assistenza_sanitaria: boolean;
+    mediazione_culturale: boolean;
+    supporto_psicologico: boolean;
+    altro: boolean;
+    altro_specificare?: string;
+  };
+
+  // Sezione D
+  caratteristiche_utenti: {
+    minori: boolean;
+    donne: boolean;
+    famiglie: boolean;
+    disabili: boolean;
+    anziani: boolean;
+    migranti: boolean;
+    dipendenze: boolean;
+    altro: boolean;
+    altro_specificare?: string;
+  };
+
+  // Sezione E
+  risorse_umane: {
+    operatori_totali: number;
+    operatori_part_time: number;
+    operatori_full_time: number;
+    volontari: number;
+  };
+
+  // Sezione F
+  criticita: {
+    finanziarie: boolean;
+    personale: boolean;
+    spazi: boolean;
+    attrezzature: boolean;
+    utenza: boolean;
+    rete_servizi: boolean;
+    altro: boolean;
+    altro_specificare?: string;
+  };
 } 
