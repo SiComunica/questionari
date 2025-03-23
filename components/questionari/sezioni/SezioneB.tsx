@@ -1,216 +1,197 @@
 "use client"
 
 import React from 'react';
-import type { QuestionarioOperatori } from '@/types/questionari';
+import type { QuestionarioOperatoriNuovo } from '@/types/questionari';
 
 interface Props {
-  formData: QuestionarioOperatori;
-  setFormData: React.Dispatch<React.SetStateAction<QuestionarioOperatori>>;
+  formData: QuestionarioOperatoriNuovo;
+  setFormData: React.Dispatch<React.SetStateAction<QuestionarioOperatoriNuovo>>;
 }
 
 export default function SezioneB({ formData, setFormData }: Props) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     
-    // Se il campo dovrebbe essere un array, lo gestiamo diversamente
-    if (name === 'mansioni_principali' || name === 'competenze_specifiche' || name === 'certificazioni' || name === 'lingue_conosciute') {
-      setFormData(prev => ({
-        ...prev,
-        [name]: value.split(',').map(item => item.trim()) // Convertiamo la stringa in array
-      }));
-    } else {
-      setFormData(prev => ({
-        ...prev,
-        [name]: value
-      }));
-    }
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-semibold">Sezione B: Struttura e ruolo</h2>
+      <h2 className="text-xl font-semibold">Sezione B: Informazioni sulle persone seguite</h2>
       
       <div className="space-y-4">
+        {/* B1. Numero di persone seguite direttamente */}
         <div>
-          <label className="block mb-2">ID Struttura *</label>
-          <input
-            type="text"
-            name="id_struttura"
-            value={formData.id_struttura}
-            onChange={handleChange}
-            required
-            className="w-full p-2 border rounded"
-          />
-        </div>
-
-        <div>
-          <label className="block mb-2">Tipo di struttura *</label>
-          <select
-            name="tipo_struttura"
-            value={formData.tipo_struttura}
-            onChange={handleChange}
-            required
-            className="w-full p-2 border rounded"
-          >
-            <option value="">Seleziona...</option>
-            <option value="comunita_accoglienza">Comunità di accoglienza</option>
-            <option value="centro_aggregazione">Centro di aggregazione</option>
-            <option value="centro_diurno">Centro diurno</option>
-            <option value="servizio_sociale">Servizio sociale</option>
-            <option value="cooperativa">Cooperativa sociale</option>
-            <option value="altro">Altro</option>
-          </select>
-        </div>
-
-        <div>
-          <label className="block mb-2">Professione *</label>
-          <select
-            name="professione"
-            value={formData.professione}
-            onChange={handleChange}
-            required
-            className="w-full p-2 border rounded"
-          >
-            <option value="">Seleziona...</option>
-            <option value="educatore">Educatore professionale</option>
-            <option value="assistente_sociale">Assistente sociale</option>
-            <option value="psicologo">Psicologo</option>
-            <option value="mediatore">Mediatore culturale</option>
-            <option value="operatore">Operatore sociale</option>
-            <option value="altro">Altro</option>
-          </select>
-        </div>
-
-        {formData.professione === 'altro' && (
-          <div>
-            <label className="block mb-2">Specifica altra professione</label>
-            <input
-              type="text"
-              name="professione_altro"
-              value={formData.professione_altro}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-            />
-          </div>
-        )}
-
-        <div>
-          <label className="block mb-2">Mansioni principali *</label>
-          <div className="space-y-2">
-            {[
-              'accoglienza',
-              'supporto_educativo',
-              'supporto_psicologico',
-              'orientamento_lavoro',
-              'mediazione_culturale',
-              'accompagnamento_servizi',
-              'progettazione',
-              'coordinamento'
-            ].map(mansione => (
-              <div key={mansione} className="flex items-center">
-                <input
-                  type="checkbox"
-                  name="mansioni_principali"
-                  value={mansione}
-                  checked={(formData.mansioni_principali || []).includes(mansione)}
-                  onChange={handleChange}
-                  className="mr-2"
-                />
-                <label>{mansione.replace('_', ' ').charAt(0).toUpperCase() + mansione.slice(1)}</label>
-              </div>
-            ))}
+          <h3 className="text-lg mb-3">B1. Indicare il numero di persone seguite direttamente</h3>
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <label className="block mb-2">Uomini</label>
+              <input
+                type="number"
+                name="persone_seguite.uomini"
+                value={formData.persone_seguite.uomini}
+                onChange={handleChange}
+                min="0"
+                className="w-full p-2 border rounded"
+              />
+            </div>
+            <div>
+              <label className="block mb-2">Donne</label>
+              <input
+                type="number"
+                name="persone_seguite.donne"
+                value={formData.persone_seguite.donne}
+                onChange={handleChange}
+                min="0"
+                className="w-full p-2 border rounded"
+              />
+            </div>
+            <div>
+              <label className="block mb-2">Totale</label>
+              <input
+                type="number"
+                value={formData.persone_seguite.totale}
+                disabled
+                className="w-full p-2 border rounded bg-gray-100"
+              />
+            </div>
           </div>
         </div>
 
+        {/* B2. Numero di persone maggiorenni */}
         <div>
-          <label className="block mb-2">Competenze specifiche *</label>
-          <div className="space-y-2">
-            {[
-              'progettazione_educativa',
-              'gestione_gruppi',
-              'counseling',
-              'mediazione_conflitti',
-              'valutazione_bisogni',
-              'networking',
-              'competenze_digitali',
-              'lingue_straniere'
-            ].map(competenza => (
-              <div key={competenza} className="flex items-center">
-                <input
-                  type="checkbox"
-                  name="competenze_specifiche"
-                  value={competenza}
-                  checked={(formData.competenze_specifiche || []).includes(competenza)}
-                  onChange={handleChange}
-                  className="mr-2"
-                />
-                <label>{competenza.replace('_', ' ').charAt(0).toUpperCase() + competenza.slice(1)}</label>
-              </div>
-            ))}
+          <h3 className="text-lg mb-3">B2. Indicare il numero di persone maggiorenni seguite direttamente</h3>
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <label className="block mb-2">Uomini</label>
+              <input
+                type="number"
+                name="persone_maggiorenni.uomini"
+                value={formData.persone_maggiorenni.uomini}
+                onChange={handleChange}
+                min="0"
+                className="w-full p-2 border rounded"
+              />
+            </div>
+            <div>
+              <label className="block mb-2">Donne</label>
+              <input
+                type="number"
+                name="persone_maggiorenni.donne"
+                value={formData.persone_maggiorenni.donne}
+                onChange={handleChange}
+                min="0"
+                className="w-full p-2 border rounded"
+              />
+            </div>
+            <div>
+              <label className="block mb-2">Totale</label>
+              <input
+                type="number"
+                value={formData.persone_maggiorenni.totale}
+                disabled
+                className="w-full p-2 border rounded bg-gray-100"
+              />
+            </div>
           </div>
         </div>
 
+        {/* B3. Caratteristiche delle persone seguite */}
         <div>
-          <label className="block mb-2">Formazione specialistica</label>
-          <textarea
-            name="formazione_specialistica"
-            value={formData.formazione_specialistica}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            rows={3}
-            placeholder="Descrivi eventuali formazioni specialistiche..."
-          />
-        </div>
-
-        <div>
-          <label className="block mb-2">Certificazioni</label>
-          <div className="space-y-2">
-            {[
-              'counseling',
-              'mediazione',
-              'project_management',
-              'lingue',
-              'informatica',
-              'primo_soccorso'
-            ].map(certificazione => (
-              <div key={certificazione} className="flex items-center">
-                <input
-                  type="checkbox"
-                  name="certificazioni"
-                  value={certificazione}
-                  checked={(formData.certificazioni || []).includes(certificazione)}
-                  onChange={handleChange}
-                  className="mr-2"
-                />
-                <label>{certificazione.replace('_', ' ').charAt(0).toUpperCase() + certificazione.slice(1)}</label>
-              </div>
-            ))}
+          <h3 className="text-lg mb-3">B3. Caratteristiche delle persone seguite direttamente</h3>
+          <div className="grid grid-cols-2 gap-4">
+            {Object.entries(formData.caratteristiche_persone).map(([key, value]) => {
+              if (key !== 'altro_specificare') {
+                return (
+                  <div key={key} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      name={`caratteristiche_persone.${key}`}
+                      checked={value}
+                      onChange={(e) => {
+                        setFormData(prev => ({
+                          ...prev,
+                          caratteristiche_persone: {
+                            ...prev.caratteristiche_persone,
+                            [key]: e.target.checked
+                          }
+                        }));
+                      }}
+                      className="mr-2"
+                    />
+                    <label>{key.replace(/_/g, ' ')}</label>
+                  </div>
+                );
+              }
+              return null;
+            })}
           </div>
         </div>
 
+        {/* B4. Tipo di intervento */}
         <div>
-          <label className="block mb-2">Lingue conosciute</label>
-          <div className="space-y-2">
-            {[
-              'inglese',
-              'francese',
-              'spagnolo',
-              'arabo',
-              'cinese',
-              'altro'
-            ].map(lingua => (
-              <div key={lingua} className="flex items-center">
-                <input
-                  type="checkbox"
-                  name="lingue_conosciute"
-                  value={lingua}
-                  checked={(formData.lingue_conosciute || []).includes(lingua)}
-                  onChange={handleChange}
-                  className="mr-2"
-                />
-                <label>{lingua.charAt(0).toUpperCase() + lingua.slice(1)}</label>
-              </div>
-            ))}
+          <h3 className="text-lg mb-3">B4. Il suo intervento riguarda</h3>
+          <div className="grid grid-cols-2 gap-4">
+            {Object.entries(formData.tipo_intervento).map(([key, value]) => {
+              if (key !== 'altro_specificare') {
+                return (
+                  <div key={key} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      name={`tipo_intervento.${key}`}
+                      checked={value}
+                      onChange={(e) => {
+                        setFormData(prev => ({
+                          ...prev,
+                          tipo_intervento: {
+                            ...prev.tipo_intervento,
+                            [key]: e.target.checked
+                          }
+                        }));
+                      }}
+                      className="mr-2"
+                    />
+                    <label>{key.replace(/_/g, ' ')}</label>
+                  </div>
+                );
+              }
+              return null;
+            })}
+          </div>
+        </div>
+
+        {/* B5. Interventi da potenziare */}
+        <div>
+          <h3 className="text-lg mb-3">B5. Interventi da realizzare o potenziare</h3>
+          <div className="grid grid-cols-2 gap-4">
+            {Object.entries(formData.interventi_potenziare).map(([key, value]) => {
+              if (key !== 'altro_specificare') {
+                return (
+                  <div key={key} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      name={`interventi_potenziare.${key}`}
+                      checked={value}
+                      onChange={(e) => {
+                        setFormData(prev => ({
+                          ...prev,
+                          interventi_potenziare: {
+                            ...prev.interventi_potenziare,
+                            [key]: e.target.checked
+                          }
+                        }));
+                      }}
+                      className="mr-2"
+                    />
+                    <label>{key.replace(/_/g, ' ')}</label>
+                  </div>
+                );
+              }
+              return null;
+            })}
           </div>
         </div>
       </div>
