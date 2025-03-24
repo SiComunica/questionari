@@ -814,7 +814,16 @@ export interface QuestionarioStruttureNew {
       oggetto: string;
     }>;
     punti_forza: string;
-    criticita: string;
+    criticita: {
+      finanziarie: boolean;
+      personale: boolean;
+      spazi: boolean;
+      attrezzature: boolean;
+      utenza: boolean;
+      rete_servizi: boolean;
+      altro: boolean;
+      altro_specificare: string;
+    };
   };
 
   // Metadati

@@ -180,19 +180,26 @@ const defaultFormData: QuestionarioStruttureNew = {
   collaborazioni: {
     soggetti: [],
     punti_forza: '',
-    criticita: ''
+    criticita: {
+      finanziarie: false,
+      personale: false,
+      spazi: false,
+      attrezzature: false,
+      utenza: false,
+      rete_servizi: false,
+      altro: false,
+      altro_specificare: ''
+    }
   },
 
   // Sezione F
-  criticita: {
-    finanziarie: false,
-    personale: false,
-    spazi: false,
-    attrezzature: false,
-    utenza: false,
-    rete_servizi: false,
-    altro: false,
-    altro_specificare: ''
+  finanziamenti: {
+    fondi_pubblici: 0,
+    fondi_privati: 0,
+    totale: 0,
+    fondi_pubblici_specifiche: '',
+    fondi_privati_specifiche: '',
+    fornitori: []
   },
 
   // Sezione D
@@ -231,6 +238,17 @@ const defaultFormData: QuestionarioStruttureNew = {
     operatori_part_time: 0,
     operatori_full_time: 0,
     volontari: 0
+  },
+
+  criticita: {
+    finanziarie: false,
+    personale: false,
+    spazi: false,
+    attrezzature: false,
+    utenza: false,
+    rete_servizi: false,
+    altro: false,
+    altro_specificare: ''
   }
 };
 
