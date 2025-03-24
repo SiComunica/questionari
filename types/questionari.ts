@@ -605,4 +605,32 @@ export interface QuestionarioStruttureNew {
     altro: boolean;
     altro_specificare?: string;
   };
+
+  // Sezione B
+  personale_retribuito: {
+    uomini: number;
+    donne: number;
+    totale: number;
+  };
+  personale_volontario: {
+    uomini: number;
+    donne: number;
+    totale: number;
+  };
+  figure_professionali: {
+    psicologi: boolean;
+    assistenti_sociali: boolean;
+    educatori: boolean;
+    mediatori: boolean;
+    medici: boolean;
+    personale_infermieristico: boolean;
+    insegnanti_formatori: boolean;
+    operatori_religiosi: boolean;
+    tutor: boolean;
+    operatori_legali: boolean;
+    operatori_multifunzionali: boolean;
+    amministrativi: boolean;
+    altro: boolean;
+    altro_specificare?: string;
+  };
 } 
