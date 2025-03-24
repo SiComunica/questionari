@@ -194,7 +194,37 @@ const defaultFormData: QuestionarioStruttureNew = {
     rete_servizi: false,
     altro: false,
     altro_specificare: ''
-  }
+  },
+
+  // Sezione D
+  attivita_servizi: {
+    alloggio: false,
+    vitto: false,
+    servizi_bassa_soglia: false,
+    servizi_bassa_soglia_desc: '',
+    ospitalita_diurna: false,
+    ospitalita_diurna_desc: '',
+    supporto_psicologico: false,
+    supporto_psicologico_desc: '',
+    sostegno_autonomia: false,
+    sostegno_autonomia_desc: '',
+    inserimento_lavorativo: false,
+    inserimento_lavorativo_desc: '',
+    orientamento_scolastico: false,
+    orientamento_scolastico_desc: '',
+    istruzione_scolastica: false,
+    istruzione_scolastica_desc: '',
+    formazione_professionale: false,
+    formazione_professionale_desc: '',
+    attivita_ricreative: false,
+    attivita_ricreative_desc: '',
+    altro: false,
+    altro_desc: ''
+  },
+  esperienze_inserimento: false,
+  attivita_significative: [],
+  previsione_attivita: false,
+  nuove_attivita: ['', '', '']
 };
 
 export default function QuestionarioStruttureNew({ initialData, readOnly, setFormData: externalSetFormData }: Props) {
