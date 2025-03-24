@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Checkbox } from '@/components/ui/checkbox';
 
 interface Props {
   formData: QuestionarioStruttureNew;
@@ -44,6 +45,32 @@ export default function SezioneEStruttureNew({ formData, setFormData }: Props) {
       collaborazioni: {
         ...prev.collaborazioni,
         [field]: value
+      }
+    }));
+  };
+
+  const handleCriticitaChange = (field: string, value: boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      collaborazioni: {
+        ...prev.collaborazioni,
+        criticita: {
+          ...prev.collaborazioni.criticita,
+          [field]: value
+        }
+      }
+    }));
+  };
+
+  const handleAltroSpecificareChange = (value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      collaborazioni: {
+        ...prev.collaborazioni,
+        criticita: {
+          ...prev.collaborazioni.criticita,
+          altro_specificare: value
+        }
       }
     }));
   };
@@ -119,12 +146,73 @@ export default function SezioneEStruttureNew({ formData, setFormData }: Props) {
           <h3 className="text-lg font-semibold mb-4">
             E3. Criticità del network
           </h3>
-          <Textarea
-            value={formData.collaborazioni.criticita || ''}
-            onChange={(e) => handleNetworkChange('criticita', e.target.value)}
-            placeholder="Descrivere brevemente"
-            className="min-h-[100px]"
-          />
+          <div className="space-y-4">
+            <div className="flex items-center space-x-2">
+              <Checkbox 
+                checked={formData.collaborazioni.criticita.finanziarie}
+                onCheckedChange={(checked) => handleCriticitaChange('finanziarie', checked as boolean)}
+              />
+              <Label>Finanziarie</Label>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Checkbox 
+                checked={formData.collaborazioni.criticita.personale}
+                onCheckedChange={(checked) => handleCriticitaChange('personale', checked as boolean)}
+              />
+              <Label>Personale</Label>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Checkbox 
+                checked={formData.collaborazioni.criticita.spazi}
+                onCheckedChange={(checked) => handleCriticitaChange('spazi', checked as boolean)}
+              />
+              <Label>Spazi</Label>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Checkbox 
+                checked={formData.collaborazioni.criticita.attrezzature}
+                onCheckedChange={(checked) => handleCriticitaChange('attrezzature', checked as boolean)}
+              />
+              <Label>Attrezzature</Label>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Checkbox 
+                checked={formData.collaborazioni.criticita.utenza}
+                onCheckedChange={(checked) => handleCriticitaChange('utenza', checked as boolean)}
+              />
+              <Label>Utenza</Label>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Checkbox 
+                checked={formData.collaborazioni.criticita.rete_servizi}
+                onCheckedChange={(checked) => handleCriticitaChange('rete_servizi', checked as boolean)}
+              />
+              <Label>Rete servizi</Label>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Checkbox 
+                checked={formData.collaborazioni.criticita.altro}
+                onCheckedChange={(checked) => handleCriticitaChange('altro', checked as boolean)}
+              />
+              <Label>Altro</Label>
+            </div>
+
+            {formData.collaborazioni.criticita.altro && (
+              <div>
+                <Label>Specificare altro</Label>
+                <Input
+                  value={formData.collaborazioni.criticita.altro_specificare}
+                  onChange={(e) => handleAltroSpecificareChange(e.target.value)}
+                />
+              </div>
+            )}
+          </div>
         </CardContent>
       </Card>
     </div>
