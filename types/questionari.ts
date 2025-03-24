@@ -816,4 +816,10 @@ export interface QuestionarioStruttureNew {
     punti_forza: string;
     criticita: string;
   };
+
+  // Metadati
+  id?: string;
+  created_at?: string;
+  stato?: string;
+  criticita?: string;
 } 
