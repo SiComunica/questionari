@@ -18,99 +18,105 @@ interface Props {
   setFormData?: React.Dispatch<React.SetStateAction<any>>;
 }
 
+const defaultFormData: QuestionarioStruttureNew = {
+  // Sezione A
+  id_struttura: '',
+  forma_giuridica: '',
+  forma_giuridica_altro: '',
+  tipo_struttura: '',
+  anno_inizio: 0,
+  missione: '',
+
+  // Sezione B
+  personale_retribuito: {
+    uomini: 0,
+    donne: 0,
+    totale: 0
+  },
+  personale_volontario: {
+    uomini: 0,
+    donne: 0,
+    totale: 0
+  },
+  figure_professionali: {
+    psicologi: false,
+    assistenti_sociali: false,
+    educatori: false,
+    mediatori: false,
+    medici: false,
+    personale_infermieristico: false,
+    insegnanti_formatori: false,
+    operatori_religiosi: false,
+    tutor: false,
+    operatori_legali: false,
+    operatori_multifunzionali: false,
+    amministrativi: false,
+    altro: false,
+    altro_specificare: ''
+  },
+
+  // Sezione C
+  servizi_offerti: {
+    accoglienza: false,
+    orientamento: false,
+    formazione: false,
+    inserimento_lavorativo: false,
+    assistenza_legale: false,
+    assistenza_sanitaria: false,
+    mediazione_culturale: false,
+    supporto_psicologico: false,
+    altro: false,
+    altro_specificare: ''
+  },
+
+  // Sezione D
+  caratteristiche_utenti: {
+    minori: false,
+    donne: false,
+    famiglie: false,
+    disabili: false,
+    anziani: false,
+    migranti: false,
+    dipendenze: false,
+    altro: false,
+    altro_specificare: ''
+  },
+
+  // Sezione E
+  risorse_umane: {
+    operatori_totali: 0,
+    operatori_part_time: 0,
+    operatori_full_time: 0,
+    volontari: 0
+  },
+
+  // Sezione F
+  criticita: {
+    finanziarie: false,
+    personale: false,
+    spazi: false,
+    attrezzature: false,
+    utenza: false,
+    rete_servizi: false,
+    altro: false,
+    altro_specificare: ''
+  }
+};
+
 export default function QuestionarioStruttureNew({ initialData, readOnly, setFormData: externalSetFormData }: Props) {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [formData, setInternalFormData] = useState<QuestionarioStruttureNew>(() => initialData || {
-    // Sezione A
-    id_struttura: '',
-    forma_giuridica: '',
-    forma_giuridica_altro: '',
-    tipo_struttura: '',
-    anno_inizio: 0,
-    missione: '',
-
-    // Sezione B
-    personale_retribuito: {
-      uomini: 0,
-      donne: 0,
-      totale: 0
-    },
-    personale_volontario: {
-      uomini: 0,
-      donne: 0,
-      totale: 0
-    },
-    figure_professionali: {
-      psicologi: false,
-      assistenti_sociali: false,
-      educatori: false,
-      mediatori: false,
-      medici: false,
-      personale_infermieristico: false,
-      insegnanti_formatori: false,
-      operatori_religiosi: false,
-      tutor: false,
-      operatori_legali: false,
-      operatori_multifunzionali: false,
-      amministrativi: false,
-      altro: false,
-      altro_specificare: ''
-    },
-
-    // Sezione C
-    servizi_offerti: {
-      accoglienza: false,
-      orientamento: false,
-      formazione: false,
-      inserimento_lavorativo: false,
-      assistenza_legale: false,
-      assistenza_sanitaria: false,
-      mediazione_culturale: false,
-      supporto_psicologico: false,
-      altro: false,
-      altro_specificare: ''
-    },
-
-    // Sezione D
-    caratteristiche_utenti: {
-      minori: false,
-      donne: false,
-      famiglie: false,
-      disabili: false,
-      anziani: false,
-      migranti: false,
-      dipendenze: false,
-      altro: false,
-      altro_specificare: ''
-    },
-
-    // Sezione E
-    risorse_umane: {
-      operatori_totali: 0,
-      operatori_part_time: 0,
-      operatori_full_time: 0,
-      volontari: 0
-    },
-
-    // Sezione F
-    criticita: {
-      finanziarie: false,
-      personale: false,
-      spazi: false,
-      attrezzature: false,
-      utenza: false,
-      rete_servizi: false,
-      altro: false,
-      altro_specificare: ''
-    }
-  });
+  const [formData, setInternalFormData] = useState<QuestionarioStruttureNew>(() => ({
+    ...defaultFormData,
+    ...initialData
+  }));
 
   const setFormData = (value: React.SetStateAction<QuestionarioStruttureNew>) => {
-    setInternalFormData(value);
+    const newValue = typeof value === 'function' ? value(formData) : value;
+    setInternalFormData(newValue);
     if (externalSetFormData) {
-      externalSetFormData(value);
+      externalSetFormData(newValue);
     }
   };
 
