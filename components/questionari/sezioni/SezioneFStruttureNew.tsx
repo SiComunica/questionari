@@ -1,10 +1,11 @@
 "use client"
 
 import React from 'react';
-import type { QuestionarioStruttureNew } from '@/types/questionari';
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
+import { QuestionarioStruttureNew, Fornitore } from '@/types/questionari';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 
 interface Props {
   formData: QuestionarioStruttureNew;
@@ -12,109 +13,148 @@ interface Props {
 }
 
 export default function SezioneFStruttureNew({ formData, setFormData }: Props) {
-  const handleCheckboxChange = (name: string, checked: boolean) => {
+  const handleFondiChange = (tipo: 'fondi_pubblici' | 'fondi_privati', value: string) => {
+    const numValue = Math.min(100, Math.max(0, parseInt(value) || 0));
+    
+    setFormData(prev => {
+      const newData = {
+        ...prev,
+        finanziamenti: {
+          ...prev.finanziamenti,
+          [tipo]: numValue
+        }
+      };
+      
+      // Calcola il totale
+      newData.finanziamenti.totale = 
+        (newData.finanziamenti.fondi_pubblici || 0) + 
+        (newData.finanziamenti.fondi_privati || 0);
+      
+      return newData;
+    });
+  };
+
+  const handleSpecificheChange = (
+    tipo: 'fondi_pubblici_specifiche' | 'fondi_privati_specifiche',
+    value: string
+  ) => {
     setFormData(prev => ({
       ...prev,
-      criticita: {
-        ...prev.criticita,
-        [name]: checked
+      finanziamenti: {
+        ...prev.finanziamenti,
+        [tipo]: value
       }
     }));
   };
 
-  const handleAltroSpecificareChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData(prev => ({
-      ...prev,
-      criticita: {
-        ...prev.criticita,
-        altro_specificare: e.target.value
+  const handleFornitoreChange = (index: number, field: keyof Fornitore, value: string) => {
+    setFormData(prev => {
+      const newFornitori = [...prev.finanziamenti.fornitori];
+      if (!newFornitori[index]) {
+        newFornitori[index] = { nome: '', tipo_sostegno: '' };
       }
-    }));
+      newFornitori[index] = {
+        ...newFornitori[index],
+        [field]: value
+      };
+      return {
+        ...prev,
+        finanziamenti: {
+          ...prev.finanziamenti,
+          fornitori: newFornitori
+        }
+      };
+    });
   };
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-semibold">Sezione F: Criticità</h2>
-
-      <div className="space-y-4">
-        <Label className="text-lg">Principali criticità riscontrate:</Label>
-        
-        <div className="space-y-2">
-          <div className="flex items-center space-x-2">
-            <Checkbox 
-              id="finanziarie"
-              checked={formData.criticita.finanziarie}
-              onCheckedChange={(checked) => handleCheckboxChange('finanziarie', checked as boolean)}
-            />
-            <Label htmlFor="finanziarie">Difficoltà finanziarie</Label>
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <Checkbox 
-              id="personale"
-              checked={formData.criticita.personale}
-              onCheckedChange={(checked) => handleCheckboxChange('personale', checked as boolean)}
-            />
-            <Label htmlFor="personale">Carenza di personale</Label>
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <Checkbox 
-              id="spazi"
-              checked={formData.criticita.spazi}
-              onCheckedChange={(checked) => handleCheckboxChange('spazi', checked as boolean)}
-            />
-            <Label htmlFor="spazi">Inadeguatezza degli spazi</Label>
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <Checkbox 
-              id="attrezzature"
-              checked={formData.criticita.attrezzature}
-              onCheckedChange={(checked) => handleCheckboxChange('attrezzature', checked as boolean)}
-            />
-            <Label htmlFor="attrezzature">Carenza di attrezzature</Label>
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <Checkbox 
-              id="utenza"
-              checked={formData.criticita.utenza}
-              onCheckedChange={(checked) => handleCheckboxChange('utenza', checked as boolean)}
-            />
-            <Label htmlFor="utenza">Difficoltà con l'utenza</Label>
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <Checkbox 
-              id="rete_servizi"
-              checked={formData.criticita.rete_servizi}
-              onCheckedChange={(checked) => handleCheckboxChange('rete_servizi', checked as boolean)}
-            />
-            <Label htmlFor="rete_servizi">Problemi di rete con altri servizi</Label>
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <Checkbox 
-              id="altro"
-              checked={formData.criticita.altro}
-              onCheckedChange={(checked) => handleCheckboxChange('altro', checked as boolean)}
-            />
-            <Label htmlFor="altro">Altro</Label>
-          </div>
-
-          {formData.criticita.altro && (
-            <div className="ml-6">
-              <Label>Specificare altro</Label>
-              <Input
-                value={formData.criticita.altro_specificare || ''}
-                onChange={handleAltroSpecificareChange}
-                placeholder="Specificare altre criticità..."
-              />
+      <Card>
+        <CardContent className="pt-6">
+          <h3 className="text-lg font-semibold mb-4">
+            F1. Finanziamento della struttura
+          </h3>
+          
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>Fondi Pubblici (%)</Label>
+                <Input
+                  type="number"
+                  min={0}
+                  max={100}
+                  value={formData.finanziamenti.fondi_pubblici}
+                  onChange={(e) => handleFondiChange('fondi_pubblici', e.target.value)}
+                />
+              </div>
+              <div>
+                <Label>Fondi Privati (%)</Label>
+                <Input
+                  type="number"
+                  min={0}
+                  max={100}
+                  value={formData.finanziamenti.fondi_privati}
+                  onChange={(e) => handleFondiChange('fondi_privati', e.target.value)}
+                />
+              </div>
             </div>
-          )}
-        </div>
-      </div>
+
+            <div className="font-semibold">
+              Totale: {formData.finanziamenti.totale}%
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <Label>Specificare le fonti dei finanziamenti pubblici</Label>
+                <Textarea
+                  value={formData.finanziamenti.fondi_pubblici_specifiche}
+                  onChange={(e) => handleSpecificheChange('fondi_pubblici_specifiche', e.target.value)}
+                />
+              </div>
+              <div>
+                <Label>Specificare le fonti dei finanziamenti privati</Label>
+                <Textarea
+                  value={formData.finanziamenti.fondi_privati_specifiche}
+                  onChange={(e) => handleSpecificheChange('fondi_privati_specifiche', e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="pt-6">
+          <h3 className="text-lg font-semibold mb-4">
+            F2. Fornitura di beni e servizi
+          </h3>
+          
+          {[0, 1].map((index) => (
+            <div key={index} className="mb-6 p-4 border rounded">
+              <h4 className="font-semibold mb-4">Fornitore {index + 1}</h4>
+              
+              <div className="space-y-4">
+                <div>
+                  <Label>Nome del fornitore</Label>
+                  <Input
+                    value={formData.finanziamenti.fornitori[index]?.nome || ''}
+                    onChange={(e) => handleFornitoreChange(index, 'nome', e.target.value)}
+                    placeholder="Specificare il nome"
+                  />
+                </div>
+                <div>
+                  <Label>Tipo di sostegno fornito</Label>
+                  <Textarea
+                    value={formData.finanziamenti.fornitori[index]?.tipo_sostegno || ''}
+                    onChange={(e) => handleFornitoreChange(index, 'tipo_sostegno', e.target.value)}
+                    placeholder="Specificare il tipo di sostegno fornito"
+                  />
+                </div>
+              </div>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
     </div>
   );
 } 
