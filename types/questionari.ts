@@ -557,7 +557,12 @@ export interface AttivitaSignificativa {
   criticita: string;
 }
 
-// Aggiorna l'interfaccia QuestionarioStruttureNew con la sezione D
+export interface SoggettoCollaborazione {
+  denominazione: string;
+  tipo: 'ricorrente' | 'occasionale';
+  oggetto: string;
+}
+
 export interface QuestionarioStruttureNew {
   // Sezione A
   id_struttura: string;
@@ -796,5 +801,16 @@ export interface QuestionarioStruttureNew {
       altro: boolean;
       altro_specificare?: string;
     };
+  };
+
+  // Sezione E
+  collaborazioni: {
+    soggetti: Array<{
+      denominazione: string;
+      tipo: 'ricorrente' | 'occasionale';
+      oggetto: string;
+    }>;
+    punti_forza: string;
+    criticita: string;
   };
 } 

@@ -177,11 +177,10 @@ const defaultFormData: QuestionarioStruttureNew = {
   },
 
   // Sezione E
-  risorse_umane: {
-    operatori_totali: 0,
-    operatori_part_time: 0,
-    operatori_full_time: 0,
-    volontari: 0
+  collaborazioni: {
+    soggetti: [],
+    punti_forza: '',
+    criticita: ''
   },
 
   // Sezione F
