@@ -4,6 +4,8 @@ import React from 'react';
 import type { QuestionarioStruttureNew } from '@/types/questionari';
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 
 interface Props {
   formData: QuestionarioStruttureNew;
@@ -11,7 +13,7 @@ interface Props {
 }
 
 export default function SezioneAStruttureNew({ formData, setFormData }: Props) {
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -19,89 +21,100 @@ export default function SezioneAStruttureNew({ formData, setFormData }: Props) {
     }));
   };
 
+  const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const year = parseInt(value);
+    if (!isNaN(year) && year >= 1900 && year <= new Date().getFullYear()) {
+      setFormData(prev => ({
+        ...prev,
+        [name]: year
+      }));
+    }
+  };
+
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-semibold">Sezione A: Anagrafica Struttura</h2>
+      <h2 className="text-xl font-semibold">Sezione A: Descrizione della struttura</h2>
 
       <div className="space-y-4">
         <div>
-          <Label>Nome struttura</Label>
+          <Label>ID Struttura (fornito da Inapp)</Label>
           <Input
-            name="nome_struttura"
-            value={formData.nome_struttura}
+            name="id_struttura"
+            value={formData.id_struttura}
             onChange={handleChange}
             className="w-full"
           />
         </div>
 
         <div>
-          <Label>Indirizzo</Label>
+          <Label>Forma giuridica della struttura</Label>
+          <select
+            name="forma_giuridica"
+            value={formData.forma_giuridica}
+            onChange={handleChange}
+            className="w-full p-2 border rounded"
+          >
+            <option value="">Seleziona forma giuridica</option>
+            <option value="ente_pubblico">1. Ente pubblico</option>
+            <option value="impresa_profit">2. Impresa for profit (ditta individuale, SNC, SAS, SS, SRL, SRLS, SPA, SAPA)</option>
+            <option value="cooperativa">3. Cooperativa</option>
+            <option value="impresa_sociale">4. Impresa sociale (o Cooperativa sociale)</option>
+            <option value="ente_filantropico">5. Ente filantropico (o Fondazione)</option>
+            <option value="aps">6. Associazione di promozione sociale</option>
+            <option value="odv">7. Organizzazione di volontariato</option>
+            <option value="rete_associativa">8. Rete associativa</option>
+            <option value="mutuo_soccorso">9. Società di mutuo soccorso</option>
+            <option value="altro">10. Altro</option>
+          </select>
+        </div>
+
+        {formData.forma_giuridica === 'altro' && (
+          <div>
+            <Label>Specificare altra forma giuridica</Label>
+            <Input
+              name="forma_giuridica_altro"
+              value={formData.forma_giuridica_altro}
+              onChange={handleChange}
+              className="w-full"
+              placeholder="Specificare..."
+            />
+          </div>
+        )}
+
+        <div>
+          <Label>Tipo di struttura (casa-famiglia, centro diurno, semiautonomia, ecc.)</Label>
           <Input
-            name="indirizzo"
-            value={formData.indirizzo}
+            name="tipo_struttura"
+            value={formData.tipo_struttura}
             onChange={handleChange}
             className="w-full"
+            placeholder="Inserisci il tipo di struttura..."
           />
         </div>
 
         <div>
-          <Label>Comune</Label>
+          <Label>Anno di inizio delle attività</Label>
           <Input
-            name="comune"
-            value={formData.comune}
-            onChange={handleChange}
+            type="number"
+            name="anno_inizio"
+            value={formData.anno_inizio || ''}
+            onChange={handleNumberChange}
+            min={1900}
+            max={new Date().getFullYear()}
             className="w-full"
+            placeholder="AAAA"
           />
         </div>
 
         <div>
-          <Label>Provincia</Label>
-          <Input
-            name="provincia"
-            value={formData.provincia}
+          <Label>Missione principale della struttura/finalità</Label>
+          <Textarea
+            name="missione"
+            value={formData.missione}
             onChange={handleChange}
-            className="w-full"
-          />
-        </div>
-
-        <div>
-          <Label>CAP</Label>
-          <Input
-            name="cap"
-            value={formData.cap}
-            onChange={handleChange}
-            className="w-full"
-          />
-        </div>
-
-        <div>
-          <Label>Telefono</Label>
-          <Input
-            name="telefono"
-            value={formData.telefono}
-            onChange={handleChange}
-            className="w-full"
-          />
-        </div>
-
-        <div>
-          <Label>Email</Label>
-          <Input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            className="w-full"
-          />
-        </div>
-
-        <div>
-          <Label>Referente</Label>
-          <Input
-            name="referente"
-            value={formData.referente}
-            onChange={handleChange}
-            className="w-full"
+            className="w-full min-h-[100px]"
+            placeholder="Descrivi la missione principale della struttura..."
           />
         </div>
       </div>
