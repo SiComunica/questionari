@@ -12,29 +12,26 @@ import SezioneEStruttureNew from './sezioni/SezioneEStruttureNew';
 import SezioneFStruttureNew from './sezioni/SezioneFStruttureNew';
 import type { QuestionarioStruttureNew } from '@/types/questionari';
 
-export interface Props {
+interface Props {
   initialData?: QuestionarioStruttureNew;
   readOnly?: boolean;
   setFormData?: React.Dispatch<React.SetStateAction<any>>;
 }
 
-export default function QuestionarioStruttureNew({ initialData, readOnly }: Props) {
+export default function QuestionarioStruttureNew({ initialData, readOnly, setFormData: externalSetFormData }: Props) {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState<QuestionarioStruttureNew>(() => initialData || {
+  const [formData, setInternalFormData] = useState<QuestionarioStruttureNew>(() => initialData || {
     // Sezione A
-    nome_struttura: '',
-    indirizzo: '',
-    comune: '',
-    provincia: '',
-    cap: '',
-    telefono: '',
-    email: '',
-    referente: '',
+    id_struttura: '',
+    forma_giuridica: '',
+    forma_giuridica_altro: '',
+    tipo_struttura: '',
+    anno_inizio: 0,
+    missione: '',
 
     // Sezione B
-    tipo_struttura: '',
     capacita_totale: 0,
     posti_occupati: 0,
 
@@ -85,6 +82,13 @@ export default function QuestionarioStruttureNew({ initialData, readOnly }: Prop
       altro_specificare: ''
     }
   });
+
+  const setFormData = (value: React.SetStateAction<QuestionarioStruttureNew>) => {
+    setInternalFormData(value);
+    if (externalSetFormData) {
+      externalSetFormData(value);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
