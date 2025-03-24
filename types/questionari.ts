@@ -629,4 +629,130 @@ export interface QuestionarioStruttureNew {
     altro: boolean;
     altro_specificare?: string;
   };
+
+  // Sezione C
+  persone_ospitate: {
+    fino_16: {
+      uomini: number;
+      donne: number;
+      totale: number;
+    };
+    da_16_a_18: {
+      uomini: number;
+      donne: number;
+      totale: number;
+    };
+    maggiorenni: {
+      uomini: number;
+      donne: number;
+      totale: number;
+    };
+    totale: {
+      uomini: number;
+      donne: number;
+      totale: number;
+    };
+  };
+  caratteristiche_ospiti: {
+    adolescenti: {
+      stranieri_migranti: boolean;
+      vittime_tratta: boolean;
+      vittime_violenza: boolean;
+      allontanati_famiglia: boolean;
+      detenuti: boolean;
+      ex_detenuti: boolean;
+      misure_alternative: boolean;
+      indigenti_senzatetto: boolean;
+      rom_sinti: boolean;
+      disabilita_fisica: boolean;
+      disabilita_cognitiva: boolean;
+      disturbi_psichiatrici: boolean;
+      dipendenze: boolean;
+      genitori_precoci: boolean;
+      problemi_orientamento: boolean;
+      altro: boolean;
+      altro_specificare?: string;
+    };
+    giovani_adulti: {
+      stranieri_migranti: boolean;
+      vittime_tratta: boolean;
+      vittime_violenza: boolean;
+      allontanati_famiglia: boolean;
+      detenuti: boolean;
+      ex_detenuti: boolean;
+      misure_alternative: boolean;
+      indigenti_senzatetto: boolean;
+      rom_sinti: boolean;
+      disabilita_fisica: boolean;
+      disabilita_cognitiva: boolean;
+      disturbi_psichiatrici: boolean;
+      dipendenze: boolean;
+      genitori_precoci: boolean;
+      problemi_orientamento: boolean;
+      altro: boolean;
+      altro_specificare?: string;
+    };
+  };
+  persone_non_ospitate: {
+    fino_16: {
+      uomini: number;
+      donne: number;
+      totale: number;
+    };
+    da_16_a_18: {
+      uomini: number;
+      donne: number;
+      totale: number;
+    };
+    maggiorenni: {
+      uomini: number;
+      donne: number;
+      totale: number;
+    };
+    totale: {
+      uomini: number;
+      donne: number;
+      totale: number;
+    };
+  };
+  caratteristiche_non_ospiti: {
+    adolescenti: {
+      stranieri_migranti: boolean;
+      vittime_tratta: boolean;
+      vittime_violenza: boolean;
+      allontanati_famiglia: boolean;
+      detenuti: boolean;
+      ex_detenuti: boolean;
+      misure_alternative: boolean;
+      indigenti_senzatetto: boolean;
+      rom_sinti: boolean;
+      disabilita_fisica: boolean;
+      disabilita_cognitiva: boolean;
+      disturbi_psichiatrici: boolean;
+      dipendenze: boolean;
+      genitori_precoci: boolean;
+      problemi_orientamento: boolean;
+      altro: boolean;
+      altro_specificare?: string;
+    };
+    giovani_adulti: {
+      stranieri_migranti: boolean;
+      vittime_tratta: boolean;
+      vittime_violenza: boolean;
+      allontanati_famiglia: boolean;
+      detenuti: boolean;
+      ex_detenuti: boolean;
+      misure_alternative: boolean;
+      indigenti_senzatetto: boolean;
+      rom_sinti: boolean;
+      disabilita_fisica: boolean;
+      disabilita_cognitiva: boolean;
+      disturbi_psichiatrici: boolean;
+      dipendenze: boolean;
+      genitori_precoci: boolean;
+      problemi_orientamento: boolean;
+      altro: boolean;
+      altro_specificare?: string;
+    };
+  };
 } 
