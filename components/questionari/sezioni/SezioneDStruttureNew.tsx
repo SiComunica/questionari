@@ -99,7 +99,7 @@ export default function SezioneDStruttureNew({ formData, setFormData }: Props) {
               <div key={key} className="space-y-2">
                 <div className="flex items-center space-x-2">
                   <Checkbox
-                    checked={formData.attivita_servizi[key as keyof typeof formData.attivita_servizi]}
+                    checked={Boolean(formData.attivita_servizi[key as keyof typeof formData.attivita_servizi])}
                     onCheckedChange={(checked) => handleAttivitaChange(key as keyof typeof formData.attivita_servizi, checked)}
                   />
                   <Label>{label}</Label>
