@@ -786,6 +786,14 @@ export interface QuestionarioStruttureNew {
     };
   };
 
+  // Aggiungiamo la sezione risorse_umane
+  risorse_umane: {
+    operatori_totali: number;
+    operatori_part_time: number;
+    operatori_full_time: number;
+    volontari: number;
+  };
+
   // Metadati
   id?: string;
   created_at?: string;
