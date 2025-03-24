@@ -223,7 +223,15 @@ const defaultFormData: QuestionarioStruttureNew = {
   esperienze_inserimento: false,
   attivita_significative: [],
   previsione_attivita: false,
-  nuove_attivita: ['', '', '']
+  nuove_attivita: ['', '', ''],
+
+  // Aggiungiamo risorse_umane
+  risorse_umane: {
+    operatori_totali: 0,
+    operatori_part_time: 0,
+    operatori_full_time: 0,
+    volontari: 0
+  }
 };
 
 export default function QuestionarioStruttureNew({ initialData, readOnly, setFormData: externalSetFormData }: Props) {
