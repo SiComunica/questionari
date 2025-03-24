@@ -672,36 +672,38 @@ export interface QuestionarioStruttureNew {
     fornitori: Fornitore[];
   };
 
-  // Aggiungiamo risorse_umane
-  risorse_umane: {
-    operatori_totali: number;
-    operatori_part_time: number;
-    operatori_full_time: number;
-    volontari: number;
+  // Sezione E
+  collaborazioni: {
+    soggetti: Array<{
+      denominazione: string;
+      tipo: 'ricorrente' | 'occasionale';
+      oggetto: string;
+    }>;
+    punti_forza: string;
+    criticita: {
+      finanziarie: boolean;
+      personale: boolean;
+      spazi: boolean;
+      attrezzature: boolean;
+      utenza: boolean;
+      rete_servizi: boolean;
+      altro: boolean;
+      altro_specificare: string;
+    };
   };
 
   // Sezione C
   persone_ospitate: {
-    fino_16: {
-      uomini: number;
-      donne: number;
-      totale: number;
-    };
-    da_16_a_18: {
-      uomini: number;
-      donne: number;
-      totale: number;
-    };
-    maggiorenni: {
-      uomini: number;
-      donne: number;
-      totale: number;
-    };
-    totale: {
-      uomini: number;
-      donne: number;
-      totale: number;
-    };
+    fino_16: { uomini: number; donne: number; totale: number };
+    da_16_a_18: { uomini: number; donne: number; totale: number };
+    maggiorenni: { uomini: number; donne: number; totale: number };
+    totale: { uomini: number; donne: number; totale: number };
+  };
+  persone_non_ospitate: {
+    fino_16: { uomini: number; donne: number; totale: number };
+    da_16_a_18: { uomini: number; donne: number; totale: number };
+    maggiorenni: { uomini: number; donne: number; totale: number };
+    totale: { uomini: number; donne: number; totale: number };
   };
   caratteristiche_ospiti: {
     adolescenti: {
@@ -721,7 +723,7 @@ export interface QuestionarioStruttureNew {
       genitori_precoci: boolean;
       problemi_orientamento: boolean;
       altro: boolean;
-      altro_specificare?: string;
+      altro_specificare: string;
     };
     giovani_adulti: {
       stranieri_migranti: boolean;
@@ -740,29 +742,7 @@ export interface QuestionarioStruttureNew {
       genitori_precoci: boolean;
       problemi_orientamento: boolean;
       altro: boolean;
-      altro_specificare?: string;
-    };
-  };
-  persone_non_ospitate: {
-    fino_16: {
-      uomini: number;
-      donne: number;
-      totale: number;
-    };
-    da_16_a_18: {
-      uomini: number;
-      donne: number;
-      totale: number;
-    };
-    maggiorenni: {
-      uomini: number;
-      donne: number;
-      totale: number;
-    };
-    totale: {
-      uomini: number;
-      donne: number;
-      totale: number;
+      altro_specificare: string;
     };
   };
   caratteristiche_non_ospiti: {
@@ -783,7 +763,7 @@ export interface QuestionarioStruttureNew {
       genitori_precoci: boolean;
       problemi_orientamento: boolean;
       altro: boolean;
-      altro_specificare?: string;
+      altro_specificare: string;
     };
     giovani_adulti: {
       stranieri_migranti: boolean;
@@ -801,26 +781,6 @@ export interface QuestionarioStruttureNew {
       dipendenze: boolean;
       genitori_precoci: boolean;
       problemi_orientamento: boolean;
-      altro: boolean;
-      altro_specificare?: string;
-    };
-  };
-
-  // Sezione E
-  collaborazioni: {
-    soggetti: Array<{
-      denominazione: string;
-      tipo: 'ricorrente' | 'occasionale';
-      oggetto: string;
-    }>;
-    punti_forza: string;
-    criticita: {
-      finanziarie: boolean;
-      personale: boolean;
-      spazi: boolean;
-      attrezzature: boolean;
-      utenza: boolean;
-      rete_servizi: boolean;
       altro: boolean;
       altro_specificare: string;
     };
