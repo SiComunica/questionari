@@ -12,6 +12,7 @@ import SezioneCOperatoriNuovo from './sezioni/SezioneCOperatoriNuovo';
 interface Props {
   initialData?: QuestionarioOperatoriNuovo;
   readOnly?: boolean;
+  setFormData?: React.Dispatch<React.SetStateAction<any>>;
 }
 
 export default function QuestionarioOperatoriNuovo({ initialData, readOnly }: Props) {

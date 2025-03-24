@@ -11,6 +11,7 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 export default function DashboardOperatori() {
   const [selectedQuestionario, setSelectedQuestionario] = useState<string | null>(null);
+  const [formData, setFormData] = useState<any>(null);
   const router = useRouter();
   const supabase = createClientComponentClient();
 
@@ -20,25 +21,78 @@ export default function DashboardOperatori() {
   };
 
   const handleInvio = async () => {
-    // Qui implementeremo la logica di invio al database
+    if (!formData) {
+      alert('Compila il questionario prima di inviare');
+      return;
+    }
+
     try {
-      // Logica di invio al database
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        alert('Utente non autenticato');
+        return;
+      }
+
+      let result;
+
+      switch (selectedQuestionario) {
+        case 'operatori':
+          result = await supabase
+            .from('operatori')
+            .insert({
+              creato_da: user.id,
+              creato_a: new Date().toISOString(),
+              fonte: 'operatore',
+              stato: 'completato',
+              ...formData
+            });
+          break;
+
+        case 'strutture':
+          result = await supabase
+            .from('struttura')
+            .insert({
+              creato_da: user.id,
+              creato_a: new Date().toISOString(),
+              fonte: 'operatore',
+              stato: 'completato',
+              ...formData
+            });
+          break;
+      }
+
+      if (result?.error) {
+        throw result.error;
+      }
+
       alert('Questionario inviato con successo!');
       setSelectedQuestionario(null);
+      setFormData(null);
     } catch (error) {
+      console.error('Errore durante l\'invio:', error);
       alert('Errore durante l\'invio del questionario');
-      console.error(error);
     }
   };
 
   const renderQuestionario = () => {
     switch (selectedQuestionario) {
       case 'giovani':
-        return <QuestionarioGiovaniNew />;
+        return <QuestionarioGiovaniNew fonte="operatore" />;
       case 'operatori':
-        return <QuestionarioOperatoriNuovo />;
+        return (
+          <QuestionarioOperatoriNuovo 
+            initialData={formData} 
+            setFormData={setFormData}
+          />
+        );
       case 'strutture':
-        return <QuestionarioStruttureNew />;
+        return (
+          <QuestionarioStruttureNew 
+            initialData={formData} 
+            setFormData={setFormData}
+          />
+        );
       default:
         return null;
     }
@@ -55,35 +109,47 @@ export default function DashboardOperatori() {
 
       {!selectedQuestionario ? (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card className="cursor-pointer hover:shadow-lg transition-shadow" 
-                onClick={() => setSelectedQuestionario('giovani')}>
-            <CardHeader>
-              <CardTitle>Questionario Giovani</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p>Compila il questionario per i giovani</p>
-            </CardContent>
-          </Card>
+          <div 
+            className="cursor-pointer hover:shadow-lg transition-shadow"
+            onClick={() => setSelectedQuestionario('giovani')}
+          >
+            <Card>
+              <CardHeader>
+                <CardTitle>Questionario Giovani</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p>Compila il questionario per i giovani</p>
+              </CardContent>
+            </Card>
+          </div>
 
-          <Card className="cursor-pointer hover:shadow-lg transition-shadow"
-                onClick={() => setSelectedQuestionario('operatori')}>
-            <CardHeader>
-              <CardTitle>Questionario Operatori</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p>Compila il questionario per gli operatori</p>
-            </CardContent>
-          </Card>
+          <div
+            className="cursor-pointer hover:shadow-lg transition-shadow"
+            onClick={() => setSelectedQuestionario('operatori')}
+          >
+            <Card>
+              <CardHeader>
+                <CardTitle>Questionario Operatori</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p>Compila il questionario per gli operatori</p>
+              </CardContent>
+            </Card>
+          </div>
 
-          <Card className="cursor-pointer hover:shadow-lg transition-shadow"
-                onClick={() => setSelectedQuestionario('strutture')}>
-            <CardHeader>
-              <CardTitle>Questionario Strutture</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p>Compila il questionario per le strutture</p>
-            </CardContent>
-          </Card>
+          <div
+            className="cursor-pointer hover:shadow-lg transition-shadow"
+            onClick={() => setSelectedQuestionario('strutture')}
+          >
+            <Card>
+              <CardHeader>
+                <CardTitle>Questionario Strutture</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p>Compila il questionario per le strutture</p>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       ) : (
         <div className="space-y-4">

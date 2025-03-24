@@ -15,6 +15,7 @@ import type { QuestionarioStruttureNew } from '@/types/questionari';
 export interface Props {
   initialData?: QuestionarioStruttureNew;
   readOnly?: boolean;
+  setFormData?: React.Dispatch<React.SetStateAction<any>>;
 }
 
 export default function QuestionarioStruttureNew({ initialData, readOnly }: Props) {
