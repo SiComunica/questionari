@@ -563,6 +563,11 @@ export interface SoggettoCollaborazione {
   oggetto: string;
 }
 
+export interface Fornitore {
+  nome: string;
+  tipo_sostegno: string;
+}
+
 export interface QuestionarioStruttureNew {
   // Sezione A
   id_struttura: string;
@@ -658,23 +663,21 @@ export interface QuestionarioStruttureNew {
   };
 
   // Sezione F
+  finanziamenti: {
+    fondi_pubblici: number;
+    fondi_privati: number;
+    totale: number;
+    fondi_pubblici_specifiche: string;
+    fondi_privati_specifiche: string;
+    fornitori: Fornitore[];
+  };
+
+  // Aggiungiamo risorse_umane
   risorse_umane: {
     operatori_totali: number;
     operatori_part_time: number;
     operatori_full_time: number;
     volontari: number;
-  };
-
-  // Sezione G
-  criticita: {
-    finanziarie: boolean;
-    personale: boolean;
-    spazi: boolean;
-    attrezzature: boolean;
-    utenza: boolean;
-    rete_servizi: boolean;
-    altro: boolean;
-    altro_specificare?: string;
   };
 
   // Sezione C
