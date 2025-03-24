@@ -32,8 +32,32 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
     missione: '',
 
     // Sezione B
-    capacita_totale: 0,
-    posti_occupati: 0,
+    personale_retribuito: {
+      uomini: 0,
+      donne: 0,
+      totale: 0
+    },
+    personale_volontario: {
+      uomini: 0,
+      donne: 0,
+      totale: 0
+    },
+    figure_professionali: {
+      psicologi: false,
+      assistenti_sociali: false,
+      educatori: false,
+      mediatori: false,
+      medici: false,
+      personale_infermieristico: false,
+      insegnanti_formatori: false,
+      operatori_religiosi: false,
+      tutor: false,
+      operatori_legali: false,
+      operatori_multifunzionali: false,
+      amministrativi: false,
+      altro: false,
+      altro_specificare: ''
+    },
 
     // Sezione C
     servizi_offerti: {
