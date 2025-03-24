@@ -546,6 +546,18 @@ export interface QuestionarioOperatoriNuovo {
   fonte: string;
 }
 
+// Aggiungi questa interfaccia per le attività significative
+export interface AttivitaSignificativa {
+  nome: string;
+  periodo: string;
+  contenuto: string;
+  destinatari: string;
+  attori: string;
+  punti_forza: string;
+  criticita: string;
+}
+
+// Aggiorna l'interfaccia QuestionarioStruttureNew con la sezione D
 export interface QuestionarioStruttureNew {
   // Sezione A
   id_struttura: string;
@@ -598,6 +610,36 @@ export interface QuestionarioStruttureNew {
   };
 
   // Sezione D
+  attivita_servizi: {
+    alloggio: boolean;
+    vitto: boolean;
+    servizi_bassa_soglia: boolean;
+    servizi_bassa_soglia_desc: string;
+    ospitalita_diurna: boolean;
+    ospitalita_diurna_desc: string;
+    supporto_psicologico: boolean;
+    supporto_psicologico_desc: string;
+    sostegno_autonomia: boolean;
+    sostegno_autonomia_desc: string;
+    inserimento_lavorativo: boolean;
+    inserimento_lavorativo_desc: string;
+    orientamento_scolastico: boolean;
+    orientamento_scolastico_desc: string;
+    istruzione_scolastica: boolean;
+    istruzione_scolastica_desc: string;
+    formazione_professionale: boolean;
+    formazione_professionale_desc: string;
+    attivita_ricreative: boolean;
+    attivita_ricreative_desc: string;
+    altro: boolean;
+    altro_desc: string;
+  };
+  esperienze_inserimento: boolean;
+  attivita_significative: AttivitaSignificativa[];
+  previsione_attivita: boolean;
+  nuove_attivita: string[];
+
+  // Sezione E
   caratteristiche_utenti: {
     minori: boolean;
     donne: boolean;
@@ -610,7 +652,7 @@ export interface QuestionarioStruttureNew {
     altro_specificare?: string;
   };
 
-  // Sezione E
+  // Sezione F
   risorse_umane: {
     operatori_totali: number;
     operatori_part_time: number;
@@ -618,7 +660,7 @@ export interface QuestionarioStruttureNew {
     volontari: number;
   };
 
-  // Sezione F
+  // Sezione G
   criticita: {
     finanziarie: boolean;
     personale: boolean;
