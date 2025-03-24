@@ -86,6 +86,16 @@ export default function SezioneBStruttureNew({ formData, setFormData }: Props) {
     }));
   };
 
+  const handleAltroSpecificareChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData(prev => ({
+      ...prev,
+      figure_professionali: {
+        ...prev.figure_professionali,
+        altro_specificare: e.target.value
+      }
+    }));
+  };
+
   return (
     <div className="space-y-6">
       <h2 className="text-xl font-semibold">Sezione B: Informazioni sul personale</h2>
@@ -202,7 +212,7 @@ export default function SezioneBStruttureNew({ formData, setFormData }: Props) {
               <Label>Specificare altro</Label>
               <Input
                 value={figureProfessionali.altro_specificare}
-                onChange={(e) => handleFigureProfessionaliChange('altro_specificare', e.target.value)}
+                onChange={handleAltroSpecificareChange}
                 placeholder="Specificare altre figure professionali..."
               />
             </div>
