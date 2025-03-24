@@ -830,5 +830,4 @@ export interface QuestionarioStruttureNew {
   id?: string;
   created_at?: string;
   stato?: string;
-  criticita?: string;
 } 

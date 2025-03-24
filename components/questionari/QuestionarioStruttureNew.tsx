@@ -238,17 +238,6 @@ const defaultFormData: QuestionarioStruttureNew = {
     operatori_part_time: 0,
     operatori_full_time: 0,
     volontari: 0
-  },
-
-  criticita: {
-    finanziarie: false,
-    personale: false,
-    spazi: false,
-    attrezzature: false,
-    utenza: false,
-    rete_servizi: false,
-    altro: false,
-    altro_specificare: ''
   }
 };
 
