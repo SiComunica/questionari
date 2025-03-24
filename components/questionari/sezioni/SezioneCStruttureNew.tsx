@@ -13,7 +13,7 @@ interface Props {
   setFormData: React.Dispatch<React.SetStateAction<QuestionarioStruttureNew>>;
 }
 
-export const SezioneCStruttureNew: React.FC<Props> = ({ formData, setFormData }) => {
+export default function SezioneCStruttureNew({ formData, setFormData }: Props) {
   const handlePersoneOspitateChange = (
     categoria: 'fino_16' | 'da_16_a_18' | 'maggiorenni',
     genere: 'uomini' | 'donne',
@@ -380,4 +380,4 @@ export const SezioneCStruttureNew: React.FC<Props> = ({ formData, setFormData })
       </Card>
     </div>
   );
-}; 
+} 
