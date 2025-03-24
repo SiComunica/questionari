@@ -548,17 +548,14 @@ export interface QuestionarioOperatoriNuovo {
 
 export interface QuestionarioStruttureNew {
   // Sezione A
-  nome_struttura: string;
-  indirizzo: string;
-  comune: string;
-  provincia: string;
-  cap: string;
-  telefono: string;
-  email: string;
-  referente: string;
+  id_struttura: string;
+  forma_giuridica: string;
+  forma_giuridica_altro?: string;
+  tipo_struttura: string;
+  anno_inizio: number;
+  missione: string;
 
   // Sezione B
-  tipo_struttura: string;
   capacita_totale: number;
   posti_occupati: number;
 
