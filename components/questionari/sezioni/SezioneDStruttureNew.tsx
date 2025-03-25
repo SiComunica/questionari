@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import type { CheckedState } from "@radix-ui/react-checkbox"
 
 interface Props {
   formData: QuestionarioStruttureNew;
@@ -13,55 +14,41 @@ interface Props {
 }
 
 export default function SezioneDStruttureNew({ formData, setFormData }: Props) {
-  const handleServizioChange = (servizio: keyof typeof formData.attività_servizi) => {
-    return function(checked: boolean | undefined) {
-      if (checked === undefined) return;
-      
-      setFormData(prev => ({
-        ...prev,
-        attività_servizi: {
-          ...prev.attività_servizi,
-          [servizio]: checked
-        }
-      }));
-    };
-  };
-
-  const handleAltroSpecificareChange = (value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      attività_servizi: {
-        ...prev.attività_servizi,
-        altro_specificare: value
-      }
-    }));
-  };
+  const servizi = [
+    'accoglienza_residenziale',
+    'accoglienza_diurna',
+    'orientamento_lavoro',
+    'orientamento_formazione',
+    'ascolto',
+    'accompagnamento_sociale',
+    'assistenza_legale',
+    'assistenza_sanitaria',
+    'assistenza_psicologica',
+    'mediazione_linguistica',
+    'mediazione_culturale',
+    'mediazione_familiare',
+    'pronto_intervento'
+  ] as const;
 
   return (
     <Card>
       <CardContent className="pt-6">
         <h3 className="text-lg font-semibold mb-4">Servizi offerti</h3>
         <div className="space-y-2">
-          {[
-            'accoglienza_residenziale',
-            'accoglienza_diurna',
-            'orientamento_lavoro',
-            'orientamento_formazione',
-            'ascolto',
-            'accompagnamento_sociale',
-            'assistenza_legale',
-            'assistenza_sanitaria',
-            'assistenza_psicologica',
-            'mediazione_linguistica',
-            'mediazione_culturale',
-            'mediazione_familiare',
-            'pronto_intervento'
-          ].map((servizio) => (
+          {servizi.map((servizio) => (
             <div key={servizio} className="flex items-center space-x-2">
               <Checkbox
                 id={servizio}
-                checked={formData.attività_servizi[servizio as keyof typeof formData.attività_servizi]}
-                onCheckedChange={handleServizioChange(servizio as keyof typeof formData.attività_servizi)}
+                checked={formData.attività_servizi[servizio]}
+                onCheckedChange={(checked: CheckedState) => {
+                  setFormData(prev => ({
+                    ...prev,
+                    attività_servizi: {
+                      ...prev.attività_servizi,
+                      [servizio]: checked === true
+                    }
+                  }));
+                }}
               />
               <Label htmlFor={servizio}>{servizio.replace(/_/g, ' ')}</Label>
             </div>
@@ -71,17 +58,34 @@ export default function SezioneDStruttureNew({ formData, setFormData }: Props) {
             <Checkbox
               id="altro"
               checked={formData.attività_servizi.altro}
-              onCheckedChange={handleServizioChange('altro')}
+              onCheckedChange={(checked: CheckedState) => {
+                setFormData(prev => ({
+                  ...prev,
+                  attività_servizi: {
+                    ...prev.attività_servizi,
+                    altro: checked === true
+                  }
+                }));
+              }}
             />
             <Label htmlFor="altro">Altro</Label>
           </div>
 
           {formData.attività_servizi.altro && (
             <div>
-              <Label>Specificare altro</Label>
+              <Label htmlFor="altro_specificare">Specificare altro</Label>
               <Input
+                id="altro_specificare"
                 value={formData.attività_servizi.altro_specificare}
-                onChange={(e) => handleAltroSpecificareChange(e.target.value)}
+                onChange={(e) => {
+                  setFormData(prev => ({
+                    ...prev,
+                    attività_servizi: {
+                      ...prev.attività_servizi,
+                      altro_specificare: e.target.value
+                    }
+                  }));
+                }}
               />
             </div>
           )}
