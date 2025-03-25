@@ -11,6 +11,8 @@ export type Toast = {
   description?: string
   action?: ToastActionElement
   variant?: "default" | "destructive"
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
 }
 
 const actionTypes = {
@@ -148,7 +150,7 @@ export function toast({ ...props }: Omit<Toast, "id">) {
       ...props,
       id,
       open: true,
-      onOpenChange: (open) => {
+      onOpenChange: (open: boolean) => {
         if (!open) dismiss()
       },
     },
