@@ -36,22 +36,22 @@ export default function SezioneDStruttureNew({ formData, setFormData }: Props) {
     }));
   };
 
-  const handleAttivitaChange = (campo: keyof typeof formData.attivita_servizi, checked: CheckedState) => {
+  const handleAttivitaChange = (campo: keyof typeof formData.attività_servizi, checked: CheckedState) => {
     setFormData(prev => ({
       ...prev,
-      attivita_servizi: {
-        ...prev.attivita_servizi,
+      attività_servizi: {
+        ...prev.attività_servizi,
         [campo]: checked === true
       }
     }));
   };
 
   const handleDescrizioneChange = (campo: string, value: string) => {
-    const descKey = `${campo}_desc` as keyof typeof formData.attivita_servizi;
+    const descKey = `${campo}_desc` as keyof typeof formData.attività_servizi;
     setFormData(prev => ({
       ...prev,
-      attivita_servizi: {
-        ...prev.attivita_servizi,
+      attività_servizi: {
+        ...prev.attività_servizi,
         [descKey]: value
       }
     }));
@@ -168,14 +168,14 @@ export default function SezioneDStruttureNew({ formData, setFormData }: Props) {
               <div key={key} className="space-y-2">
                 <div className="flex items-center space-x-2">
                   <Checkbox
-                    checked={Boolean(formData.attivita_servizi[key as keyof typeof formData.attivita_servizi])}
-                    onCheckedChange={(checked) => handleAttivitaChange(key as keyof typeof formData.attivita_servizi, checked)}
+                    checked={Boolean(formData.attività_servizi[key as keyof typeof formData.attività_servizi])}
+                    onCheckedChange={(checked) => handleAttivitaChange(key as keyof typeof formData.attività_servizi, checked)}
                   />
                   <Label>{label}</Label>
                 </div>
-                {hasDesc && formData.attivita_servizi[key as keyof typeof formData.attivita_servizi] && (
+                {hasDesc && formData.attività_servizi[key as keyof typeof formData.attività_servizi] && (
                   <Textarea
-                    value={formData.attivita_servizi[`${key}_desc` as keyof typeof formData.attivita_servizi] as string}
+                    value={formData.attività_servizi[`${key}_desc` as keyof typeof formData.attività_servizi] as string}
                     onChange={(e) => handleDescrizioneChange(key, e.target.value)}
                     placeholder="Descrivere il servizio/attività"
                   />
