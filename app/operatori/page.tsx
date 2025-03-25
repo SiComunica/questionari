@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import QuestionarioGiovaniNew from '@/components/questionari/QuestionarioGiovaniNew';
@@ -16,6 +16,17 @@ export default function Operatori() {
   const [selectedQuestionario, setSelectedQuestionario] = useState<string | null>(null);
   const [formData, setFormData] = useState<any>(null);
   const [notification, setNotification] = useState({ show: false, message: '', type: '' });
+  const [operatore, setOperatore] = useState<string>('');
+
+  useEffect(() => {
+    // Accediamo a localStorage solo dopo il mount del componente
+    const codiceOperatore = localStorage.getItem('codiceOperatore');
+    if (!codiceOperatore) {
+      router.push('/');
+    } else {
+      setOperatore(codiceOperatore);
+    }
+  }, []);
 
   const showNotification = (message: string, type: 'success' | 'error') => {
     setNotification({ show: true, message, type });
@@ -67,7 +78,7 @@ export default function Operatori() {
         <h1 className="text-2xl font-bold">Dashboard Operatore</h1>
         <div className="flex items-center gap-4">
           <p className="text-gray-600">
-            Operatore: {localStorage.getItem('codiceOperatore')}
+            Operatore: {operatore}
           </p>
           <Button 
             variant="outline" 

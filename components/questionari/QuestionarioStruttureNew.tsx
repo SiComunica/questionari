@@ -198,13 +198,12 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
   }));
 
   useEffect(() => {
-    // Recuperiamo il codice operatore dalla localStorage invece che sessionStorage
+    // Accediamo a localStorage solo dopo il mount del componente
     const codiceOperatore = localStorage.getItem('codiceOperatore');
-    if (codiceOperatore) {
-      setOperatore(codiceOperatore);
-    } else {
-      // Se non c'è il codice operatore, redirect alla pagina di login
+    if (!codiceOperatore) {
       router.push('/');
+    } else {
+      setOperatore(codiceOperatore);
     }
   }, []);
 
