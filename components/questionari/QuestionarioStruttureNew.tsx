@@ -31,7 +31,9 @@ const defaultFormData: QuestionarioStruttureNew = {
   personale_retribuito: {
     uomini: 0,
     donne: 0,
-    totale: 0
+    totale: 0,
+    part_time: 0,
+    full_time: 0
   },
   personale_volontario: {
     uomini: 0,
