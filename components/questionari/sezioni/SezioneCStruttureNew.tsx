@@ -90,12 +90,12 @@ export default function SezioneCStruttureNew({ formData, setFormData }: Props) {
     value: string,
     checked: boolean
   ) => {
-    const fieldName = `caratteristiche_ospiti_${categoria}` as const;
+    const fieldName = `caratteristiche_ospiti_${categoria}` as keyof QuestionarioStruttureNew;
     setFormData({
       ...formData,
       [fieldName]: checked 
-        ? [...(formData[fieldName] || []), value]
-        : (formData[fieldName] || []).filter(v => v !== value)
+        ? [...(formData[fieldName] as string[] || []), value]
+        : (formData[fieldName] as string[] || []).filter(v => v !== value)
     });
   };
 
@@ -104,12 +104,12 @@ export default function SezioneCStruttureNew({ formData, setFormData }: Props) {
     value: string,
     checked: boolean
   ) => {
-    const fieldName = `caratteristiche_non_ospiti_${categoria}` as const;
+    const fieldName = `caratteristiche_non_ospiti_${categoria}` as keyof QuestionarioStruttureNew;
     setFormData({
       ...formData,
       [fieldName]: checked 
-        ? [...(formData[fieldName] || []), value]
-        : (formData[fieldName] || []).filter(v => v !== value)
+        ? [...(formData[fieldName] as string[] || []), value]
+        : (formData[fieldName] as string[] || []).filter(v => v !== value)
     });
   };
 
@@ -137,7 +137,7 @@ export default function SezioneCStruttureNew({ formData, setFormData }: Props) {
     "Minori vittime di tratta",
     "Minori con problemi di giustizia",
     "Altro"
-  ];
+  ] as const;
 
   const opzioniCaratteristicheGiovani = [
     "Giovani italiani",
@@ -145,7 +145,7 @@ export default function SezioneCStruttureNew({ formData, setFormData }: Props) {
     "Giovani vittime di tratta",
     "Giovani con problemi di giustizia",
     "Altro"
-  ];
+  ] as const;
 
   return (
     <div className="space-y-6">
@@ -225,25 +225,13 @@ export default function SezioneCStruttureNew({ formData, setFormData }: Props) {
             <div className="font-semibold">Adolescenti (16-18)</div>
             <div className="font-semibold">Giovani adulti (18-25)</div>
 
-            {opzioniCaratteristicheAdolescenti.map((opzione) => (
-              <div key={opzione} className="flex items-center space-x-2">
-                <Checkbox
-                  id={`ospiti-adolescenti-${opzione}`}
-                  checked={(formData.caratteristiche_ospiti_adolescenti || []).includes(opzione)}
-                  onCheckedChange={(checked: boolean) => 
-                    handleCaratteristicheOspitiChange('adolescenti', opzione, checked)
-                  }
-                />
-                <Label htmlFor={`ospiti-adolescenti-${opzione}`}>{opzione}</Label>
-                {opzione === "Altro" && 
-                  (formData.caratteristiche_ospiti_adolescenti || []).includes("Altro") && (
-                  <Input
-                    value={formData.caratteristiche_ospiti_adolescenti.find(v => v === 'altro')?.altro_specificare || ''}
-                    onChange={(e) => handleAltroSpecificareChange('ospiti', 'adolescenti', e.target.value)}
-                  />
-                )}
-              </div>
-            ))}
+            <CheckboxGroup
+              values={formData.caratteristiche_ospiti_adolescenti || []}
+              onChange={(value, checked) => 
+                handleCaratteristicheOspitiChange('adolescenti', value, checked)
+              }
+              options={opzioniCaratteristicheAdolescenti}
+            />
           </div>
         </CardContent>
       </Card>
@@ -324,25 +312,13 @@ export default function SezioneCStruttureNew({ formData, setFormData }: Props) {
             <div className="font-semibold">Adolescenti (16-18)</div>
             <div className="font-semibold">Giovani adulti (18-25)</div>
 
-            {opzioniCaratteristicheAdolescenti.map((opzione) => (
-              <div key={opzione} className="flex items-center space-x-2">
-                <Checkbox
-                  id={`non-ospiti-adolescenti-${opzione}`}
-                  checked={(formData.caratteristiche_non_ospiti_adolescenti || []).includes(opzione)}
-                  onCheckedChange={(checked: boolean) => 
-                    handleCaratteristicheNonOspitiChange('adolescenti', opzione, checked)
-                  }
-                />
-                <Label htmlFor={`non-ospiti-adolescenti-${opzione}`}>{opzione}</Label>
-                {opzione === "Altro" && 
-                  (formData.caratteristiche_non_ospiti_adolescenti || []).includes("Altro") && (
-                  <Input
-                    value={formData.caratteristiche_non_ospiti_adolescenti.find(v => v === 'altro')?.altro_specificare || ''}
-                    onChange={(e) => handleAltroSpecificareChange('non_ospiti', 'adolescenti', e.target.value)}
-                  />
-                )}
-              </div>
-            ))}
+            <CheckboxGroup
+              values={formData.caratteristiche_non_ospiti_adolescenti || []}
+              onChange={(value, checked) => 
+                handleCaratteristicheNonOspitiChange('adolescenti', value, checked)
+              }
+              options={opzioniCaratteristicheAdolescenti}
+            />
           </div>
         </CardContent>
       </Card>
@@ -357,25 +333,13 @@ export default function SezioneCStruttureNew({ formData, setFormData }: Props) {
             <div></div>
             <div className="font-semibold">Giovani adulti (18-25)</div>
 
-            {opzioniCaratteristicheGiovani.map((opzione) => (
-              <div key={opzione} className="flex items-center space-x-2">
-                <Checkbox
-                  id={`ospiti-giovani-${opzione}`}
-                  checked={(formData.caratteristiche_ospiti_giovani || []).includes(opzione)}
-                  onCheckedChange={(checked: boolean) => 
-                    handleCaratteristicheOspitiChange('giovani', opzione, checked)
-                  }
-                />
-                <Label htmlFor={`ospiti-giovani-${opzione}`}>{opzione}</Label>
-                {opzione === "Altro" && 
-                  (formData.caratteristiche_ospiti_giovani || []).includes("Altro") && (
-                  <Input
-                    value={formData.caratteristiche_ospiti_giovani.find(v => v === 'altro')?.altro_specificare || ''}
-                    onChange={(e) => handleAltroSpecificareChange('ospiti', 'giovani', e.target.value)}
-                  />
-                )}
-              </div>
-            ))}
+            <CheckboxGroup
+              values={formData.caratteristiche_ospiti_giovani || []}
+              onChange={(value, checked) => 
+                handleCaratteristicheOspitiChange('giovani', value, checked)
+              }
+              options={opzioniCaratteristicheGiovani}
+            />
           </div>
         </CardContent>
       </Card>
@@ -390,25 +354,13 @@ export default function SezioneCStruttureNew({ formData, setFormData }: Props) {
             <div></div>
             <div className="font-semibold">Giovani adulti (18-25)</div>
 
-            {opzioniCaratteristicheGiovani.map((opzione) => (
-              <div key={opzione} className="flex items-center space-x-2">
-                <Checkbox
-                  id={`non-ospiti-giovani-${opzione}`}
-                  checked={(formData.caratteristiche_non_ospiti_giovani || []).includes(opzione)}
-                  onCheckedChange={(checked: boolean) => 
-                    handleCaratteristicheNonOspitiChange('giovani', opzione, checked)
-                  }
-                />
-                <Label htmlFor={`non-ospiti-giovani-${opzione}`}>{opzione}</Label>
-                {opzione === "Altro" && 
-                  (formData.caratteristiche_non_ospiti_giovani || []).includes("Altro") && (
-                  <Input
-                    value={formData.caratteristiche_non_ospiti_giovani.find(v => v === 'altro')?.altro_specificare || ''}
-                    onChange={(e) => handleAltroSpecificareChange('non_ospiti', 'giovani', e.target.value)}
-                  />
-                )}
-              </div>
-            ))}
+            <CheckboxGroup
+              values={formData.caratteristiche_non_ospiti_giovani || []}
+              onChange={(value, checked) => 
+                handleCaratteristicheNonOspitiChange('giovani', value, checked)
+              }
+              options={opzioniCaratteristicheGiovani}
+            />
           </div>
         </CardContent>
       </Card>
