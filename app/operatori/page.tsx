@@ -1,6 +1,8 @@
 "use client"
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import QuestionarioGiovaniNew from '@/components/questionari/QuestionarioGiovaniNew';
 import QuestionarioOperatoriNuovo from '@/components/questionari/QuestionarioOperatoriNuovo';
 import QuestionarioStruttureNew from '@/components/questionari/QuestionarioStruttureNew';
@@ -9,6 +11,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 export default function Operatori() {
+  const router = useRouter();
+  const supabase = createClientComponentClient();
   const [selectedQuestionario, setSelectedQuestionario] = useState<string | null>(null);
   const [formData, setFormData] = useState<any>(null);
   const [notification, setNotification] = useState({ show: false, message: '', type: '' });
@@ -39,6 +43,15 @@ export default function Operatori() {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      router.push('/login');
+    } catch (error) {
+      console.error('Errore durante il logout:', error);
+    }
+  };
+
   const renderQuestionario = () => {
     switch (selectedQuestionario) {
       case 'questionariogiovaninew':
@@ -54,6 +67,15 @@ export default function Operatori() {
 
   return (
     <div className="relative">
+      <div className="absolute top-4 right-4">
+        <Button 
+          variant="outline" 
+          onClick={handleLogout}
+        >
+          Logout
+        </Button>
+      </div>
+
       {notification.show && (
         <div className={`fixed top-4 right-4 p-4 rounded-md shadow-lg z-50 ${
           notification.type === 'success' ? 'bg-green-500' : 'bg-red-500'

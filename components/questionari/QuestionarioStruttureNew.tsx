@@ -11,6 +11,7 @@ import SezioneDStruttureNew from './sezioni/SezioneDStruttureNew';
 import SezioneEStruttureNew from './sezioni/SezioneEStruttureNew';
 import SezioneFStruttureNew from './sezioni/SezioneFStruttureNew';
 import type { QuestionarioStruttureNew } from '@/types/questionari';
+import { Button } from "@/components/ui/button";
 
 interface Props {
   initialData?: QuestionarioStruttureNew;
@@ -200,27 +201,26 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
+  const handleInviaQuestionario = async () => {
     try {
-      const supabase = createClient();
-      const { error } = await supabase
-        .from('questionari_strutture')
-        .insert({
-          ...formData,
-          id: uuidv4(),
-          created_at: new Date().toISOString(),
-          stato: 'completato'
-        });
+      const response = await fetch('/api/questionari/strutture', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+      });
 
-      if (error) throw error;
-      router.push('/operatore/dashboard');
+      if (!response.ok) {
+        throw new Error('Errore durante l\'invio del questionario');
+      }
+
+      alert('Questionario inviato con successo!');
+      router.push('/operatori'); // Torna alla pagina operatori dopo l'invio
+
     } catch (error) {
-      console.error('Errore durante il salvataggio:', error);
-    } finally {
-      setLoading(false);
+      console.error('Errore:', error);
+      alert('Errore durante l\'invio del questionario');
     }
   };
 
@@ -246,37 +246,21 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Questionario Strutture</h1>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleInviaQuestionario}>
         {renderStep()}
         
-        <div className="flex justify-between mt-4">
-          {currentStep > 1 && (
-            <button
-              type="button"
-              onClick={() => setCurrentStep(step => step - 1)}
-              className="bg-gray-500 text-white px-4 py-2 rounded"
-            >
-              Indietro
-            </button>
-          )}
-          
-          {currentStep < 6 ? (
-            <button
-              type="button"
-              onClick={() => setCurrentStep(step => step + 1)}
-              className="bg-blue-500 text-white px-4 py-2 rounded"
-            >
-              Avanti
-            </button>
-          ) : (
-            <button
-              type="submit"
-              disabled={loading}
-              className="bg-green-500 text-white px-4 py-2 rounded"
-            >
-              {loading ? 'Salvataggio...' : 'Salva'}
-            </button>
-          )}
+        <div className="flex gap-4 mt-4">
+          <Button 
+            variant="outline" 
+            onClick={() => router.push('/operatori')}
+          >
+            Torna indietro
+          </Button>
+          <Button 
+            onClick={handleInviaQuestionario}
+          >
+            Invia questionario
+          </Button>
         </div>
       </form>
     </div>
