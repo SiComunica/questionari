@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { type CheckedState } from '@radix-ui/react-checkbox';
 
 interface Props {
   formData: QuestionarioStruttureNew;
@@ -13,12 +14,12 @@ interface Props {
 }
 
 export default function SezioneDStruttureNew({ formData, setFormData }: Props) {
-  const handleServizioChange = (servizio: keyof typeof formData.attività_servizi, checked: boolean) => {
+  const handleServizioChange = (servizio: keyof typeof formData.attività_servizi) => (checked: CheckedState) => {
     setFormData(prev => ({
       ...prev,
       attività_servizi: {
         ...prev.attività_servizi,
-        [servizio]: checked
+        [servizio]: checked === true
       }
     }));
   };
@@ -56,7 +57,7 @@ export default function SezioneDStruttureNew({ formData, setFormData }: Props) {
             <div key={servizio} className="flex items-center space-x-2">
               <Checkbox
                 checked={formData.attività_servizi[servizio as keyof typeof formData.attività_servizi]}
-                onCheckedChange={(checked) => handleServizioChange(servizio as keyof typeof formData.attività_servizi, !!checked)}
+                onCheckedChange={handleServizioChange(servizio as keyof typeof formData.attività_servizi)}
               />
               <Label>{servizio.replace(/_/g, ' ')}</Label>
             </div>
@@ -65,7 +66,7 @@ export default function SezioneDStruttureNew({ formData, setFormData }: Props) {
           <div className="flex items-center space-x-2">
             <Checkbox
               checked={formData.attività_servizi.altro}
-              onCheckedChange={(checked) => handleServizioChange('altro', !!checked)}
+              onCheckedChange={handleServizioChange('altro')}
             />
             <Label>Altro</Label>
           </div>
