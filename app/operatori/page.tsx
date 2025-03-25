@@ -8,14 +8,15 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useRouter } from 'next/navigation';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { useToast } from "@/components/ui/use-toast";
 
 export default function DashboardOperatori() {
   const [selectedQuestionario, setSelectedQuestionario] = useState<string | null>(null);
   const [formData, setFormData] = useState<any>(null);
   const router = useRouter();
   const supabase = createClientComponentClient();
-  const { toast } = useToast();
+  const [showMessage, setShowMessage] = useState(false);
+  const [messageType, setMessageType] = useState<'success' | 'error'>('success');
+  const [messageText, setMessageText] = useState('');
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -87,6 +88,13 @@ export default function DashboardOperatori() {
     }
   };
 
+  const showNotification = (type: 'success' | 'error', text: string) => {
+    setMessageType(type);
+    setMessageText(text);
+    setShowMessage(true);
+    setTimeout(() => setShowMessage(false), 5000);
+  };
+
   const handleInviaQuestionario = async (questionario: QuestionarioStruttureNew) => {
     try {
       const response = await fetch('/api/questionari/strutture', {
@@ -101,20 +109,11 @@ export default function DashboardOperatori() {
         throw new Error('Errore durante l\'invio del questionario');
       }
 
-      toast({
-        title: "Questionario inviato con successo",
-        description: "Il questionario è stato salvato e sarà visibile nella dashboard amministratori",
-        duration: 5000,
-      });
+      showNotification('success', 'Questionario inviato con successo');
 
     } catch (error) {
       console.error('Errore:', error);
-      toast({
-        title: "Errore durante l'invio",
-        description: "Si è verificato un errore durante l'invio del questionario. Riprova più tardi.",
-        variant: "destructive",
-        duration: 5000,
-      });
+      showNotification('error', 'Errore durante l\'invio del questionario');
     }
   };
 
@@ -142,71 +141,84 @@ export default function DashboardOperatori() {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold">Dashboard Operatori</h1>
-        <Button variant="destructive" onClick={handleLogout}>
-          Logout
-        </Button>
-      </div>
-
-      {!selectedQuestionario ? (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div 
-            className="cursor-pointer hover:shadow-lg transition-shadow"
-            onClick={() => setSelectedQuestionario('questionariogiovaninew')}
-          >
-            <Card>
-              <CardHeader>
-                <CardTitle>Questionario Giovani</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p>Compila il questionario per i giovani</p>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div
-            className="cursor-pointer hover:shadow-lg transition-shadow"
-            onClick={() => setSelectedQuestionario('questionariooperatorinuovo')}
-          >
-            <Card>
-              <CardHeader>
-                <CardTitle>Questionario Operatori</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p>Compila il questionario per gli operatori</p>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div
-            className="cursor-pointer hover:shadow-lg transition-shadow"
-            onClick={() => setSelectedQuestionario('questionariostruttureNew')}
-          >
-            <Card>
-              <CardHeader>
-                <CardTitle>Questionario Strutture</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p>Compila il questionario per le strutture</p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          <div className="flex justify-between items-center">
-            <Button variant="outline" onClick={() => setSelectedQuestionario(null)}>
-              Torna alla selezione
-            </Button>
-            <Button onClick={handleSubmit}>
-              Invia Questionario
-            </Button>
-          </div>
-          {renderQuestionario()}
+    <div className="relative">
+      {/* Notification */}
+      {showMessage && (
+        <div 
+          className={`fixed top-4 right-4 p-4 rounded-md shadow-lg ${
+            messageType === 'success' ? 'bg-green-500' : 'bg-red-500'
+          } text-white z-50`}
+        >
+          {messageText}
         </div>
       )}
+
+      <div className="container mx-auto p-4">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-2xl font-bold">Dashboard Operatori</h1>
+          <Button variant="destructive" onClick={handleLogout}>
+            Logout
+          </Button>
+        </div>
+
+        {!selectedQuestionario ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div 
+              className="cursor-pointer hover:shadow-lg transition-shadow"
+              onClick={() => setSelectedQuestionario('questionariogiovaninew')}
+            >
+              <Card>
+                <CardHeader>
+                  <CardTitle>Questionario Giovani</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p>Compila il questionario per i giovani</p>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div
+              className="cursor-pointer hover:shadow-lg transition-shadow"
+              onClick={() => setSelectedQuestionario('questionariooperatorinuovo')}
+            >
+              <Card>
+                <CardHeader>
+                  <CardTitle>Questionario Operatori</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p>Compila il questionario per gli operatori</p>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div
+              className="cursor-pointer hover:shadow-lg transition-shadow"
+              onClick={() => setSelectedQuestionario('questionariostruttureNew')}
+            >
+              <Card>
+                <CardHeader>
+                  <CardTitle>Questionario Strutture</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p>Compila il questionario per le strutture</p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <Button variant="outline" onClick={() => setSelectedQuestionario(null)}>
+                Torna alla selezione
+              </Button>
+              <Button onClick={handleSubmit}>
+                Invia Questionario
+              </Button>
+            </div>
+            {renderQuestionario()}
+          </div>
+        )}
+      </div>
     </div>
   );
 } 
