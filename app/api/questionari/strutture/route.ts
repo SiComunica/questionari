@@ -17,19 +17,33 @@ export async function POST(request: Request) {
       );
     }
     
+    // Prepariamo i dati per il salvataggio
+    const datiDaSalvare = {
+      ...questionario,
+      creato_a: new Date().toISOString(),
+      stato: 'inviato'
+    };
+
+    // Salviamo nella tabella strutturanuova
     const { data, error } = await supabase
       .from('strutturanuova')
-      .insert([questionario])
+      .insert([datiDaSalvare])
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      console.error('Errore Supabase:', error);
+      return NextResponse.json(
+        { error: `Errore durante il salvataggio: ${error.message}` },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json(data, { status: 201 });
   } catch (error) {
-    console.error('Errore:', error);
+    console.error('Errore durante il salvataggio:', error);
     return NextResponse.json(
-      { error: 'Errore durante il salvataggio' },
+      { error: 'Errore durante il salvataggio del questionario' },
       { status: 500 }
     );
   }

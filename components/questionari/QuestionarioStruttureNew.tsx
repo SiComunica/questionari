@@ -236,19 +236,17 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
         return;
       }
 
-      const datiQuestionario = {
-        ...formData,
-        creato_a: new Date().toISOString(),
-        stato: 'inviato'
-      };
+      const response = await fetch('/api/questionari/strutture', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+      });
 
-      const supabase = createClientComponentClient();
-      const { error: saveError } = await supabase
-        .from('strutturanuova')
-        .insert(datiQuestionario);
-
-      if (saveError) {
-        throw new Error(`Errore durante il salvataggio: ${saveError.message}`);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Errore durante il salvataggio');
       }
 
       alert('Questionario inviato con successo!');
@@ -256,7 +254,7 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
 
     } catch (error) {
       console.error('Errore:', error);
-      alert('Errore durante l\'invio del questionario. Riprova.');
+      alert(error instanceof Error ? error.message : 'Errore durante l\'invio del questionario');
     }
   };
 
