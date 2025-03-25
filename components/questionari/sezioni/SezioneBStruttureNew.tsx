@@ -1,7 +1,7 @@
 "use client"
 
 import React from 'react';
-import { QuestionarioStruttureNew } from '@/types/questionari';
+import { QuestionarioStruttureNew, PersonaleRetribuito, PersonaleVolontario } from '@/types/questionari';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';

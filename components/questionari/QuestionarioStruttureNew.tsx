@@ -165,20 +165,9 @@ const defaultFormData: QuestionarioStruttureNew = {
   },
 
   // Sezione E
-  collaborazioni: {
-    soggetti: [],
-    punti_forza: '',
-    criticita: {
-      finanziarie: false,
-      personale: false,
-      spazi: false,
-      attrezzature: false,
-      utenza: false,
-      rete_servizi: false,
-      altro: false,
-      altro_specificare: ''
-    }
-  },
+  collaborazioni: [],
+  punti_forza_network: '',
+  critica_network: '',
 
   // Sezione F
   finanziamenti: {

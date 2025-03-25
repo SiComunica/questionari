@@ -582,6 +582,26 @@ export interface PersonaleVolontario {
   donne: number;
 }
 
+export interface CaratteristicheUtenti {
+  stranieri_migranti: boolean;
+  vittime_tratta: boolean;
+  vittime_violenza: boolean;
+  allontanati_famiglia: boolean;
+  detenuti: boolean;
+  ex_detenuti: boolean;
+  misure_alternative: boolean;
+  indigenti_senzatetto: boolean;
+  rom_sinti: boolean;
+  disabilita_fisica: boolean;
+  disabilita_cognitiva: boolean;
+  disturbi_psichiatrici: boolean;
+  dipendenze: boolean;
+  genitori_precoci: boolean;
+  problemi_orientamento: boolean;
+  altro: boolean;
+  altro_specificare: string;
+}
+
 export interface QuestionarioStruttureNew {
   id?: string;
   creato_a?: string;
@@ -604,8 +624,10 @@ export interface QuestionarioStruttureNew {
     maggiorenni: { uomini: number; donne: number; totale: number };
     totale: { uomini: number; donne: number; totale: number };
   };
-  caratteristiche_ospiti_adolescenti: string[];
-  caratteristiche_ospiti_giovani: string[];
+  caratteristiche_ospiti: {
+    adolescenti: CaratteristicheUtenti;
+    giovani_adulti: CaratteristicheUtenti;
+  };
   caratteristiche_ospiti_altro?: string;
   persone_non_ospitate: {
     fino_16: { uomini: number; donne: number; totale: number };
@@ -613,14 +635,16 @@ export interface QuestionarioStruttureNew {
     maggiorenni: { uomini: number; donne: number; totale: number };
     totale: { uomini: number; donne: number; totale: number };
   };
-  caratteristiche_non_ospiti_adolescenti: string[];
-  caratteristiche_non_ospiti_giovani: string[];
+  caratteristiche_non_ospiti: {
+    adolescenti: CaratteristicheUtenti;
+    giovani_adulti: CaratteristicheUtenti;
+  };
   caratteristiche_non_ospiti_altro?: string;
   attività_servizi: any; // Definire la struttura specifica
   esperienze_inserimento_lavorativo: boolean;
   attività_inserimento: any[]; // Definire la struttura specifica
   nuove_attività: string[];
-  collaborazioni: any[]; // Definire la struttura specifica
+  collaborazioni: SoggettoCollaborazione[];
   punti_forza_network: string;
   critica_network: string;
   finanziamenti: {
