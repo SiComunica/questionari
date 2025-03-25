@@ -22,7 +22,7 @@ export default function SezioneCStruttureNew({ formData, setFormData }: Props) {
   ) => {
     const numValue = parseInt(value) || 0;
     
-    setFormData(prev => {
+    setFormData((prev: QuestionarioStruttureNew) => {
       const newData = { ...prev };
       newData.persone_ospitate[categoria][genere] = numValue;
       
@@ -57,7 +57,7 @@ export default function SezioneCStruttureNew({ formData, setFormData }: Props) {
   ) => {
     const numValue = parseInt(value) || 0;
     
-    setFormData(prev => {
+    setFormData((prev: QuestionarioStruttureNew) => {
       const newData = { ...prev };
       newData.persone_non_ospitate[categoria][genere] = numValue;
       
@@ -118,15 +118,9 @@ export default function SezioneCStruttureNew({ formData, setFormData }: Props) {
     categoria: 'adolescenti' | 'giovani',
     value: string
   ) => {
-    setFormData(prev => ({
+    setFormData((prev: QuestionarioStruttureNew) => ({
       ...prev,
-      [`caratteristiche_${tipo}`]: {
-        ...prev[`caratteristiche_${tipo}`],
-        [categoria]: {
-          ...prev[`caratteristiche_${tipo}`][categoria],
-          altro_specificare: value
-        }
-      }
+      [`caratteristiche_${tipo}_${categoria}_altro`]: value
     }));
   };
 
