@@ -1,16 +1,17 @@
 "use client"
 
-import React from 'react';
+import React, { useState } from 'react';
 import { QuestionarioStruttureNew } from '@/types/questionari';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { CheckedState } from '@radix-ui/react-checkbox';
+import { CheckboxGroup } from '@/components/ui/checkbox-group';
 
 interface Props {
   formData: QuestionarioStruttureNew;
-  setFormData: React.Dispatch<React.SetStateAction<QuestionarioStruttureNew>>;
+  setFormData: (data: QuestionarioStruttureNew) => void;
 }
 
 export default function SezioneCStruttureNew({ formData, setFormData }: Props) {
@@ -84,27 +85,37 @@ export default function SezioneCStruttureNew({ formData, setFormData }: Props) {
     });
   };
 
-  const handleCaratteristicheChange = (
-    tipo: 'ospiti' | 'non_ospiti',
-    categoria: 'adolescenti' | 'giovani_adulti',
-    campo: string,
-    checked: CheckedState
+  const handleCaratteristicheOspitiChange = (
+    categoria: 'adolescenti' | 'giovani',
+    value: string,
+    checked: boolean
   ) => {
-    setFormData(prev => ({
-      ...prev,
-      [`caratteristiche_${tipo}`]: {
-        ...prev[`caratteristiche_${tipo}`],
-        [categoria]: {
-          ...prev[`caratteristiche_${tipo}`][categoria],
-          [campo]: checked === true
-        }
-      }
-    }));
+    const fieldName = `caratteristiche_ospiti_${categoria}` as const;
+    setFormData({
+      ...formData,
+      [fieldName]: checked 
+        ? [...(formData[fieldName] || []), value]
+        : (formData[fieldName] || []).filter(v => v !== value)
+    });
+  };
+
+  const handleCaratteristicheNonOspitiChange = (
+    categoria: 'adolescenti' | 'giovani',
+    value: string,
+    checked: boolean
+  ) => {
+    const fieldName = `caratteristiche_non_ospiti_${categoria}` as const;
+    setFormData({
+      ...formData,
+      [fieldName]: checked 
+        ? [...(formData[fieldName] || []), value]
+        : (formData[fieldName] || []).filter(v => v !== value)
+    });
   };
 
   const handleAltroSpecificareChange = (
     tipo: 'ospiti' | 'non_ospiti',
-    categoria: 'adolescenti' | 'giovani_adulti',
+    categoria: 'adolescenti' | 'giovani',
     value: string
   ) => {
     setFormData(prev => ({
@@ -118,6 +129,23 @@ export default function SezioneCStruttureNew({ formData, setFormData }: Props) {
       }
     }));
   };
+
+  const opzioniCaratteristicheAdolescenti = [
+    "MSNA",
+    "Minori stranieri accompagnati",
+    "Minori italiani",
+    "Minori vittime di tratta",
+    "Minori con problemi di giustizia",
+    "Altro"
+  ];
+
+  const opzioniCaratteristicheGiovani = [
+    "Giovani italiani",
+    "Giovani stranieri",
+    "Giovani vittime di tratta",
+    "Giovani con problemi di giustizia",
+    "Altro"
+  ];
 
   return (
     <div className="space-y-6">
@@ -197,55 +225,25 @@ export default function SezioneCStruttureNew({ formData, setFormData }: Props) {
             <div className="font-semibold">Adolescenti (16-18)</div>
             <div className="font-semibold">Giovani adulti (18-25)</div>
 
-            {[
-              { key: 'stranieri_migranti', label: 'Stranieri con problemi legati alla condizione migratoria' },
-              { key: 'vittime_tratta', label: 'Vittime di tratta' },
-              { key: 'vittime_violenza', label: 'Vittime di violenza domestica' },
-              { key: 'allontanati_famiglia', label: 'Persone allontanate dalla famiglia' },
-              { key: 'detenuti', label: 'Detenuti' },
-              { key: 'ex_detenuti', label: 'Ex detenuti' },
-              { key: 'misure_alternative', label: 'Persone in esecuzione penale esterna' },
-              { key: 'indigenti_senzatetto', label: 'Indigenti e/o senza dimora' },
-              { key: 'rom_sinti', label: 'Rom e Sinti' },
-              { key: 'disabilita_fisica', label: 'Persone con disabilità fisica' },
-              { key: 'disabilita_cognitiva', label: 'Persone con disabilità cognitiva' },
-              { key: 'disturbi_psichiatrici', label: 'Persone con disturbi psichiatrici' },
-              { key: 'dipendenze', label: 'Persone con dipendenze' },
-              { key: 'genitori_precoci', label: 'Genitori precoci' },
-              { key: 'problemi_orientamento', label: 'Persone con problemi legati all\'orientamento sessuale' },
-              { key: 'altro', label: 'Altro' }
-            ].map(({ key, label }) => (
-              <React.Fragment key={key}>
-                <div>{label}</div>
+            {opzioniCaratteristicheAdolescenti.map((opzione) => (
+              <div key={opzione} className="flex items-center space-x-2">
                 <Checkbox
-                  checked={Boolean(formData.caratteristiche_ospiti.adolescenti[key as keyof typeof formData.caratteristiche_ospiti.adolescenti])}
-                  onCheckedChange={(checked) => handleCaratteristicheChange('ospiti', 'adolescenti', key, checked)}
+                  id={`ospiti-adolescenti-${opzione}`}
+                  checked={(formData.caratteristiche_ospiti_adolescenti || []).includes(opzione)}
+                  onCheckedChange={(checked: boolean) => 
+                    handleCaratteristicheOspitiChange('adolescenti', opzione, checked)
+                  }
                 />
-                <Checkbox
-                  checked={Boolean(formData.caratteristiche_ospiti.giovani_adulti[key as keyof typeof formData.caratteristiche_ospiti.giovani_adulti])}
-                  onCheckedChange={(checked) => handleCaratteristicheChange('ospiti', 'giovani_adulti', key, checked)}
-                />
-              </React.Fragment>
+                <Label htmlFor={`ospiti-adolescenti-${opzione}`}>{opzione}</Label>
+                {opzione === "Altro" && 
+                  (formData.caratteristiche_ospiti_adolescenti || []).includes("Altro") && (
+                  <Input
+                    value={formData.caratteristiche_ospiti_adolescenti.find(v => v === 'altro')?.altro_specificare || ''}
+                    onChange={(e) => handleAltroSpecificareChange('ospiti', 'adolescenti', e.target.value)}
+                  />
+                )}
+              </div>
             ))}
-
-            {formData.caratteristiche_ospiti.adolescenti.altro && (
-              <>
-                <div>Specificare altro:</div>
-                <Input
-                  value={formData.caratteristiche_ospiti.adolescenti.altro_specificare || ''}
-                  onChange={(e) => handleAltroSpecificareChange('ospiti', 'adolescenti', e.target.value)}
-                />
-              </>
-            )}
-            {formData.caratteristiche_ospiti.giovani_adulti.altro && (
-              <>
-                <div></div>
-                <Input
-                  value={formData.caratteristiche_ospiti.giovani_adulti.altro_specificare || ''}
-                  onChange={(e) => handleAltroSpecificareChange('ospiti', 'giovani_adulti', e.target.value)}
-                />
-              </>
-            )}
           </div>
         </CardContent>
       </Card>
@@ -326,55 +324,91 @@ export default function SezioneCStruttureNew({ formData, setFormData }: Props) {
             <div className="font-semibold">Adolescenti (16-18)</div>
             <div className="font-semibold">Giovani adulti (18-25)</div>
 
-            {[
-              { key: 'stranieri_migranti', label: 'Stranieri non accompagnati e/o con problemi legati alla condizione migratoria' },
-              { key: 'vittime_tratta', label: 'Vittime di tratta' },
-              { key: 'vittime_violenza', label: 'Vittime di violenza domestica' },
-              { key: 'allontanati_famiglia', label: 'Persone allontanate dalla famiglia' },
-              { key: 'detenuti', label: 'Detenuti' },
-              { key: 'ex_detenuti', label: 'Ex detenuti' },
-              { key: 'misure_alternative', label: 'Persone in esecuzione penale esterna' },
-              { key: 'indigenti_senzatetto', label: 'Indigenti' },
-              { key: 'rom_sinti', label: 'Rom e Sinti' },
-              { key: 'disabilita_fisica', label: 'Persone con disabilità fisica' },
-              { key: 'disabilita_cognitiva', label: 'Persone con disabilità cognitiva' },
-              { key: 'disturbi_psichiatrici', label: 'Persone con disturbi psichiatrici' },
-              { key: 'dipendenze', label: 'Persone con dipendenze' },
-              { key: 'genitori_precoci', label: 'Genitori precoci' },
-              { key: 'problemi_orientamento', label: 'Persone con problemi legati all\'orientamento sessuale' },
-              { key: 'altro', label: 'Altro' }
-            ].map(({ key, label }) => (
-              <React.Fragment key={key}>
-                <div>{label}</div>
+            {opzioniCaratteristicheAdolescenti.map((opzione) => (
+              <div key={opzione} className="flex items-center space-x-2">
                 <Checkbox
-                  checked={Boolean(formData.caratteristiche_non_ospiti.adolescenti[key as keyof typeof formData.caratteristiche_non_ospiti.adolescenti])}
-                  onCheckedChange={(checked) => handleCaratteristicheChange('non_ospiti', 'adolescenti', key, checked)}
+                  id={`non-ospiti-adolescenti-${opzione}`}
+                  checked={(formData.caratteristiche_non_ospiti_adolescenti || []).includes(opzione)}
+                  onCheckedChange={(checked: boolean) => 
+                    handleCaratteristicheNonOspitiChange('adolescenti', opzione, checked)
+                  }
                 />
-                <Checkbox
-                  checked={Boolean(formData.caratteristiche_non_ospiti.giovani_adulti[key as keyof typeof formData.caratteristiche_non_ospiti.giovani_adulti])}
-                  onCheckedChange={(checked) => handleCaratteristicheChange('non_ospiti', 'giovani_adulti', key, checked)}
-                />
-              </React.Fragment>
+                <Label htmlFor={`non-ospiti-adolescenti-${opzione}`}>{opzione}</Label>
+                {opzione === "Altro" && 
+                  (formData.caratteristiche_non_ospiti_adolescenti || []).includes("Altro") && (
+                  <Input
+                    value={formData.caratteristiche_non_ospiti_adolescenti.find(v => v === 'altro')?.altro_specificare || ''}
+                    onChange={(e) => handleAltroSpecificareChange('non_ospiti', 'adolescenti', e.target.value)}
+                  />
+                )}
+              </div>
             ))}
+          </div>
+        </CardContent>
+      </Card>
 
-            {formData.caratteristiche_non_ospiti.adolescenti.altro && (
-              <>
-                <div>Specificare altro:</div>
-                <Input
-                  value={formData.caratteristiche_non_ospiti.adolescenti.altro_specificare || ''}
-                  onChange={(e) => handleAltroSpecificareChange('non_ospiti', 'adolescenti', e.target.value)}
+      <Card>
+        <CardContent className="pt-6">
+          <h3 className="text-lg font-semibold mb-4">
+            C5. Caratteristiche delle persone ospitate giovani
+          </h3>
+          
+          <div className="grid grid-cols-3 gap-4">
+            <div></div>
+            <div className="font-semibold">Giovani adulti (18-25)</div>
+
+            {opzioniCaratteristicheGiovani.map((opzione) => (
+              <div key={opzione} className="flex items-center space-x-2">
+                <Checkbox
+                  id={`ospiti-giovani-${opzione}`}
+                  checked={(formData.caratteristiche_ospiti_giovani || []).includes(opzione)}
+                  onCheckedChange={(checked: boolean) => 
+                    handleCaratteristicheOspitiChange('giovani', opzione, checked)
+                  }
                 />
-              </>
-            )}
-            {formData.caratteristiche_non_ospiti.giovani_adulti.altro && (
-              <>
-                <div></div>
-                <Input
-                  value={formData.caratteristiche_non_ospiti.giovani_adulti.altro_specificare || ''}
-                  onChange={(e) => handleAltroSpecificareChange('non_ospiti', 'giovani_adulti', e.target.value)}
+                <Label htmlFor={`ospiti-giovani-${opzione}`}>{opzione}</Label>
+                {opzione === "Altro" && 
+                  (formData.caratteristiche_ospiti_giovani || []).includes("Altro") && (
+                  <Input
+                    value={formData.caratteristiche_ospiti_giovani.find(v => v === 'altro')?.altro_specificare || ''}
+                    onChange={(e) => handleAltroSpecificareChange('ospiti', 'giovani', e.target.value)}
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="pt-6">
+          <h3 className="text-lg font-semibold mb-4">
+            C6. Caratteristiche delle persone non ospitate giovani
+          </h3>
+          
+          <div className="grid grid-cols-3 gap-4">
+            <div></div>
+            <div className="font-semibold">Giovani adulti (18-25)</div>
+
+            {opzioniCaratteristicheGiovani.map((opzione) => (
+              <div key={opzione} className="flex items-center space-x-2">
+                <Checkbox
+                  id={`non-ospiti-giovani-${opzione}`}
+                  checked={(formData.caratteristiche_non_ospiti_giovani || []).includes(opzione)}
+                  onCheckedChange={(checked: boolean) => 
+                    handleCaratteristicheNonOspitiChange('giovani', opzione, checked)
+                  }
                 />
-              </>
-            )}
+                <Label htmlFor={`non-ospiti-giovani-${opzione}`}>{opzione}</Label>
+                {opzione === "Altro" && 
+                  (formData.caratteristiche_non_ospiti_giovani || []).includes("Altro") && (
+                  <Input
+                    value={formData.caratteristiche_non_ospiti_giovani.find(v => v === 'altro')?.altro_specificare || ''}
+                    onChange={(e) => handleAltroSpecificareChange('non_ospiti', 'giovani', e.target.value)}
+                  />
+                )}
+              </div>
+            ))}
           </div>
         </CardContent>
       </Card>
