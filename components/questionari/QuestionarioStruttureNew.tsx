@@ -13,6 +13,8 @@ import SezioneEStruttureNew from './sezioni/SezioneEStruttureNew';
 import SezioneFStruttureNew from './sezioni/SezioneFStruttureNew';
 import type { QuestionarioStruttureNew } from '@/types/questionari';
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 interface Props {
   initialData?: QuestionarioStruttureNew;
@@ -194,7 +196,8 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
 
   const [formData, setInternalFormData] = useState<QuestionarioStruttureNew>(() => ({
     ...defaultFormData,
-    ...initialData
+    ...initialData,
+    creato_da: '',
   }));
 
   useEffect(() => {
@@ -213,37 +216,32 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
     }
   };
 
-  const handleNext = () => {
-    if (currentStep < totalSteps) {
-      setCurrentStep(currentStep + 1);
-    }
-  };
-
-  const handlePrevious = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-    }
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setInternalFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
   const handleInviaQuestionario = async () => {
     try {
-      const codiceOperatore = localStorage.getItem('codiceOperatore');
-      if (!codiceOperatore) {
-        alert('Sessione scaduta. Effettua nuovamente l\'accesso.');
-        router.push('/');
+      if (!formData.creato_da) {
+        alert('Inserisci il tuo codice operatore prima di inviare il questionario');
         return;
       }
 
-      // Prepariamo i dati del questionario
+      if (!formData.creato_da.startsWith('operatore')) {
+        alert('Il codice operatore deve essere nel formato "operatoreX" (es. operatore1)');
+        return;
+      }
+
       const datiQuestionario = {
         ...formData,
-        id: uuidv4(),
-        creato_da: codiceOperatore,
         creato_a: new Date().toISOString(),
         stato: 'inviato'
       };
 
-      // Inviamo i dati a Supabase
       const supabase = createClientComponentClient();
       const { error: saveError } = await supabase
         .from('strutturanuova')
@@ -265,7 +263,27 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
   const renderStep = () => {
     switch (currentStep) {
       case 1:
-        return <SezioneAStruttureNew formData={formData} setFormData={setFormData} />;
+        return (
+          <div className="space-y-4">
+            <div className="border p-4 rounded-lg">
+              <Label htmlFor="creato_da">Codice Operatore *</Label>
+              <Input
+                id="creato_da"
+                name="creato_da"
+                value={formData.creato_da}
+                onChange={handleChange}
+                placeholder="Inserisci il tuo codice (es. operatore1)"
+                className="mt-1"
+                required
+              />
+              <p className="text-sm text-gray-500 mt-1">
+                Inserisci il tuo codice operatore nel formato "operatoreX" (es. operatore1)
+              </p>
+            </div>
+            
+            <SezioneAStruttureNew formData={formData} setFormData={setFormData} />
+          </div>
+        );
       case 2:
         return <SezioneBStruttureNew formData={formData} setFormData={setFormData} />;
       case 3:
@@ -308,7 +326,7 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
           {currentStep > 1 && (
             <Button 
               variant="outline"
-              onClick={handlePrevious}
+              onClick={() => setCurrentStep(prev => prev - 1)}
             >
               Indietro
             </Button>
@@ -316,7 +334,7 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
 
           {currentStep < totalSteps && (
             <Button 
-              onClick={handleNext}
+              onClick={() => setCurrentStep(prev => prev + 1)}
             >
               Avanti
             </Button>
