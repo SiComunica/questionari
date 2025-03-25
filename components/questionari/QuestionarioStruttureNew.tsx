@@ -242,32 +242,32 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
 
   const handleInviaQuestionario = async () => {
     try {
-      // Verifichiamo prima che l'utente sia autenticato
-      const { data: { session } } = await supabase.auth.getSession();
+      const supabase = createClientComponentClient();
       
-      if (!session) {
-        alert('Sessione scaduta. Effettua nuovamente il login.');
-        router.push('/');
+      // Otteniamo la sessione corrente
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError || !session) {
+        console.error('Errore sessione:', sessionError);
+        alert('Errore di autenticazione. Riprova.');
         return;
       }
 
-      const response = await fetch('/api/questionari/strutture', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          // Aggiungiamo il token di autenticazione
-          'Authorization': `Bearer ${session.access_token}`
-        },
-        body: JSON.stringify({
-          ...formData,
-          user_id: session.user.id,
-          created_at: new Date().toISOString()
-        })
-      });
+      // Prepariamo i dati del questionario
+      const datiQuestionario = {
+        ...formData,
+        id: uuidv4(), // Aggiungiamo un ID unico
+        user_id: session.user.id,
+        created_at: new Date().toISOString()
+      };
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Errore durante l\'invio del questionario');
+      // Salviamo direttamente usando il client Supabase
+      const { error: saveError } = await supabase
+        .from('strutturanuova')
+        .insert(datiQuestionario);
+
+      if (saveError) {
+        throw new Error(`Errore durante il salvataggio: ${saveError.message}`);
       }
 
       alert('Questionario inviato con successo!');
@@ -275,7 +275,7 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
 
     } catch (error) {
       console.error('Errore:', error);
-      alert(error instanceof Error ? error.message : 'Errore durante l\'invio del questionario');
+      alert('Errore durante l\'invio del questionario. Riprova.');
     }
   };
 
