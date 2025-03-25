@@ -236,24 +236,36 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
         return;
       }
 
+      // Prepariamo i dati
+      const datiDaInviare = {
+        ...formData,
+        id: uuidv4(), // Aggiungiamo sempre un ID
+        // Convertiamo eventuali array vuoti in array con almeno un elemento null
+        figure_professionali: formData.figure_professionali?.length ? formData.figure_professionali : [null],
+        nuove_attivita: formData.nuove_attivita?.length ? formData.nuove_attivita : [null],
+        collaborazioni: formData.collaborazioni?.length ? formData.collaborazioni : [null],
+        attivita_inserimento: formData.attivita_inserimento?.length ? formData.attivita_inserimento : [null]
+      };
+
       const response = await fetch('/api/questionari/strutture', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(datiDaInviare)
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Errore durante il salvataggio');
+        throw new Error(data.error || 'Errore durante il salvataggio');
       }
 
       alert('Questionario inviato con successo!');
       router.push('/operatori');
 
     } catch (error) {
-      console.error('Errore:', error);
+      console.error('Errore dettagliato:', error);
       alert(error instanceof Error ? error.message : 'Errore durante l\'invio del questionario');
     }
   };
