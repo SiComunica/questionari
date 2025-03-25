@@ -91,11 +91,15 @@ export default function SezioneCStruttureNew({ formData, setFormData }: Props) {
     checked: boolean
   ) => {
     const fieldName = `caratteristiche_ospiti_${categoria}` as keyof QuestionarioStruttureNew;
+    const currentValues = formData[fieldName] as string[] || [];
+    
+    const newValues = checked 
+      ? [...currentValues, value]
+      : currentValues.filter(v => v !== value);
+
     setFormData({
       ...formData,
-      [fieldName]: checked 
-        ? [...(formData[fieldName] as string[] || []), value]
-        : (formData[fieldName] as string[] || []).filter(v => v !== value)
+      [fieldName]: newValues
     });
   };
 
@@ -105,11 +109,15 @@ export default function SezioneCStruttureNew({ formData, setFormData }: Props) {
     checked: boolean
   ) => {
     const fieldName = `caratteristiche_non_ospiti_${categoria}` as keyof QuestionarioStruttureNew;
+    const currentValues = formData[fieldName] as string[] || [];
+    
+    const newValues = checked 
+      ? [...currentValues, value]
+      : currentValues.filter(v => v !== value);
+
     setFormData({
       ...formData,
-      [fieldName]: checked 
-        ? [...(formData[fieldName] as string[] || []), value]
-        : (formData[fieldName] as string[] || []).filter(v => v !== value)
+      [fieldName]: newValues
     });
   };
 
