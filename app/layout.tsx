@@ -1,5 +1,6 @@
 import { AuthProvider } from '@/contexts/AuthContext'
 import './globals.css'
+import { Toaster } from "@/components/ui/toaster"
 
 export const metadata = {
   title: 'Ferro',
@@ -17,6 +18,7 @@ export default function RootLayout({
         <AuthProvider>
           {children}
         </AuthProvider>
+        <Toaster />
       </body>
     </html>
   )
