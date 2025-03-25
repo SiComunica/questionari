@@ -90,17 +90,19 @@ export default function SezioneCStruttureNew({ formData, setFormData }: Props) {
     value: string,
     checked: boolean
   ) => {
-    const fieldName = `caratteristiche_ospiti_${categoria}` as keyof QuestionarioStruttureNew;
-    const currentValues = formData[fieldName] as string[] || [];
+    const newFormData = { ...formData };
     
-    const newValues = checked 
-      ? [...currentValues, value]
-      : currentValues.filter(v => v !== value);
+    if (categoria === 'adolescenti') {
+      newFormData.caratteristiche_ospiti_adolescenti = checked
+        ? [...(formData.caratteristiche_ospiti_adolescenti || []), value]
+        : (formData.caratteristiche_ospiti_adolescenti || []).filter(v => v !== value);
+    } else {
+      newFormData.caratteristiche_ospiti_giovani = checked
+        ? [...(formData.caratteristiche_ospiti_giovani || []), value]
+        : (formData.caratteristiche_ospiti_giovani || []).filter(v => v !== value);
+    }
 
-    setFormData({
-      ...formData,
-      [fieldName]: newValues
-    });
+    setFormData(newFormData);
   };
 
   const handleCaratteristicheNonOspitiChange = (
@@ -108,28 +110,34 @@ export default function SezioneCStruttureNew({ formData, setFormData }: Props) {
     value: string,
     checked: boolean
   ) => {
-    const fieldName = `caratteristiche_non_ospiti_${categoria}` as keyof QuestionarioStruttureNew;
-    const currentValues = formData[fieldName] as string[] || [];
+    const newFormData = { ...formData };
     
-    const newValues = checked 
-      ? [...currentValues, value]
-      : currentValues.filter(v => v !== value);
+    if (categoria === 'adolescenti') {
+      newFormData.caratteristiche_non_ospiti_adolescenti = checked
+        ? [...(formData.caratteristiche_non_ospiti_adolescenti || []), value]
+        : (formData.caratteristiche_non_ospiti_adolescenti || []).filter(v => v !== value);
+    } else {
+      newFormData.caratteristiche_non_ospiti_giovani = checked
+        ? [...(formData.caratteristiche_non_ospiti_giovani || []), value]
+        : (formData.caratteristiche_non_ospiti_giovani || []).filter(v => v !== value);
+    }
 
-    setFormData({
-      ...formData,
-      [fieldName]: newValues
-    });
+    setFormData(newFormData);
   };
 
-  const handleAltroSpecificareChange = (
+  const handleAltroChange = (
     tipo: 'ospiti' | 'non_ospiti',
-    categoria: 'adolescenti' | 'giovani',
     value: string
   ) => {
-    setFormData((prev: QuestionarioStruttureNew) => ({
-      ...prev,
-      [`caratteristiche_${tipo}_${categoria}_altro`]: value
-    }));
+    const newFormData = { ...formData };
+    
+    if (tipo === 'ospiti') {
+      newFormData.caratteristiche_ospiti_altro = value;
+    } else {
+      newFormData.caratteristiche_non_ospiti_altro = value;
+    }
+
+    setFormData(newFormData);
   };
 
   const opzioniCaratteristicheAdolescenti = [
