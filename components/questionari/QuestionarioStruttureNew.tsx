@@ -162,29 +162,41 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
         return;
       }
 
+      if (!formData.creato_da.startsWith('operatore')) {
+        alert('Il codice operatore deve essere nel formato "operatoreX" (es. operatore1)');
+        return;
+      }
+
       // Prepariamo i dati da salvare
       const datiDaSalvare = {
         ...formData,
+        id: uuidv4(), // Aggiungiamo un ID univoco
         creato_a: new Date().toISOString(),
         stato: 'inviato'
       };
 
-      // Salviamo direttamente su Supabase
-      const { error } = await supabase
-        .from('strutturanuova')
-        .insert(datiDaSalvare);
+      // Salviamo su Supabase
+      const { data, error } = await supabase
+        .from('strutture') // Cambiato da strutturanuova a strutture
+        .insert([datiDaSalvare])
+        .select();
 
       if (error) {
-        console.error('Errore Supabase:', error);
+        console.error('Errore Supabase dettagliato:', {
+          code: error.code,
+          message: error.message,
+          details: error.details
+        });
         throw new Error(`Errore durante il salvataggio: ${error.message}`);
       }
 
+      console.log('Dati salvati con successo:', data);
       alert('Questionario inviato con successo!');
       router.push('/operatori');
 
     } catch (error) {
       console.error('Errore completo:', error);
-      alert('Errore durante l\'invio del questionario. Riprova.');
+      alert(error instanceof Error ? error.message : 'Errore durante l\'invio del questionario');
     }
   };
 
