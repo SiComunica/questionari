@@ -43,13 +43,9 @@ export default function Operatori() {
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      await supabase.auth.signOut();
-      router.replace('/');
-    } catch (error) {
-      console.error('Errore durante il logout:', error);
-    }
+  const handleLogout = () => {
+    localStorage.removeItem('codiceOperatore');
+    router.push('/');
   };
 
   const renderQuestionario = () => {
@@ -66,14 +62,20 @@ export default function Operatori() {
   };
 
   return (
-    <div className="relative">
-      <div className="absolute top-4 right-4">
-        <Button 
-          variant="outline" 
-          onClick={handleLogout}
-        >
-          Logout
-        </Button>
+    <div className="container mx-auto p-4">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Dashboard Operatore</h1>
+        <div className="flex items-center gap-4">
+          <p className="text-gray-600">
+            Operatore: {localStorage.getItem('codiceOperatore')}
+          </p>
+          <Button 
+            variant="outline" 
+            onClick={handleLogout}
+          >
+            Logout
+          </Button>
+        </div>
       </div>
 
       {notification.show && (
@@ -84,27 +86,25 @@ export default function Operatori() {
         </div>
       )}
 
-      <div className="container mx-auto p-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Seleziona il questionario da compilare</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex gap-4">
-              <Button onClick={() => setSelectedQuestionario('questionariogiovaninew')}>
-                Questionario Giovani
-              </Button>
-              <Button onClick={() => setSelectedQuestionario('questionariooperatorinuovo')}>
-                Questionario Operatori
-              </Button>
-              <Button onClick={() => setSelectedQuestionario('questionariostruttureNew')}>
-                Questionario Strutture
-              </Button>
-            </div>
-            {renderQuestionario()}
-          </CardContent>
-        </Card>
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Seleziona il questionario da compilare</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex gap-4">
+            <Button onClick={() => setSelectedQuestionario('questionariogiovaninew')}>
+              Questionario Giovani
+            </Button>
+            <Button onClick={() => setSelectedQuestionario('questionariooperatorinuovo')}>
+              Questionario Operatori
+            </Button>
+            <Button onClick={() => setSelectedQuestionario('questionariostruttureNew')}>
+              Questionario Strutture
+            </Button>
+          </div>
+          {renderQuestionario()}
+        </CardContent>
+      </Card>
     </div>
   );
 } 

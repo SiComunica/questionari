@@ -198,8 +198,8 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
   }));
 
   useEffect(() => {
-    // Recuperiamo il codice operatore dalla sessionStorage
-    const codiceOperatore = sessionStorage.getItem('codiceOperatore');
+    // Recuperiamo il codice operatore dalla localStorage invece che sessionStorage
+    const codiceOperatore = localStorage.getItem('codiceOperatore');
     if (codiceOperatore) {
       setOperatore(codiceOperatore);
     } else {
@@ -230,7 +230,7 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
 
   const handleInviaQuestionario = async () => {
     try {
-      const codiceOperatore = sessionStorage.getItem('codiceOperatore');
+      const codiceOperatore = localStorage.getItem('codiceOperatore');
       if (!codiceOperatore) {
         alert('Sessione scaduta. Effettua nuovamente l\'accesso.');
         router.push('/');
@@ -241,7 +241,7 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
       const datiQuestionario = {
         ...formData,
         id: uuidv4(),
-        creato_da: codiceOperatore, // Usiamo il codice operatore
+        creato_da: codiceOperatore,
         creato_a: new Date().toISOString(),
         stato: 'inviato'
       };
