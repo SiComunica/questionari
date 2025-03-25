@@ -7,12 +7,15 @@ export async function POST(request: Request) {
     const cookieStore = cookies();
     const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
     
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      return NextResponse.json({ error: 'Non autorizzato' }, { status: 401 });
-    }
-
     const questionario = await request.json();
+    
+    // Verifichiamo che ci sia il codice operatore
+    if (!questionario.creato_da) {
+      return NextResponse.json(
+        { error: 'Codice operatore mancante' },
+        { status: 400 }
+      );
+    }
     
     const { data, error } = await supabase
       .from('strutturanuova')

@@ -187,7 +187,6 @@ const defaultFormData: QuestionarioStruttureNew = {
 
 export default function QuestionarioStruttureNew({ initialData, readOnly, setFormData: externalSetFormData }: Props) {
   const router = useRouter();
-  const supabase = createClientComponentClient();
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [operatore, setOperatore] = useState<string>('');
@@ -199,25 +198,14 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
   }));
 
   useEffect(() => {
-    const getUser = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('username')
-            .eq('id', user.id)
-            .single();
-          
-          if (profile) {
-            setOperatore(profile.username);
-          }
-        }
-      } catch (error) {
-        console.error('Errore nel recupero del profilo:', error);
-      }
-    };
-    getUser();
+    // Recuperiamo il codice operatore dalla sessionStorage
+    const codiceOperatore = sessionStorage.getItem('codiceOperatore');
+    if (codiceOperatore) {
+      setOperatore(codiceOperatore);
+    } else {
+      // Se non c'è il codice operatore, redirect alla pagina di login
+      router.push('/');
+    }
   }, []);
 
   const setFormData = (value: React.SetStateAction<QuestionarioStruttureNew>) => {
@@ -242,26 +230,24 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
 
   const handleInviaQuestionario = async () => {
     try {
-      const supabase = createClientComponentClient();
-      
-      // Otteniamo la sessione corrente
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      
-      if (sessionError || !session) {
-        console.error('Errore sessione:', sessionError);
-        alert('Errore di autenticazione. Riprova.');
+      const codiceOperatore = sessionStorage.getItem('codiceOperatore');
+      if (!codiceOperatore) {
+        alert('Sessione scaduta. Effettua nuovamente l\'accesso.');
+        router.push('/');
         return;
       }
 
       // Prepariamo i dati del questionario
       const datiQuestionario = {
         ...formData,
-        id: uuidv4(), // Aggiungiamo un ID unico
-        user_id: session.user.id,
-        created_at: new Date().toISOString()
+        id: uuidv4(),
+        creato_da: codiceOperatore, // Usiamo il codice operatore
+        creato_a: new Date().toISOString(),
+        stato: 'inviato'
       };
 
-      // Salviamo direttamente usando il client Supabase
+      // Inviamo i dati a Supabase
+      const supabase = createClientComponentClient();
       const { error: saveError } = await supabase
         .from('strutturanuova')
         .insert(datiQuestionario);
@@ -302,7 +288,7 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Questionario Strutture</h1>
-        <p className="text-gray-600">Benvenuto, {operatore}</p>
+        <p className="text-gray-600">Operatore: {operatore}</p>
       </div>
 
       <div className="mb-4">
