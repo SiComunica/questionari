@@ -158,26 +158,21 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
   const handleInviaQuestionario = async () => {
     try {
       if (!formData.creato_da) {
-        alert('Inserisci il tuo codice operatore prima di inviare il questionario');
+        alert('Inserisci il codice operatore prima di inviare il questionario');
         return;
       }
 
-      if (!formData.creato_da.startsWith('operatore')) {
-        alert('Il codice operatore deve essere nel formato "operatoreX" (es. operatore1)');
-        return;
-      }
-
-      // Prepariamo i dati base
-      const datiDaInviare = {
+      // Prepariamo i dati da salvare
+      const datiDaSalvare = {
         ...formData,
         creato_a: new Date().toISOString(),
         stato: 'inviato'
       };
 
-      // Salvataggio diretto su Supabase
+      // Salviamo direttamente su Supabase
       const { error } = await supabase
         .from('strutturanuova')
-        .insert(datiDaInviare);
+        .insert(datiDaSalvare);
 
       if (error) {
         console.error('Errore Supabase:', error);
@@ -189,7 +184,7 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
 
     } catch (error) {
       console.error('Errore completo:', error);
-      alert(error instanceof Error ? error.message : 'Errore durante l\'invio del questionario');
+      alert('Errore durante l\'invio del questionario. Riprova.');
     }
   };
 
