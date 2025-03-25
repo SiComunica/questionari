@@ -162,7 +162,7 @@ const defaultFormData: QuestionarioStruttureNew = {
     altro: false,
     altro_desc: ''
   },
-  attività_significative: [],
+  attivita_significative: [],
   esperienze_inserimento_lavorativo: false,
   attivita_inserimento: [],
   nuove_attivita: [],
