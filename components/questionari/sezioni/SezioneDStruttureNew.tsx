@@ -14,12 +14,14 @@ interface Props {
 
 export default function SezioneDStruttureNew({ formData, setFormData }: Props) {
   const handleServizioChange = (servizio: keyof typeof formData.attività_servizi) => {
-    return function(checked: boolean | "indeterminate") {
+    return function(checked: boolean | undefined) {
+      if (checked === undefined) return;
+      
       setFormData(prev => ({
         ...prev,
         attività_servizi: {
           ...prev.attività_servizi,
-          [servizio]: checked === true
+          [servizio]: checked
         }
       }));
     };
@@ -57,19 +59,21 @@ export default function SezioneDStruttureNew({ formData, setFormData }: Props) {
           ].map((servizio) => (
             <div key={servizio} className="flex items-center space-x-2">
               <Checkbox
+                id={servizio}
                 checked={formData.attività_servizi[servizio as keyof typeof formData.attività_servizi]}
                 onCheckedChange={handleServizioChange(servizio as keyof typeof formData.attività_servizi)}
               />
-              <Label>{servizio.replace(/_/g, ' ')}</Label>
+              <Label htmlFor={servizio}>{servizio.replace(/_/g, ' ')}</Label>
             </div>
           ))}
           
           <div className="flex items-center space-x-2">
             <Checkbox
+              id="altro"
               checked={formData.attività_servizi.altro}
               onCheckedChange={handleServizioChange('altro')}
             />
-            <Label>Altro</Label>
+            <Label htmlFor="altro">Altro</Label>
           </div>
 
           {formData.attività_servizi.altro && (
