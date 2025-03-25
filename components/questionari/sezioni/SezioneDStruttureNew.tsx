@@ -13,7 +13,9 @@ interface Props {
 }
 
 export default function SezioneDStruttureNew({ formData, setFormData }: Props) {
-  const handleServizioChange = (servizio: keyof typeof formData.attività_servizi, checked: boolean | "indeterminate") => {
+  const handleServizioChange = (servizio: keyof typeof formData.attività_servizi, checked: boolean | "indeterminate" | undefined) => {
+    if (checked === undefined) return;
+    
     setFormData(prev => ({
       ...prev,
       attività_servizi: {
@@ -33,7 +35,9 @@ export default function SezioneDStruttureNew({ formData, setFormData }: Props) {
     }));
   };
 
-  const handleAttivitaSignificativeChange = (attivita: string, checked: boolean | "indeterminate") => {
+  const handleAttivitaSignificativeChange = (attivita: string, checked: boolean | "indeterminate" | undefined) => {
+    if (checked === undefined) return;
+
     setFormData(prev => ({
       ...prev,
       attività_significative: checked === true
@@ -66,7 +70,7 @@ export default function SezioneDStruttureNew({ formData, setFormData }: Props) {
               <div key={servizio} className="flex items-center space-x-2">
                 <Checkbox
                   checked={formData.attività_servizi[servizio as keyof typeof formData.attività_servizi]}
-                  onCheckedChange={(checked) => handleServizioChange(servizio as keyof typeof formData.attività_servizi, checked as boolean)}
+                  onCheckedChange={(checked) => handleServizioChange(servizio as keyof typeof formData.attività_servizi, checked)}
                 />
                 <Label>{servizio.replace(/_/g, ' ')}</Label>
               </div>
@@ -75,7 +79,7 @@ export default function SezioneDStruttureNew({ formData, setFormData }: Props) {
             <div className="flex items-center space-x-2">
               <Checkbox
                 checked={formData.attività_servizi.altro}
-                onCheckedChange={(checked) => handleServizioChange('altro', checked as boolean)}
+                onCheckedChange={(checked) => handleServizioChange('altro', checked)}
               />
               <Label>Altro</Label>
             </div>
@@ -107,7 +111,7 @@ export default function SezioneDStruttureNew({ formData, setFormData }: Props) {
               <div key={attivita} className="flex items-center space-x-2">
                 <Checkbox
                   checked={formData.attività_significative.includes(attivita)}
-                  onCheckedChange={(checked) => handleAttivitaSignificativeChange(attivita, checked as boolean)}
+                  onCheckedChange={(checked) => handleAttivitaSignificativeChange(attivita, checked)}
                 />
                 <Label>{attivita.replace(/_/g, ' ')}</Label>
               </div>
