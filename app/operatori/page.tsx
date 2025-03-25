@@ -46,7 +46,7 @@ export default function Operatori() {
   const handleLogout = async () => {
     try {
       await supabase.auth.signOut();
-      router.push('/login');
+      router.replace('/');
     } catch (error) {
       console.error('Errore durante il logout:', error);
     }

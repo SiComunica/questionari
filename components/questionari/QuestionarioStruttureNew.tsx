@@ -200,17 +200,21 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
 
   useEffect(() => {
     const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('full_name')
-          .eq('id', user.id)
-          .single();
-        
-        if (profile) {
-          setOperatore(profile.full_name);
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('username')
+            .eq('id', user.id)
+            .single();
+          
+          if (profile) {
+            setOperatore(profile.username);
+          }
         }
+      } catch (error) {
+        console.error('Errore nel recupero del profilo:', error);
       }
     };
     getUser();

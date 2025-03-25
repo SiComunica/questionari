@@ -1,16 +1,29 @@
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
-  const supabase = createClientComponentClient();
-
   try {
+    const cookieStore = cookies();
+    const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
+    
+    // Ottieni l'utente corrente
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Utente non autenticato' },
+        { status: 401 }
+      );
+    }
+
     const questionario = await request.json();
 
     // Prepara i dati per il salvataggio
     const datiDaSalvare = {
       ...questionario,
-      creato_a: new Date().toISOString(),
+      user_id: user.id,
+      created_at: new Date().toISOString(),
       stato: 'inviato'
     };
 
@@ -21,7 +34,13 @@ export async function POST(request: Request) {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      console.error('Errore Supabase:', error);
+      return NextResponse.json(
+        { error: 'Errore durante il salvataggio nel database' },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json(data, { status: 201 });
     
