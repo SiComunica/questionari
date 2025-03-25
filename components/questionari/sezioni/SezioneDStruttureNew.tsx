@@ -7,6 +7,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { CheckedState } from "@radix-ui/react-checkbox";
 
 interface Props {
   formData: QuestionarioStruttureNew;
@@ -43,6 +44,16 @@ export default function SezioneDStruttureNew({ formData, setFormData }: Props) {
     });
   };
 
+  const handleCheckboxChange = (id: string, checked: CheckedState) => {
+    setFormData(prev => ({
+      ...prev,
+      attivita_servizi: {
+        ...prev.attivita_servizi,
+        [id]: checked === true
+      }
+    }));
+  };
+
   return (
     <div className="space-y-6">
       <Card>
@@ -54,16 +65,8 @@ export default function SezioneDStruttureNew({ formData, setFormData }: Props) {
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id={id}
-                    checked={formData.attivita_servizi[id as keyof typeof formData.attivita_servizi]}
-                    onCheckedChange={(checked) => {
-                      setFormData(prev => ({
-                        ...prev,
-                        attivita_servizi: {
-                          ...prev.attivita_servizi,
-                          [id]: checked === true
-                        }
-                      }));
-                    }}
+                    checked={Boolean(formData.attivita_servizi[id as keyof typeof formData.attivita_servizi])}
+                    onCheckedChange={(checked) => handleCheckboxChange(id, checked)}
                   />
                   <Label htmlFor={id}>{label}</Label>
                 </div>
