@@ -19,7 +19,6 @@ export default function Operatori() {
   const [operatore, setOperatore] = useState<string>('');
 
   useEffect(() => {
-    // Accediamo a localStorage solo dopo il mount del componente
     const codiceOperatore = localStorage.getItem('codiceOperatore');
     if (!codiceOperatore) {
       router.push('/');
@@ -33,30 +32,19 @@ export default function Operatori() {
     setTimeout(() => setNotification({ show: false, message: '', type: '' }), 5000);
   };
 
-  const handleInviaQuestionario = async (questionario: QuestionarioStruttureNewType) => {
-    try {
-      const response = await fetch('/api/questionari/strutture', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(questionario)
-      });
-
-      if (!response.ok) {
-        throw new Error('Errore durante l\'invio del questionario');
-      }
-
-      showNotification('Questionario inviato con successo', 'success');
-    } catch (error) {
-      console.error('Errore:', error);
-      showNotification('Errore durante l\'invio del questionario', 'error');
-    }
-  };
-
   const handleLogout = () => {
     localStorage.removeItem('codiceOperatore');
     router.push('/');
+  };
+
+  const handleSelectQuestionario = (tipo: string) => {
+    const codiceOperatore = localStorage.getItem('codiceOperatore');
+    if (!codiceOperatore) {
+      alert('Sessione scaduta. Effettua nuovamente l\'accesso.');
+      router.push('/');
+      return;
+    }
+    setSelectedQuestionario(tipo);
   };
 
   const renderQuestionario = () => {
@@ -103,13 +91,13 @@ export default function Operatori() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex gap-4">
-            <Button onClick={() => setSelectedQuestionario('questionariogiovaninew')}>
+            <Button onClick={() => handleSelectQuestionario('questionariogiovaninew')}>
               Questionario Giovani
             </Button>
-            <Button onClick={() => setSelectedQuestionario('questionariooperatorinuovo')}>
+            <Button onClick={() => handleSelectQuestionario('questionariooperatorinuovo')}>
               Questionario Operatori
             </Button>
-            <Button onClick={() => setSelectedQuestionario('questionariostruttureNew')}>
+            <Button onClick={() => handleSelectQuestionario('questionariostruttureNew')}>
               Questionario Strutture
             </Button>
           </div>

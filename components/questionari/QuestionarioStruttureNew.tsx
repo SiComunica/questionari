@@ -198,11 +198,9 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
   }));
 
   useEffect(() => {
-    // Accediamo a localStorage solo dopo il mount del componente
+    // Rimuoviamo il redirect automatico e ci limitiamo a impostare l'operatore
     const codiceOperatore = localStorage.getItem('codiceOperatore');
-    if (!codiceOperatore) {
-      router.push('/');
-    } else {
+    if (codiceOperatore) {
       setOperatore(codiceOperatore);
     }
   }, []);
