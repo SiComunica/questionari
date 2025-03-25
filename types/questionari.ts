@@ -568,101 +568,61 @@ export interface Fornitore {
   tipo_sostegno: string;
 }
 
+export interface PersonaleRetribuito {
+  totale: number;
+  part_time: number;
+  full_time: number;
+  uomini: number;
+  donne: number;
+}
+
+export interface PersonaleVolontario {
+  totale: number;
+  uomini: number;
+  donne: number;
+}
+
 export interface QuestionarioStruttureNew {
-  // Sezione A
+  id?: string;
+  creato_a?: string;
+  creato_da?: string;
+  fonte?: string;
+  stato?: string;
   id_struttura: string;
   forma_giuridica: string;
   forma_giuridica_altro?: string;
   tipo_struttura: string;
   anno_inizio: number;
   missione: string;
-
-  // Sezione B
-  personale_retribuito: {
-    uomini: number;
-    donne: number;
-    totale: number;
+  personale_retribuito: PersonaleRetribuito;
+  personale_volontario: PersonaleVolontario;
+  figure_professionali: string[];
+  figure_professionali_altro: string;
+  persone_ospitate: {
+    fino_16: { uomini: number; donne: number; totale: number };
+    da_16_a_18: { uomini: number; donne: number; totale: number };
+    maggiorenni: { uomini: number; donne: number; totale: number };
+    totale: { uomini: number; donne: number; totale: number };
   };
-  personale_volontario: {
-    uomini: number;
-    donne: number;
-    totale: number;
+  caratteristiche_ospiti_adolescenti: string[];
+  caratteristiche_ospiti_giovani: string[];
+  caratteristiche_ospiti_altro?: string;
+  persone_non_ospitate: {
+    fino_16: { uomini: number; donne: number; totale: number };
+    da_16_a_18: { uomini: number; donne: number; totale: number };
+    maggiorenni: { uomini: number; donne: number; totale: number };
+    totale: { uomini: number; donne: number; totale: number };
   };
-  figure_professionali: {
-    psicologi: boolean;
-    assistenti_sociali: boolean;
-    educatori: boolean;
-    mediatori: boolean;
-    medici: boolean;
-    personale_infermieristico: boolean;
-    insegnanti_formatori: boolean;
-    operatori_religiosi: boolean;
-    tutor: boolean;
-    operatori_legali: boolean;
-    operatori_multifunzionali: boolean;
-    amministrativi: boolean;
-    altro: boolean;
-    altro_specificare?: string;
-  };
-
-  // Sezione C
-  servizi_offerti: {
-    accoglienza: boolean;
-    orientamento: boolean;
-    formazione: boolean;
-    inserimento_lavorativo: boolean;
-    assistenza_legale: boolean;
-    assistenza_sanitaria: boolean;
-    mediazione_culturale: boolean;
-    supporto_psicologico: boolean;
-    altro: boolean;
-    altro_specificare?: string;
-  };
-
-  // Sezione D
-  attivita_servizi: {
-    alloggio: boolean;
-    vitto: boolean;
-    servizi_bassa_soglia: boolean;
-    servizi_bassa_soglia_desc: string;
-    ospitalita_diurna: boolean;
-    ospitalita_diurna_desc: string;
-    supporto_psicologico: boolean;
-    supporto_psicologico_desc: string;
-    sostegno_autonomia: boolean;
-    sostegno_autonomia_desc: string;
-    inserimento_lavorativo: boolean;
-    inserimento_lavorativo_desc: string;
-    orientamento_scolastico: boolean;
-    orientamento_scolastico_desc: string;
-    istruzione_scolastica: boolean;
-    istruzione_scolastica_desc: string;
-    formazione_professionale: boolean;
-    formazione_professionale_desc: string;
-    attivita_ricreative: boolean;
-    attivita_ricreative_desc: string;
-    altro: boolean;
-    altro_desc: string;
-  };
-  esperienze_inserimento: boolean;
-  attivita_significative: AttivitaSignificativa[];
-  previsione_attivita: boolean;
-  nuove_attivita: string[];
-
-  // Sezione E
-  caratteristiche_utenti: {
-    minori: boolean;
-    donne: boolean;
-    famiglie: boolean;
-    disabili: boolean;
-    anziani: boolean;
-    migranti: boolean;
-    dipendenze: boolean;
-    altro: boolean;
-    altro_specificare?: string;
-  };
-
-  // Sezione F
+  caratteristiche_non_ospiti_adolescenti: string[];
+  caratteristiche_non_ospiti_giovani: string[];
+  caratteristiche_non_ospiti_altro?: string;
+  attività_servizi: any; // Definire la struttura specifica
+  esperienze_inserimento_lavorativo: boolean;
+  attività_inserimento: any[]; // Definire la struttura specifica
+  nuove_attività: string[];
+  collaborazioni: any[]; // Definire la struttura specifica
+  punti_forza_network: string;
+  critica_network: string;
   finanziamenti: {
     fondi_pubblici: number;
     fondi_privati: number;
@@ -671,131 +631,4 @@ export interface QuestionarioStruttureNew {
     fondi_privati_specifiche: string;
     fornitori: Fornitore[];
   };
-
-  // Sezione E
-  collaborazioni: {
-    soggetti: Array<{
-      denominazione: string;
-      tipo: 'ricorrente' | 'occasionale';
-      oggetto: string;
-    }>;
-    punti_forza: string;
-    criticita: {
-      finanziarie: boolean;
-      personale: boolean;
-      spazi: boolean;
-      attrezzature: boolean;
-      utenza: boolean;
-      rete_servizi: boolean;
-      altro: boolean;
-      altro_specificare: string;
-    };
-  };
-
-  // Sezione C
-  persone_ospitate: {
-    fino_16: { uomini: number; donne: number; totale: number };
-    da_16_a_18: { uomini: number; donne: number; totale: number };
-    maggiorenni: { uomini: number; donne: number; totale: number };
-    totale: { uomini: number; donne: number; totale: number };
-  };
-  persone_non_ospitate: {
-    fino_16: { uomini: number; donne: number; totale: number };
-    da_16_a_18: { uomini: number; donne: number; totale: number };
-    maggiorenni: { uomini: number; donne: number; totale: number };
-    totale: { uomini: number; donne: number; totale: number };
-  };
-  caratteristiche_ospiti: {
-    adolescenti: {
-      stranieri_migranti: boolean;
-      vittime_tratta: boolean;
-      vittime_violenza: boolean;
-      allontanati_famiglia: boolean;
-      detenuti: boolean;
-      ex_detenuti: boolean;
-      misure_alternative: boolean;
-      indigenti_senzatetto: boolean;
-      rom_sinti: boolean;
-      disabilita_fisica: boolean;
-      disabilita_cognitiva: boolean;
-      disturbi_psichiatrici: boolean;
-      dipendenze: boolean;
-      genitori_precoci: boolean;
-      problemi_orientamento: boolean;
-      altro: boolean;
-      altro_specificare: string;
-    };
-    giovani_adulti: {
-      stranieri_migranti: boolean;
-      vittime_tratta: boolean;
-      vittime_violenza: boolean;
-      allontanati_famiglia: boolean;
-      detenuti: boolean;
-      ex_detenuti: boolean;
-      misure_alternative: boolean;
-      indigenti_senzatetto: boolean;
-      rom_sinti: boolean;
-      disabilita_fisica: boolean;
-      disabilita_cognitiva: boolean;
-      disturbi_psichiatrici: boolean;
-      dipendenze: boolean;
-      genitori_precoci: boolean;
-      problemi_orientamento: boolean;
-      altro: boolean;
-      altro_specificare: string;
-    };
-  };
-  caratteristiche_non_ospiti: {
-    adolescenti: {
-      stranieri_migranti: boolean;
-      vittime_tratta: boolean;
-      vittime_violenza: boolean;
-      allontanati_famiglia: boolean;
-      detenuti: boolean;
-      ex_detenuti: boolean;
-      misure_alternative: boolean;
-      indigenti_senzatetto: boolean;
-      rom_sinti: boolean;
-      disabilita_fisica: boolean;
-      disabilita_cognitiva: boolean;
-      disturbi_psichiatrici: boolean;
-      dipendenze: boolean;
-      genitori_precoci: boolean;
-      problemi_orientamento: boolean;
-      altro: boolean;
-      altro_specificare: string;
-    };
-    giovani_adulti: {
-      stranieri_migranti: boolean;
-      vittime_tratta: boolean;
-      vittime_violenza: boolean;
-      allontanati_famiglia: boolean;
-      detenuti: boolean;
-      ex_detenuti: boolean;
-      misure_alternative: boolean;
-      indigenti_senzatetto: boolean;
-      rom_sinti: boolean;
-      disabilita_fisica: boolean;
-      disabilita_cognitiva: boolean;
-      disturbi_psichiatrici: boolean;
-      dipendenze: boolean;
-      genitori_precoci: boolean;
-      problemi_orientamento: boolean;
-      altro: boolean;
-      altro_specificare: string;
-    };
-  };
-
-  // Aggiungiamo la sezione risorse_umane
-  risorse_umane: {
-    operatori_totali: number;
-    operatori_part_time: number;
-    operatori_full_time: number;
-    volontari: number;
-  };
-
-  // Metadati
-  id?: string;
-  created_at?: string;
-  stato?: string;
 } 
