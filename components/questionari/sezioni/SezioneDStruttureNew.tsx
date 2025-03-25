@@ -1,12 +1,12 @@
 "use client"
 
 import React from 'react';
-import { QuestionarioStruttureNew } from '@/types/questionari';
+import { QuestionarioStruttureNew, AttivitaInserimento } from '@/types/questionari';
 import { Card, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import type { CheckedState } from "@radix-ui/react-checkbox"
+import { Textarea } from '@/components/ui/textarea';
 
 interface Props {
   formData: QuestionarioStruttureNew;
@@ -15,82 +15,188 @@ interface Props {
 
 export default function SezioneDStruttureNew({ formData, setFormData }: Props) {
   const servizi = [
-    'accoglienza_residenziale',
-    'accoglienza_diurna',
-    'orientamento_lavoro',
-    'orientamento_formazione',
-    'ascolto',
-    'accompagnamento_sociale',
-    'assistenza_legale',
-    'assistenza_sanitaria',
-    'assistenza_psicologica',
-    'mediazione_linguistica',
-    'mediazione_culturale',
-    'mediazione_familiare',
-    'pronto_intervento'
+    { id: 'alloggio', label: 'Alloggio', hasDesc: false },
+    { id: 'vitto', label: 'Vitto', hasDesc: false },
+    { id: 'servizi_bassa_soglia', label: 'Altri servizi a bassa soglia (docce, lavanderia, offerta beni di prima necessità, etc.)', hasDesc: true },
+    { id: 'ospitalita_diurna', label: 'Ospitalità solo diurna', hasDesc: true },
+    { id: 'supporto_psicologico', label: 'Supporto psicologico', hasDesc: true },
+    { id: 'sostegno_abitativo', label: 'Sostegno all\'autonomia abitativa', hasDesc: true },
+    { id: 'inserimento_lavorativo', label: 'Orientamento e sostegno all\'inserimento lavorativo', hasDesc: true },
+    { id: 'orientamento_scolastico', label: 'Orientamento scolastico/formativo', hasDesc: true },
+    { id: 'istruzione_scolastica', label: 'Istruzione scolastica', hasDesc: true },
+    { id: 'formazione_professionale', label: 'Formazione professionale', hasDesc: true },
+    { id: 'attivita_ricreative', label: 'Attività ricreative e di socializzazione', hasDesc: true },
+    { id: 'altro', label: 'Altro', hasDesc: true }
   ] as const;
 
-  return (
-    <Card>
-      <CardContent className="pt-6">
-        <h3 className="text-lg font-semibold mb-4">Servizi offerti</h3>
-        <div className="space-y-2">
-          {servizi.map((servizio) => (
-            <div key={servizio} className="flex items-center space-x-2">
-              <Checkbox
-                id={servizio}
-                checked={formData.attività_servizi[servizio]}
-                onCheckedChange={(checked: CheckedState) => {
-                  setFormData(prev => ({
-                    ...prev,
-                    attività_servizi: {
-                      ...prev.attività_servizi,
-                      [servizio]: checked === true
-                    }
-                  }));
-                }}
-              />
-              <Label htmlFor={servizio}>{servizio.replace(/_/g, ' ')}</Label>
-            </div>
-          ))}
-          
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="altro"
-              checked={formData.attività_servizi.altro}
-              onCheckedChange={(checked: CheckedState) => {
-                setFormData(prev => ({
-                  ...prev,
-                  attività_servizi: {
-                    ...prev.attività_servizi,
-                    altro: checked === true
-                  }
-                }));
-              }}
-            />
-            <Label htmlFor="altro">Altro</Label>
-          </div>
+  const handleAttivitaInserimentoChange = (index: number, field: keyof AttivitaInserimento, value: string) => {
+    setFormData(prev => {
+      const newAttivita = [...prev.attivita_inserimento];
+      if (!newAttivita[index]) {
+        newAttivita[index] = {
+          nome: '', periodo: '', contenuto: '', destinatari: '',
+          attori: '', punti_forza: '', criticita: ''
+        };
+      }
+      newAttivita[index] = { ...newAttivita[index], [field]: value };
+      return { ...prev, attivita_inserimento: newAttivita };
+    });
+  };
 
-          {formData.attività_servizi.altro && (
-            <div>
-              <Label htmlFor="altro_specificare">Specificare altro</Label>
-              <Input
-                id="altro_specificare"
-                value={formData.attività_servizi.altro_specificare}
-                onChange={(e) => {
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardContent className="pt-6">
+          <h3 className="text-lg font-semibold mb-4">D1. Attività/servizi attualmente disponibili</h3>
+          <div className="space-y-4">
+            {servizi.map(({ id, label, hasDesc }) => (
+              <div key={id} className="space-y-2">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id={id}
+                    checked={formData.attivita_servizi[id as keyof typeof formData.attivita_servizi]}
+                    onCheckedChange={(checked) => {
+                      setFormData(prev => ({
+                        ...prev,
+                        attivita_servizi: {
+                          ...prev.attivita_servizi,
+                          [id]: checked === true
+                        }
+                      }));
+                    }}
+                  />
+                  <Label htmlFor={id}>{label}</Label>
+                </div>
+                {hasDesc && formData.attivita_servizi[id as keyof typeof formData.attivita_servizi] && (
+                  <div className="ml-6">
+                    <Label>Descrivere il servizio/attività</Label>
+                    <Textarea
+                      value={formData.attivita_servizi[`${id}_desc` as keyof typeof formData.attivita_servizi] as string}
+                      onChange={(e) => {
+                        setFormData(prev => ({
+                          ...prev,
+                          attivita_servizi: {
+                            ...prev.attivita_servizi,
+                            [`${id}_desc`]: e.target.value
+                          }
+                        }));
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="pt-6">
+          <h3 className="text-lg font-semibold mb-4">D2. Esperienze di inserimento socio-lavorativo</h3>
+          <div className="space-y-4">
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="esperienze_inserimento"
+                checked={formData.esperienze_inserimento_lavorativo}
+                onCheckedChange={(checked) => {
                   setFormData(prev => ({
                     ...prev,
-                    attività_servizi: {
-                      ...prev.attività_servizi,
-                      altro_specificare: e.target.value
-                    }
+                    esperienze_inserimento_lavorativo: checked === true
                   }));
                 }}
               />
+              <Label htmlFor="esperienze_inserimento">
+                Negli ultimi 3 anni (2022-24) avete realizzato esperienze significative?
+              </Label>
             </div>
-          )}
-        </div>
-      </CardContent>
-    </Card>
+
+            {formData.esperienze_inserimento_lavorativo && (
+              <div className="space-y-6">
+                {[0, 1, 2].map((index) => (
+                  <div key={index} className="p-4 border rounded space-y-4">
+                    <h4 className="font-medium">Attività {index + 1}</h4>
+                    <div className="space-y-4">
+                      <div>
+                        <Label>Nome del progetto o dell'attività</Label>
+                        <Input
+                          value={formData.attivita_inserimento[index]?.nome || ''}
+                          onChange={(e) => handleAttivitaInserimentoChange(index, 'nome', e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <Label>Periodo di realizzazione</Label>
+                        <Input
+                          value={formData.attivita_inserimento[index]?.periodo || ''}
+                          onChange={(e) => handleAttivitaInserimentoChange(index, 'periodo', e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <Label>Contenuto dell'attività</Label>
+                        <Textarea
+                          value={formData.attivita_inserimento[index]?.contenuto || ''}
+                          onChange={(e) => handleAttivitaInserimentoChange(index, 'contenuto', e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <Label>Destinatari</Label>
+                        <Textarea
+                          value={formData.attivita_inserimento[index]?.destinatari || ''}
+                          onChange={(e) => handleAttivitaInserimentoChange(index, 'destinatari', e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <Label>Attori coinvolti</Label>
+                        <Input
+                          value={formData.attivita_inserimento[index]?.attori || ''}
+                          onChange={(e) => handleAttivitaInserimentoChange(index, 'attori', e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <Label>Punti di forza</Label>
+                        <Textarea
+                          value={formData.attivita_inserimento[index]?.punti_forza || ''}
+                          onChange={(e) => handleAttivitaInserimentoChange(index, 'punti_forza', e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <Label>Criticità</Label>
+                        <Textarea
+                          value={formData.attivita_inserimento[index]?.criticita || ''}
+                          onChange={(e) => handleAttivitaInserimentoChange(index, 'criticita', e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="pt-6">
+          <h3 className="text-lg font-semibold mb-4">D4. Nuove attività previste</h3>
+          <div className="space-y-4">
+            {[0, 1, 2].map((index) => (
+              <div key={index}>
+                <Label>Nuova attività {index + 1}</Label>
+                <Textarea
+                  value={formData.nuove_attivita[index] || ''}
+                  onChange={(e) => {
+                    setFormData(prev => {
+                      const newAttivita = [...prev.nuove_attivita];
+                      newAttivita[index] = e.target.value;
+                      return { ...prev, nuove_attivita: newAttivita };
+                    });
+                  }}
+                  placeholder="Descrivere brevemente"
+                />
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 } 

@@ -602,6 +602,16 @@ export interface CaratteristicheUtenti {
   altro_specificare: string;
 }
 
+export interface AttivitaInserimento {
+  nome: string;
+  periodo: string;
+  contenuto: string;
+  destinatari: string;
+  attori: string;
+  punti_forza: string;
+  criticita: string;
+}
+
 export interface QuestionarioStruttureNew {
   id?: string;
   creato_a?: string;
@@ -641,26 +651,33 @@ export interface QuestionarioStruttureNew {
   };
   caratteristiche_non_ospiti_altro?: string;
   attività_servizi: {
-    accoglienza_residenziale: boolean;
-    accoglienza_diurna: boolean;
-    orientamento_lavoro: boolean;
-    orientamento_formazione: boolean;
-    ascolto: boolean;
-    accompagnamento_sociale: boolean;
-    assistenza_legale: boolean;
-    assistenza_sanitaria: boolean;
-    assistenza_psicologica: boolean;
-    mediazione_linguistica: boolean;
-    mediazione_culturale: boolean;
-    mediazione_familiare: boolean;
-    pronto_intervento: boolean;
+    alloggio: boolean;
+    vitto: boolean;
+    servizi_bassa_soglia: boolean;
+    servizi_bassa_soglia_desc: string;
+    ospitalita_diurna: boolean;
+    ospitalita_diurna_desc: string;
+    supporto_psicologico: boolean;
+    supporto_psicologico_desc: string;
+    sostegno_abitativo: boolean;
+    sostegno_abitativo_desc: string;
+    inserimento_lavorativo: boolean;
+    inserimento_lavorativo_desc: string;
+    orientamento_scolastico: boolean;
+    orientamento_scolastico_desc: string;
+    istruzione_scolastica: boolean;
+    istruzione_scolastica_desc: string;
+    formazione_professionale: boolean;
+    formazione_professionale_desc: string;
+    attivita_ricreative: boolean;
+    attivita_ricreative_desc: string;
     altro: boolean;
-    altro_specificare: string;
+    altro_desc: string;
   };
   attività_significative: string[];
   esperienze_inserimento_lavorativo: boolean;
-  attività_inserimento: any[];
-  nuove_attività: string[];
+  attivita_inserimento: AttivitaInserimento[];
+  nuove_attivita: string[];
   collaborazioni: SoggettoCollaborazione[];
   punti_forza_network: string;
   critica_network: string;
