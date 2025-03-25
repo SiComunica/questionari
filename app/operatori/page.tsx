@@ -20,55 +20,65 @@ export default function DashboardOperatori() {
     router.push('/login');
   };
 
-  const handleInvio = async () => {
-    if (!formData) {
-      alert('Compila il questionario prima di inviare');
-      return;
-    }
-
+  const handleSubmit = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
       if (!user) {
-        alert('Utente non autenticato');
+        alert('Devi essere autenticato per inviare il questionario');
         return;
       }
 
-      let result;
-
-      switch (selectedQuestionario) {
-        case 'operatori':
-          result = await supabase
-            .from('operatori')
-            .insert({
-              creato_da: user.id,
-              creato_a: new Date().toISOString(),
-              fonte: 'operatore',
-              stato: 'completato',
-              ...formData
-            });
-          break;
-
-        case 'strutture':
-          result = await supabase
-            .from('struttura')
-            .insert({
-              creato_da: user.id,
-              creato_a: new Date().toISOString(),
-              fonte: 'operatore',
-              stato: 'completato',
-              ...formData
-            });
-          break;
+      if (!formData) {
+        alert('Seleziona un questionario e compilalo prima di inviare');
+        return;
       }
 
-      if (result?.error) {
-        throw result.error;
+      // Ottieni l'ID dell'operatore dalla sessione
+      const { data: operatore } = await supabase
+        .from('operatori')
+        .select('id')
+        .eq('creato_da', user.id)
+        .single();
+
+      const operatoreId = operatore?.id || 'anonimo';
+
+      if (selectedQuestionario === 'questionariogiovaninew') {
+        const { error } = await supabase.from('questionariogiovaninew').insert({
+          ...formData,
+          creato_da: user.id,
+          fonte: `operatore${operatoreId}`,
+          stato: 'inviato'
+        });
+
+        if (error) throw error;
+      } 
+      else if (selectedQuestionario === 'questionariostruttureNew') {
+        const { error } = await supabase.from('struttura').insert({
+          ...formData,
+          creato_da: user.id,
+          fonte: `operatore${operatoreId}`,
+          stato: 'inviato'
+        });
+
+        if (error) throw error;
+      }
+      else if (selectedQuestionario === 'questionariooperatorinuovo') {
+        const { error } = await supabase.from('operatori').insert({
+          ...formData,
+          creato_da: user.id,
+          fonte: `operatore${operatoreId}`,
+          stato: 'inviato'
+        });
+
+        if (error) throw error;
       }
 
       alert('Questionario inviato con successo!');
-      setSelectedQuestionario(null);
       setFormData(null);
+      setSelectedQuestionario(null);
     } catch (error) {
       console.error('Errore durante l\'invio:', error);
       alert('Errore durante l\'invio del questionario');
@@ -77,16 +87,16 @@ export default function DashboardOperatori() {
 
   const renderQuestionario = () => {
     switch (selectedQuestionario) {
-      case 'giovani':
+      case 'questionariogiovaninew':
         return <QuestionarioGiovaniNew fonte="operatore" />;
-      case 'operatori':
+      case 'questionariooperatorinuovo':
         return (
           <QuestionarioOperatoriNuovo 
             initialData={formData} 
             setFormData={setFormData}
           />
         );
-      case 'strutture':
+      case 'questionariostruttureNew':
         return (
           <QuestionarioStruttureNew 
             initialData={formData} 
@@ -111,7 +121,7 @@ export default function DashboardOperatori() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div 
             className="cursor-pointer hover:shadow-lg transition-shadow"
-            onClick={() => setSelectedQuestionario('giovani')}
+            onClick={() => setSelectedQuestionario('questionariogiovaninew')}
           >
             <Card>
               <CardHeader>
@@ -125,7 +135,7 @@ export default function DashboardOperatori() {
 
           <div
             className="cursor-pointer hover:shadow-lg transition-shadow"
-            onClick={() => setSelectedQuestionario('operatori')}
+            onClick={() => setSelectedQuestionario('questionariooperatorinuovo')}
           >
             <Card>
               <CardHeader>
@@ -139,7 +149,7 @@ export default function DashboardOperatori() {
 
           <div
             className="cursor-pointer hover:shadow-lg transition-shadow"
-            onClick={() => setSelectedQuestionario('strutture')}
+            onClick={() => setSelectedQuestionario('questionariostruttureNew')}
           >
             <Card>
               <CardHeader>
@@ -157,7 +167,7 @@ export default function DashboardOperatori() {
             <Button variant="outline" onClick={() => setSelectedQuestionario(null)}>
               Torna alla selezione
             </Button>
-            <Button onClick={handleInvio}>
+            <Button onClick={handleSubmit}>
               Invia Questionario
             </Button>
           </div>
