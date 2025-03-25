@@ -613,43 +613,56 @@ export interface AttivitaInserimento {
 }
 
 export interface QuestionarioStruttureNew {
-  id?: string;
+  creato_da: string;
   creato_a?: string;
-  creato_da?: string;
-  fonte?: string;
   stato?: string;
+  
+  // Sezione A
   id_struttura: string;
   forma_giuridica: string;
-  forma_giuridica_altro?: string;
+  forma_giuridica_altro: string;
   tipo_struttura: string;
   anno_inizio: number;
   missione: string;
-  personale_retribuito: PersonaleRetribuito;
-  personale_volontario: PersonaleVolontario;
+
+  // Sezione B
+  personale_retribuito: {
+    uomini: number;
+    donne: number;
+    totale: number;
+    part_time: number;
+    full_time: number;
+  };
+  personale_volontario: {
+    uomini: number;
+    donne: number;
+    totale: number;
+  };
   figure_professionali: string[];
   figure_professionali_altro: string;
+
+  // Sezione C
   persone_ospitate: {
     fino_16: { uomini: number; donne: number; totale: number };
     da_16_a_18: { uomini: number; donne: number; totale: number };
     maggiorenni: { uomini: number; donne: number; totale: number };
     totale: { uomini: number; donne: number; totale: number };
   };
-  caratteristiche_ospiti: {
-    adolescenti: CaratteristicheUtenti;
-    giovani_adulti: CaratteristicheUtenti;
-  };
-  caratteristiche_ospiti_altro?: string;
+  caratteristiche_ospiti_adolescenti: string[];
+  caratteristiche_ospiti_giovani: string[];
+  caratteristiche_ospiti_altro: string;
+  
   persone_non_ospitate: {
     fino_16: { uomini: number; donne: number; totale: number };
     da_16_a_18: { uomini: number; donne: number; totale: number };
     maggiorenni: { uomini: number; donne: number; totale: number };
     totale: { uomini: number; donne: number; totale: number };
   };
-  caratteristiche_non_ospiti: {
-    adolescenti: CaratteristicheUtenti;
-    giovani_adulti: CaratteristicheUtenti;
-  };
-  caratteristiche_non_ospiti_altro?: string;
+  caratteristiche_non_ospiti_adolescenti: string[];
+  caratteristiche_non_ospiti_giovani: string[];
+  caratteristiche_non_ospiti_altro: string;
+
+  // Sezione D
   attivita_servizi: {
     alloggio: boolean;
     vitto: boolean;
@@ -674,19 +687,22 @@ export interface QuestionarioStruttureNew {
     altro: boolean;
     altro_desc: string;
   };
-  attivita_significative: any[];
   esperienze_inserimento_lavorativo: boolean;
   attivita_inserimento: any[];
   nuove_attivita: string[];
-  collaborazioni: SoggettoCollaborazione[];
+
+  // Sezione E
+  collaborazioni: any[];
   punti_forza_network: string;
   critica_network: string;
+
+  // Sezione F
   finanziamenti: {
     fondi_pubblici: number;
     fondi_privati: number;
     totale: number;
     fondi_pubblici_specifiche: string;
     fondi_privati_specifiche: string;
-    fornitori: Fornitore[];
+    fornitori: any[];
   };
 } 
