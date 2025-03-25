@@ -8,13 +8,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useRouter } from 'next/navigation';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { toast } from "@/components/ui/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function DashboardOperatori() {
   const [selectedQuestionario, setSelectedQuestionario] = useState<string | null>(null);
   const [formData, setFormData] = useState<any>(null);
   const router = useRouter();
   const supabase = createClientComponentClient();
+  const { toast } = useToast();
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
