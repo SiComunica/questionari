@@ -22,32 +22,37 @@ export default function SezioneCStruttureNew({ formData, setFormData }: Props) {
   ) => {
     const numValue = parseInt(value) || 0;
     
-    setFormData((prev: QuestionarioStruttureNew) => {
-      const newData = { ...prev };
-      newData.persone_ospitate[categoria][genere] = numValue;
-      
-      // Calcolo totale per categoria
-      newData.persone_ospitate[categoria].totale = 
-        newData.persone_ospitate[categoria].uomini + 
-        newData.persone_ospitate[categoria].donne;
-      
-      // Calcolo totali generali
-      newData.persone_ospitate.totale.uomini = 
-        newData.persone_ospitate.fino_16.uomini +
-        newData.persone_ospitate.da_16_a_18.uomini +
-        newData.persone_ospitate.maggiorenni.uomini;
-        
-      newData.persone_ospitate.totale.donne = 
-        newData.persone_ospitate.fino_16.donne +
-        newData.persone_ospitate.da_16_a_18.donne +
-        newData.persone_ospitate.maggiorenni.donne;
-        
-      newData.persone_ospitate.totale.totale = 
-        newData.persone_ospitate.totale.uomini +
-        newData.persone_ospitate.totale.donne;
-        
-      return newData;
-    });
+    // Creiamo una copia completa dell'oggetto formData
+    const newData: QuestionarioStruttureNew = {
+      ...formData,
+      persone_ospitate: {
+        ...formData.persone_ospitate,
+        [categoria]: {
+          ...formData.persone_ospitate[categoria],
+          [genere]: numValue,
+          totale: genere === 'uomini' 
+            ? numValue + formData.persone_ospitate[categoria].donne
+            : formData.persone_ospitate[categoria].uomini + numValue
+        }
+      }
+    };
+
+    // Aggiorniamo i totali
+    newData.persone_ospitate.totale = {
+      uomini: newData.persone_ospitate.fino_16.uomini +
+              newData.persone_ospitate.da_16_a_18.uomini +
+              newData.persone_ospitate.maggiorenni.uomini,
+      donne: newData.persone_ospitate.fino_16.donne +
+             newData.persone_ospitate.da_16_a_18.donne +
+             newData.persone_ospitate.maggiorenni.donne,
+      totale: 0 // Sarà calcolato sotto
+    };
+    
+    newData.persone_ospitate.totale.totale = 
+      newData.persone_ospitate.totale.uomini +
+      newData.persone_ospitate.totale.donne;
+
+    setFormData(newData);
   };
 
   const handlePersoneNonOspitateChange = (
@@ -57,32 +62,36 @@ export default function SezioneCStruttureNew({ formData, setFormData }: Props) {
   ) => {
     const numValue = parseInt(value) || 0;
     
-    setFormData((prev: QuestionarioStruttureNew) => {
-      const newData = { ...prev };
-      newData.persone_non_ospitate[categoria][genere] = numValue;
-      
-      // Calcolo totale per categoria
-      newData.persone_non_ospitate[categoria].totale = 
-        newData.persone_non_ospitate[categoria].uomini + 
-        newData.persone_non_ospitate[categoria].donne;
-      
-      // Calcolo totali generali
-      newData.persone_non_ospitate.totale.uomini = 
-        newData.persone_non_ospitate.fino_16.uomini +
-        newData.persone_non_ospitate.da_16_a_18.uomini +
-        newData.persone_non_ospitate.maggiorenni.uomini;
-        
-      newData.persone_non_ospitate.totale.donne = 
-        newData.persone_non_ospitate.fino_16.donne +
-        newData.persone_non_ospitate.da_16_a_18.donne +
-        newData.persone_non_ospitate.maggiorenni.donne;
-        
-      newData.persone_non_ospitate.totale.totale = 
-        newData.persone_non_ospitate.totale.uomini +
-        newData.persone_non_ospitate.totale.donne;
-        
-      return newData;
-    });
+    const newData: QuestionarioStruttureNew = {
+      ...formData,
+      persone_non_ospitate: {
+        ...formData.persone_non_ospitate,
+        [categoria]: {
+          ...formData.persone_non_ospitate[categoria],
+          [genere]: numValue,
+          totale: genere === 'uomini' 
+            ? numValue + formData.persone_non_ospitate[categoria].donne
+            : formData.persone_non_ospitate[categoria].uomini + numValue
+        }
+      }
+    };
+
+    // Aggiorniamo i totali
+    newData.persone_non_ospitate.totale = {
+      uomini: newData.persone_non_ospitate.fino_16.uomini +
+              newData.persone_non_ospitate.da_16_a_18.uomini +
+              newData.persone_non_ospitate.maggiorenni.uomini,
+      donne: newData.persone_non_ospitate.fino_16.donne +
+             newData.persone_non_ospitate.da_16_a_18.donne +
+             newData.persone_non_ospitate.maggiorenni.donne,
+      totale: 0
+    };
+    
+    newData.persone_non_ospitate.totale.totale = 
+      newData.persone_non_ospitate.totale.uomini +
+      newData.persone_non_ospitate.totale.donne;
+
+    setFormData(newData);
   };
 
   const handleCaratteristicheOspitiChange = (
