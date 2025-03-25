@@ -23,6 +23,8 @@ interface Props {
 }
 
 const defaultFormData: QuestionarioStruttureNew = {
+  creato_da: '',
+  
   // Sezione A
   id_struttura: '',
   forma_giuridica: '',
@@ -54,92 +56,19 @@ const defaultFormData: QuestionarioStruttureNew = {
     maggiorenni: { uomini: 0, donne: 0, totale: 0 },
     totale: { uomini: 0, donne: 0, totale: 0 }
   },
-  caratteristiche_ospiti: {
-    adolescenti: {
-      stranieri_migranti: false,
-      vittime_tratta: false,
-      vittime_violenza: false,
-      allontanati_famiglia: false,
-      detenuti: false,
-      ex_detenuti: false,
-      misure_alternative: false,
-      indigenti_senzatetto: false,
-      rom_sinti: false,
-      disabilita_fisica: false,
-      disabilita_cognitiva: false,
-      disturbi_psichiatrici: false,
-      dipendenze: false,
-      genitori_precoci: false,
-      problemi_orientamento: false,
-      altro: false,
-      altro_specificare: ''
-    },
-    giovani_adulti: {
-      stranieri_migranti: false,
-      vittime_tratta: false,
-      vittime_violenza: false,
-      allontanati_famiglia: false,
-      detenuti: false,
-      ex_detenuti: false,
-      misure_alternative: false,
-      indigenti_senzatetto: false,
-      rom_sinti: false,
-      disabilita_fisica: false,
-      disabilita_cognitiva: false,
-      disturbi_psichiatrici: false,
-      dipendenze: false,
-      genitori_precoci: false,
-      problemi_orientamento: false,
-      altro: false,
-      altro_specificare: ''
-    }
-  },
+  caratteristiche_ospiti_adolescenti: [],
+  caratteristiche_ospiti_giovani: [],
+  caratteristiche_ospiti_altro: '',
+  
   persone_non_ospitate: {
     fino_16: { uomini: 0, donne: 0, totale: 0 },
     da_16_a_18: { uomini: 0, donne: 0, totale: 0 },
     maggiorenni: { uomini: 0, donne: 0, totale: 0 },
     totale: { uomini: 0, donne: 0, totale: 0 }
   },
-  caratteristiche_non_ospiti: {
-    adolescenti: {
-      stranieri_migranti: false,
-      vittime_tratta: false,
-      vittime_violenza: false,
-      allontanati_famiglia: false,
-      detenuti: false,
-      ex_detenuti: false,
-      misure_alternative: false,
-      indigenti_senzatetto: false,
-      rom_sinti: false,
-      disabilita_fisica: false,
-      disabilita_cognitiva: false,
-      disturbi_psichiatrici: false,
-      dipendenze: false,
-      genitori_precoci: false,
-      problemi_orientamento: false,
-      altro: false,
-      altro_specificare: ''
-    },
-    giovani_adulti: {
-      stranieri_migranti: false,
-      vittime_tratta: false,
-      vittime_violenza: false,
-      allontanati_famiglia: false,
-      detenuti: false,
-      ex_detenuti: false,
-      misure_alternative: false,
-      indigenti_senzatetto: false,
-      rom_sinti: false,
-      disabilita_fisica: false,
-      disabilita_cognitiva: false,
-      disturbi_psichiatrici: false,
-      dipendenze: false,
-      genitori_precoci: false,
-      problemi_orientamento: false,
-      altro: false,
-      altro_specificare: ''
-    }
-  },
+  caratteristiche_non_ospiti_adolescenti: [],
+  caratteristiche_non_ospiti_giovani: [],
+  caratteristiche_non_ospiti_altro: '',
 
   // Sezione D
   attivita_servizi: {
@@ -166,7 +95,6 @@ const defaultFormData: QuestionarioStruttureNew = {
     altro: false,
     altro_desc: ''
   },
-  attivita_significative: [],
   esperienze_inserimento_lavorativo: false,
   attivita_inserimento: [],
   nuove_attivita: [],
@@ -189,6 +117,7 @@ const defaultFormData: QuestionarioStruttureNew = {
 
 export default function QuestionarioStruttureNew({ initialData, readOnly, setFormData: externalSetFormData }: Props) {
   const router = useRouter();
+  const supabase = createClientComponentClient();
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [operatore, setOperatore] = useState<string>('');
@@ -236,36 +165,28 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
         return;
       }
 
-      // Prepariamo i dati
+      // Prepariamo i dati base
       const datiDaInviare = {
         ...formData,
-        id: uuidv4(), // Aggiungiamo sempre un ID
-        // Convertiamo eventuali array vuoti in array con almeno un elemento null
-        figure_professionali: formData.figure_professionali?.length ? formData.figure_professionali : [null],
-        nuove_attivita: formData.nuove_attivita?.length ? formData.nuove_attivita : [null],
-        collaborazioni: formData.collaborazioni?.length ? formData.collaborazioni : [null],
-        attivita_inserimento: formData.attivita_inserimento?.length ? formData.attivita_inserimento : [null]
+        creato_a: new Date().toISOString(),
+        stato: 'inviato'
       };
 
-      const response = await fetch('/api/questionari/strutture', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(datiDaInviare)
-      });
+      // Salvataggio diretto su Supabase
+      const { error } = await supabase
+        .from('strutturanuova')
+        .insert(datiDaInviare);
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Errore durante il salvataggio');
+      if (error) {
+        console.error('Errore Supabase:', error);
+        throw new Error(`Errore durante il salvataggio: ${error.message}`);
       }
 
       alert('Questionario inviato con successo!');
       router.push('/operatori');
 
     } catch (error) {
-      console.error('Errore dettagliato:', error);
+      console.error('Errore completo:', error);
       alert(error instanceof Error ? error.message : 'Errore durante l\'invio del questionario');
     }
   };
