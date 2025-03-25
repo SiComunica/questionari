@@ -43,33 +43,6 @@ const defaultFormData: QuestionarioStruttureNew = {
   figure_professionali: [],
   figure_professionali_altro: '',
 
-  // Servizi offerti (struttura corretta)
-  servizi_offerti: {
-    accoglienza: false,
-    orientamento: false,
-    formazione: false,
-    inserimento_lavorativo: false,
-    assistenza_legale: false,
-    assistenza_sanitaria: false,
-    mediazione_culturale: false,
-    supporto_psicologico: false,
-    altro: false,
-    altro_specificare: ''
-  },
-
-  // Caratteristiche utenti (struttura corretta)
-  caratteristiche_utenti: {
-    minori: false,
-    donne: false,
-    famiglie: false,
-    disabili: false,
-    anziani: false,
-    migranti: false,
-    dipendenze: false,
-    altro: false,
-    altro_specificare: ''
-  },
-
   // Sezione C
   persone_ospitate: {
     fino_16: { uomini: 0, donne: 0, totale: 0 },
@@ -164,6 +137,28 @@ const defaultFormData: QuestionarioStruttureNew = {
     }
   },
 
+  // Sezione D
+  attività_servizi: {
+    accoglienza_residenziale: false,
+    accoglienza_diurna: false,
+    orientamento_lavoro: false,
+    orientamento_formazione: false,
+    ascolto: false,
+    accompagnamento_sociale: false,
+    assistenza_legale: false,
+    assistenza_sanitaria: false,
+    assistenza_psicologica: false,
+    mediazione_linguistica: false,
+    mediazione_culturale: false,
+    mediazione_familiare: false,
+    pronto_intervento: false,
+    altro: false,
+    altro_specificare: ''
+  },
+  esperienze_inserimento_lavorativo: false,
+  attività_inserimento: [],
+  nuove_attività: [],
+
   // Sezione E
   collaborazioni: [],
   punti_forza_network: '',
@@ -177,44 +172,6 @@ const defaultFormData: QuestionarioStruttureNew = {
     fondi_pubblici_specifiche: '',
     fondi_privati_specifiche: '',
     fornitori: []
-  },
-
-  // Sezione D
-  attivita_servizi: {
-    alloggio: false,
-    vitto: false,
-    servizi_bassa_soglia: false,
-    servizi_bassa_soglia_desc: '',
-    ospitalita_diurna: false,
-    ospitalita_diurna_desc: '',
-    supporto_psicologico: false,
-    supporto_psicologico_desc: '',
-    sostegno_autonomia: false,
-    sostegno_autonomia_desc: '',
-    inserimento_lavorativo: false,
-    inserimento_lavorativo_desc: '',
-    orientamento_scolastico: false,
-    orientamento_scolastico_desc: '',
-    istruzione_scolastica: false,
-    istruzione_scolastica_desc: '',
-    formazione_professionale: false,
-    formazione_professionale_desc: '',
-    attivita_ricreative: false,
-    attivita_ricreative_desc: '',
-    altro: false,
-    altro_desc: ''
-  },
-  esperienze_inserimento: false,
-  attivita_significative: [],
-  previsione_attivita: false,
-  nuove_attivita: ['', '', ''],
-
-  // Aggiungiamo risorse_umane
-  risorse_umane: {
-    operatori_totali: 0,
-    operatori_part_time: 0,
-    operatori_full_time: 0,
-    volontari: 0
   }
 };
 
