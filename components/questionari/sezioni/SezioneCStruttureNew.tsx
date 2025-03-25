@@ -156,7 +156,7 @@ export default function SezioneCStruttureNew({ formData, setFormData }: Props) {
     "Minori vittime di tratta",
     "Minori con problemi di giustizia",
     "Altro"
-  ] as const;
+  ];
 
   const opzioniCaratteristicheGiovani = [
     "Giovani italiani",
@@ -164,7 +164,7 @@ export default function SezioneCStruttureNew({ formData, setFormData }: Props) {
     "Giovani vittime di tratta",
     "Giovani con problemi di giustizia",
     "Altro"
-  ] as const;
+  ];
 
   return (
     <div className="space-y-6">
