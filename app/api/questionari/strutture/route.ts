@@ -1,5 +1,11 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { createClient } from '@supabase/supabase-js';
+
+// Inizializza il client Supabase
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
 export async function POST(request: Request) {
   try {
@@ -12,12 +18,16 @@ export async function POST(request: Request) {
       stato: 'inviato'
     };
 
-    // Salva nel database usando il nome corretto della tabella
-    const savedQuestionario = await prisma.questionarioStruttureNew.create({
-      data: questionarioToSave
-    });
+    // Salva nella tabella strutturanuova di Supabase
+    const { data, error } = await supabase
+      .from('strutturanuova')
+      .insert(questionarioToSave)
+      .select()
+      .single();
 
-    return NextResponse.json(savedQuestionario, { status: 201 });
+    if (error) throw error;
+
+    return NextResponse.json(data, { status: 201 });
     
   } catch (error) {
     console.error('Errore durante il salvataggio del questionario:', error);
