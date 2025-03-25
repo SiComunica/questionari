@@ -3,7 +3,8 @@
 import React, { useState } from 'react';
 import QuestionarioGiovaniNew from '@/components/questionari/QuestionarioGiovaniNew';
 import QuestionarioOperatoriNuovo from '@/components/questionari/QuestionarioOperatoriNuovo';
-import type { QuestionarioStruttureNew } from "@/types/questionari";
+import QuestionarioStruttureNew from '@/components/questionari/QuestionarioStruttureNew';
+import type { QuestionarioStruttureNew as QuestionarioStruttureNewType } from "@/types/questionari";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useRouter } from 'next/navigation';
@@ -91,7 +92,7 @@ export default function DashboardOperatori() {
     setTimeout(() => setNotification({ show: false, message: '', type: '' }), 5000);
   };
 
-  const handleInviaQuestionario = async (questionario: QuestionarioStruttureNew) => {
+  const handleInviaQuestionario = async (questionario: QuestionarioStruttureNewType) => {
     try {
       const response = await fetch('/api/questionari/strutture', {
         method: 'POST',
