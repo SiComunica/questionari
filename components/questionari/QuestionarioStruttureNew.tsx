@@ -1,7 +1,8 @@
 "use client"
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { createClient } from '@/utils/supabase/client';
 import { v4 as uuidv4 } from 'uuid';
 import SezioneAStruttureNew from './sezioni/SezioneAStruttureNew';
@@ -186,18 +187,52 @@ const defaultFormData: QuestionarioStruttureNew = {
 
 export default function QuestionarioStruttureNew({ initialData, readOnly, setFormData: externalSetFormData }: Props) {
   const router = useRouter();
+  const supabase = createClientComponentClient();
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [operatore, setOperatore] = useState<string>('');
+  const totalSteps = 6;
+
   const [formData, setInternalFormData] = useState<QuestionarioStruttureNew>(() => ({
     ...defaultFormData,
     ...initialData
   }));
+
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('full_name')
+          .eq('id', user.id)
+          .single();
+        
+        if (profile) {
+          setOperatore(profile.full_name);
+        }
+      }
+    };
+    getUser();
+  }, []);
 
   const setFormData = (value: React.SetStateAction<QuestionarioStruttureNew>) => {
     const newValue = typeof value === 'function' ? value(formData) : value;
     setInternalFormData(newValue);
     if (externalSetFormData) {
       externalSetFormData(newValue);
+    }
+  };
+
+  const handleNext = () => {
+    if (currentStep < totalSteps) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
     }
   };
 
@@ -216,7 +251,7 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
       }
 
       alert('Questionario inviato con successo!');
-      router.push('/operatori'); // Torna alla pagina operatori dopo l'invio
+      router.push('/operatori');
 
     } catch (error) {
       console.error('Errore:', error);
@@ -245,8 +280,18 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Questionario Strutture</h1>
-      <form onSubmit={handleInviaQuestionario}>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Questionario Strutture</h1>
+        <p className="text-gray-600">Benvenuto, {operatore}</p>
+      </div>
+
+      <div className="mb-4">
+        <p className="text-sm text-gray-500">
+          Sezione {currentStep} di {totalSteps}
+        </p>
+      </div>
+
+      <form onSubmit={(e) => e.preventDefault()}>
         {renderStep()}
         
         <div className="flex gap-4 mt-4">
@@ -254,13 +299,34 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
             variant="outline" 
             onClick={() => router.push('/operatori')}
           >
-            Torna indietro
+            Torna alla dashboard
           </Button>
-          <Button 
-            onClick={handleInviaQuestionario}
-          >
-            Invia questionario
-          </Button>
+
+          {currentStep > 1 && (
+            <Button 
+              variant="outline"
+              onClick={handlePrevious}
+            >
+              Indietro
+            </Button>
+          )}
+
+          {currentStep < totalSteps && (
+            <Button 
+              onClick={handleNext}
+            >
+              Avanti
+            </Button>
+          )}
+
+          {currentStep === totalSteps && (
+            <Button 
+              onClick={handleInviaQuestionario}
+              className="bg-green-600 hover:bg-green-700"
+            >
+              Invia questionario
+            </Button>
+          )}
         </div>
       </form>
     </div>
