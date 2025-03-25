@@ -1,13 +1,12 @@
 "use client"
 
 import React from 'react';
-import { QuestionarioStruttureNew } from '@/types/questionari';
+import { QuestionarioStruttureNew, SoggettoCollaborazione } from '@/types/questionari';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Checkbox } from '@/components/ui/checkbox';
 
 interface Props {
   formData: QuestionarioStruttureNew;
@@ -15,63 +14,34 @@ interface Props {
 }
 
 export default function SezioneEStruttureNew({ formData, setFormData }: Props) {
-  const handleSoggettoChange = (index: number, field: 'denominazione' | 'tipo' | 'oggetto', value: string) => {
+  const handleCollaborazioneChange = (index: number, field: keyof SoggettoCollaborazione, value: string) => {
     setFormData(prev => {
-      const newSoggetti = [...(prev.collaborazioni.soggetti || [])];
-      if (!newSoggetti[index]) {
-        newSoggetti[index] = {
-          denominazione: '',
-          tipo: 'occasionale',
-          oggetto: ''
-        };
+      const newCollaborazioni = [...prev.collaborazioni];
+      if (!newCollaborazioni[index]) {
+        newCollaborazioni[index] = { denominazione: '', tipo: 'ricorrente', oggetto: '' };
       }
-      newSoggetti[index] = {
-        ...newSoggetti[index],
+      newCollaborazioni[index] = {
+        ...newCollaborazioni[index],
         [field]: value
       };
       return {
         ...prev,
-        collaborazioni: {
-          ...prev.collaborazioni,
-          soggetti: newSoggetti
-        }
+        collaborazioni: newCollaborazioni
       };
     });
   };
 
-  const handleNetworkChange = (field: 'punti_forza' | 'criticita', value: string) => {
+  const handlePuntiForzaChange = (value: string) => {
     setFormData(prev => ({
       ...prev,
-      collaborazioni: {
-        ...prev.collaborazioni,
-        [field]: value
-      }
+      punti_forza_network: value
     }));
   };
 
-  const handleCriticitaChange = (field: string, value: boolean) => {
+  const handleCriticaNetworkChange = (value: string) => {
     setFormData(prev => ({
       ...prev,
-      collaborazioni: {
-        ...prev.collaborazioni,
-        criticita: {
-          ...prev.collaborazioni.criticita,
-          [field]: value
-        }
-      }
-    }));
-  };
-
-  const handleAltroSpecificareChange = (value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      collaborazioni: {
-        ...prev.collaborazioni,
-        criticita: {
-          ...prev.collaborazioni.criticita,
-          altro_specificare: value
-        }
-      }
+      critica_network: value
     }));
   };
 
@@ -79,46 +49,42 @@ export default function SezioneEStruttureNew({ formData, setFormData }: Props) {
     <div className="space-y-6">
       <Card>
         <CardContent className="pt-6">
-          <h3 className="text-lg font-semibold mb-4">
-            E1. Con quali soggetti/strutture collaborate?
-          </h3>
-
-          {[1, 2, 3].map((num, index) => (
-            <div key={num} className="mb-8 p-4 border rounded">
-              <h4 className="font-semibold mb-4">{num}° soggetto</h4>
+          <h3 className="text-lg font-semibold mb-4">Collaborazioni e partnership</h3>
+          
+          {[0, 1, 2].map((index) => (
+            <div key={index} className="mb-6 p-4 border rounded">
+              <h4 className="font-medium mb-4">Soggetto {index + 1}</h4>
               
               <div className="space-y-4">
                 <div>
-                  <Label>E1.{num}SOGG Denominazione</Label>
+                  <Label>Denominazione</Label>
                   <Input
-                    value={formData.collaborazioni.soggetti[index]?.denominazione || ''}
-                    onChange={(e) => handleSoggettoChange(index, 'denominazione', e.target.value)}
+                    value={formData.collaborazioni[index]?.denominazione || ''}
+                    onChange={(e) => handleCollaborazioneChange(index, 'denominazione', e.target.value)}
                   />
                 </div>
 
                 <div>
-                  <Label>E1.{num}TIPO Tipo di collaborazione</Label>
-                  <RadioGroup
-                    value={formData.collaborazioni.soggetti[index]?.tipo || 'occasionale'}
-                    onValueChange={(value) => handleSoggettoChange(index, 'tipo', value)}
-                    className="mt-2"
+                  <Label>Tipo di collaborazione</Label>
+                  <Select
+                    value={formData.collaborazioni[index]?.tipo || 'ricorrente'}
+                    onValueChange={(value) => handleCollaborazioneChange(index, 'tipo', value)}
                   >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="ricorrente" id={`ricorrente-${index}`} />
-                      <Label htmlFor={`ricorrente-${index}`}>1. ricorrente</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="occasionale" id={`occasionale-${index}`} />
-                      <Label htmlFor={`occasionale-${index}`}>2. occasionale</Label>
-                    </div>
-                  </RadioGroup>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ricorrente">Ricorrente</SelectItem>
+                      <SelectItem value="occasionale">Occasionale</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div>
-                  <Label>E1.{num}OGGETTO Oggetto della collaborazione</Label>
-                  <Input
-                    value={formData.collaborazioni.soggetti[index]?.oggetto || ''}
-                    onChange={(e) => handleSoggettoChange(index, 'oggetto', e.target.value)}
+                  <Label>Oggetto della collaborazione</Label>
+                  <Textarea
+                    value={formData.collaborazioni[index]?.oggetto || ''}
+                    onChange={(e) => handleCollaborazioneChange(index, 'oggetto', e.target.value)}
                   />
                 </div>
               </div>
@@ -129,89 +95,24 @@ export default function SezioneEStruttureNew({ formData, setFormData }: Props) {
 
       <Card>
         <CardContent className="pt-6">
-          <h3 className="text-lg font-semibold mb-4">
-            E2. Punti di forza del network
-          </h3>
-          <Textarea
-            value={formData.collaborazioni.punti_forza || ''}
-            onChange={(e) => handleNetworkChange('punti_forza', e.target.value)}
-            placeholder="Descrivere brevemente"
-            className="min-h-[100px]"
-          />
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="pt-6">
-          <h3 className="text-lg font-semibold mb-4">
-            E3. Criticità del network
-          </h3>
+          <h3 className="text-lg font-semibold mb-4">Valutazione del network</h3>
+          
           <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <Checkbox 
-                checked={formData.collaborazioni.criticita.finanziarie}
-                onCheckedChange={(checked) => handleCriticitaChange('finanziarie', checked as boolean)}
+            <div>
+              <Label>Punti di forza del network</Label>
+              <Textarea
+                value={formData.punti_forza_network}
+                onChange={(e) => handlePuntiForzaChange(e.target.value)}
               />
-              <Label>Finanziarie</Label>
             </div>
 
-            <div className="flex items-center space-x-2">
-              <Checkbox 
-                checked={formData.collaborazioni.criticita.personale}
-                onCheckedChange={(checked) => handleCriticitaChange('personale', checked as boolean)}
+            <div>
+              <Label>Criticità del network</Label>
+              <Textarea
+                value={formData.critica_network}
+                onChange={(e) => handleCriticaNetworkChange(e.target.value)}
               />
-              <Label>Personale</Label>
             </div>
-
-            <div className="flex items-center space-x-2">
-              <Checkbox 
-                checked={formData.collaborazioni.criticita.spazi}
-                onCheckedChange={(checked) => handleCriticitaChange('spazi', checked as boolean)}
-              />
-              <Label>Spazi</Label>
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <Checkbox 
-                checked={formData.collaborazioni.criticita.attrezzature}
-                onCheckedChange={(checked) => handleCriticitaChange('attrezzature', checked as boolean)}
-              />
-              <Label>Attrezzature</Label>
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <Checkbox 
-                checked={formData.collaborazioni.criticita.utenza}
-                onCheckedChange={(checked) => handleCriticitaChange('utenza', checked as boolean)}
-              />
-              <Label>Utenza</Label>
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <Checkbox 
-                checked={formData.collaborazioni.criticita.rete_servizi}
-                onCheckedChange={(checked) => handleCriticitaChange('rete_servizi', checked as boolean)}
-              />
-              <Label>Rete servizi</Label>
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <Checkbox 
-                checked={formData.collaborazioni.criticita.altro}
-                onCheckedChange={(checked) => handleCriticitaChange('altro', checked as boolean)}
-              />
-              <Label>Altro</Label>
-            </div>
-
-            {formData.collaborazioni.criticita.altro && (
-              <div>
-                <Label>Specificare altro</Label>
-                <Input
-                  value={formData.collaborazioni.criticita.altro_specificare}
-                  onChange={(e) => handleAltroSpecificareChange(e.target.value)}
-                />
-              </div>
-            )}
           </div>
         </CardContent>
       </Card>
