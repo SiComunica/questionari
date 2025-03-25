@@ -242,16 +242,32 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
 
   const handleInviaQuestionario = async () => {
     try {
+      // Verifichiamo prima che l'utente sia autenticato
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        alert('Sessione scaduta. Effettua nuovamente il login.');
+        router.push('/');
+        return;
+      }
+
       const response = await fetch('/api/questionari/strutture', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          // Aggiungiamo il token di autenticazione
+          'Authorization': `Bearer ${session.access_token}`
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({
+          ...formData,
+          user_id: session.user.id,
+          created_at: new Date().toISOString()
+        })
       });
 
       if (!response.ok) {
-        throw new Error('Errore durante l\'invio del questionario');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Errore durante l\'invio del questionario');
       }
 
       alert('Questionario inviato con successo!');
@@ -259,7 +275,7 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
 
     } catch (error) {
       console.error('Errore:', error);
-      alert('Errore durante l\'invio del questionario');
+      alert(error instanceof Error ? error.message : 'Errore durante l\'invio del questionario');
     }
   };
 

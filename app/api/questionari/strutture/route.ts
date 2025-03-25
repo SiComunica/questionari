@@ -7,22 +7,32 @@ export async function POST(request: Request) {
     const cookieStore = cookies();
     const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
     
-    // Ottieni l'utente corrente
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    if (!user) {
+    // Verifica autenticazione
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session) {
       return NextResponse.json(
-        { error: 'Utente non autenticato' },
+        { error: 'Sessione non valida. Effettua nuovamente il login.' },
         { status: 401 }
       );
     }
 
     const questionario = await request.json();
 
+    // Verifica che i dati necessari siano presenti
+    if (!questionario) {
+      return NextResponse.json(
+        { error: 'Dati del questionario mancanti' },
+        { status: 400 }
+      );
+    }
+
     // Prepara i dati per il salvataggio
     const datiDaSalvare = {
       ...questionario,
-      user_id: user.id,
+      user_id: session.user.id,
       created_at: new Date().toISOString(),
       stato: 'inviato'
     };
@@ -30,14 +40,14 @@ export async function POST(request: Request) {
     // Salva nella tabella strutturanuova
     const { data, error } = await supabase
       .from('strutturanuova')
-      .insert(datiDaSalvare)
+      .insert([datiDaSalvare])
       .select()
       .single();
 
     if (error) {
       console.error('Errore Supabase:', error);
       return NextResponse.json(
-        { error: 'Errore durante il salvataggio nel database' },
+        { error: 'Errore durante il salvataggio nel database: ' + error.message },
         { status: 500 }
       );
     }
@@ -47,7 +57,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Errore durante il salvataggio:', error);
     return NextResponse.json(
-      { error: 'Errore durante il salvataggio del questionario' },
+      { error: 'Errore interno del server: ' + (error instanceof Error ? error.message : 'Errore sconosciuto') },
       { status: 500 }
     );
   }
