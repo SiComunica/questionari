@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import QuestionarioGiovaniNew from '@/components/questionari/QuestionarioGiovaniNew';
 import QuestionarioOperatoriNuovo from '@/components/questionari/QuestionarioOperatoriNuovo';
-import { QuestionarioStruttureNew } from "@/types/questionari";
+import type { QuestionarioStruttureNew } from "@/types/questionari";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useRouter } from 'next/navigation';
@@ -14,9 +14,7 @@ export default function DashboardOperatori() {
   const [formData, setFormData] = useState<any>(null);
   const router = useRouter();
   const supabase = createClientComponentClient();
-  const [showMessage, setShowMessage] = useState(false);
-  const [messageType, setMessageType] = useState<'success' | 'error'>('success');
-  const [messageText, setMessageText] = useState('');
+  const [notification, setNotification] = useState({ show: false, message: '', type: '' });
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -88,11 +86,9 @@ export default function DashboardOperatori() {
     }
   };
 
-  const showNotification = (type: 'success' | 'error', text: string) => {
-    setMessageType(type);
-    setMessageText(text);
-    setShowMessage(true);
-    setTimeout(() => setShowMessage(false), 5000);
+  const showNotification = (message: string, type: 'success' | 'error') => {
+    setNotification({ show: true, message, type });
+    setTimeout(() => setNotification({ show: false, message: '', type: '' }), 5000);
   };
 
   const handleInviaQuestionario = async (questionario: QuestionarioStruttureNew) => {
@@ -109,11 +105,11 @@ export default function DashboardOperatori() {
         throw new Error('Errore durante l\'invio del questionario');
       }
 
-      showNotification('success', 'Questionario inviato con successo');
+      showNotification('Questionario inviato con successo', 'success');
 
     } catch (error) {
       console.error('Errore:', error);
-      showNotification('error', 'Errore durante l\'invio del questionario');
+      showNotification('Errore durante l\'invio del questionario', 'error');
     }
   };
 
@@ -142,14 +138,13 @@ export default function DashboardOperatori() {
 
   return (
     <div className="relative">
-      {/* Notification */}
-      {showMessage && (
+      {notification.show && (
         <div 
-          className={`fixed top-4 right-4 p-4 rounded-md shadow-lg ${
-            messageType === 'success' ? 'bg-green-500' : 'bg-red-500'
-          } text-white z-50`}
+          className={`fixed top-4 right-4 p-4 rounded-md shadow-lg z-50 ${
+            notification.type === 'success' ? 'bg-green-500' : 'bg-red-500'
+          } text-white`}
         >
-          {messageText}
+          {notification.message}
         </div>
       )}
 
