@@ -6,7 +6,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { type CheckedState } from '@radix-ui/react-checkbox';
 
 interface Props {
   formData: QuestionarioStruttureNew;
@@ -14,14 +13,16 @@ interface Props {
 }
 
 export default function SezioneDStruttureNew({ formData, setFormData }: Props) {
-  const handleServizioChange = (servizio: keyof typeof formData.attività_servizi) => (checked: CheckedState) => {
-    setFormData(prev => ({
-      ...prev,
-      attività_servizi: {
-        ...prev.attività_servizi,
-        [servizio]: checked === true
-      }
-    }));
+  const handleServizioChange = (servizio: keyof typeof formData.attività_servizi) => {
+    return function(checked: boolean | "indeterminate") {
+      setFormData(prev => ({
+        ...prev,
+        attività_servizi: {
+          ...prev.attività_servizi,
+          [servizio]: checked === true
+        }
+      }));
+    };
   };
 
   const handleAltroSpecificareChange = (value: string) => {
