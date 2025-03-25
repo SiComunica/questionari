@@ -3,11 +3,12 @@
 import React, { useState } from 'react';
 import QuestionarioGiovaniNew from '@/components/questionari/QuestionarioGiovaniNew';
 import QuestionarioOperatoriNuovo from '@/components/questionari/QuestionarioOperatoriNuovo';
-import QuestionarioStruttureNew from '@/components/questionari/QuestionarioStruttureNew';
+import { QuestionarioStruttureNew } from "@/types/questionari";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useRouter } from 'next/navigation';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { toast } from "@/components/ui/use-toast";
 
 export default function DashboardOperatori() {
   const [selectedQuestionario, setSelectedQuestionario] = useState<string | null>(null);
@@ -82,6 +83,37 @@ export default function DashboardOperatori() {
     } catch (error) {
       console.error('Errore durante l\'invio:', error);
       alert('Errore durante l\'invio del questionario');
+    }
+  };
+
+  const handleInviaQuestionario = async (questionario: QuestionarioStruttureNew) => {
+    try {
+      const response = await fetch('/api/questionari/strutture', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(questionario)
+      });
+
+      if (!response.ok) {
+        throw new Error('Errore durante l\'invio del questionario');
+      }
+
+      toast({
+        title: "Questionario inviato con successo",
+        description: "Il questionario è stato salvato e sarà visibile nella dashboard amministratori",
+        duration: 5000,
+      });
+
+    } catch (error) {
+      console.error('Errore:', error);
+      toast({
+        title: "Errore durante l'invio",
+        description: "Si è verificato un errore durante l'invio del questionario. Riprova più tardi.",
+        variant: "destructive",
+        duration: 5000,
+      });
     }
   };
 
