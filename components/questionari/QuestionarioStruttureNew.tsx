@@ -155,9 +155,9 @@ const defaultFormData: QuestionarioStruttureNew = {
     altro: false,
     altro_specificare: ''
   },
-  attivita_significative: [],
+  attività_significative: [],
   esperienze_inserimento_lavorativo: false,
-  attivita_inserimento: [],
+  attività_inserimento: [],
   nuove_attività: [],
 
   // Sezione E

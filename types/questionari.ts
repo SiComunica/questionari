@@ -640,9 +640,26 @@ export interface QuestionarioStruttureNew {
     giovani_adulti: CaratteristicheUtenti;
   };
   caratteristiche_non_ospiti_altro?: string;
-  attività_servizi: any; // Definire la struttura specifica
+  attività_servizi: {
+    accoglienza_residenziale: boolean;
+    accoglienza_diurna: boolean;
+    orientamento_lavoro: boolean;
+    orientamento_formazione: boolean;
+    ascolto: boolean;
+    accompagnamento_sociale: boolean;
+    assistenza_legale: boolean;
+    assistenza_sanitaria: boolean;
+    assistenza_psicologica: boolean;
+    mediazione_linguistica: boolean;
+    mediazione_culturale: boolean;
+    mediazione_familiare: boolean;
+    pronto_intervento: boolean;
+    altro: boolean;
+    altro_specificare: string;
+  };
+  attività_significative: string[];
   esperienze_inserimento_lavorativo: boolean;
-  attività_inserimento: any[]; // Definire la struttura specifica
+  attività_inserimento: any[];
   nuove_attività: string[];
   collaborazioni: SoggettoCollaborazione[];
   punti_forza_network: string;

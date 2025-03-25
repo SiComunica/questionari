@@ -36,9 +36,9 @@ export default function SezioneDStruttureNew({ formData, setFormData }: Props) {
   const handleAttivitaSignificativeChange = (attivita: string, checked: boolean) => {
     setFormData(prev => ({
       ...prev,
-      attivita_significative: checked 
-        ? [...prev.attivita_significative, attivita]
-        : prev.attivita_significative.filter(a => a !== attivita)
+      attività_significative: checked 
+        ? [...prev.attività_significative, attivita]
+        : prev.attività_significative.filter(a => a !== attivita)
     }));
   };
 
@@ -106,7 +106,7 @@ export default function SezioneDStruttureNew({ formData, setFormData }: Props) {
             ].map((attivita) => (
               <div key={attivita} className="flex items-center space-x-2">
                 <Checkbox
-                  checked={formData.attivita_significative.includes(attivita)}
+                  checked={formData.attività_significative.includes(attivita)}
                   onCheckedChange={(checked) => handleAttivitaSignificativeChange(attivita, checked as boolean)}
                 />
                 <Label>{attivita.replace(/_/g, ' ')}</Label>
