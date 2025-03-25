@@ -40,22 +40,8 @@ const defaultFormData: QuestionarioStruttureNew = {
     donne: 0,
     totale: 0
   },
-  figure_professionali: {
-    psicologi: false,
-    assistenti_sociali: false,
-    educatori: false,
-    mediatori: false,
-    medici: false,
-    personale_infermieristico: false,
-    insegnanti_formatori: false,
-    operatori_religiosi: false,
-    tutor: false,
-    operatori_legali: false,
-    operatori_multifunzionali: false,
-    amministrativi: false,
-    altro: false,
-    altro_specificare: ''
-  },
+  figure_professionali: [],
+  figure_professionali_altro: '',
 
   // Servizi offerti (struttura corretta)
   servizi_offerti: {
