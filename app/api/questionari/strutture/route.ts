@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/lib/db';
+import { prisma } from '@/lib/prisma';
 
 export async function POST(request: Request) {
   try {
@@ -12,8 +12,8 @@ export async function POST(request: Request) {
       stato: 'inviato'
     };
 
-    // Salva nel database
-    const savedQuestionario = await db.questionarioStrutture.create({
+    // Salva nel database usando il nome corretto della tabella
+    const savedQuestionario = await prisma.questionarioStruttureNew.create({
       data: questionarioToSave
     });
 
