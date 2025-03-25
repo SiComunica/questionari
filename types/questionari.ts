@@ -650,7 +650,7 @@ export interface QuestionarioStruttureNew {
     giovani_adulti: CaratteristicheUtenti;
   };
   caratteristiche_non_ospiti_altro?: string;
-  attività_servizi: {
+  attivita_servizi: {
     alloggio: boolean;
     vitto: boolean;
     servizi_bassa_soglia: boolean;
@@ -674,9 +674,9 @@ export interface QuestionarioStruttureNew {
     altro: boolean;
     altro_desc: string;
   };
-  attività_significative: string[];
+  attivita_significative: any[];
   esperienze_inserimento_lavorativo: boolean;
-  attivita_inserimento: AttivitaInserimento[];
+  attivita_inserimento: any[];
   nuove_attivita: string[];
   collaborazioni: SoggettoCollaborazione[];
   punti_forza_network: string;
