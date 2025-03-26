@@ -163,7 +163,7 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
         return;
       }
 
-      const questionarioData: QuestionarioStruttureNew = {
+      const nuovoQuestionario: QuestionarioStruttureNew = {
         id: uuidv4(),
         creato_a: new Date().toISOString(),
         nome_struttura: formData.nome_struttura || '',
@@ -181,17 +181,23 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
         }
       };
 
+      console.log('Saving questionario:', nuovoQuestionario);
+
       const { data, error } = await supabase
         .from('strutture')
-        .insert(questionarioData)
-        .select();
+        .insert(nuovoQuestionario)
+        .select()
+        .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Errore durante il salvataggio:', error);
+        throw error;
+      }
 
-      console.log('Questionario salvato:', data);
+      console.log('Questionario salvato con successo:', data);
       toast.success('Questionario inviato con successo!');
-      router.push('/operatori');
-      
+      router.push('/');
+
     } catch (error) {
       console.error('Errore durante il salvataggio:', error);
       toast.error(`Errore durante il salvataggio: ${error.message}`);
