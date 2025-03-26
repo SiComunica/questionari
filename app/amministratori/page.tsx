@@ -10,7 +10,7 @@ import { FileSpreadsheet, FileText, Trash2, LogOut } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import QuestionariStruttureNew from '@/components/dashboard/QuestionariStruttureNew'
 import { exportToExcel, exportToPDF } from '@/utils/export'
-import XLSX from 'xlsx'
+import * as XLSX from 'xlsx'
 import jsPDF from 'jspdf'
 
 // Tipo corretto per i questionari giovani
