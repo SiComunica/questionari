@@ -165,95 +165,18 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
         return;
       }
 
-      const nuovoQuestionario: QuestionarioStruttureNew = {
-        id: uuidv4(),
-        nome_struttura: formData.nome_struttura || '',
+      const questionarioToSave = {
+        ...formData,
         creato_da: operatore,
         creato_a: new Date().toISOString(),
-        stato: 'inviato',
-        id_struttura: formData.id_struttura || '',
-        forma_giuridica: formData.forma_giuridica || '',
-        forma_giuridica_altro: formData.forma_giuridica_altro || '',
-        tipo_struttura: formData.tipo_struttura || '',
-        anno_inizio: formData.anno_inizio || 0,
-        missione: formData.missione || '',
-        personale_retribuito: formData.personale_retribuito || {
-          uomini: 0,
-          donne: 0,
-          totale: 0,
-          part_time: 0,
-          full_time: 0
-        },
-        personale_volontario: formData.personale_volontario || {
-          uomini: 0,
-          donne: 0,
-          totale: 0
-        },
-        figure_professionali: formData.figure_professionali || [],
-        figure_professionali_altro: formData.figure_professionali_altro || '',
-        persone_ospitate: formData.persone_ospitate || {
-          fino_16: { uomini: 0, donne: 0, totale: 0 },
-          da_16_a_18: { uomini: 0, donne: 0, totale: 0 },
-          maggiorenni: { uomini: 0, donne: 0, totale: 0 },
-          totale: { uomini: 0, donne: 0, totale: 0 }
-        },
-        caratteristiche_ospiti_adolescenti: formData.caratteristiche_ospiti_adolescenti || [],
-        caratteristiche_ospiti_giovani: formData.caratteristiche_ospiti_giovani || [],
-        caratteristiche_ospiti_altro: formData.caratteristiche_ospiti_altro || '',
-        persone_non_ospitate: formData.persone_non_ospitate || {
-          fino_16: { uomini: 0, donne: 0, totale: 0 },
-          da_16_a_18: { uomini: 0, donne: 0, totale: 0 },
-          maggiorenni: { uomini: 0, donne: 0, totale: 0 },
-          totale: { uomini: 0, donne: 0, totale: 0 }
-        },
-        caratteristiche_non_ospiti_adolescenti: formData.caratteristiche_non_ospiti_adolescenti || [],
-        caratteristiche_non_ospiti_giovani: formData.caratteristiche_non_ospiti_giovani || [],
-        caratteristiche_non_ospiti_altro: formData.caratteristiche_non_ospiti_altro || '',
-        attivita_servizi: formData.attivita_servizi || {
-          alloggio: false,
-          vitto: false,
-          servizi_bassa_soglia: false,
-          servizi_bassa_soglia_desc: '',
-          ospitalita_diurna: false,
-          ospitalita_diurna_desc: '',
-          supporto_psicologico: false,
-          supporto_psicologico_desc: '',
-          sostegno_abitativo: false,
-          sostegno_abitativo_desc: '',
-          inserimento_lavorativo: false,
-          inserimento_lavorativo_desc: '',
-          orientamento_scolastico: false,
-          orientamento_scolastico_desc: '',
-          istruzione_scolastica: false,
-          istruzione_scolastica_desc: '',
-          formazione_professionale: false,
-          formazione_professionale_desc: '',
-          attivita_ricreative: false,
-          attivita_ricreative_desc: '',
-          altro: false,
-          altro_desc: ''
-        },
-        esperienze_inserimento_lavorativo: formData.esperienze_inserimento_lavorativo || false,
-        attivita_inserimento: formData.attivita_inserimento || [],
-        nuove_attivita: formData.nuove_attivita || [],
-        collaborazioni: formData.collaborazioni || [],
-        punti_forza_network: formData.punti_forza_network || '',
-        critica_network: formData.critica_network || '',
-        finanziamenti: formData.finanziamenti || {
-          fondi_pubblici: 0,
-          fondi_privati: 0,
-          totale: 0,
-          fondi_pubblici_specifiche: '',
-          fondi_privati_specifiche: '',
-          fornitori: []
-        }
+        stato: 'inviato'
       };
 
-      console.log('Saving questionario:', nuovoQuestionario);
+      console.log('Saving questionario:', questionarioToSave);
 
       const { data, error } = await supabase
         .from('strutture')
-        .insert(nuovoQuestionario)
+        .insert(questionarioToSave)
         .select()
         .single();
 
