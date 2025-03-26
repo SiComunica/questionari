@@ -4,10 +4,25 @@ import { useEffect, useState } from 'react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { FileSpreadsheet, FileText, Trash2 } from 'lucide-react'
+import { toast } from 'react-hot-toast'
+import { exportToExcel, exportToPDF } from '@/utils/export'
+
+type QuestionarioStrutture = {
+  id: string;
+  creato_a: string;
+  creato_da: string;
+  stato: string;
+  nome_struttura: string;
+  // ... altri campi necessari
+}
 
 export default function QuestionariStruttureNew() {
-  const [questionari, setQuestionari] = useState<any[]>([])
+  const [questionari, setQuestionari] = useState<QuestionarioStrutture[]>([])
   const [loading, setLoading] = useState(true)
+  const [selectedQuestionario, setSelectedQuestionario] = useState<QuestionarioStrutture | null>(null)
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
   const supabase = createClientComponentClient()
 
   useEffect(() => {
@@ -22,6 +37,7 @@ export default function QuestionariStruttureNew() {
         setQuestionari(data || [])
       } catch (err) {
         console.error('Errore:', err)
+        toast.error('Errore nel caricamento dei questionari')
       } finally {
         setLoading(false)
       }
@@ -30,16 +46,114 @@ export default function QuestionariStruttureNew() {
     fetchQuestionari()
   }, [])
 
-  if (loading) {
-    return <div>Caricamento...</div>
+  const handleExportExcel = async (questionario?: QuestionarioStrutture) => {
+    try {
+      if (questionario) {
+        exportToExcel({
+          strutture: [questionario],
+          giovani: [],
+          operatori: []
+        });
+        toast.success('Questionario esportato in Excel');
+      } else {
+        exportToExcel({
+          strutture: questionari,
+          giovani: [],
+          operatori: []
+        });
+        toast.success('Tutti i questionari esportati in Excel');
+      }
+    } catch (error) {
+      console.error('Errore durante l\'export Excel:', error);
+      toast.error('Errore durante l\'export in Excel');
+    }
+  };
+
+  const handleExportPDF = async (questionario?: QuestionarioStrutture) => {
+    try {
+      if (questionario) {
+        exportToPDF({
+          strutture: [questionario],
+          giovani: [],
+          operatori: []
+        });
+        toast.success('Questionario esportato in PDF');
+      } else {
+        exportToPDF({
+          strutture: questionari,
+          giovani: [],
+          operatori: []
+        });
+        toast.success('Tutti i questionari esportati in PDF');
+      }
+    } catch (error) {
+      console.error('Errore durante l\'export PDF:', error);
+      toast.error('Errore durante l\'export in PDF');
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('strutture')
+        .delete()
+        .eq('id', id)
+
+      if (error) throw error
+      
+      setQuestionari(prev => prev.filter(q => q.id !== id))
+      toast.success('Questionario eliminato con successo')
+    } catch (error) {
+      toast.error('Errore durante l\'eliminazione')
+    }
   }
 
+  const renderQuestionarioDettaglio = (questionario: QuestionarioStrutture) => {
+    return (
+      <div className="space-y-4">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <h3 className="font-bold">Dati Generali</h3>
+            <p>Nome struttura: {questionario.nome_struttura}</p>
+            <p>Data invio: {new Date(questionario.creato_a).toLocaleDateString()}</p>
+            <p>Inviato da: {questionario.creato_da}</p>
+            <p>Stato: {questionario.stato}</p>
+          </div>
+          {/* Aggiungi altre sezioni del questionario */}
+        </div>
+        <div className="flex justify-end gap-2 mt-4">
+          <Button onClick={() => handleExportExcel(questionario)} className="flex gap-2">
+            <FileSpreadsheet size={20} />
+            Excel
+          </Button>
+          <Button onClick={() => handleExportPDF(questionario)} className="flex gap-2">
+            <FileText size={20} />
+            PDF
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  if (loading) return <div>Caricamento...</div>
+
   return (
-    <Card>
+    <Card className="mt-8">
       <CardHeader>
         <CardTitle>Questionari Strutture</CardTitle>
       </CardHeader>
       <CardContent>
+        <div className="mb-6 flex gap-4">
+          <Button onClick={() => handleExportExcel()} className="flex gap-2">
+            <FileSpreadsheet size={20} />
+            Esporta tutti in Excel
+          </Button>
+          <Button onClick={() => handleExportPDF()} className="flex gap-2">
+            <FileText size={20} />
+            Esporta tutti in PDF
+          </Button>
+        </div>
+
         {questionari.length === 0 ? (
           <p>Nessun questionario strutture ricevuto</p>
         ) : (
@@ -56,18 +170,50 @@ export default function QuestionariStruttureNew() {
                       Stato: {questionario.stato}
                     </p>
                   </div>
-                  <Button 
-                    variant="outline"
-                    onClick={() => {/* TODO: implementare visualizzazione dettagli */}}
-                  >
-                    Visualizza dettagli
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button 
+                      variant="outline"
+                      onClick={() => {
+                        setSelectedQuestionario(questionario)
+                        setIsDialogOpen(true)
+                      }}
+                    >
+                      Visualizza dettagli
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      onClick={() => handleExportExcel(questionario)}
+                    >
+                      <FileSpreadsheet size={20} />
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      onClick={() => handleExportPDF(questionario)}
+                    >
+                      <FileText size={20} />
+                    </Button>
+                    <Button 
+                      variant="destructive"
+                      onClick={() => handleDelete(questionario.id)}
+                    >
+                      <Trash2 size={20} />
+                    </Button>
+                  </div>
                 </div>
               </Card>
             ))}
           </div>
         )}
       </CardContent>
+
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Dettaglio Questionario Struttura</DialogTitle>
+          </DialogHeader>
+          {selectedQuestionario && renderQuestionarioDettaglio(selectedQuestionario)}
+        </DialogContent>
+      </Dialog>
     </Card>
   )
 } 
