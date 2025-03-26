@@ -153,19 +153,19 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
     try {
       setLoading(true);
 
-      // Prepara i dati base
+      // Prepara i dati base con i nomi delle colonne corretti
       const questionarioData = {
         id: uuidv4(),
-        creato_a: new Date().toISOString(),
-        creato_da: formData.creato_da || 'operatore', // valore di default se manca
+        data_creazione: new Date().toISOString(), // invece di creato_a
+        codice_operatore: formData.creato_da || 'operatore', // invece di creato_da
         stato: 'inviato',
-        nome_struttura: formData.nome_struttura || '',
-        id_struttura: formData.id_struttura || '',
+        denominazione: formData.nome_struttura || '', // invece di nome_struttura
+        codice_struttura: formData.id_struttura || '', // invece di id_struttura
         forma_giuridica: formData.forma_giuridica || '',
-        forma_giuridica_altro: formData.forma_giuridica_altro || '',
-        tipo_struttura: formData.tipo_struttura || '',
-        anno_inizio: formData.anno_inizio || 0,
-        missione: formData.missione || ''
+        altra_forma_giuridica: formData.forma_giuridica_altro || '', // invece di forma_giuridica_altro
+        tipologia: formData.tipo_struttura || '', // invece di tipo_struttura
+        anno_avvio: formData.anno_inizio || 0, // invece di anno_inizio
+        mission: formData.missione || '' // invece di missione
       };
 
       console.log('Tentativo di salvataggio dati:', questionarioData);
