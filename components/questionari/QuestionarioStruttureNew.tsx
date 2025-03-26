@@ -151,41 +151,44 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
 
   const handleInviaQuestionario = async () => {
     try {
-      // Validazione base
-      if (!formData.id_struttura || !formData.nome_struttura) {
-        alert('Compilare i campi obbligatori');
+      // Verifica che ci sia almeno il codice operatore
+      if (!formData.creato_da) {
+        toast.error('Inserire il codice operatore');
         return;
       }
+
+      setLoading(true); // Aggiungi indicatore di caricamento
 
       // Prepara i dati per il salvataggio
       const questionarioData = {
         ...formData,
         id: uuidv4(),
         creato_a: new Date().toISOString(),
-        stato: 'inviato'
+        stato: 'inviato',
+        creato_da: formData.creato_da // Assicurati che il codice operatore sia incluso
       };
 
-      // Salva nella tabella strutture
+      console.log('Dati da salvare:', questionarioData); // Per debug
+
       const { data, error } = await supabase
         .from('strutture')
         .insert(questionarioData)
-        .select();
+        .select('*');
 
       if (error) {
-        console.error('Errore durante il salvataggio:', error);
-        alert('Errore durante il salvataggio: ' + error.message);
+        console.error('Errore Supabase:', error);
+        toast.error(`Errore durante il salvataggio: ${error.message}`);
         return;
       }
 
-      console.log('Questionario salvato con successo:', data);
-      alert('Questionario inviato con successo!');
-      
-      // Opzionale: reindirizza alla pagina operatori
+      toast.success('Questionario inviato con successo!');
       router.push('/operatori');
 
     } catch (error) {
-      console.error('Errore durante l\'invio:', error);
-      alert('Errore durante l\'invio del questionario');
+      console.error('Errore generico:', error);
+      toast.error('Errore durante l\'invio del questionario');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -272,10 +275,10 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
           {currentStep === totalSteps && (
             <Button 
               onClick={handleInviaQuestionario}
-              disabled={currentStep < 6}
+              disabled={loading}
               className="bg-green-600 hover:bg-green-700"
             >
-              Invia questionario
+              {loading ? 'Invio in corso...' : 'Invia questionario'}
             </Button>
           )}
         </div>
