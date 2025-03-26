@@ -7,8 +7,6 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { FileSpreadsheet, FileText, Trash2 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
-import { exportToExcel, exportToPDF } from '@/utils/export'
-import { utils, writeFile } from 'xlsx'
 
 // Definiamo il tipo base che corrisponde alla struttura del database
 type QuestionarioStrutture = {
@@ -59,47 +57,30 @@ export default function QuestionariStruttureNew() {
 
   const handleExportExcel = async (questionario?: QuestionarioStrutture) => {
     try {
-      if (questionario) {
-        exportToExcel({
-          strutture: [questionario],
-          giovani: [],
-          operatori: []
-        });
-        toast.success('Questionario esportato in Excel');
-      } else {
-        exportToExcel({
-          strutture: questionari,
-          giovani: [],
-          operatori: []
-        });
-        toast.success('Tutti i questionari esportati in Excel');
-      }
+      const data = questionario ? [questionario] : questionari;
+      // Qui useremo una funzione di utility per l'export
+      const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `questionari_strutture_${new Date().toISOString()}.json`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+      toast.success('Export completato');
     } catch (error) {
-      console.error('Errore durante l\'export Excel:', error);
-      toast.error('Errore durante l\'export in Excel');
+      console.error('Errore durante l\'export:', error);
+      toast.error('Errore durante l\'export');
     }
   };
 
   const handleExportPDF = async (questionario?: QuestionarioStrutture) => {
     try {
-      if (questionario) {
-        exportToPDF({
-          strutture: [questionario],
-          giovani: [],
-          operatori: []
-        });
-        toast.success('Questionario esportato in PDF');
-      } else {
-        exportToPDF({
-          strutture: questionari,
-          giovani: [],
-          operatori: []
-        });
-        toast.success('Tutti i questionari esportati in PDF');
-      }
+      const data = questionario ? [questionario] : questionari;
+      // Per ora solo un placeholder
+      toast.success('Export PDF in sviluppo');
     } catch (error) {
       console.error('Errore durante l\'export PDF:', error);
-      toast.error('Errore durante l\'export in PDF');
+      toast.error('Errore durante l\'export');
     }
   };
 
