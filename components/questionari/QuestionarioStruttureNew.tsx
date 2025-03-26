@@ -153,19 +153,38 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
     try {
       setLoading(true);
 
-      // Prepara i dati base con i nomi delle colonne corretti
+      // Prepara i dati esattamente come sono nel database
       const questionarioData = {
         id: uuidv4(),
-        data_creazione: new Date().toISOString(), // invece di creato_a
-        codice_operatore: formData.creato_da || 'operatore', // invece di creato_da
+        creato_a: new Date().toISOString(),
+        creato_da: formData.creato_da,
         stato: 'inviato',
-        denominazione: formData.nome_struttura || '', // invece di nome_struttura
-        codice_struttura: formData.id_struttura || '', // invece di id_struttura
-        forma_giuridica: formData.forma_giuridica || '',
-        altra_forma_giuridica: formData.forma_giuridica_altro || '', // invece di forma_giuridica_altro
-        tipologia: formData.tipo_struttura || '', // invece di tipo_struttura
-        anno_avvio: formData.anno_inizio || 0, // invece di anno_inizio
-        mission: formData.missione || '' // invece di missione
+        id_struttura: formData.id_struttura,
+        forma_giuridica: formData.forma_giuridica,
+        forma_giuridica_altro: formData.forma_giuridica_altro,
+        tipo_struttura: formData.tipo_struttura,
+        anno_inizio: formData.anno_inizio,
+        missione: formData.missione,
+        personale_retribuito: formData.personale_retribuito,
+        personale_volontario: formData.personale_volontario,
+        figure_professionali: formData.figure_professionali,
+        figure_professionali_altro: formData.figure_professionali_altro,
+        persone_ospitate: formData.persone_ospitate,
+        caratteristiche_ospiti_adolescenti: formData.caratteristiche_ospiti_adolescenti,
+        caratteristiche_ospiti_giovani: formData.caratteristiche_ospiti_giovani,
+        caratteristiche_ospiti_altro: formData.caratteristiche_ospiti_altro,
+        persone_non_ospitate: formData.persone_non_ospitate,
+        caratteristiche_non_ospiti_adolescenti: formData.caratteristiche_non_ospiti_adolescenti,
+        caratteristiche_non_ospiti_giovani: formData.caratteristiche_non_ospiti_giovani,
+        caratteristiche_non_ospiti_altro: formData.caratteristiche_non_ospiti_altro,
+        "attività_servizi": formData.attivita_servizi, // nota l'accento
+        esperienze_inserimento_lavorativo: formData.esperienze_inserimento_lavorativo,
+        "attività_inserimento": formData.attivita_inserimento, // nota l'accento
+        "nuove_attività": formData.nuove_attivita, // nota l'accento
+        collaborazioni: formData.collaborazioni,
+        punti_forza_network: formData.punti_forza_network,
+        critica_network: formData.critica_network,
+        finanziamenti: formData.finanziamenti
       };
 
       console.log('Tentativo di salvataggio dati:', questionarioData);
