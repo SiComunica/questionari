@@ -629,5 +629,13 @@ export type QuestionarioStruttureNew = {
   personale_volontario_uomini: number;
   personale_volontario_donne: number;
   figure_professionali: string[];
-  // ... altri campi necessari
-}; 
+  persone_ospitate: {
+    fino_16: { uomini: number; donne: number; totale: number };
+    da_16_a_18: { uomini: number; donne: number; totale: number };
+    maggiorenni: { uomini: number; donne: number; totale: number };
+    totale: { uomini: number; donne: number; totale: number };
+  };
+  caratteristiche_ospiti_adolescenti: string[];
+  caratteristiche_ospiti_giovani: string[];
+  caratteristiche_ospiti_altro: string;
+} 
