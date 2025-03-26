@@ -8,12 +8,30 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { FileSpreadsheet, FileText, Trash2 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import { exportToExcel, exportToPDF } from '@/utils/export'
-import type { QuestionarioStruttureNew } from '@/types/questionari'
+
+// Definiamo il tipo base che corrisponde alla struttura del database
+type QuestionarioStrutture = {
+  id: string;
+  creato_a: string;
+  creato_da: string;
+  stato: string;
+  nome_struttura: string;
+  id_struttura: string;
+  forma_giuridica: string;
+  tipo_struttura: string;
+  anno_inizio: number;
+  missione: string;
+  personale_retribuito_uomini: number;
+  personale_retribuito_donne: number;
+  personale_volontario_uomini: number;
+  personale_volontario_donne: number;
+  figure_professionali: string[];
+}
 
 export default function QuestionariStruttureNew() {
-  const [questionari, setQuestionari] = useState<QuestionarioStruttureNew[]>([])
+  const [questionari, setQuestionari] = useState<QuestionarioStrutture[]>([])
   const [loading, setLoading] = useState(true)
-  const [selectedQuestionario, setSelectedQuestionario] = useState<QuestionarioStruttureNew | null>(null)
+  const [selectedQuestionario, setSelectedQuestionario] = useState<QuestionarioStrutture | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const supabase = createClientComponentClient()
 
@@ -38,7 +56,7 @@ export default function QuestionariStruttureNew() {
     fetchQuestionari()
   }, [])
 
-  const handleExportExcel = async (questionario?: QuestionarioStruttureNew) => {
+  const handleExportExcel = async (questionario?: QuestionarioStrutture) => {
     try {
       if (questionario) {
         exportToExcel({
@@ -61,7 +79,7 @@ export default function QuestionariStruttureNew() {
     }
   };
 
-  const handleExportPDF = async (questionario?: QuestionarioStruttureNew) => {
+  const handleExportPDF = async (questionario?: QuestionarioStrutture) => {
     try {
       if (questionario) {
         exportToPDF({
@@ -98,45 +116,6 @@ export default function QuestionariStruttureNew() {
     } catch (error) {
       toast.error('Errore durante l\'eliminazione')
     }
-  }
-
-  const renderQuestionarioDettaglio = (questionario: QuestionarioStruttureNew) => {
-    return (
-      <div className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <h3 className="font-bold">Dati Generali</h3>
-            <p>Nome struttura: {questionario.nome_struttura}</p>
-            <p>ID Struttura: {questionario.id_struttura}</p>
-            <p>Data invio: {new Date(questionario.creato_a).toLocaleDateString()}</p>
-            <p>Inviato da: {questionario.creato_da}</p>
-            <p>Stato: {questionario.stato}</p>
-            <p>Forma giuridica: {questionario.forma_giuridica}</p>
-            <p>Tipo struttura: {questionario.tipo_struttura}</p>
-            <p>Anno inizio: {questionario.anno_inizio}</p>
-            <p>Missione: {questionario.missione}</p>
-          </div>
-          <div>
-            <h3 className="font-bold">Personale</h3>
-            <p>Uomini retribuiti: {questionario.personale_retribuito_uomini}</p>
-            <p>Donne retribuite: {questionario.personale_retribuito_donne}</p>
-            <p>Uomini volontari: {questionario.personale_volontario_uomini}</p>
-            <p>Donne volontarie: {questionario.personale_volontario_donne}</p>
-            <p>Figure professionali: {questionario.figure_professionali.join(', ')}</p>
-          </div>
-        </div>
-        <div className="flex justify-end gap-2 mt-4">
-          <Button onClick={() => handleExportExcel(questionario)} className="flex gap-2">
-            <FileSpreadsheet size={20} />
-            Excel
-          </Button>
-          <Button onClick={() => handleExportPDF(questionario)} className="flex gap-2">
-            <FileText size={20} />
-            PDF
-          </Button>
-        </div>
-      </div>
-    )
   }
 
   if (loading) return <div>Caricamento...</div>
@@ -215,7 +194,26 @@ export default function QuestionariStruttureNew() {
           <DialogHeader>
             <DialogTitle>Dettaglio Questionario Struttura</DialogTitle>
           </DialogHeader>
-          {selectedQuestionario && renderQuestionarioDettaglio(selectedQuestionario)}
+          {selectedQuestionario && (
+            <div className="space-y-4">
+              {Object.entries(selectedQuestionario).map(([key, value]) => (
+                <div key={key} className="grid grid-cols-2 gap-2">
+                  <span className="font-semibold">{key}:</span>
+                  <span>{typeof value === 'object' ? JSON.stringify(value) : value}</span>
+                </div>
+              ))}
+              <div className="flex justify-end gap-2 mt-4">
+                <Button onClick={() => handleExportExcel(selectedQuestionario)} className="flex gap-2">
+                  <FileSpreadsheet size={20} />
+                  Excel
+                </Button>
+                <Button onClick={() => handleExportPDF(selectedQuestionario)} className="flex gap-2">
+                  <FileText size={20} />
+                  PDF
+                </Button>
+              </div>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </Card>
