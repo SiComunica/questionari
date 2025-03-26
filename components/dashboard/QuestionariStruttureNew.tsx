@@ -8,20 +8,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { FileSpreadsheet, FileText, Trash2 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import { exportToExcel, exportToPDF } from '@/utils/export'
-
-type QuestionarioStrutture = {
-  id: string;
-  creato_a: string;
-  creato_da: string;
-  stato: string;
-  nome_struttura: string;
-  // ... altri campi necessari
-}
+import type { QuestionarioStruttureNew } from '@/types/questionari'
 
 export default function QuestionariStruttureNew() {
-  const [questionari, setQuestionari] = useState<QuestionarioStrutture[]>([])
+  const [questionari, setQuestionari] = useState<QuestionarioStruttureNew[]>([])
   const [loading, setLoading] = useState(true)
-  const [selectedQuestionario, setSelectedQuestionario] = useState<QuestionarioStrutture | null>(null)
+  const [selectedQuestionario, setSelectedQuestionario] = useState<QuestionarioStruttureNew | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const supabase = createClientComponentClient()
 
@@ -46,7 +38,7 @@ export default function QuestionariStruttureNew() {
     fetchQuestionari()
   }, [])
 
-  const handleExportExcel = async (questionario?: QuestionarioStrutture) => {
+  const handleExportExcel = async (questionario?: QuestionarioStruttureNew) => {
     try {
       if (questionario) {
         exportToExcel({
@@ -69,7 +61,7 @@ export default function QuestionariStruttureNew() {
     }
   };
 
-  const handleExportPDF = async (questionario?: QuestionarioStrutture) => {
+  const handleExportPDF = async (questionario?: QuestionarioStruttureNew) => {
     try {
       if (questionario) {
         exportToPDF({
@@ -108,7 +100,7 @@ export default function QuestionariStruttureNew() {
     }
   }
 
-  const renderQuestionarioDettaglio = (questionario: QuestionarioStrutture) => {
+  const renderQuestionarioDettaglio = (questionario: QuestionarioStruttureNew) => {
     return (
       <div className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
