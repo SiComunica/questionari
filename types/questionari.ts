@@ -620,6 +620,7 @@ export type QuestionarioStruttureNew = {
   nome_struttura: string;
   id_struttura: string;
   forma_giuridica: string;
+  forma_giuridica_altro: string;
   tipo_struttura: string;
   anno_inizio: number;
   missione: string;

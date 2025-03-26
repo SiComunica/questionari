@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { FileSpreadsheet, FileText, Trash2 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import { exportToExcel, exportToPDF } from '@/utils/export'
+import { utils, writeFile } from 'xlsx'
 
 // Definiamo il tipo base che corrisponde alla struttura del database
 type QuestionarioStrutture = {
