@@ -106,14 +106,12 @@ const QuestionarioOperatoriNuovo = () => {
     },
 
     // Metadati
-    created_at: new Date().toISOString(),
+    creato_a: new Date().toISOString(),
     stato: 'bozza',
     fonte: ''
   }));
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
+  const handleSubmit = async () => {
     if (!codiceOperatore) {
       toast.error('Inserire il codice operatore');
       return;
@@ -129,8 +127,6 @@ const QuestionarioOperatoriNuovo = () => {
         creato_da: codiceOperatore,
         stato: 'inviato'
       };
-
-      console.log('Dati da salvare:', questionarioData);
 
       const { data, error } = await supabase
         .from('operatori')
