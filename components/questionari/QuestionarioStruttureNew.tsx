@@ -151,41 +151,42 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
 
   const handleInviaQuestionario = async () => {
     try {
-      // Verifica che ci sia almeno il codice operatore
-      if (!formData.creato_da) {
-        toast.error('Inserire il codice operatore');
-        return;
-      }
+      setLoading(true);
 
-      setLoading(true); // Aggiungi indicatore di caricamento
-
-      // Prepara i dati per il salvataggio
+      // Prepara i dati base
       const questionarioData = {
-        ...formData,
         id: uuidv4(),
         creato_a: new Date().toISOString(),
+        creato_da: formData.creato_da || 'operatore', // valore di default se manca
         stato: 'inviato',
-        creato_da: formData.creato_da // Assicurati che il codice operatore sia incluso
+        nome_struttura: formData.nome_struttura || '',
+        id_struttura: formData.id_struttura || '',
+        forma_giuridica: formData.forma_giuridica || '',
+        forma_giuridica_altro: formData.forma_giuridica_altro || '',
+        tipo_struttura: formData.tipo_struttura || '',
+        anno_inizio: formData.anno_inizio || 0,
+        missione: formData.missione || ''
       };
 
-      console.log('Dati da salvare:', questionarioData); // Per debug
+      console.log('Tentativo di salvataggio dati:', questionarioData);
 
       const { data, error } = await supabase
         .from('strutture')
         .insert(questionarioData)
-        .select('*');
+        .select();
 
       if (error) {
-        console.error('Errore Supabase:', error);
-        toast.error(`Errore durante il salvataggio: ${error.message}`);
+        console.error('Dettaglio errore Supabase:', error);
+        toast.error(`Errore: ${error.message}`);
         return;
       }
 
+      console.log('Dati salvati con successo:', data);
       toast.success('Questionario inviato con successo!');
       router.push('/operatori');
 
     } catch (error) {
-      console.error('Errore generico:', error);
+      console.error('Errore completo:', error);
       toast.error('Errore durante l\'invio del questionario');
     } finally {
       setLoading(false);
