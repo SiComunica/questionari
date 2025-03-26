@@ -8,6 +8,8 @@ import type { QuestionarioOperatoriNuovo } from '@/types/questionari';
 import SezioneAOperatoriNuovo from './sezioni/SezioneAOperatoriNuovo';
 import SezioneBOperatoriNuovo from './sezioni/SezioneBOperatoriNuovo';
 import SezioneCOperatoriNuovo from './sezioni/SezioneCOperatoriNuovo';
+import { supabase } from '@/lib/supabaseClient';
+import { toast } from 'react-hot-toast';
 
 interface Props {
   initialData?: QuestionarioOperatoriNuovo;
@@ -15,12 +17,13 @@ interface Props {
   setFormData?: React.Dispatch<React.SetStateAction<any>>;
 }
 
-export default function QuestionarioOperatoriNuovo({ initialData, readOnly }: Props) {
+const QuestionarioOperatoriNuovo = () => {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [codiceOperatore, setCodiceOperatore] = useState('');
 
-  const [formData, setFormData] = useState<QuestionarioOperatoriNuovo>(() => initialData || {
+  const [formData, setFormData] = useState<QuestionarioOperatoriNuovo>(() => ({
     // Sezione A
     id_struttura: '',
     tipo_struttura: '',
@@ -105,27 +108,43 @@ export default function QuestionarioOperatoriNuovo({ initialData, readOnly }: Pr
     created_at: new Date().toISOString(),
     stato: 'bozza',
     fonte: ''
-  });
+  }));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const supabase = createClient();
-      const { error } = await supabase
-        .from('questionari_operatori_nuovo')
-        .insert({
-          ...formData,
-          id: uuidv4(),
-          created_at: new Date().toISOString(),
-          stato: 'completato'
-        });
+      if (!codiceOperatore) {
+        toast.error('Inserire il codice operatore');
+        return;
+      }
 
-      if (error) throw error;
-      router.push('/operatore/dashboard');
+      const questionarioData = {
+        id: uuidv4(),
+        creato_a: new Date().toISOString(),
+        creato_da: codiceOperatore,
+        stato: 'inviato',
+        ...formData
+      };
+
+      const { data, error } = await supabase
+        .from('operatori')
+        .insert(questionarioData)
+        .select();
+
+      if (error) {
+        console.error('Errore salvataggio:', error);
+        toast.error(`Errore: ${error.message}`);
+        return;
+      }
+
+      toast.success('Questionario inviato con successo!');
+      router.push('/operatori');
+
     } catch (error) {
-      console.error('Errore durante il salvataggio:', error);
+      console.error('Errore:', error);
+      toast.error('Errore durante l\'invio del questionario');
     } finally {
       setLoading(false);
     }
@@ -148,38 +167,39 @@ export default function QuestionarioOperatoriNuovo({ initialData, readOnly }: Pr
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Questionario Operatori</h1>
       <form onSubmit={handleSubmit}>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700">
+            Codice Operatore
+          </label>
+          <input
+            type="text"
+            value={codiceOperatore}
+            onChange={(e) => setCodiceOperatore(e.target.value)}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            required
+          />
+        </div>
         {renderStep()}
         
-        <div className="flex justify-between mt-4">
-          {currentStep > 1 && (
-            <button
-              type="button"
-              onClick={() => setCurrentStep(step => step - 1)}
-              className="bg-gray-500 text-white px-4 py-2 rounded"
-            >
-              Indietro
-            </button>
-          )}
+        <div className="mt-4 flex justify-between">
+          <button
+            onClick={() => router.push('/operatori')}
+            className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
+          >
+            Torna alla Dashboard
+          </button>
           
-          {currentStep < 3 ? (
-            <button
-              type="button"
-              onClick={() => setCurrentStep(step => step + 1)}
-              className="bg-blue-500 text-white px-4 py-2 rounded"
-            >
-              Avanti
-            </button>
-          ) : (
-            <button
-              type="submit"
-              disabled={loading}
-              className="bg-green-500 text-white px-4 py-2 rounded"
-            >
-              {loading ? 'Salvataggio...' : 'Salva'}
-            </button>
-          )}
+          <button
+            onClick={handleSubmit}
+            disabled={loading || !codiceOperatore}
+            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded disabled:opacity-50"
+          >
+            {loading ? 'Invio in corso...' : 'Invia Questionario'}
+          </button>
         </div>
       </form>
     </div>
   );
-} 
+};
+
+export default QuestionarioOperatoriNuovo; 
