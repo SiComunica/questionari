@@ -199,7 +199,7 @@ export interface QuestionarioStrutture {
   // Sezione E: Reti/collaborazioni
   collaborazioni: Array<{
     denominazione: string;
-    tipo: 'ricorrente' | 'occasionale';
+    tipo: string;
     oggetto: string;
   }>;
 
@@ -690,7 +690,11 @@ export type QuestionarioStruttureNew = {
   }>;
   nuove_attivita: string[];
   
-  collaborazioni: string[];
+  collaborazioni: Array<{
+    denominazione: string;
+    tipo: string;
+    oggetto: string;
+  }>;
   punti_forza_network: string;
   critica_network: string;
   

@@ -60,27 +60,30 @@ export default function SezioneDStruttureNew({ formData, setFormData }: Props) {
         <CardContent className="pt-6">
           <h3 className="text-lg font-semibold mb-4">D1. Attività/servizi attualmente disponibili</h3>
           <div className="space-y-4">
-            {servizi.map(({ id, label, hasDesc }) => (
-              <div key={id} className="space-y-2">
+            {Object.entries(formData.attivita_servizi).map(([key, servizio], index) => (
+              <div key={key} className="space-y-2">
                 <div className="flex items-center space-x-2">
                   <Checkbox
-                    id={id}
-                    checked={Boolean(formData.attivita_servizi[id as keyof typeof formData.attivita_servizi])}
-                    onCheckedChange={(checked) => handleCheckboxChange(id, checked)}
+                    id={key}
+                    checked={servizio.attivo}
+                    onCheckedChange={(checked) => handleCheckboxChange(key, checked)}
                   />
-                  <Label htmlFor={id}>{label}</Label>
+                  <Label htmlFor={key}>{servizi[index].label}</Label>
                 </div>
-                {hasDesc && formData.attivita_servizi[id as keyof typeof formData.attivita_servizi] && (
+                {servizi[index].hasDesc && servizio.attivo && (
                   <div className="ml-6">
                     <Label>Descrivere il servizio/attività</Label>
                     <Textarea
-                      value={formData.attivita_servizi[`${id}_desc` as keyof typeof formData.attivita_servizi] as string}
+                      value={servizio.descrizione}
                       onChange={(e) => {
                         setFormData(prev => ({
                           ...prev,
                           attivita_servizi: {
                             ...prev.attivita_servizi,
-                            [`${id}_desc`]: e.target.value
+                            [key]: {
+                              ...servizio,
+                              descrizione: e.target.value
+                            }
                           }
                         }));
                       }}
