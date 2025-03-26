@@ -30,32 +30,43 @@ interface BaseQuestionario {
 type Questionario = (QuestionarioGiovani | QuestionarioOperatori | QuestionarioStrutture) & BaseQuestionario
 
 export default function AmministratoriDashboard() {
-  const [questionari, setQuestionari] = useState<Questionario[]>([])
+  const [questionariVecchi, setQuestionariVecchi] = useState<Questionario[]>([])
+  const [questionariStrutture, setQuestionariStrutture] = useState<QuestionarioStruttureNew[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedQuestionario, setSelectedQuestionario] = useState<Questionario | null>(null)
   const supabase = createClientComponentClient()
 
   useEffect(() => {
-    const fetchQuestionari = async () => {
+    const fetchAllQuestionari = async () => {
       try {
-        console.log('Fetching questionari...')
-        
+        // Fetch vecchi questionari
         const [giovani, operatori, strutture] = await Promise.all([
           supabase.from('giovani').select('*'),
           supabase.from('operatori').select('*'),
           supabase.from('struttura').select('*')
         ])
 
-        const allQuestionari = [
+        const vecchiQuestionari = [
           ...(giovani.data || []).map(q => ({ ...q, tipo: 'giovani' as const })),
           ...(operatori.data || []).map(q => ({ ...q, tipo: 'operatori' as const })),
           ...(strutture.data || []).map(q => ({ ...q, tipo: 'strutture' as const }))
         ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
 
-        setQuestionari(allQuestionari as Questionario[])
+        setQuestionariVecchi(vecchiQuestionari)
+
+        // Fetch nuovi questionari strutture
+        const { data: nuoveStrutture, error } = await supabase
+          .from('strutture')
+          .select('*')
+          .order('creato_a', { ascending: false });
+
+        if (error) throw error;
+        
+        console.log('Nuovi questionari strutture:', nuoveStrutture);
+        setQuestionariStrutture(nuoveStrutture || []);
+
       } catch (err) {
         console.error('Errore:', err)
-        setQuestionari([])
       } finally {
         setLoading(false)
       }
@@ -66,7 +77,7 @@ export default function AmministratoriDashboard() {
       const codice = localStorage.getItem('codice')
       
       if (userType === 'admin' && codice === 'admin2025') {
-        fetchQuestionari()
+        fetchAllQuestionari()
       }
     }
   }, [])
@@ -83,7 +94,7 @@ export default function AmministratoriDashboard() {
   }
 
   const exportToExcel = () => {
-    const formattedData = questionari.map(q => {
+    const formattedData = questionariVecchi.map(q => {
       const formatted = formatQuestionarioData(q)
       return {
         ...formatted,
@@ -99,7 +110,7 @@ export default function AmministratoriDashboard() {
   const exportToPDF = () => {
     const doc = new jsPDF()
     
-    questionari.forEach((q, index) => {
+    questionariVecchi.forEach((q, index) => {
       if (index > 0) doc.addPage()
       
       // Intestazione
@@ -128,24 +139,6 @@ export default function AmministratoriDashboard() {
     doc.save("questionari_completi.pdf")
   }
 
-  const fetchQuestionariStrutture = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('strutture')
-        .select('*')
-        .order('creato_a', { ascending: false })
-
-      if (error) {
-        throw error
-      }
-
-      console.log('Questionari recuperati:', data)
-      setQuestionari(data || [] as Questionario[])
-    } catch (error) {
-      console.error('Errore nel recupero dei questionari:', error)
-    }
-  }
-
   return (
     <div className="p-8">
       <div className="flex justify-between items-center mb-6">
@@ -172,14 +165,14 @@ export default function AmministratoriDashboard() {
       ) : (
         <div className="space-y-4">
           <h2 className="text-xl font-semibold">
-            Questionari Ricevuti ({questionari.length})
+            Questionari Ricevuti ({questionariVecchi.length})
           </h2>
           
-          {questionari.length === 0 ? (
+          {questionariVecchi.length === 0 ? (
             <p className="text-gray-500">Nessun questionario ricevuto</p>
           ) : (
             <div className="grid gap-4">
-              {questionari.map((q) => (
+              {questionariVecchi.map((q) => (
                 <div 
                   key={q.id} 
                   className="border p-4 rounded-lg bg-white shadow cursor-pointer hover:bg-gray-50"
@@ -214,26 +207,29 @@ export default function AmministratoriDashboard() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Questionari Strutture Ricevuti</CardTitle>
+              <CardTitle>Nuovi Questionari Strutture</CardTitle>
             </CardHeader>
             <CardContent>
-              {questionari.length === 0 ? (
-                <p>Nessun questionario ricevuto</p>
+              {questionariStrutture.length === 0 ? (
+                <p>Nessun nuovo questionario strutture ricevuto</p>
               ) : (
                 <div className="space-y-4">
-                  {questionari.map((questionario) => (
+                  {questionariStrutture.map((questionario) => (
                     <Card key={questionario.id} className="p-4">
                       <div className="flex justify-between items-center">
                         <div>
                           <p className="font-bold">Struttura: {questionario.id_struttura}</p>
                           <p className="text-sm text-gray-600">
                             Inviato da: {questionario.creato_da} il{' '}
-                            {new Date(questionario.creato_a!).toLocaleDateString()}
+                            {new Date(questionario.creato_a || '').toLocaleDateString()}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            Stato: {questionario.stato}
                           </p>
                         </div>
                         <Button 
                           variant="outline"
-                          onClick={() => {/* Aggiungi funzione per visualizzare i dettagli */}}
+                          onClick={() => {/* TODO: implementare visualizzazione dettagli */}}
                         >
                           Visualizza dettagli
                         </Button>
