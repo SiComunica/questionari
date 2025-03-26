@@ -6,8 +6,15 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import QuestionariStruttureNew from '@/components/dashboard/QuestionariStruttureNew'
 
+// Definiamo un tipo base per i questionari giovani
+type QuestionarioGiovani = {
+  created_at: string;
+  stato: string;
+  // ... altri campi se necessari
+}
+
 export default function AmministratoriDashboard() {
-  const [questionari, setQuestionari] = useState([])
+  const [questionari, setQuestionari] = useState<QuestionarioGiovani[]>([])
   const [loading, setLoading] = useState(true)
   const supabase = createClientComponentClient()
 
