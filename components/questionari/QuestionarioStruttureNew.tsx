@@ -162,22 +162,40 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
         return;
       }
 
-      if (!formData.creato_da.startsWith('operatore')) {
-        alert('Il codice operatore deve essere nel formato "operatoreX" (es. operatore1)');
-        return;
-      }
-
-      // Prepariamo i dati da salvare
+      // Prepariamo i dati da salvare assicurandoci che corrispondano alla struttura della tabella
       const datiDaSalvare = {
         ...formData,
-        id: uuidv4(), // Aggiungiamo un ID univoco
         creato_a: new Date().toISOString(),
-        stato: 'inviato'
+        stato: 'inviato',
+        // Convertiamo gli array in JSONB dove necessario
+        attivita_inserimento: formData.attivita_inserimento?.map(item => 
+          typeof item === 'string' ? JSON.parse(item) : item
+        ) || [],
+        collaborazioni: formData.collaborazioni?.map(item => 
+          typeof item === 'string' ? JSON.parse(item) : item
+        ) || [],
+        // Assicuriamoci che i campi JSONB siano oggetti validi
+        personale_retribuito: {
+          uomini: Number(formData.personale_retribuito?.uomini || 0),
+          donne: Number(formData.personale_retribuito?.donne || 0),
+          totale: Number(formData.personale_retribuito?.totale || 0),
+          part_time: Number(formData.personale_retribuito?.part_time || 0),
+          full_time: Number(formData.personale_retribuito?.full_time || 0)
+        },
+        personale_volontario: {
+          uomini: Number(formData.personale_volontario?.uomini || 0),
+          donne: Number(formData.personale_volontario?.donne || 0),
+          totale: Number(formData.personale_volontario?.totale || 0)
+        },
+        // Assicuriamoci che gli array siano inizializzati correttamente
+        figure_professionali: formData.figure_professionali || [],
+        nuove_attivita: formData.nuove_attivita || []
       };
 
-      // Salviamo su Supabase
+      console.log('Dati da salvare:', datiDaSalvare);
+
       const { data, error } = await supabase
-        .from('strutture') // Cambiato da strutturanuova a strutture
+        .from('strutture')
         .insert([datiDaSalvare])
         .select();
 
@@ -190,7 +208,7 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
         throw new Error(`Errore durante il salvataggio: ${error.message}`);
       }
 
-      console.log('Dati salvati con successo:', data);
+      console.log('Questionario salvato con successo:', data);
       alert('Questionario inviato con successo!');
       router.push('/operatori');
 
