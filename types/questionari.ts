@@ -704,6 +704,9 @@ export type QuestionarioStruttureNew = {
     totale: number;
     fondi_pubblici_specifiche: string;
     fondi_privati_specifiche: string;
-    fornitori: string[];
+    fornitori: Array<{
+      nome: string;
+      tipo_sostegno: string;
+    }>;
   };
 } 
