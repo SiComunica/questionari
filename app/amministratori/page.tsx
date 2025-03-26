@@ -215,7 +215,7 @@ export default function AmministratoriDashboard() {
               ) : (
                 <div className="space-y-4">
                   {questionariStrutture.map((questionario) => (
-                    <Card key={questionario.uuid} className="p-4">
+                    <Card key={questionario.id} className="p-4">
                       <div className="flex justify-between items-center">
                         <div>
                           <p className="font-bold">Struttura: {questionario.nome_struttura}</p>
