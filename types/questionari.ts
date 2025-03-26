@@ -615,6 +615,7 @@ export interface AttivitaInserimento {
 export type QuestionarioStruttureNew = {
   id: string;  // UUID generato da Supabase
   creato_a: string;
+  creato_da: string;  // Aggiunto questo campo
   nome_struttura: string;
   codice_operatore: string;
   stato: string;
