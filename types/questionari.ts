@@ -695,7 +695,11 @@ export type QuestionarioStruttureNew = {
   nuove_attivita: string[];
 
   // Sezione E
-  collaborazioni: string[];
+  collaborazioni: {
+    denominazione: string;
+    tipo: string;
+    oggetto: string;
+  }[];
   punti_forza_network: string;
   critica_network: string;
 
