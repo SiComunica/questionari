@@ -107,11 +107,23 @@ export default function QuestionariStruttureNew() {
           <div>
             <h3 className="font-bold">Dati Generali</h3>
             <p>Nome struttura: {questionario.nome_struttura}</p>
+            <p>ID Struttura: {questionario.id_struttura}</p>
             <p>Data invio: {new Date(questionario.creato_a).toLocaleDateString()}</p>
             <p>Inviato da: {questionario.creato_da}</p>
             <p>Stato: {questionario.stato}</p>
+            <p>Forma giuridica: {questionario.forma_giuridica}</p>
+            <p>Tipo struttura: {questionario.tipo_struttura}</p>
+            <p>Anno inizio: {questionario.anno_inizio}</p>
+            <p>Missione: {questionario.missione}</p>
           </div>
-          {/* Aggiungi altre sezioni del questionario */}
+          <div>
+            <h3 className="font-bold">Personale</h3>
+            <p>Uomini retribuiti: {questionario.personale_retribuito_uomini}</p>
+            <p>Donne retribuite: {questionario.personale_retribuito_donne}</p>
+            <p>Uomini volontari: {questionario.personale_volontario_uomini}</p>
+            <p>Donne volontarie: {questionario.personale_volontario_donne}</p>
+            <p>Figure professionali: {questionario.figure_professionali.join(', ')}</p>
+          </div>
         </div>
         <div className="flex justify-end gap-2 mt-4">
           <Button onClick={() => handleExportExcel(questionario)} className="flex gap-2">
