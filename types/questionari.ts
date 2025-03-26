@@ -602,7 +602,7 @@ export interface CaratteristicheUtenti {
   altro_specificare: string;
 }
 
-export interface AttivitaInserimento {
+export type AttivitaInserimento = {
   nome: string;
   periodo: string;
   contenuto: string;
@@ -610,7 +610,7 @@ export interface AttivitaInserimento {
   attori: string;
   punti_forza: string;
   criticita: string;
-}
+};
 
 export type QuestionarioStruttureNew = {
   // Campi base
@@ -691,7 +691,7 @@ export type QuestionarioStruttureNew = {
     altro_desc: string;
   };
   esperienze_inserimento_lavorativo: boolean;
-  attivita_inserimento: string[];
+  attivita_inserimento: AttivitaInserimento[];
   nuove_attivita: string[];
 
   // Sezione E
