@@ -458,13 +458,18 @@ export interface QuestionarioProps {
   initialData?: any;
 }
 
-export interface QuestionarioOperatoriNuovo {
+export type QuestionarioOperatoriNuovo = {
+  id?: string;
+  creato_a: string;
+  creato_da?: string;
+  stato: string;
+  
   // Sezione A
   id_struttura: string;
   tipo_struttura: string;
   professione: {
-    tipo: '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13';
-    altro_specificare?: string;
+    tipo: string;
+    altro_specificare: string;
   };
 
   // Sezione B
@@ -495,7 +500,7 @@ export interface QuestionarioOperatoriNuovo {
     genitori_precoci: boolean;
     problemi_orientamento: boolean;
     altro: boolean;
-    altro_specificare?: string;
+    altro_specificare: string;
   };
   tipo_intervento: {
     sostegno_formazione: boolean;
@@ -508,7 +513,7 @@ export interface QuestionarioOperatoriNuovo {
     sostegno_sociosanitario: boolean;
     mediazione_interculturale: boolean;
     altro: boolean;
-    altro_specificare?: string;
+    altro_specificare: string;
   };
   interventi_potenziare: {
     sostegno_formazione: boolean;
@@ -522,7 +527,7 @@ export interface QuestionarioOperatoriNuovo {
     mediazione_interculturale: boolean;
     nessuno: boolean;
     altro: boolean;
-    altro_specificare?: string;
+    altro_specificare: string;
   };
 
   // Sezione C
@@ -536,15 +541,11 @@ export interface QuestionarioOperatoriNuovo {
     problemi_psicologici: number;
     difficolta_linguistiche: number;
     altro: number;
-    altro_specificare?: string;
+    altro_specificare: string;
   };
 
-  // Metadati
-  id?: string;
-  created_at: string;
-  stato: string;
   fonte: string;
-}
+};
 
 // Aggiungi questa interfaccia per le attività significative
 export interface AttivitaSignificativa {
