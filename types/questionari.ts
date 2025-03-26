@@ -624,12 +624,27 @@ export type QuestionarioStruttureNew = {
   tipo_struttura: string;
   anno_inizio: number;
   missione: string;
-  personale_retribuito_uomini: number;
-  personale_retribuito_donne: number;
-  personale_volontario_uomini: number;
-  personale_volontario_donne: number;
+  personale_retribuito: {
+    uomini: number;
+    donne: number;
+    totale: number;
+    part_time: number;
+    full_time: number;
+  };
+  personale_volontario: {
+    uomini: number;
+    donne: number;
+    totale: number;
+  };
   figure_professionali: string[];
+  figure_professionali_altro: string;
   persone_ospitate: {
+    fino_16: { uomini: number; donne: number; totale: number };
+    da_16_a_18: { uomini: number; donne: number; totale: number };
+    maggiorenni: { uomini: number; donne: number; totale: number };
+    totale: { uomini: number; donne: number; totale: number };
+  };
+  persone_non_ospitate: {
     fino_16: { uomini: number; donne: number; totale: number };
     da_16_a_18: { uomini: number; donne: number; totale: number };
     maggiorenni: { uomini: number; donne: number; totale: number };
@@ -638,4 +653,11 @@ export type QuestionarioStruttureNew = {
   caratteristiche_ospiti_adolescenti: string[];
   caratteristiche_ospiti_giovani: string[];
   caratteristiche_ospiti_altro: string;
+  caratteristiche_non_ospiti_adolescenti: string[];
+  caratteristiche_non_ospiti_giovani: string[];
+  caratteristiche_non_ospiti_altro: string;
+  attivita_servizi: string[];
+  collaborazioni: string[];
+  punti_forza_network: string;
+  critica_network: string;
 } 
