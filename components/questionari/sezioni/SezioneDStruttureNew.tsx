@@ -14,17 +14,6 @@ interface Props {
   setFormData: React.Dispatch<React.SetStateAction<QuestionarioStruttureNew>>;
 }
 
-// Modifica la definizione del tipo per le attività
-type Attivita = {
-  nome: string;
-  periodo: string;
-  contenuto: string;
-  destinatari: string;
-  attori: string[];
-  punti_forza: string;
-  critica: string;
-}
-
 export default function SezioneDStruttureNew({ formData, setFormData }: Props) {
   const servizi = [
     { id: 'alloggio', label: 'Alloggio', hasDesc: false },
@@ -63,38 +52,6 @@ export default function SezioneDStruttureNew({ formData, setFormData }: Props) {
         [id]: checked === true
       }
     }));
-  };
-
-  // Assicurati che nel formData le attività siano un array di stringhe
-  const handleAttivitaChange = (attivita: Attivita[]) => {
-    const attivitaStrings = attivita.map(a => JSON.stringify(a));
-    setFormData(prev => ({
-      ...prev,
-      attivita_inserimento: attivitaStrings
-    }));
-  };
-
-  const handleAttivitaInsert = () => {
-    if (!nuovaAttivita.nome) return;
-
-    // Creiamo una stringa formattata con i dati dell'attività
-    const attivitaString = `${nuovaAttivita.nome} - ${nuovaAttivita.periodo} - ${nuovaAttivita.contenuto}`;
-    
-    setFormData(prev => ({
-      ...prev,
-      attivita_inserimento: [...prev.attivita_inserimento, attivitaString]
-    }));
-
-    // Reset del form
-    setNuovaAttivita({
-      nome: '',
-      periodo: '',
-      contenuto: '',
-      destinatari: '',
-      attori: '',
-      punti_forza: '',
-      critica: ''
-    });
   };
 
   return (
