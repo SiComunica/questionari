@@ -215,16 +215,16 @@ export default function AmministratoriDashboard() {
               ) : (
                 <div className="space-y-4">
                   {questionariStrutture.map((questionario) => (
-                    <Card key={questionario.id} className="p-4">
+                    <Card key={questionario.uuid} className="p-4">
                       <div className="flex justify-between items-center">
                         <div>
-                          <p className="font-bold">Struttura: {questionario.id_struttura}</p>
+                          <p className="font-bold">Struttura: {questionario.nome_struttura}</p>
                           <p className="text-sm text-gray-600">
-                            Inviato da: {questionario.creato_da} il{' '}
+                            Inviato il{' '}
                             {new Date(questionario.creato_a || '').toLocaleDateString()}
                           </p>
                           <p className="text-sm text-gray-600">
-                            Stato: {questionario.stato}
+                            Codice operatore: {questionario.codice_operatore}
                           </p>
                         </div>
                         <Button 
