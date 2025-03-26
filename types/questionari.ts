@@ -624,6 +624,7 @@ export type QuestionarioStruttureNew = {
   tipo_struttura: string;
   anno_inizio: number;
   missione: string;
+  
   personale_retribuito: {
     uomini: number;
     donne: number;
@@ -631,31 +632,37 @@ export type QuestionarioStruttureNew = {
     part_time: number;
     full_time: number;
   };
+  
   personale_volontario: {
     uomini: number;
     donne: number;
     totale: number;
   };
+  
   figure_professionali: string[];
   figure_professionali_altro: string;
+  
   persone_ospitate: {
     fino_16: { uomini: number; donne: number; totale: number };
     da_16_a_18: { uomini: number; donne: number; totale: number };
     maggiorenni: { uomini: number; donne: number; totale: number };
     totale: { uomini: number; donne: number; totale: number };
   };
+  
   persone_non_ospitate: {
     fino_16: { uomini: number; donne: number; totale: number };
     da_16_a_18: { uomini: number; donne: number; totale: number };
     maggiorenni: { uomini: number; donne: number; totale: number };
     totale: { uomini: number; donne: number; totale: number };
   };
+  
   caratteristiche_ospiti_adolescenti: string[];
   caratteristiche_ospiti_giovani: string[];
   caratteristiche_ospiti_altro: string;
   caratteristiche_non_ospiti_adolescenti: string[];
   caratteristiche_non_ospiti_giovani: string[];
   caratteristiche_non_ospiti_altro: string;
+  
   attivita_servizi: {
     alloggio: { attivo: boolean; descrizione: string; };
     vitto: { attivo: boolean; descrizione: string; };
@@ -670,7 +677,21 @@ export type QuestionarioStruttureNew = {
     attivita_socializzazione: { attivo: boolean; descrizione: string; };
     altro: { attivo: boolean; descrizione: string; };
   };
+  
+  esperienze_inserimento_lavorativo: boolean;
+  attivita_inserimento: string[];
+  nuove_attivita: string[];
+  
   collaborazioni: string[];
   punti_forza_network: string;
   critica_network: string;
+  
+  finanziamenti: {
+    fondi_pubblici: number;
+    fondi_privati: number;
+    totale: number;
+    fondi_pubblici_specifiche: string;
+    fondi_privati_specifiche: string;
+    fornitori: string[];
+  };
 } 
