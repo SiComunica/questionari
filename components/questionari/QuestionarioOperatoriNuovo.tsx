@@ -121,11 +121,11 @@ const QuestionarioOperatoriNuovo = () => {
       }
 
       const questionarioData = {
+        ...formData,
         id: uuidv4(),
         creato_a: new Date().toISOString(),
         creato_da: codiceOperatore,
-        stato: 'inviato',
-        ...formData
+        stato: 'inviato'
       };
 
       const { data, error } = await supabase
