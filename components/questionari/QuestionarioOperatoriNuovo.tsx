@@ -113,14 +113,15 @@ const QuestionarioOperatoriNuovo = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!codiceOperatore) {
+      toast.error('Inserire il codice operatore');
+      return;
+    }
+
     setLoading(true);
 
     try {
-      if (!codiceOperatore) {
-        toast.error('Inserire il codice operatore');
-        return;
-      }
-
       const questionarioData = {
         ...formData,
         id: uuidv4(),
@@ -166,7 +167,23 @@ const QuestionarioOperatoriNuovo = () => {
   const renderStep = () => {
     switch (currentStep) {
       case 1:
-        return <SezioneAOperatoriNuovo formData={formData} setFormData={setFormData} />;
+        return (
+          <>
+            <div className="mb-6 bg-white p-6 rounded-lg shadow-md">
+              <h2 className="text-xl font-semibold mb-4">Codice Operatore</h2>
+              <div className="flex gap-4 items-center">
+                <input
+                  type="text"
+                  value={codiceOperatore}
+                  onChange={(e) => setCodiceOperatore(e.target.value)}
+                  placeholder="es: operatore1"
+                  className="flex-1 p-2 border rounded-md"
+                />
+              </div>
+            </div>
+            <SezioneAOperatoriNuovo formData={formData} setFormData={setFormData} />
+          </>
+        );
       case 2:
         return <SezioneBOperatoriNuovo formData={formData} setFormData={setFormData} />;
       case 3:
@@ -179,20 +196,6 @@ const QuestionarioOperatoriNuovo = () => {
   return (
     <div className="container mx-auto p-4">
       <div className="max-w-4xl mx-auto">
-        <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-          <h2 className="text-xl font-semibold mb-4">Codice Operatore</h2>
-          <div className="flex gap-4 items-center">
-            <input
-              type="text"
-              value={codiceOperatore}
-              onChange={(e) => setCodiceOperatore(e.target.value)}
-              placeholder="Inserisci il codice operatore"
-              className="flex-1 p-2 border rounded-md"
-              required
-            />
-          </div>
-        </div>
-
         <div className="bg-white p-6 rounded-lg shadow-md">
           <div className="mb-6">
             <h2 className="text-xl font-semibold">
