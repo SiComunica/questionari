@@ -12,6 +12,7 @@ import QuestionariStruttureNew from '@/components/dashboard/QuestionariStrutture
 import { exportToExcel, exportToPDF } from '@/utils/export'
 import * as XLSX from 'xlsx'
 import jsPDF from 'jspdf'
+import QuestionariOperatoriLista from '@/components/dashboard/QuestionariOperatoriLista'
 
 // Tipo corretto per i questionari giovani
 type QuestionarioGiovani = {
@@ -248,6 +249,9 @@ export default function AmministratoriDashboard() {
 
       {/* Nuovo componente per questionari strutture */}
       <QuestionariStruttureNew />
+
+      {/* Nuova Sezione Questionari Operatori */}
+      <QuestionariOperatoriLista />
     </div>
   )
 } 
