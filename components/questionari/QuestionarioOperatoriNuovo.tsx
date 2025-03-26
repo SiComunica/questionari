@@ -130,6 +130,8 @@ const QuestionarioOperatoriNuovo = () => {
         stato: 'inviato'
       };
 
+      console.log('Dati da salvare:', questionarioData);
+
       const { data, error } = await supabase
         .from('operatori')
         .insert(questionarioData)
