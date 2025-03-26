@@ -24,6 +24,8 @@ interface Props {
 }
 
 const defaultFormData: QuestionarioStruttureNew = {
+  id: '',
+  nome_struttura: '',
   creato_da: '',
   creato_a: new Date().toISOString(),
   stato: 'bozza',
