@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from 'react-hot-toast';
+import { supabase } from '@/lib/supabaseClient';
 
 interface Props {
   initialData?: QuestionarioStruttureNew;
@@ -150,38 +151,41 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
 
   const handleInviaQuestionario = async () => {
     try {
-      if (!operatore) {
-        toast.error("Inserire il codice operatore");
+      // Validazione base
+      if (!formData.id_struttura || !formData.nome_struttura) {
+        alert('Compilare i campi obbligatori');
         return;
       }
 
-      const questionarioToSave = {
+      // Prepara i dati per il salvataggio
+      const questionarioData = {
         ...formData,
-        creato_da: operatore,
+        id: uuidv4(),
         creato_a: new Date().toISOString(),
         stato: 'inviato'
       };
 
-      console.log('Saving questionario:', questionarioToSave);
-
+      // Salva nella tabella strutture
       const { data, error } = await supabase
         .from('strutture')
-        .insert(questionarioToSave)
-        .select()
-        .single();
+        .insert(questionarioData)
+        .select();
 
       if (error) {
         console.error('Errore durante il salvataggio:', error);
-        throw error;
+        alert('Errore durante il salvataggio: ' + error.message);
+        return;
       }
 
       console.log('Questionario salvato con successo:', data);
-      toast.success('Questionario inviato con successo!');
-      router.push('/');
+      alert('Questionario inviato con successo!');
+      
+      // Opzionale: reindirizza alla pagina operatori
+      router.push('/operatori');
 
-    } catch (error: any) {
-      console.error('Errore durante il salvataggio:', error);
-      toast.error(`Errore durante il salvataggio: ${error?.message || 'Errore sconosciuto'}`);
+    } catch (error) {
+      console.error('Errore durante l\'invio:', error);
+      alert('Errore durante l\'invio del questionario');
     }
   };
 
@@ -268,6 +272,7 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
           {currentStep === totalSteps && (
             <Button 
               onClick={handleInviaQuestionario}
+              disabled={currentStep < 6}
               className="bg-green-600 hover:bg-green-700"
             >
               Invia questionario
