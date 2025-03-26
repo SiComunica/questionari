@@ -4,28 +4,23 @@ import { useEffect, useState } from 'react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { QuestionarioGiovani } from '@/types/questionari'
 import QuestionariStruttureNew from '@/components/dashboard/QuestionariStruttureNew'
 
 export default function AmministratoriDashboard() {
-  const [questionariGiovani, setQuestionariGiovani] = useState<QuestionarioGiovani[]>([])
+  const [questionari, setQuestionari] = useState([])
   const [loading, setLoading] = useState(true)
   const supabase = createClientComponentClient()
 
   useEffect(() => {
-    const fetchQuestionariGiovani = async () => {
+    const fetchQuestionari = async () => {
       try {
-        // Fetch solo questionari giovani
-        const { data: giovani, error } = await supabase
+        const { data, error } = await supabase
           .from('giovani')
           .select('*')
-          .order('created_at', { ascending: false });
+          .order('created_at', { ascending: false })
 
-        if (error) throw error;
-        
-        console.log('Questionari giovani:', giovani);
-        setQuestionariGiovani(giovani || []);
-
+        if (error) throw error
+        setQuestionari(data || [])
       } catch (err) {
         console.error('Errore:', err)
       } finally {
@@ -38,7 +33,7 @@ export default function AmministratoriDashboard() {
       const codice = localStorage.getItem('codice')
       
       if (userType === 'admin' && codice === 'admin2025') {
-        fetchQuestionariGiovani()
+        fetchQuestionari()
       }
     }
   }, [])
@@ -51,18 +46,18 @@ export default function AmministratoriDashboard() {
     <div className="p-8">
       <h1 className="text-2xl font-bold mb-6">Dashboard Amministratori</h1>
 
-      {/* Sezione questionari giovani */}
+      {/* Sezione questionari giovani (originale) */}
       <Card className="mb-8">
         <CardHeader>
           <CardTitle>Questionari Giovani</CardTitle>
         </CardHeader>
         <CardContent>
-          {questionariGiovani.length === 0 ? (
-            <p>Nessun questionario giovani ricevuto</p>
+          {questionari.length === 0 ? (
+            <p>Nessun questionario ricevuto</p>
           ) : (
             <div className="space-y-4">
-              {questionariGiovani.map((questionario) => (
-                <Card key={questionario.id} className="p-4">
+              {questionari.map((questionario) => (
+                <Card key={questionario.created_at} className="p-4">
                   <div className="flex justify-between items-center">
                     <div>
                       <p className="text-sm text-gray-600">
@@ -86,7 +81,7 @@ export default function AmministratoriDashboard() {
         </CardContent>
       </Card>
 
-      {/* Sezione questionari strutture */}
+      {/* Nuovo componente per questionari strutture */}
       <QuestionariStruttureNew />
     </div>
   )
