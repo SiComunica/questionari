@@ -12,6 +12,10 @@ import {
 import * as XLSX from 'xlsx'
 import { jsPDF } from 'jspdf'
 import 'jspdf-autotable'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { QuestionarioStruttureNew } from '@/types/questionari'
 
 // Definiamo un tipo base per i campi comuni
 interface BaseQuestionario {
@@ -29,7 +33,8 @@ export default function AmministratoriDashboard() {
   const [questionari, setQuestionari] = useState<Questionario[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedQuestionario, setSelectedQuestionario] = useState<Questionario | null>(null)
-  
+  const supabase = createClientComponentClient()
+
   useEffect(() => {
     const fetchQuestionari = async () => {
       try {
@@ -123,6 +128,24 @@ export default function AmministratoriDashboard() {
     doc.save("questionari_completi.pdf")
   }
 
+  const fetchQuestionariStrutture = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('strutture')
+        .select('*')
+        .order('creato_a', { ascending: false })
+
+      if (error) {
+        throw error
+      }
+
+      console.log('Questionari recuperati:', data)
+      setQuestionari(data || [] as Questionario[])
+    } catch (error) {
+      console.error('Errore nel recupero dei questionari:', error)
+    }
+  }
+
   return (
     <div className="p-8">
       <div className="flex justify-between items-center mb-6">
@@ -188,6 +211,39 @@ export default function AmministratoriDashboard() {
               onClose={() => setSelectedQuestionario(null)}
             />
           )}
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Questionari Strutture Ricevuti</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {questionari.length === 0 ? (
+                <p>Nessun questionario ricevuto</p>
+              ) : (
+                <div className="space-y-4">
+                  {questionari.map((questionario) => (
+                    <Card key={questionario.id} className="p-4">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <p className="font-bold">Struttura: {questionario.id_struttura}</p>
+                          <p className="text-sm text-gray-600">
+                            Inviato da: {questionario.creato_da} il{' '}
+                            {new Date(questionario.creato_a!).toLocaleDateString()}
+                          </p>
+                        </div>
+                        <Button 
+                          variant="outline"
+                          onClick={() => {/* Aggiungi funzione per visualizzare i dettagli */}}
+                        >
+                          Visualizza dettagli
+                        </Button>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
       )}
     </div>
