@@ -679,7 +679,15 @@ export type QuestionarioStruttureNew = {
   };
   
   esperienze_inserimento_lavorativo: boolean;
-  attivita_inserimento: string[];
+  attivita_inserimento: Array<{
+    nome: string;
+    periodo: string;
+    contenuto: string;
+    destinatari: string;
+    attori: string;
+    punti_forza: string;
+    criticita: string;
+  }>;
   nuove_attivita: string[];
   
   collaborazioni: string[];
