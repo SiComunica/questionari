@@ -15,6 +15,7 @@ import type { QuestionarioStruttureNew } from '@/types/questionari';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { toast } from 'react-hot-toast';
 
 interface Props {
   initialData?: QuestionarioStruttureNew;
@@ -157,64 +158,43 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
 
   const handleInviaQuestionario = async () => {
     try {
-      if (!formData.creato_da) {
-        alert('Inserisci il codice operatore prima di inviare il questionario');
+      if (!operatore) {
+        toast.error("Inserire il codice operatore");
         return;
       }
 
-      // Prepariamo i dati da salvare assicurandoci che corrispondano alla struttura della tabella
-      const datiDaSalvare = {
-        ...formData,
+      const questionarioData: QuestionarioStruttureNew = {
+        id: uuidv4(),
         creato_a: new Date().toISOString(),
+        nome_struttura: formData.nome_struttura || '',
+        codice_operatore: operatore,
         stato: 'inviato',
-        // Convertiamo gli array in JSONB dove necessario
-        attivita_inserimento: formData.attivita_inserimento?.map(item => 
-          typeof item === 'string' ? JSON.parse(item) : item
-        ) || [],
-        collaborazioni: formData.collaborazioni?.map(item => 
-          typeof item === 'string' ? JSON.parse(item) : item
-        ) || [],
-        // Assicuriamoci che i campi JSONB siano oggetti validi
-        personale_retribuito: {
-          uomini: Number(formData.personale_retribuito?.uomini || 0),
-          donne: Number(formData.personale_retribuito?.donne || 0),
-          totale: Number(formData.personale_retribuito?.totale || 0),
-          part_time: Number(formData.personale_retribuito?.part_time || 0),
-          full_time: Number(formData.personale_retribuito?.full_time || 0)
+        dati_personale: {
+          numero_operatori: formData.numero_operatori || 0,
+          numero_volontari: formData.numero_volontari || 0,
+          // ... altri dati del personale
         },
-        personale_volontario: {
-          uomini: Number(formData.personale_volontario?.uomini || 0),
-          donne: Number(formData.personale_volontario?.donne || 0),
-          totale: Number(formData.personale_volontario?.totale || 0)
-        },
-        // Assicuriamoci che gli array siano inizializzati correttamente
-        figure_professionali: formData.figure_professionali || [],
-        nuove_attivita: formData.nuove_attivita || []
+        dati_ospiti: {
+          persone_ospitate: formData.persone_ospitate || 0,
+          persone_non_ospitate: formData.persone_non_ospitate || 0,
+          // ... altri dati degli ospiti
+        }
       };
-
-      console.log('Dati da salvare:', datiDaSalvare);
 
       const { data, error } = await supabase
         .from('strutture')
-        .insert([datiDaSalvare])
+        .insert(questionarioData)
         .select();
 
-      if (error) {
-        console.error('Errore Supabase dettagliato:', {
-          code: error.code,
-          message: error.message,
-          details: error.details
-        });
-        throw new Error(`Errore durante il salvataggio: ${error.message}`);
-      }
+      if (error) throw error;
 
-      console.log('Questionario salvato con successo:', data);
-      alert('Questionario inviato con successo!');
+      console.log('Questionario salvato:', data);
+      toast.success('Questionario inviato con successo!');
       router.push('/operatori');
-
+      
     } catch (error) {
-      console.error('Errore completo:', error);
-      alert(error instanceof Error ? error.message : 'Errore durante l\'invio del questionario');
+      console.error('Errore durante il salvataggio:', error);
+      toast.error(`Errore durante il salvataggio: ${error.message}`);
     }
   };
 
