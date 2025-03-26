@@ -613,21 +613,99 @@ export interface AttivitaInserimento {
 }
 
 export type QuestionarioStruttureNew = {
-  id: string;  // UUID generato da Supabase
+  // Campi base
+  id: string;
   creato_a: string;
-  creato_da: string;  // Aggiunto questo campo
-  nome_struttura: string;
-  codice_operatore: string;
+  creato_da: string;
   stato: string;
-  dati_personale: {
-    numero_operatori: number;
-    numero_volontari: number;
-    // ... altri campi del personale
+  
+  // Sezione A
+  id_struttura: string;
+  nome_struttura: string;
+  forma_giuridica: string;
+  forma_giuridica_altro: string;
+  tipo_struttura: string;
+  anno_inizio: number;
+  missione: string;
+
+  // Sezione B
+  personale_retribuito: {
+    uomini: number;
+    donne: number;
+    totale: number;
+    part_time: number;
+    full_time: number;
   };
-  dati_ospiti: {
-    persone_ospitate: number;
-    persone_non_ospitate: number;
-    // ... altri campi degli ospiti
+  personale_volontario: {
+    uomini: number;
+    donne: number;
+    totale: number;
   };
-  // ... altri campi necessari
-} 
+  figure_professionali: string[];
+  figure_professionali_altro: string;
+
+  // Sezione C
+  persone_ospitate: {
+    fino_16: { uomini: number; donne: number; totale: number };
+    da_16_a_18: { uomini: number; donne: number; totale: number };
+    maggiorenni: { uomini: number; donne: number; totale: number };
+    totale: { uomini: number; donne: number; totale: number };
+  };
+  caratteristiche_ospiti_adolescenti: string[];
+  caratteristiche_ospiti_giovani: string[];
+  caratteristiche_ospiti_altro: string;
+  
+  persone_non_ospitate: {
+    fino_16: { uomini: number; donne: number; totale: number };
+    da_16_a_18: { uomini: number; donne: number; totale: number };
+    maggiorenni: { uomini: number; donne: number; totale: number };
+    totale: { uomini: number; donne: number; totale: number };
+  };
+  caratteristiche_non_ospiti_adolescenti: string[];
+  caratteristiche_non_ospiti_giovani: string[];
+  caratteristiche_non_ospiti_altro: string;
+
+  // Sezione D
+  attivita_servizi: {
+    alloggio: boolean;
+    vitto: boolean;
+    servizi_bassa_soglia: boolean;
+    servizi_bassa_soglia_desc: string;
+    ospitalita_diurna: boolean;
+    ospitalita_diurna_desc: string;
+    supporto_psicologico: boolean;
+    supporto_psicologico_desc: string;
+    sostegno_abitativo: boolean;
+    sostegno_abitativo_desc: string;
+    inserimento_lavorativo: boolean;
+    inserimento_lavorativo_desc: string;
+    orientamento_scolastico: boolean;
+    orientamento_scolastico_desc: string;
+    istruzione_scolastica: boolean;
+    istruzione_scolastica_desc: string;
+    formazione_professionale: boolean;
+    formazione_professionale_desc: string;
+    attivita_ricreative: boolean;
+    attivita_ricreative_desc: string;
+    altro: boolean;
+    altro_desc: string;
+  };
+  esperienze_inserimento_lavorativo: boolean;
+  attivita_inserimento: string[];
+  nuove_attivita: string[];
+
+  // Sezione E
+  collaborazioni: string[];
+  punti_forza_network: string;
+  critica_network: string;
+
+  // Sezione F
+  finanziamenti: {
+    fondi_pubblici: number;
+    fondi_privati: number;
+    totale: number;
+    fondi_pubblici_specifiche: string;
+    fondi_privati_specifiche: string;
+    fornitori: string[];
+  };
+}; 

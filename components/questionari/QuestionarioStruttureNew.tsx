@@ -164,21 +164,11 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
       }
 
       const nuovoQuestionario: QuestionarioStruttureNew = {
+        ...formData,
         id: uuidv4(),
         creato_a: new Date().toISOString(),
-        nome_struttura: formData.nome_struttura || '',
-        codice_operatore: operatore,
-        stato: 'inviato',
-        dati_personale: {
-          numero_operatori: formData.numero_operatori || 0,
-          numero_volontari: formData.numero_volontari || 0,
-          // ... altri dati del personale
-        },
-        dati_ospiti: {
-          persone_ospitate: formData.persone_ospitate || 0,
-          persone_non_ospitate: formData.persone_non_ospitate || 0,
-          // ... altri dati degli ospiti
-        }
+        creato_da: operatore,
+        stato: 'inviato'
       };
 
       console.log('Saving questionario:', nuovoQuestionario);
@@ -198,9 +188,9 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
       toast.success('Questionario inviato con successo!');
       router.push('/');
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Errore durante il salvataggio:', error);
-      toast.error(`Errore durante il salvataggio: ${error.message}`);
+      toast.error(`Errore durante il salvataggio: ${error?.message || 'Errore sconosciuto'}`);
     }
   };
 
