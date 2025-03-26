@@ -22,6 +22,7 @@ const QuestionarioOperatoriNuovo = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [codiceOperatore, setCodiceOperatore] = useState('');
+  const totalSteps = 3;
 
   const [formData, setFormData] = useState<QuestionarioOperatoriNuovo>(() => ({
     // Sezione A
@@ -150,6 +151,18 @@ const QuestionarioOperatoriNuovo = () => {
     }
   };
 
+  const handleNext = () => {
+    if (currentStep < totalSteps) {
+      setCurrentStep(prev => prev + 1);
+    }
+  };
+
+  const handlePrev = () => {
+    if (currentStep > 1) {
+      setCurrentStep(prev => prev - 1);
+    }
+  };
+
   const renderStep = () => {
     switch (currentStep) {
       case 1:
@@ -165,39 +178,75 @@ const QuestionarioOperatoriNuovo = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Questionario Operatori</h1>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">
-            Codice Operatore
-          </label>
-          <input
-            type="text"
-            value={codiceOperatore}
-            onChange={(e) => setCodiceOperatore(e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-            required
-          />
+      <div className="max-w-4xl mx-auto">
+        <div className="bg-white p-6 rounded-lg shadow-md mb-6">
+          <h2 className="text-xl font-semibold mb-4">Codice Operatore</h2>
+          <div className="flex gap-4 items-center">
+            <input
+              type="text"
+              value={codiceOperatore}
+              onChange={(e) => setCodiceOperatore(e.target.value)}
+              placeholder="Inserisci il codice operatore"
+              className="flex-1 p-2 border rounded-md"
+              required
+            />
+          </div>
         </div>
-        {renderStep()}
-        
-        <div className="mt-4 flex justify-between">
+
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <div className="mb-6">
+            <h2 className="text-xl font-semibold">
+              Sezione {currentStep} di {totalSteps}
+            </h2>
+          </div>
+
+          <form onSubmit={(e) => e.preventDefault()}>
+            {renderStep()}
+
+            <div className="mt-6 flex justify-between">
+              <button
+                type="button"
+                onClick={handlePrev}
+                disabled={currentStep === 1}
+                className="px-4 py-2 bg-gray-500 text-white rounded-md disabled:opacity-50"
+              >
+                Indietro
+              </button>
+
+              <div>
+                {currentStep === totalSteps ? (
+                  <button
+                    type="button"
+                    onClick={handleSubmit}
+                    disabled={loading || !codiceOperatore}
+                    className="px-4 py-2 bg-green-600 text-white rounded-md disabled:opacity-50"
+                  >
+                    {loading ? 'Invio in corso...' : 'Invia Questionario'}
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleNext}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-md"
+                  >
+                    Avanti
+                  </button>
+                )}
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div className="mt-4">
           <button
+            type="button"
             onClick={() => router.push('/operatori')}
-            className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
+            className="px-4 py-2 bg-gray-500 text-white rounded-md w-full"
           >
             Torna alla Dashboard
           </button>
-          
-          <button
-            onClick={handleSubmit}
-            disabled={loading || !codiceOperatore}
-            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded disabled:opacity-50"
-          >
-            {loading ? 'Invio in corso...' : 'Invia Questionario'}
-          </button>
         </div>
-      </form>
+      </div>
     </div>
   );
 };
