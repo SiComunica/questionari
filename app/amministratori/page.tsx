@@ -68,7 +68,7 @@ export default function AmministratoriDashboard() {
   const handleLogout = () => {
     localStorage.removeItem('userType')
     localStorage.removeItem('codice')
-    router.push('/login')
+    router.push('/')
   }
 
   const handleExportExcel = async (questionario?: QuestionarioGiovani) => {
