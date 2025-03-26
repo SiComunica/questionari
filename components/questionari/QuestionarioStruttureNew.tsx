@@ -153,7 +153,6 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
     try {
       setLoading(true);
 
-      // Prepara i dati esattamente come sono nel database
       const questionarioData = {
         id: uuidv4(),
         creato_a: new Date().toISOString(),
@@ -177,10 +176,10 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
         caratteristiche_non_ospiti_adolescenti: formData.caratteristiche_non_ospiti_adolescenti,
         caratteristiche_non_ospiti_giovani: formData.caratteristiche_non_ospiti_giovani,
         caratteristiche_non_ospiti_altro: formData.caratteristiche_non_ospiti_altro,
-        "attività_servizi": formData.attivita_servizi, // nota l'accento
+        attivita_servizi_new: formData.attivita_servizi,
         esperienze_inserimento_lavorativo: formData.esperienze_inserimento_lavorativo,
-        "attività_inserimento": formData.attivita_inserimento, // nota l'accento
-        "nuove_attività": formData.nuove_attivita, // nota l'accento
+        attivita_inserimento: formData.attivita_inserimento,
+        nuove_attivita: formData.nuove_attivita,
         collaborazioni: formData.collaborazioni,
         punti_forza_network: formData.punti_forza_network,
         critica_network: formData.critica_network,
