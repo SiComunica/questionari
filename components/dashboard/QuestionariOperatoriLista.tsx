@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { FileSpreadsheet, FileText, Trash2 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
+import jsPDF from 'jspdf'
+import 'jspdf-autotable'
 
 type QuestionarioOperatori = {
   id: string;
@@ -123,13 +125,35 @@ export default function QuestionariOperatoriLista() {
 
   const handleExportPDF = async (questionario?: QuestionarioOperatori) => {
     try {
-      const data = questionario ? [questionario] : questionari;
-      toast.success('Export PDF in sviluppo');
+      const doc = new jsPDF()
+      const dataToExport = questionario ? [questionario] : questionari
+      
+      doc.text("Questionari Operatori", 14, 15)
+      
+      doc.autoTable({
+        head: [['Campo', 'Valore']],
+        body: Object.entries(dataToExport[0]).map(([key, value]) => [
+          key,
+          typeof value === 'object' ? JSON.stringify(value) : String(value)
+        ]),
+        startY: 25,
+        styles: {
+          fontSize: 10,
+          cellPadding: 5
+        },
+        columnStyles: {
+          0: { fontStyle: 'bold' },
+          1: { cellWidth: 'auto' }
+        }
+      })
+      
+      doc.save(`questionari_operatori_${new Date().toISOString()}.pdf`)
+      toast.success('Export PDF completato')
     } catch (error) {
-      console.error('Errore durante l\'export PDF:', error);
-      toast.error('Errore durante l\'export');
+      console.error('Errore export PDF:', error)
+      toast.error('Errore durante l\'export PDF')
     }
-  };
+  }
 
   const handleDelete = async (id: string) => {
     try {
@@ -145,6 +169,35 @@ export default function QuestionariOperatoriLista() {
     } catch (error) {
       toast.error('Errore durante l\'eliminazione')
     }
+  }
+
+  const renderQuestionarioDettaglio = (questionario: QuestionarioOperatori) => {
+    return (
+      <div className="space-y-4">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <h3 className="font-bold">Dati Generali</h3>
+            <p>Data invio: {new Date(questionario.creato_a).toLocaleDateString()}</p>
+            <p>Operatore: {questionario.creato_da}</p>
+            <p>Stato: {questionario.stato}</p>
+          </div>
+          <div>
+            <h3 className="font-bold">Dettagli Operatore</h3>
+            {/* Aggiungi qui i campi specifici degli operatori */}
+          </div>
+        </div>
+        <div className="flex justify-end gap-2 mt-4">
+          <Button onClick={() => handleExportExcel(questionario)} className="flex gap-2">
+            <FileSpreadsheet size={20} />
+            Excel
+          </Button>
+          <Button onClick={() => handleExportPDF(questionario)} className="flex gap-2">
+            <FileText size={20} />
+            PDF
+          </Button>
+        </div>
+      </div>
+    )
   }
 
   if (loading) return <div>Caricamento...</div>
@@ -223,26 +276,7 @@ export default function QuestionariOperatoriLista() {
           <DialogHeader>
             <DialogTitle>Dettaglio Questionario Operatore</DialogTitle>
           </DialogHeader>
-          {selectedQuestionario && (
-            <div className="space-y-4">
-              {Object.entries(selectedQuestionario).map(([key, value]) => (
-                <div key={key} className="grid grid-cols-2 gap-2">
-                  <span className="font-semibold">{key}:</span>
-                  <span>{typeof value === 'object' ? JSON.stringify(value) : value}</span>
-                </div>
-              ))}
-              <div className="flex justify-end gap-2 mt-4">
-                <Button onClick={() => handleExportExcel(selectedQuestionario)} className="flex gap-2">
-                  <FileSpreadsheet size={20} />
-                  Excel
-                </Button>
-                <Button onClick={() => handleExportPDF(selectedQuestionario)} className="flex gap-2">
-                  <FileText size={20} />
-                  PDF
-                </Button>
-              </div>
-            </div>
-          )}
+          {selectedQuestionario && renderQuestionarioDettaglio(selectedQuestionario)}
         </DialogContent>
       </Dialog>
     </Card>

@@ -67,16 +67,26 @@ export default function QuestionariGiovaniOperatori() {
       const doc = new jsPDF()
       const dataToExport = questionario ? [questionario] : questionari
       
-      doc.text("Questionari Giovani", 14, 15)
+      doc.text("Questionari Giovani Operatori", 14, 15)
       
-      // @ts-ignore - ignoriamo l'errore di TypeScript per autoTable
       doc.autoTable({
-        head: [Object.keys(dataToExport[0])],
-        body: dataToExport.map(Object.values),
+        head: [['Campo', 'Valore']],
+        body: Object.entries(dataToExport[0]).map(([key, value]) => [
+          key,
+          typeof value === 'object' ? JSON.stringify(value) : String(value)
+        ]),
         startY: 25,
+        styles: {
+          fontSize: 10,
+          cellPadding: 5
+        },
+        columnStyles: {
+          0: { fontStyle: 'bold' },
+          1: { cellWidth: 'auto' }
+        }
       })
       
-      doc.save(`questionari_giovani_${new Date().toISOString()}.pdf`)
+      doc.save(`questionari_giovani_operatori_${new Date().toISOString()}.pdf`)
       toast.success('Export PDF completato')
     } catch (error) {
       console.error('Errore export PDF:', error)
@@ -101,6 +111,35 @@ export default function QuestionariGiovaniOperatori() {
   }
 
   if (loading) return <div>Caricamento...</div>
+
+  const renderQuestionarioDettaglio = (questionario: QuestionarioGiovani) => {
+    return (
+      <div className="space-y-4">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <h3 className="font-bold">Dati Generali</h3>
+            <p>Data invio: {new Date(questionario.creato_a).toLocaleDateString()}</p>
+            <p>Operatore: {questionario.creato_da}</p>
+            <p>Stato: {questionario.stato}</p>
+          </div>
+          <div>
+            <h3 className="font-bold">Dettagli Giovane</h3>
+            {/* Aggiungi qui i campi specifici dei giovani */}
+          </div>
+        </div>
+        <div className="flex justify-end gap-2 mt-4">
+          <Button onClick={() => handleExportExcel(questionario)} className="flex gap-2">
+            <FileSpreadsheet size={20} />
+            Excel
+          </Button>
+          <Button onClick={() => handleExportPDF(questionario)} className="flex gap-2">
+            <FileText size={20} />
+            PDF
+          </Button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <Card className="mt-8">
@@ -178,26 +217,7 @@ export default function QuestionariGiovaniOperatori() {
           <DialogHeader>
             <DialogTitle>Dettaglio Questionario Giovani</DialogTitle>
           </DialogHeader>
-          {selectedQuestionario && (
-            <div className="space-y-4">
-              {Object.entries(selectedQuestionario).map(([key, value]) => (
-                <div key={key} className="grid grid-cols-2 gap-2">
-                  <span className="font-semibold">{key}:</span>
-                  <span>{typeof value === 'object' ? JSON.stringify(value) : value}</span>
-                </div>
-              ))}
-              <div className="flex justify-end gap-2 mt-4">
-                <Button onClick={() => handleExportExcel(selectedQuestionario)} className="flex gap-2">
-                  <FileSpreadsheet size={20} />
-                  Excel
-                </Button>
-                <Button onClick={() => handleExportPDF(selectedQuestionario)} className="flex gap-2">
-                  <FileText size={20} />
-                  PDF
-                </Button>
-              </div>
-            </div>
-          )}
+          {selectedQuestionario && renderQuestionarioDettaglio(selectedQuestionario)}
         </DialogContent>
       </Dialog>
     </Card>
