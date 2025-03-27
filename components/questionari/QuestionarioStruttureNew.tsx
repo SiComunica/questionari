@@ -150,43 +150,20 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
   };
 
   const handleInviaQuestionario = async () => {
-    try {
-      setLoading(true);
+    if (!formData.creato_da) {
+      toast.error('Inserire il codice operatore');
+      return;
+    }
 
+    setLoading(true);
+
+    try {
       const questionarioData = {
+        ...formData,
         id: uuidv4(),
         creato_a: new Date().toISOString(),
-        creato_da: formData.creato_da,
-        stato: 'inviato',
-        id_struttura: formData.id_struttura,
-        forma_giuridica: formData.forma_giuridica,
-        forma_giuridica_altro: formData.forma_giuridica_altro,
-        tipo_struttura: formData.tipo_struttura,
-        anno_inizio: formData.anno_inizio,
-        missione: formData.missione,
-        personale_retribuito: formData.personale_retribuito,
-        personale_volontario: formData.personale_volontario,
-        figure_professionali: formData.figure_professionali,
-        figure_professionali_altro: formData.figure_professionali_altro,
-        persone_ospitate: formData.persone_ospitate,
-        caratteristiche_ospiti_adolescenti: formData.caratteristiche_ospiti_adolescenti,
-        caratteristiche_ospiti_giovani: formData.caratteristiche_ospiti_giovani,
-        caratteristiche_ospiti_altro: formData.caratteristiche_ospiti_altro,
-        persone_non_ospitate: formData.persone_non_ospitate,
-        caratteristiche_non_ospiti_adolescenti: formData.caratteristiche_non_ospiti_adolescenti,
-        caratteristiche_non_ospiti_giovani: formData.caratteristiche_non_ospiti_giovani,
-        caratteristiche_non_ospiti_altro: formData.caratteristiche_non_ospiti_altro,
-        attivita_servizi_new: formData.attivita_servizi,
-        esperienze_inserimento_lavorativo: formData.esperienze_inserimento_lavorativo,
-        attivita_inserimento: formData.attivita_inserimento,
-        nuove_attivita: formData.nuove_attivita,
-        collaborazioni: formData.collaborazioni,
-        punti_forza_network: formData.punti_forza_network,
-        critica_network: formData.critica_network,
-        finanziamenti: formData.finanziamenti
+        stato: 'inviato'
       };
-
-      console.log('Tentativo di salvataggio dati:', questionarioData);
 
       const { data, error } = await supabase
         .from('strutture')
@@ -194,17 +171,17 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
         .select();
 
       if (error) {
-        console.error('Dettaglio errore Supabase:', error);
+        console.error('Errore salvataggio:', error);
         toast.error(`Errore: ${error.message}`);
         return;
       }
 
-      console.log('Dati salvati con successo:', data);
       toast.success('Questionario inviato con successo');
       router.push('/operatori');
+      return;
 
     } catch (error) {
-      console.error('Errore completo:', error);
+      console.error('Errore:', error);
       toast.error('Errore durante l\'invio del questionario');
     } finally {
       setLoading(false);
