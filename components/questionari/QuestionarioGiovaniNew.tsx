@@ -1898,130 +1898,128 @@ export default function QuestionarioGiovaniNew({ fonte, readOnly, initialData }:
     }
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
+  const handleSubmit = async () => {
+    if (!codiceOperatore) {
+      toast.error('Inserire il codice operatore');
+      return;
+    }
+
+    setLoading(true);
 
     try {
-      const { id, created_at, created_by, ...restFormData } = formData
-
-      const formattedData = {
-        ...restFormData,
-        attivita_attuali: Object.entries(formData.attivita_attuali)
-          .filter(([_, value]) => value === true)
-          .map(([key]) => key),
-        attivita_precedenti: Object.entries(formData.attivita_precedenti)
-          .filter(([key, value]) => value === true && key !== 'altro_specificare')
-          .map(([key]) => key),
-        ricerca_lavoro: Object.entries(formData.ricerca_lavoro)
-          .filter(([key, value]) => value === true && key !== 'altro_specificare')
-          .map(([key]) => key),
-        orientamento_luoghi: Object.entries(formData.orientamento_lavoro.dove)
-          .filter(([_, value]) => value === true)
-          .map(([key]) => key),
-        fattori_vulnerabilita: Object.entries(formData.fattori_vulnerabilita)
-          .filter(([key, value]) => value === true && key !== 'fv16_spec')
-          .map(([key]) => key)
-      }
-
-      // Log dei dati prima dell'invio
-      console.log('Dati da salvare:', {
+      const questionarioData = {
+        ...formData,
         id: uuidv4(),
-        ...formattedData,
-        fonte: 'anonimo',  // Cambiato da 'anonimo9999' a 'anonimo'
-        stato: 'completato',
-        created_at: new Date().toISOString(),
-        ultima_modifica: new Date().toISOString()
-      })
+        creato_a: new Date().toISOString(),
+        creato_da: codiceOperatore,
+        stato: 'inviato'
+      };
 
       const { data, error } = await supabase
-        .from('giovani')
-        .insert([
-          {
-            id: uuidv4(),
-            ...formattedData,
-            fonte: 'anonimo',  // Cambiato da 'anonimo9999' a 'anonimo'
-            stato: 'completato',
-            created_at: new Date().toISOString(),
-            ultima_modifica: new Date().toISOString()
-          }
-        ])
+        .from('operatorinew')
+        .insert(questionarioData)
+        .select();
 
-      if (error) throw error
+      if (error) {
+        console.error('Errore salvataggio:', error);
+        toast.error(`Errore: ${error.message}`);
+        return;
+      }
 
-      router.push('/anonimo?success=true')
-    } catch (err: any) {
-      console.error('Errore nel salvataggio:', err)
-      setError('Errore nel salvataggio del questionario: ' + err.message)
+      toast.success('Questionario inviato con successo!');
+      router.push('/operatori');
+
+    } catch (error) {
+      console.error('Errore:', error);
+      toast.error('Errore durante l\'invio del questionario');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
+
+  // Aggiungi questo prima del form principale
+  const CodiceOperatoreInput = () => (
+    <div className="mb-6 bg-white p-6 rounded-lg shadow-md">
+      <h2 className="text-xl font-semibold mb-4">Codice Operatore</h2>
+      <div className="flex gap-4 items-center">
+        <input
+          type="text"
+          value={codiceOperatore}
+          onChange={(e) => setCodiceOperatore(e.target.value)}
+          placeholder="es: operatore1"
+          className="flex-1 p-2 border rounded-md"
+          required
+        />
+      </div>
+    </div>
+  );
 
   return (
     <div className="container mx-auto p-4">
-      {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          {error}
-        </div>
-      )}
-      
-      <Card>
-        <CardContent className="p-6">
-          {/* Progress bar */}
-          <div className="mb-8">
-            <div className="w-full h-2 bg-gray-200 rounded-full">
-              <div 
-                className="h-full bg-blue-600 rounded-full transition-all duration-300"
-                style={{ width: `${progress}%` }}
-              />
+      <div className="max-w-4xl mx-auto">
+        <CodiceOperatoreInput />
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            {error}
+          </div>
+        )}
+        
+        <Card>
+          <CardContent className="p-6">
+            {/* Progress bar */}
+            <div className="mb-8">
+              <div className="w-full h-2 bg-gray-200 rounded-full">
+                <div 
+                  className="h-full bg-blue-600 rounded-full transition-all duration-300"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+              <p className="text-center mt-2">Step {currentStep} di {totalSteps}</p>
             </div>
-            <p className="text-center mt-2">Step {currentStep} di {totalSteps}</p>
-          </div>
 
-          {/* Contenuto dinamico in base allo step */}
-          <div className="mb-6">
-            {currentStep === 1 && (
-              <SectionA formData={formData} setFormData={setFormData} />
-            )}
-            {currentStep === 2 && (
-              <SectionB formData={formData} setFormData={setFormData} />
-            )}
-            {currentStep === 3 && (
-              <SectionC formData={formData} setFormData={setFormData} />
-            )}
-            {currentStep === 4 && (
-              <SectionD formData={formData} setFormData={setFormData} />
-            )}
-            {currentStep === 5 && (
-              <SectionE formData={formData} setFormData={setFormData} />
-            )}
-          </div>
+            {/* Contenuto dinamico in base allo step */}
+            <div className="mb-6">
+              {currentStep === 1 && (
+                <SectionA formData={formData} setFormData={setFormData} />
+              )}
+              {currentStep === 2 && (
+                <SectionB formData={formData} setFormData={setFormData} />
+              )}
+              {currentStep === 3 && (
+                <SectionC formData={formData} setFormData={setFormData} />
+              )}
+              {currentStep === 4 && (
+                <SectionD formData={formData} setFormData={setFormData} />
+              )}
+              {currentStep === 5 && (
+                <SectionE formData={formData} setFormData={setFormData} />
+              )}
+            </div>
 
-          {/* Pulsanti navigazione */}
-          <div className="flex justify-between mt-6">
-            {currentStep > 1 && (
-              <Button onClick={handlePrev} variant="outline">
-                Indietro
-              </Button>
-            )}
-            {currentStep < totalSteps ? (
-              <Button onClick={handleNext} className="ml-auto">
-                Avanti
-              </Button>
-            ) : (
-              <Button 
-                onClick={handleSubmit} 
-                className="ml-auto"
-                disabled={loading}
-              >
-                {loading ? 'Invio in corso...' : 'Invia Questionario'}
-              </Button>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+            {/* Pulsanti navigazione */}
+            <div className="flex justify-between mt-6">
+              {currentStep > 1 && (
+                <Button onClick={handlePrev} variant="outline">
+                  Indietro
+                </Button>
+              )}
+              {currentStep < totalSteps ? (
+                <Button onClick={handleNext} className="ml-auto">
+                  Avanti
+                </Button>
+              ) : (
+                <Button 
+                  onClick={handleSubmit} 
+                  className="ml-auto"
+                  disabled={loading}
+                >
+                  {loading ? 'Invio in corso...' : 'Invia Questionario'}
+                </Button>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }
