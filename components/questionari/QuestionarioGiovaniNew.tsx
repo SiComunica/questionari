@@ -1926,8 +1926,9 @@ export default function QuestionarioGiovaniNew({ fonte, readOnly, initialData }:
         return;
       }
 
-      toast.success('Questionario inviato con successo!');
+      toast.success('Questionario inviato con successo');
       router.push('/operatori');
+      return; // Aggiungi questo return per assicurarti che il codice si fermi qui
 
     } catch (error) {
       console.error('Errore:', error);
