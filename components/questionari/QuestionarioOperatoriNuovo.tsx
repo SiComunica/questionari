@@ -139,7 +139,7 @@ const QuestionarioOperatoriNuovo = () => {
         return;
       }
 
-      toast.success('Questionario inviato con successo!');
+      toast.success('Questionario inviato con successo');
       router.push('/operatori');
 
     } catch (error) {

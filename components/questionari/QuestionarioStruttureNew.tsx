@@ -200,7 +200,7 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
       }
 
       console.log('Dati salvati con successo:', data);
-      toast.success('Questionario inviato con successo!');
+      toast.success('Questionario inviato con successo');
       router.push('/operatori');
 
     } catch (error) {
