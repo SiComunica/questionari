@@ -166,8 +166,6 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
         stato: 'inviato'
       };
 
-      console.log('Dati da inviare:', questionarioData);
-
       const { data, error } = await supabase
         .from('strutture')
         .insert(questionarioData)
@@ -182,7 +180,7 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
 
       toast.success('Questionario inviato con successo');
       setTimeout(() => {
-        router.push('/operatori');
+        window.location.href = '/operatori';
       }, 2000);
 
     } catch (error) {
