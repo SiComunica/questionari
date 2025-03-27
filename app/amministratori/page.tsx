@@ -249,16 +249,9 @@ export default function AmministratoriDashboard() {
         </DialogContent>
       </Dialog>
 
-      {/* Nuovo componente per questionari strutture */}
       <QuestionariStruttureNew />
-
-      {/* Nuova Sezione Questionari Operatori */}
       <QuestionariOperatoriLista />
-
-      {/* Aggiungi il nuovo componente */}
       <QuestionariGiovaniOperatori />
-
-      {/* Nuovo componente per questionari anonimi */}
       <QuestionariGiovaniAnonimi />
     </div>
   )
