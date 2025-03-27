@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from 'react-hot-toast';
 import { supabase } from '@/lib/supabaseClient';
+import { Toaster } from 'react-hot-toast';
 
 interface Props {
   initialData?: QuestionarioStruttureNew;
@@ -233,6 +234,7 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
 
   return (
     <div className="container mx-auto p-4">
+      <Toaster position="top-right" />
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Questionario Strutture</h1>
         <p className="text-gray-600">Operatore: {operatore}</p>

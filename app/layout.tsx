@@ -1,12 +1,18 @@
-import { Toaster } from 'react-hot-toast';
+import './globals.css'
+import { Inter } from 'next/font/google'
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+const inter = Inter({ subsets: ['latin'] })
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   return (
     <html lang="it">
-      <body>
+      <body className={inter.className}>
         {children}
-        <Toaster position="top-right" />
       </body>
     </html>
-  );
+  )
 }
