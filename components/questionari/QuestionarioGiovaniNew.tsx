@@ -1882,6 +1882,7 @@ export default function QuestionarioGiovaniNew({ fonte, readOnly, initialData }:
   const [formData, setFormData] = useState<QuestionarioGiovani>(initialFormData)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [codiceOperatore, setCodiceOperatore] = useState('')
   
   const router = useRouter()
 
