@@ -1929,8 +1929,9 @@ export default function QuestionarioGiovaniNew({ fonte, readOnly, initialData }:
       }
 
       toast.success('Questionario inviato con successo');
+      // Aggiungiamo un timeout per il reindirizzamento
       setTimeout(() => {
-        router.push('/operatori');
+        window.location.href = '/operatori';
       }, 2000);
 
     } catch (error) {

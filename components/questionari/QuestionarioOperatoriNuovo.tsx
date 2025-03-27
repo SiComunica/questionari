@@ -143,7 +143,7 @@ const QuestionarioOperatoriNuovo = () => {
 
       toast.success('Questionario inviato con successo');
       setTimeout(() => {
-        router.push('/operatori');
+        window.location.href = '/operatori';
       }, 2000);
 
     } catch (error) {
