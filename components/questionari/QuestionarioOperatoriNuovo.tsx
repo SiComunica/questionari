@@ -10,6 +10,7 @@ import SezioneBOperatoriNuovo from './sezioni/SezioneBOperatoriNuovo';
 import SezioneCOperatoriNuovo from './sezioni/SezioneCOperatoriNuovo';
 import { supabase } from '@/lib/supabaseClient';
 import { toast } from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast';
 
 interface Props {
   initialData?: QuestionarioOperatoriNuovo;
@@ -136,12 +137,14 @@ const QuestionarioOperatoriNuovo = () => {
       if (error) {
         console.error('Errore salvataggio:', error);
         toast.error(`Errore: ${error.message}`);
+        setLoading(false);
         return;
       }
 
       toast.success('Questionario inviato con successo');
-      router.push('/operatori');
-      return;
+      setTimeout(() => {
+        router.push('/operatori');
+      }, 2000);
 
     } catch (error) {
       console.error('Errore:', error);
@@ -194,6 +197,7 @@ const QuestionarioOperatoriNuovo = () => {
 
   return (
     <div className="container mx-auto p-4">
+      <Toaster position="top-right" />
       <div className="max-w-4xl mx-auto">
         <div className="bg-white p-6 rounded-lg shadow-md">
           <div className="mb-6">
