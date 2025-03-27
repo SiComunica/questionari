@@ -71,11 +71,31 @@ export default function QuestionariGiovaniAnonimi() {
       
       doc.text("Questionari Giovani Anonimi", 14, 15)
       
-      // @ts-ignore
+      const headers = ['Campo', 'Valore']
+      const data = Object.entries(dataToExport[0]).map(([key, value]) => {
+        let displayValue = value
+        if (typeof value === 'object' && value !== null) {
+          displayValue = JSON.stringify(value, null, 2)
+        }
+        return [key, String(displayValue)]
+      })
+
       doc.autoTable({
-        head: [Object.keys(dataToExport[0])],
-        body: dataToExport.map(Object.values),
+        head: [headers],
+        body: data,
         startY: 25,
+        styles: {
+          fontSize: 10,
+          cellPadding: 5,
+          overflow: 'linebreak',
+          cellWidth: 'wrap'
+        },
+        columnStyles: {
+          0: { fontStyle: 'bold', cellWidth: 50 },
+          1: { cellWidth: 'auto' }
+        },
+        margin: { left: 10, right: 10 },
+        theme: 'grid'
       })
       
       doc.save(`questionari_anonimi_${new Date().toISOString()}.pdf`)
@@ -100,6 +120,37 @@ export default function QuestionariGiovaniAnonimi() {
     } catch (error) {
       toast.error('Errore durante l\'eliminazione')
     }
+  }
+
+  const renderQuestionarioDettaglio = (questionario: QuestionarioGiovaniAnonimo) => {
+    return (
+      <div className="space-y-4">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <h3 className="font-bold">Dati Generali</h3>
+            <p>Data invio: {new Date(questionario.created_at).toLocaleDateString()}</p>
+            <p>Stato: {questionario.stato}</p>
+            <p>Età: {questionario.eta}</p>
+            <p>Genere: {questionario.genere}</p>
+          </div>
+          <div>
+            <h3 className="font-bold">Formazione e Lavoro</h3>
+            <p>Titolo di studio: {questionario.titolo_studio}</p>
+            <p>Occupazione: {questionario.occupazione}</p>
+          </div>
+        </div>
+        <div className="flex justify-end gap-2 mt-4">
+          <Button onClick={() => handleExportExcel(questionario)} className="flex gap-2">
+            <FileSpreadsheet size={20} />
+            Excel
+          </Button>
+          <Button onClick={() => handleExportPDF(questionario)} className="flex gap-2">
+            <FileText size={20} />
+            PDF
+          </Button>
+        </div>
+      </div>
+    )
   }
 
   if (loading) return <div>Caricamento...</div>
@@ -177,26 +228,7 @@ export default function QuestionariGiovaniAnonimi() {
           <DialogHeader>
             <DialogTitle>Dettaglio Questionario Anonimo</DialogTitle>
           </DialogHeader>
-          {selectedQuestionario && (
-            <div className="space-y-4">
-              {Object.entries(selectedQuestionario).map(([key, value]) => (
-                <div key={key} className="grid grid-cols-2 gap-2">
-                  <span className="font-semibold">{key}:</span>
-                  <span>{typeof value === 'object' ? JSON.stringify(value) : value}</span>
-                </div>
-              ))}
-              <div className="flex justify-end gap-2 mt-4">
-                <Button onClick={() => handleExportExcel(selectedQuestionario)} className="flex gap-2">
-                  <FileSpreadsheet size={20} />
-                  Excel
-                </Button>
-                <Button onClick={() => handleExportPDF(selectedQuestionario)} className="flex gap-2">
-                  <FileText size={20} />
-                  PDF
-                </Button>
-              </div>
-            </div>
-          )}
+          {selectedQuestionario && renderQuestionarioDettaglio(selectedQuestionario)}
         </DialogContent>
       </Dialog>
     </Card>

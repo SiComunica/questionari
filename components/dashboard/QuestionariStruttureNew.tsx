@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { FileSpreadsheet, FileText, Trash2 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
+import jsPDF from 'jspdf'
+import 'jspdf-autotable'
 
 // Definiamo il tipo base che corrisponde alla struttura del database
 type QuestionarioStrutture = {
@@ -75,14 +77,45 @@ export default function QuestionariStruttureNew() {
 
   const handleExportPDF = async (questionario?: QuestionarioStrutture) => {
     try {
-      const data = questionario ? [questionario] : questionari;
-      // Per ora solo un placeholder
-      toast.success('Export PDF in sviluppo');
+      const doc = new jsPDF()
+      const dataToExport = questionario ? [questionario] : questionari
+      
+      doc.text("Questionari Strutture", 14, 15)
+      
+      const headers = ['Campo', 'Valore']
+      const data = Object.entries(dataToExport[0]).map(([key, value]) => {
+        let displayValue = value
+        if (typeof value === 'object' && value !== null) {
+          displayValue = JSON.stringify(value, null, 2)
+        }
+        return [key, String(displayValue)]
+      })
+
+      doc.autoTable({
+        head: [headers],
+        body: data,
+        startY: 25,
+        styles: {
+          fontSize: 10,
+          cellPadding: 5,
+          overflow: 'linebreak',
+          cellWidth: 'wrap'
+        },
+        columnStyles: {
+          0: { fontStyle: 'bold', cellWidth: 50 },
+          1: { cellWidth: 'auto' }
+        },
+        margin: { left: 10, right: 10 },
+        theme: 'grid'
+      })
+      
+      doc.save(`questionari_strutture_${new Date().toISOString()}.pdf`)
+      toast.success('Export PDF completato')
     } catch (error) {
-      console.error('Errore durante l\'export PDF:', error);
-      toast.error('Errore durante l\'export');
+      console.error('Errore export PDF:', error)
+      toast.error('Errore durante l\'export PDF')
     }
-  };
+  }
 
   const handleDelete = async (id: string) => {
     try {
@@ -98,6 +131,52 @@ export default function QuestionariStruttureNew() {
     } catch (error) {
       toast.error('Errore durante l\'eliminazione')
     }
+  }
+
+  const renderQuestionarioDettaglio = (questionario: QuestionarioStrutture) => {
+    return (
+      <div className="space-y-4">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <h3 className="font-bold">Dati Struttura</h3>
+            <p>Nome: {questionario.nome_struttura}</p>
+            <p>ID Struttura: {questionario.id_struttura}</p>
+            <p>Forma Giuridica: {questionario.forma_giuridica}</p>
+            <p>Tipo: {questionario.tipo_struttura}</p>
+            <p>Anno Inizio: {questionario.anno_inizio}</p>
+          </div>
+          <div>
+            <h3 className="font-bold">Personale</h3>
+            <p>Retribuiti Uomini: {questionario.personale_retribuito_uomini}</p>
+            <p>Retribuiti Donne: {questionario.personale_retribuito_donne}</p>
+            <p>Volontari Uomini: {questionario.personale_volontario_uomini}</p>
+            <p>Volontari Donne: {questionario.personale_volontario_donne}</p>
+          </div>
+        </div>
+        <div>
+          <h3 className="font-bold">Missione</h3>
+          <p>{questionario.missione}</p>
+        </div>
+        <div>
+          <h3 className="font-bold">Figure Professionali</h3>
+          <ul className="list-disc pl-4">
+            {questionario.figure_professionali.map((figura, index) => (
+              <li key={index}>{figura}</li>
+            ))}
+          </ul>
+        </div>
+        <div className="flex justify-end gap-2 mt-4">
+          <Button onClick={() => handleExportExcel(questionario)} className="flex gap-2">
+            <FileSpreadsheet size={20} />
+            Excel
+          </Button>
+          <Button onClick={() => handleExportPDF(questionario)} className="flex gap-2">
+            <FileText size={20} />
+            PDF
+          </Button>
+        </div>
+      </div>
+    )
   }
 
   if (loading) return <div>Caricamento...</div>
@@ -176,26 +255,7 @@ export default function QuestionariStruttureNew() {
           <DialogHeader>
             <DialogTitle>Dettaglio Questionario Struttura</DialogTitle>
           </DialogHeader>
-          {selectedQuestionario && (
-            <div className="space-y-4">
-              {Object.entries(selectedQuestionario).map(([key, value]) => (
-                <div key={key} className="grid grid-cols-2 gap-2">
-                  <span className="font-semibold">{key}:</span>
-                  <span>{typeof value === 'object' ? JSON.stringify(value) : value}</span>
-                </div>
-              ))}
-              <div className="flex justify-end gap-2 mt-4">
-                <Button onClick={() => handleExportExcel(selectedQuestionario)} className="flex gap-2">
-                  <FileSpreadsheet size={20} />
-                  Excel
-                </Button>
-                <Button onClick={() => handleExportPDF(selectedQuestionario)} className="flex gap-2">
-                  <FileText size={20} />
-                  PDF
-                </Button>
-              </div>
-            </div>
-          )}
+          {selectedQuestionario && renderQuestionarioDettaglio(selectedQuestionario)}
         </DialogContent>
       </Dialog>
     </Card>

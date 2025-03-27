@@ -130,21 +130,31 @@ export default function QuestionariOperatoriLista() {
       
       doc.text("Questionari Operatori", 14, 15)
       
+      const headers = ['Campo', 'Valore']
+      const data = Object.entries(dataToExport[0]).map(([key, value]) => {
+        let displayValue = value
+        if (typeof value === 'object' && value !== null) {
+          displayValue = JSON.stringify(value, null, 2)
+        }
+        return [key, String(displayValue)]
+      })
+
       doc.autoTable({
-        head: [['Campo', 'Valore']],
-        body: Object.entries(dataToExport[0]).map(([key, value]) => [
-          key,
-          typeof value === 'object' ? JSON.stringify(value) : String(value)
-        ]),
+        head: [headers],
+        body: data,
         startY: 25,
         styles: {
           fontSize: 10,
-          cellPadding: 5
+          cellPadding: 5,
+          overflow: 'linebreak',
+          cellWidth: 'wrap'
         },
         columnStyles: {
-          0: { fontStyle: 'bold' },
+          0: { fontStyle: 'bold', cellWidth: 50 },
           1: { cellWidth: 'auto' }
-        }
+        },
+        margin: { left: 10, right: 10 },
+        theme: 'grid'
       })
       
       doc.save(`questionari_operatori_${new Date().toISOString()}.pdf`)
