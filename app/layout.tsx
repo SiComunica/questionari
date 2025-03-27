@@ -1,21 +1,12 @@
-import { AuthProvider } from '@/contexts/AuthContext'
-import './globals.css'
+import { Toaster } from 'react-hot-toast';
 
-export const metadata = {
-  title: 'Ferro',
-  description: 'Gestione questionari',
-}
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="it">
       <body>
         {children}
+        <Toaster position="top-right" />
       </body>
     </html>
-  )
-} 
+  );
+}
