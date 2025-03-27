@@ -1942,12 +1942,12 @@ export default function QuestionarioGiovaniNew({ fonte, readOnly, initialData }:
     <div className="mb-6 bg-white p-6 rounded-lg shadow-md">
       <h2 className="text-xl font-semibold mb-4">Codice Operatore</h2>
       <div className="flex gap-4 items-center">
-        <Input
+        <input  // Usa l'elemento input HTML nativo invece del componente Input
           type="text"
           value={codiceOperatore}
           onChange={(e) => setCodiceOperatore(e.target.value)}
           placeholder="Inserisci il codice operatore (es: operatore 1)"
-          className="flex-1"
+          className="flex-1 p-2 border rounded-md"
         />
       </div>
     </div>
