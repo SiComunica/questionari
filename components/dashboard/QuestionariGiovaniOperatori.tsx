@@ -8,6 +8,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { FileSpreadsheet, FileText, Trash2 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import * as XLSX from 'xlsx'
+import jsPDF from 'jspdf'
+import 'jspdf-autotable'
 
 type QuestionarioGiovani = {
   id: string;
@@ -62,12 +64,23 @@ export default function QuestionariGiovaniOperatori() {
 
   const handleExportPDF = async (questionario?: QuestionarioGiovani) => {
     try {
-      const data = questionario ? [questionario] : questionari
-      // Per ora solo un placeholder
-      toast.success('Export PDF in sviluppo')
+      const doc = new jsPDF()
+      const dataToExport = questionario ? [questionario] : questionari
+      
+      doc.text("Questionari Giovani", 14, 15)
+      
+      // @ts-ignore - ignoriamo l'errore di TypeScript per autoTable
+      doc.autoTable({
+        head: [Object.keys(dataToExport[0])],
+        body: dataToExport.map(Object.values),
+        startY: 25,
+      })
+      
+      doc.save(`questionari_giovani_${new Date().toISOString()}.pdf`)
+      toast.success('Export PDF completato')
     } catch (error) {
-      console.error('Errore durante l\'export PDF:', error)
-      toast.error('Errore durante l\'export')
+      console.error('Errore export PDF:', error)
+      toast.error('Errore durante l\'export PDF')
     }
   }
 
