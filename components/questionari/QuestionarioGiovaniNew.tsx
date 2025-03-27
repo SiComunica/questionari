@@ -1882,7 +1882,7 @@ export default function QuestionarioGiovaniNew({ fonte, readOnly, initialData }:
   const [formData, setFormData] = useState<QuestionarioGiovani>(initialFormData)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [codiceOperatore, setCodiceOperatore] = useState('')
+  const [codiceOperatore, setCodiceOperatore] = useState('operatore 1') // Valore predefinito
   
   const router = useRouter()
 
@@ -1946,9 +1946,8 @@ export default function QuestionarioGiovaniNew({ fonte, readOnly, initialData }:
           type="text"
           value={codiceOperatore}
           onChange={(e) => setCodiceOperatore(e.target.value)}
-          placeholder="operatore 1"
+          placeholder="Inserisci il codice operatore"
           className="flex-1"
-          defaultValue="operatore 1"
         />
       </div>
     </div>
