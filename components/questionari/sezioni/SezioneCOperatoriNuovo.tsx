@@ -49,53 +49,54 @@ export default function SezioneCOperatoriNuovo({ formData, setFormData }: Props)
       </h2>
 
       <div>
-        <h3 className="text-lg font-medium mb-4">
+        <h3 className="font-semibold mb-4">
           C1. Quali difficoltà le persone uscite dalle strutture/progetto si trovano ad affrontare?
-          <br />
-          <span className="text-sm text-gray-600">
-            Per ciascuna opzione assegnare un punteggio da 1 a 10 (dove 1 significa nessuna difficoltà e 10 difficoltà massima)
-          </span>
         </h3>
-
-        <div className="space-y-4">
-          <div className="grid grid-cols-12 gap-4 font-medium text-center mb-2">
-            <div className="col-span-4">Tipologia di difficoltà</div>
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(num => (
-              <div key={num} className="col-span-0.8">{num}</div>
-            ))}
-          </div>
-
-          {difficolta.map(({ key, label }) => (
-            <div key={key} className="grid grid-cols-12 gap-4 items-center">
-              <div className="col-span-4">{label}</div>
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(num => (
-                <div key={num} className="col-span-0.8 flex justify-center">
-                  <input
-                    type="radio"
-                    name={key}
-                    value={num}
-                    checked={formData.difficolta_uscita[key] === num}
-                    onChange={(e) => handleDifficoltaChange(e, key)}
-                    className="form-radio"
-                  />
-                </div>
+        <p className="text-sm text-gray-500 mb-4">
+          Per ciascuna opzione assegnare un punteggio da 1 a 10 (dove 1 significa nessuna difficoltà e 10 difficoltà massima)
+        </p>
+        
+        <div className="w-full overflow-x-auto">
+          <div className="grid gap-4 min-w-[800px]">
+            <div className="grid grid-cols-[250px_repeat(10,1fr)] gap-2 items-center">
+              <div className="font-semibold">Tipologia di difficoltà</div>
+              {[...Array(10)].map((_, i) => (
+                <div key={i} className="text-center w-10">{i + 1}</div>
               ))}
             </div>
-          ))}
+            
+            {difficolta.map(({ key, label }) => (
+              <div key={key} className="grid grid-cols-12 gap-4 items-center">
+                <div className="col-span-4">{label}</div>
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(num => (
+                  <div key={num} className="col-span-0.8 flex justify-center">
+                    <input
+                      type="radio"
+                      name={key}
+                      value={num}
+                      checked={formData.difficolta_uscita[key] === num}
+                      onChange={(e) => handleDifficoltaChange(e, key)}
+                      className="form-radio"
+                    />
+                  </div>
+                ))}
+              </div>
+            ))}
 
-          {formData.difficolta_uscita.altro > 1 && (
-            <div className="mt-4">
-              <label className="block mb-2">Specificare altro tipo di problema:</label>
-              <input
-                type="text"
-                value={formData.difficolta_uscita.altro_specificare}
-                onChange={handleAltroSpecificaChange}
-                className="w-full p-2 border rounded"
-                placeholder="Descrivi il problema..."
-                required
-              />
-            </div>
-          )}
+            {formData.difficolta_uscita.altro > 1 && (
+              <div className="mt-4">
+                <label className="block mb-2">Specificare altro tipo di problema:</label>
+                <input
+                  type="text"
+                  value={formData.difficolta_uscita.altro_specificare}
+                  onChange={handleAltroSpecificaChange}
+                  className="w-full p-2 border rounded"
+                  placeholder="Descrivi il problema..."
+                  required
+                />
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
