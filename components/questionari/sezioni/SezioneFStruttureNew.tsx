@@ -13,25 +13,23 @@ interface Props {
 }
 
 export default function SezioneFStruttureNew({ formData, setFormData }: Props) {
-  const handleFondiChange = (tipo: 'fondi_pubblici' | 'fondi_privati', value: string) => {
-    const numValue = Math.min(100, Math.max(0, parseInt(value) || 0));
+  const handleFinanziamentiChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const pubblicoValue = parseInt(e.target.value) || 0;
     
-    setFormData(prev => {
-      const newData = {
-        ...prev,
-        finanziamenti: {
-          ...prev.finanziamenti,
-          [tipo]: numValue
-        }
-      };
-      
-      // Calcola il totale
-      newData.finanziamenti.totale = 
-        (newData.finanziamenti.fondi_pubblici || 0) + 
-        (newData.finanziamenti.fondi_privati || 0);
-      
-      return newData;
-    });
+    // Assicuriamoci che il valore sia tra 0 e 100
+    const pubblicoNormalizzato = Math.min(Math.max(pubblicoValue, 0), 100);
+    
+    // Calcoliamo automaticamente il valore dei fondi privati
+    const privatoValue = 100 - pubblicoNormalizzato;
+
+    setFormData(prev => ({
+      ...prev,
+      finanziamenti: {
+        ...prev.finanziamenti,
+        fondi_pubblici: pubblicoNormalizzato,
+        fondi_privati: privatoValue
+      }
+    }));
   };
 
   const handleSpecificheChange = (
@@ -76,31 +74,28 @@ export default function SezioneFStruttureNew({ formData, setFormData }: Props) {
           </h3>
           
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>Fondi Pubblici (%)</Label>
-                <Input
-                  type="number"
-                  min={0}
-                  max={100}
-                  value={formData.finanziamenti.fondi_pubblici}
-                  onChange={(e) => handleFondiChange('fondi_pubblici', e.target.value)}
-                />
-              </div>
-              <div>
-                <Label>Fondi Privati (%)</Label>
-                <Input
-                  type="number"
-                  min={0}
-                  max={100}
-                  value={formData.finanziamenti.fondi_privati}
-                  onChange={(e) => handleFondiChange('fondi_privati', e.target.value)}
-                />
-              </div>
+            <div>
+              <Label>Fondi Pubblici (%)</Label>
+              <Input
+                type="number"
+                min={0}
+                max={100}
+                value={formData.finanziamenti.fondi_pubblici}
+                onChange={handleFinanziamentiChange}
+              />
+            </div>
+            <div>
+              <Label>Fondi Privati (%)</Label>
+              <Input
+                type="number"
+                value={formData.finanziamenti.fondi_privati}
+                className="bg-gray-100"
+                disabled
+              />
             </div>
 
             <div className="font-semibold">
-              Totale: {formData.finanziamenti.totale}%
+              Totale: {formData.finanziamenti.fondi_pubblici + formData.finanziamenti.fondi_privati}%
             </div>
 
             <div className="space-y-4">
