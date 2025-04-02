@@ -9,6 +9,7 @@ import { FileSpreadsheet, FileText, Trash2 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import jsPDF from 'jspdf'
 import 'jspdf-autotable'
+import * as XLSX from 'xlsx'
 
 // Definiamo il tipo base che corrisponde alla struttura del database
 type QuestionarioStrutture = {
@@ -133,6 +134,38 @@ export default function QuestionariStruttureNew() {
     }
   }
 
+  const handleExportXLSX = () => {
+    if (questionari.length === 0) {
+      toast.error('Nessun dato da esportare');
+      return;
+    }
+
+    // Prepariamo i dati per l'export
+    const dataToExport = questionari.map(q => ({
+      ID: q.id,
+      'Data Creazione': new Date(q.creato_a).toLocaleDateString('it-IT'),
+      'Codice Operatore': q.creato_da,
+      'Nome Struttura': q.nome_struttura,
+      'ID Struttura': q.id_struttura,
+      'Forma Giuridica': q.forma_giuridica,
+      'Tipo Struttura': q.tipo_struttura,
+      'Anno Inizio': q.anno_inizio,
+      'Missione': q.missione,
+      'Fondi Pubblici (%)': q.finanziamenti.fondi_pubblici,
+      'Fondi Privati (%)': q.finanziamenti.fondi_privati,
+      // Aggiungi altri campi necessari...
+    }));
+
+    // Creiamo il workbook
+    const ws = XLSX.utils.json_to_sheet(dataToExport);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Questionari Strutture');
+
+    // Scarichiamo il file
+    XLSX.writeFile(wb, 'questionari_strutture.xlsx');
+    toast.success('Export completato con successo');
+  };
+
   const renderQuestionarioDettaglio = (questionario: QuestionarioStrutture) => {
     return (
       <div className="space-y-4">
@@ -188,6 +221,9 @@ export default function QuestionariStruttureNew() {
       </CardHeader>
       <CardContent>
         <div className="mb-6 flex gap-4">
+          <Button onClick={handleExportXLSX} className="flex gap-2">
+            Esporta XLSX
+          </Button>
           <Button onClick={() => handleExportExcel()} className="flex gap-2">
             <FileSpreadsheet size={20} />
             Esporta tutti in Excel

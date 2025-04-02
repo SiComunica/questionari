@@ -9,6 +9,7 @@ import { FileSpreadsheet, FileText, Trash2 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import jsPDF from 'jspdf'
 import 'jspdf-autotable'
+import * as XLSX from 'xlsx'
 
 type QuestionarioOperatori = {
   id: string;
@@ -181,6 +182,36 @@ export default function QuestionariOperatoriLista() {
     }
   }
 
+  const handleExportXLSX = () => {
+    if (questionari.length === 0) {
+      toast.error('Nessun dato da esportare');
+      return;
+    }
+
+    // Prepariamo i dati per l'export
+    const dataToExport = questionari.map(q => ({
+      ID: q.id,
+      'Data Creazione': new Date(q.creato_a).toLocaleDateString('it-IT'),
+      'Codice Operatore': q.creato_da,
+      'Persone Seguite': q.persone_seguite,
+      'Persone Maggiorenni': q.persone_maggiorenni,
+      'Caratteristiche Persone': JSON.stringify(q.caratteristiche_persone),
+      'Tipo Intervento': JSON.stringify(q.tipo_intervento),
+      'Interventi da Potenziare': JSON.stringify(q.interventi_potenziare),
+      'Difficoltà Uscita': JSON.stringify(q.difficolta_uscita),
+      // Aggiungi altri campi necessari...
+    }));
+
+    // Creiamo il workbook
+    const ws = XLSX.utils.json_to_sheet(dataToExport);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Questionari Operatori');
+
+    // Scarichiamo il file
+    XLSX.writeFile(wb, 'questionari_operatori.xlsx');
+    toast.success('Export completato con successo');
+  };
+
   const renderQuestionarioDettaglio = (questionario: QuestionarioOperatori) => {
     return (
       <div className="space-y-4">
@@ -226,6 +257,10 @@ export default function QuestionariOperatoriLista() {
           <Button onClick={() => handleExportPDF()} className="flex gap-2">
             <FileText size={20} />
             Esporta tutti in PDF
+          </Button>
+          <Button onClick={handleExportXLSX} className="flex gap-2">
+            <FileSpreadsheet size={20} />
+            Esporta tutti in XLSX
           </Button>
         </div>
 
