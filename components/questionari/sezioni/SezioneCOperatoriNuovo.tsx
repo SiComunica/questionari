@@ -6,8 +6,22 @@ interface Props {
   setFormData: React.Dispatch<React.SetStateAction<QuestionarioOperatoriNuovo>>;
 }
 
+type DifficoltaKey = keyof Omit<QuestionarioOperatoriNuovo['difficolta_uscita'], 'altro_specificare'>;
+
+const difficolta: Array<{ key: DifficoltaKey; label: string }> = [
+  { key: 'problemi_economici', label: 'Problemi economici' },
+  { key: 'trovare_lavoro', label: 'Difficoltà di trovare un lavoro' },
+  { key: 'lavori_qualita', label: 'Difficoltà di trovare lavori di qualità' },
+  { key: 'trovare_casa', label: 'Difficoltà nel trovare casa' },
+  { key: 'discriminazioni', label: 'Problemi di discriminazioni, stigma, pregiudizi' },
+  { key: 'salute_fisica', label: 'Problemi di salute fisica' },
+  { key: 'problemi_psicologici', label: 'Problemi psicologici o psichiatrici' },
+  { key: 'difficolta_linguistiche', label: 'Difficoltà linguistiche' },
+  { key: 'altro', label: 'Altro tipo di problema' }
+];
+
 export default function SezioneCOperatoriNuovo({ formData, setFormData }: Props) {
-  const handleDifficoltaChange = (e: React.ChangeEvent<HTMLInputElement>, campo: keyof typeof formData.difficolta_uscita) => {
+  const handleDifficoltaChange = (e: React.ChangeEvent<HTMLInputElement>, campo: DifficoltaKey) => {
     const value = parseInt(e.target.value) || 1;
     if (value >= 1 && value <= 10) {
       setFormData(prev => ({
@@ -29,18 +43,6 @@ export default function SezioneCOperatoriNuovo({ formData, setFormData }: Props)
       }
     }));
   };
-
-  const difficolta = [
-    { key: 'problemi_economici', label: 'Problemi economici' },
-    { key: 'trovare_lavoro', label: 'Difficoltà di trovare un lavoro' },
-    { key: 'lavori_qualita', label: 'Difficoltà di trovare lavori di qualità' },
-    { key: 'trovare_casa', label: 'Difficoltà nel trovare casa' },
-    { key: 'discriminazioni', label: 'Problemi di discriminazioni, stigma, pregiudizi' },
-    { key: 'salute_fisica', label: 'Problemi di salute fisica' },
-    { key: 'problemi_psicologici', label: 'Problemi psicologici o psichiatrici' },
-    { key: 'difficolta_linguistiche', label: 'Difficoltà linguistiche' },
-    { key: 'altro', label: 'Altro tipo di problema' }
-  ] as const;
 
   return (
     <div className="space-y-6">
@@ -65,7 +67,7 @@ export default function SezioneCOperatoriNuovo({ formData, setFormData }: Props)
               ))}
             </div>
             
-            {Object.entries(difficolta).map(([key, label]) => (
+            {difficolta.map(({ key, label }) => (
               <div key={key} className="grid grid-cols-[250px_repeat(10,40px)] gap-2 items-center">
                 <div>{label}</div>
                 {[...Array(10)].map((_, i) => (
@@ -75,7 +77,7 @@ export default function SezioneCOperatoriNuovo({ formData, setFormData }: Props)
                       name={`difficolta_${key}`}
                       value={i + 1}
                       checked={formData.difficolta_uscita[key] === (i + 1)}
-                      onChange={(e) => handleDifficoltaChange(e, key as keyof typeof formData.difficolta_uscita)}
+                      onChange={(e) => handleDifficoltaChange(e, key)}
                       className="w-4 h-4"
                     />
                   </div>
