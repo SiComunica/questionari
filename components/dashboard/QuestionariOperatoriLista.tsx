@@ -193,13 +193,15 @@ export default function QuestionariOperatoriLista() {
       ID: q.id,
       'Data Creazione': new Date(q.creato_a).toLocaleDateString('it-IT'),
       'Codice Operatore': q.creato_da,
-      'Persone Seguite': q.persone_seguite,
-      'Persone Maggiorenni': q.persone_maggiorenni,
+      'ID Struttura': q.id_struttura,
+      'Tipo Struttura': q.tipo_struttura,
+      'Professione': q.professione.tipo,
+      'Persone Seguite': JSON.stringify(q.persone_seguite),
+      'Persone Maggiorenni': JSON.stringify(q.persone_maggiorenni),
       'Caratteristiche Persone': JSON.stringify(q.caratteristiche_persone),
       'Tipo Intervento': JSON.stringify(q.tipo_intervento),
-      'Interventi da Potenziare': JSON.stringify(q.interventi_potenziare),
       'Difficoltà Uscita': JSON.stringify(q.difficolta_uscita),
-      // Aggiungi altri campi necessari...
+      'Fonte': q.fonte
     }));
 
     // Creiamo il workbook
