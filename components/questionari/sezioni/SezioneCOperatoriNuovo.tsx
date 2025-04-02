@@ -58,25 +58,25 @@ export default function SezioneCOperatoriNuovo({ formData, setFormData }: Props)
         
         <div className="w-full overflow-x-auto">
           <div className="grid gap-4 min-w-[800px]">
-            <div className="grid grid-cols-[250px_repeat(10,1fr)] gap-2 items-center">
+            <div className="grid grid-cols-[250px_repeat(10,40px)] gap-2 items-center">
               <div className="font-semibold">Tipologia di difficoltà</div>
               {[...Array(10)].map((_, i) => (
                 <div key={i} className="text-center w-10">{i + 1}</div>
               ))}
             </div>
             
-            {difficolta.map(({ key, label }) => (
-              <div key={key} className="grid grid-cols-12 gap-4 items-center">
-                <div className="col-span-4">{label}</div>
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(num => (
-                  <div key={num} className="col-span-0.8 flex justify-center">
+            {Object.entries(difficolta).map(([key, label]) => (
+              <div key={key} className="grid grid-cols-[250px_repeat(10,40px)] gap-2 items-center">
+                <div>{label}</div>
+                {[...Array(10)].map((_, i) => (
+                  <div key={i} className="flex justify-center">
                     <input
                       type="radio"
-                      name={key}
-                      value={num}
-                      checked={formData.difficolta_uscita[key] === num}
-                      onChange={(e) => handleDifficoltaChange(e, key)}
-                      className="form-radio"
+                      name={`difficolta_${key}`}
+                      value={i + 1}
+                      checked={formData.difficolta_uscita[key] === (i + 1)}
+                      onChange={(e) => handleDifficoltaChange(e, key as keyof typeof formData.difficolta_uscita)}
+                      className="w-4 h-4"
                     />
                   </div>
                 ))}
