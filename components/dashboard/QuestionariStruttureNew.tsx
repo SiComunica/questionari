@@ -151,9 +151,7 @@ export default function QuestionariStruttureNew() {
       'Tipo Struttura': q.tipo_struttura,
       'Anno Inizio': q.anno_inizio,
       'Missione': q.missione,
-      'Fondi Pubblici (%)': q.finanziamenti.fondi_pubblici,
-      'Fondi Privati (%)': q.finanziamenti.fondi_privati,
-      // Aggiungi altri campi necessari...
+      'Stato': q.stato
     }));
 
     // Creiamo il workbook
