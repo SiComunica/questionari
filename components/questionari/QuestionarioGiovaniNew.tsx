@@ -93,7 +93,6 @@ const ATTIVITA_ATTUALI = [
   { id: 'formazione', label: 'Formazione professionale' },
   { id: 'lavoro', label: 'Lavoro' },
   { id: 'ricerca_lavoro', label: 'Ricerca lavoro' },
-  { id: 'tirocinio', label: 'Tirocinio' },
   { id: 'nessuna', label: 'Nessuna' }
 ]
 
