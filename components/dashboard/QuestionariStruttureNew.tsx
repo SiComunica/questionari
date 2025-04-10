@@ -148,15 +148,15 @@ export default function QuestionariStruttureNew() {
         'Personale Retribuito Donne': q.personale_retribuito_donne,
         'Personale Volontario Uomini': q.personale_volontario_uomini,
         'Personale Volontario Donne': q.personale_volontario_donne,
-        'Figure Professionali': q.figure_professionali.join(', '),
-        'Servizi Offerti': q.servizi_offerti.join(', '),
-        'Tipologia Utenti': q.tipologia_utenti.join(', '),
+        'Figure Professionali': Array.isArray(q.figure_professionali) ? q.figure_professionali.join(', ') : '',
+        'Servizi Offerti': Array.isArray(q.servizi_offerti) ? q.servizi_offerti.join(', ') : '',
+        'Tipologia Utenti': Array.isArray(q.tipologia_utenti) ? q.tipologia_utenti.join(', ') : '',
         'Modalità Accesso': q.modalita_accesso,
         'Durata Media Accoglienza': q.durata_media_accoglienza,
         'Numero Posti': q.numero_posti,
         'Costi Mensili': q.costi_mensili,
-        'Fonti Finanziamento': q.fonti_finanziamento.join(', '),
-        'Collaborazioni': q.collaborazioni.join(', '),
+        'Fonti Finanziamento': Array.isArray(q.fonti_finanziamento) ? q.fonti_finanziamento.join(', ') : '',
+        'Collaborazioni': Array.isArray(q.collaborazioni) ? q.collaborazioni.join(', ') : '',
         'Note': q.note
       }));
 

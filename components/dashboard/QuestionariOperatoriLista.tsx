@@ -179,7 +179,7 @@ export default function QuestionariOperatoriLista() {
       'ID Struttura': q.id_struttura,
       'Tipo Struttura': q.tipo_struttura,
       'Professione': q.professione.tipo,
-      'Professione Altro': q.professione.altro_specificare,
+      'Professione Altro': q.professione.altro_specificare || '',
       'Persone Seguite Uomini': q.persone_seguite.uomini,
       'Persone Seguite Donne': q.persone_seguite.donne,
       'Persone Seguite Totale': q.persone_seguite.totale,
@@ -188,19 +188,19 @@ export default function QuestionariOperatoriLista() {
       'Persone Maggiorenni Totale': q.persone_maggiorenni.totale,
       'Caratteristiche Persone': Object.entries(q.caratteristiche_persone)
         .filter(([key, value]) => typeof value === 'boolean' && value === true && !key.includes('spec'))
-        .map(([key]) => key)
+        .map(([key]) => key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()))
         .join(', '),
-      'Caratteristiche Altro': q.caratteristiche_persone.altro_specificare,
+      'Caratteristiche Altro': q.caratteristiche_persone.altro_specificare || '',
       'Tipo Intervento': Object.entries(q.tipo_intervento)
         .filter(([key, value]) => typeof value === 'boolean' && value === true && !key.includes('spec'))
-        .map(([key]) => key)
+        .map(([key]) => key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()))
         .join(', '),
-      'Tipo Intervento Altro': q.tipo_intervento.altro_specificare,
+      'Tipo Intervento Altro': q.tipo_intervento.altro_specificare || '',
       'Difficoltà Uscita': Object.entries(q.difficolta_uscita)
         .filter(([key, value]) => typeof value === 'number' && value > 0 && !key.includes('spec'))
-        .map(([key, value]) => `${key}: ${value}`)
+        .map(([key, value]) => `${key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}: ${value}`)
         .join(', '),
-      'Difficoltà Altro': q.difficolta_uscita.altro_specificare,
+      'Difficoltà Altro': q.difficolta_uscita.altro_specificare || '',
       'Fonte': q.fonte,
       'Stato': q.stato
     }));
