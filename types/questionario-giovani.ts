@@ -203,7 +203,6 @@ export interface AttivitaAttuali {
   formazione: boolean;
   lavoro: boolean;
   ricerca_lavoro: boolean;
-  tirocinio: boolean;
   nessuna: boolean;
 }
 

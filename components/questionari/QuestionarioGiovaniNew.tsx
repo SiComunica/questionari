@@ -39,7 +39,6 @@ const TIPI_PERCORSO = [
   'Formazione professionale',
   'Scuola superiore',
   'Università',
-  'Tirocinio',
   'Lavoro',
   'Altro'
 ]
@@ -247,7 +246,6 @@ const initialFormData: QuestionarioGiovani = {
     formazione: false,
     lavoro: false,
     ricerca_lavoro: false,
-    tirocinio: false,
     nessuna: false
   },
   motivi_non_studio: [], // Mantieni come array
