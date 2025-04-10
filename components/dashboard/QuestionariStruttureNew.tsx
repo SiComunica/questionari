@@ -67,24 +67,6 @@ export default function QuestionariStruttureNew() {
     fetchQuestionari()
   }, [])
 
-  const handleExportExcel = async (questionario?: QuestionarioStrutture) => {
-    try {
-      const data = questionario ? [questionario] : questionari;
-      // Qui useremo una funzione di utility per l'export
-      const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `questionari_strutture_${new Date().toISOString()}.json`;
-      a.click();
-      window.URL.revokeObjectURL(url);
-      toast.success('Export completato');
-    } catch (error) {
-      console.error('Errore durante l\'export:', error);
-      toast.error('Errore durante l\'export');
-    }
-  };
-
   const handleExportPDF = async (questionario?: QuestionarioStrutture) => {
     try {
       const doc = new jsPDF()
@@ -149,42 +131,47 @@ export default function QuestionariStruttureNew() {
       return;
     }
 
-    // Prepariamo i dati per l'export
-    const dataToExport = questionari.map(q => ({
-      ID: q.id,
-      'Data Creazione': new Date(q.creato_a).toLocaleDateString('it-IT'),
-      'Codice Operatore': q.creato_da,
-      'Nome Struttura': q.nome_struttura,
-      'ID Struttura': q.id_struttura,
-      'Forma Giuridica': q.forma_giuridica,
-      'Tipo Struttura': q.tipo_struttura,
-      'Anno Inizio': q.anno_inizio,
-      'Missione': q.missione,
-      'Stato': q.stato,
-      'Personale Retribuito Uomini': q.personale_retribuito_uomini,
-      'Personale Retribuito Donne': q.personale_retribuito_donne,
-      'Personale Volontario Uomini': q.personale_volontario_uomini,
-      'Personale Volontario Donne': q.personale_volontario_donne,
-      'Figure Professionali': q.figure_professionali.join(', '),
-      'Servizi Offerti': q.servizi_offerti.join(', '),
-      'Tipologia Utenti': q.tipologia_utenti.join(', '),
-      'Modalità Accesso': q.modalita_accesso,
-      'Durata Media Accoglienza': q.durata_media_accoglienza,
-      'Numero Posti': q.numero_posti,
-      'Costi Mensili': q.costi_mensili,
-      'Fonti Finanziamento': q.fonti_finanziamento.join(', '),
-      'Collaborazioni': q.collaborazioni.join(', '),
-      'Note': q.note
-    }));
+    try {
+      // Prepariamo i dati per l'export
+      const dataToExport = questionari.map(q => ({
+        ID: q.id,
+        'Data Creazione': new Date(q.creato_a).toLocaleDateString('it-IT'),
+        'Codice Operatore': q.creato_da,
+        'Nome Struttura': q.nome_struttura,
+        'ID Struttura': q.id_struttura,
+        'Forma Giuridica': q.forma_giuridica,
+        'Tipo Struttura': q.tipo_struttura,
+        'Anno Inizio': q.anno_inizio,
+        'Missione': q.missione,
+        'Stato': q.stato,
+        'Personale Retribuito Uomini': q.personale_retribuito_uomini,
+        'Personale Retribuito Donne': q.personale_retribuito_donne,
+        'Personale Volontario Uomini': q.personale_volontario_uomini,
+        'Personale Volontario Donne': q.personale_volontario_donne,
+        'Figure Professionali': q.figure_professionali.join(', '),
+        'Servizi Offerti': q.servizi_offerti.join(', '),
+        'Tipologia Utenti': q.tipologia_utenti.join(', '),
+        'Modalità Accesso': q.modalita_accesso,
+        'Durata Media Accoglienza': q.durata_media_accoglienza,
+        'Numero Posti': q.numero_posti,
+        'Costi Mensili': q.costi_mensili,
+        'Fonti Finanziamento': q.fonti_finanziamento.join(', '),
+        'Collaborazioni': q.collaborazioni.join(', '),
+        'Note': q.note
+      }));
 
-    // Creiamo il workbook
-    const ws = XLSX.utils.json_to_sheet(dataToExport);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Questionari Strutture');
+      // Creiamo il workbook
+      const ws = XLSX.utils.json_to_sheet(dataToExport);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Questionari Strutture');
 
-    // Scarichiamo il file
-    XLSX.writeFile(wb, 'questionari_strutture.xlsx');
-    toast.success('Export completato con successo');
+      // Scarichiamo il file
+      XLSX.writeFile(wb, 'questionari_strutture.xlsx');
+      toast.success('Export completato con successo');
+    } catch (error) {
+      console.error('Errore durante l\'export:', error);
+      toast.error('Errore durante l\'export');
+    }
   };
 
   const renderQuestionarioDettaglio = (questionario: QuestionarioStrutture) => {
@@ -220,10 +207,6 @@ export default function QuestionariStruttureNew() {
           </ul>
         </div>
         <div className="flex justify-end gap-2 mt-4">
-          <Button onClick={() => handleExportExcel(questionario)} className="flex gap-2">
-            <FileSpreadsheet size={20} />
-            Excel
-          </Button>
           <Button onClick={() => handleExportPDF(questionario)} className="flex gap-2">
             <FileText size={20} />
             PDF
@@ -243,15 +226,12 @@ export default function QuestionariStruttureNew() {
       <CardContent>
         <div className="mb-6 flex gap-4">
           <Button onClick={handleExportXLSX} className="flex gap-2">
-            Esporta XLSX
-          </Button>
-          <Button onClick={() => handleExportExcel()} className="flex gap-2">
             <FileSpreadsheet size={20} />
-            Esporta tutti in Excel
+            Esporta XLSX
           </Button>
           <Button onClick={() => handleExportPDF()} className="flex gap-2">
             <FileText size={20} />
-            Esporta tutti in PDF
+            Esporta PDF
           </Button>
         </div>
 
@@ -280,12 +260,6 @@ export default function QuestionariStruttureNew() {
                       }}
                     >
                       Visualizza dettagli
-                    </Button>
-                    <Button 
-                      variant="outline"
-                      onClick={() => handleExportExcel(questionario)}
-                    >
-                      <FileSpreadsheet size={20} />
                     </Button>
                     <Button 
                       variant="outline"

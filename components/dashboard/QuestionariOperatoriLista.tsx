@@ -107,23 +107,6 @@ export default function QuestionariOperatoriLista() {
     fetchQuestionari()
   }, [])
 
-  const handleExportExcel = async (questionario?: QuestionarioOperatori) => {
-    try {
-      const data = questionario ? [questionario] : questionari;
-      const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `questionari_operatori_${new Date().toISOString()}.json`;
-      a.click();
-      window.URL.revokeObjectURL(url);
-      toast.success('Export completato');
-    } catch (error) {
-      console.error('Errore durante l\'export:', error);
-      toast.error('Errore durante l\'export');
-    }
-  };
-
   const handleExportPDF = async (questionario?: QuestionarioOperatori) => {
     try {
       const doc = new jsPDF()
@@ -214,10 +197,11 @@ export default function QuestionariOperatoriLista() {
         .join(', '),
       'Tipo Intervento Altro': q.tipo_intervento.altro_specificare,
       'Difficoltà Uscita': Object.entries(q.difficolta_uscita)
-        .filter(([key, value]) => typeof value === 'boolean' && value === true && !key.includes('spec'))
-        .map(([key]) => key)
+        .filter(([key, value]) => typeof value === 'number' && value > 0 && !key.includes('spec'))
+        .map(([key, value]) => `${key}: ${value}`)
         .join(', '),
       'Difficoltà Altro': q.difficolta_uscita.altro_specificare,
+      'Fonte': q.fonte,
       'Stato': q.stato
     }));
 
@@ -247,10 +231,6 @@ export default function QuestionariOperatoriLista() {
           </div>
         </div>
         <div className="flex justify-end gap-2 mt-4">
-          <Button onClick={() => handleExportExcel(questionario)} className="flex gap-2">
-            <FileSpreadsheet size={20} />
-            Excel
-          </Button>
           <Button onClick={() => handleExportPDF(questionario)} className="flex gap-2">
             <FileText size={20} />
             PDF
@@ -269,17 +249,13 @@ export default function QuestionariOperatoriLista() {
       </CardHeader>
       <CardContent>
         <div className="mb-6 flex gap-4">
-          <Button onClick={() => handleExportExcel()} className="flex gap-2">
+          <Button onClick={handleExportXLSX} className="flex gap-2">
             <FileSpreadsheet size={20} />
-            Esporta tutti in Excel
+            Esporta XLSX
           </Button>
           <Button onClick={() => handleExportPDF()} className="flex gap-2">
             <FileText size={20} />
-            Esporta tutti in PDF
-          </Button>
-          <Button onClick={handleExportXLSX} className="flex gap-2">
-            <FileSpreadsheet size={20} />
-            Esporta tutti in XLSX
+            Esporta PDF
           </Button>
         </div>
 
@@ -308,12 +284,6 @@ export default function QuestionariOperatoriLista() {
                       }}
                     >
                       Visualizza dettagli
-                    </Button>
-                    <Button 
-                      variant="outline"
-                      onClick={() => handleExportExcel(questionario)}
-                    >
-                      <FileSpreadsheet size={20} />
                     </Button>
                     <Button 
                       variant="outline"
