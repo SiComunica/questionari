@@ -28,6 +28,15 @@ type QuestionarioStrutture = {
   personale_volontario_uomini: number;
   personale_volontario_donne: number;
   figure_professionali: string[];
+  servizi_offerti: string[];
+  tipologia_utenti: string[];
+  modalita_accesso: string;
+  durata_media_accoglienza: number;
+  numero_posti: number;
+  costi_mensili: number;
+  fonti_finanziamento: string[];
+  collaborazioni: string[];
+  note: string;
 }
 
 export default function QuestionariStruttureNew() {
@@ -151,7 +160,21 @@ export default function QuestionariStruttureNew() {
       'Tipo Struttura': q.tipo_struttura,
       'Anno Inizio': q.anno_inizio,
       'Missione': q.missione,
-      'Stato': q.stato
+      'Stato': q.stato,
+      'Personale Retribuito Uomini': q.personale_retribuito_uomini,
+      'Personale Retribuito Donne': q.personale_retribuito_donne,
+      'Personale Volontario Uomini': q.personale_volontario_uomini,
+      'Personale Volontario Donne': q.personale_volontario_donne,
+      'Figure Professionali': q.figure_professionali.join(', '),
+      'Servizi Offerti': q.servizi_offerti.join(', '),
+      'Tipologia Utenti': q.tipologia_utenti.join(', '),
+      'Modalità Accesso': q.modalita_accesso,
+      'Durata Media Accoglienza': q.durata_media_accoglienza,
+      'Numero Posti': q.numero_posti,
+      'Costi Mensili': q.costi_mensili,
+      'Fonti Finanziamento': q.fonti_finanziamento.join(', '),
+      'Collaborazioni': q.collaborazioni.join(', '),
+      'Note': q.note
     }));
 
     // Creiamo il workbook

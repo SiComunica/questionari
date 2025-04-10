@@ -196,12 +196,29 @@ export default function QuestionariOperatoriLista() {
       'ID Struttura': q.id_struttura,
       'Tipo Struttura': q.tipo_struttura,
       'Professione': q.professione.tipo,
-      'Persone Seguite': JSON.stringify(q.persone_seguite),
-      'Persone Maggiorenni': JSON.stringify(q.persone_maggiorenni),
-      'Caratteristiche Persone': JSON.stringify(q.caratteristiche_persone),
-      'Tipo Intervento': JSON.stringify(q.tipo_intervento),
-      'Difficoltà Uscita': JSON.stringify(q.difficolta_uscita),
-      'Fonte': q.fonte
+      'Professione Altro': q.professione.altro_specificare,
+      'Persone Seguite Uomini': q.persone_seguite.uomini,
+      'Persone Seguite Donne': q.persone_seguite.donne,
+      'Persone Seguite Totale': q.persone_seguite.totale,
+      'Persone Maggiorenni Uomini': q.persone_maggiorenni.uomini,
+      'Persone Maggiorenni Donne': q.persone_maggiorenni.donne,
+      'Persone Maggiorenni Totale': q.persone_maggiorenni.totale,
+      'Caratteristiche Persone': Object.entries(q.caratteristiche_persone)
+        .filter(([key, value]) => typeof value === 'boolean' && value === true && !key.includes('spec'))
+        .map(([key]) => key)
+        .join(', '),
+      'Caratteristiche Altro': q.caratteristiche_persone.altro_specificare,
+      'Tipo Intervento': Object.entries(q.tipo_intervento)
+        .filter(([key, value]) => typeof value === 'boolean' && value === true && !key.includes('spec'))
+        .map(([key]) => key)
+        .join(', '),
+      'Tipo Intervento Altro': q.tipo_intervento.altro_specificare,
+      'Difficoltà Uscita': Object.entries(q.difficolta_uscita)
+        .filter(([key, value]) => typeof value === 'boolean' && value === true && !key.includes('spec'))
+        .map(([key]) => key)
+        .join(', '),
+      'Difficoltà Altro': q.difficolta_uscita.altro_specificare,
+      'Stato': q.stato
     }));
 
     // Creiamo il workbook
