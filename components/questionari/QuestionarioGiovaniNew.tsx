@@ -1993,22 +1993,18 @@ export default function QuestionarioGiovaniNew({ fonte, readOnly, initialData }:
   );
 
   const handleExportXLSX = () => {
-    if (!formData) {
-      toast.error('Nessun dato da esportare');
-      return;
-    }
-
     try {
       const dataToExport = {
+        ID: formData.id || 'FORNITO DAL SISTEMA',
+        DATA_CREAZIONE: new Date(formData.created_at || new Date()).toLocaleDateString('it-IT'),
         COD_OPE: formData.created_by || 'FORNITO DA INAPP',
-        ID_QUEST: formData.id || 'FORNITO DAL SISTEMA',
-        ID_STRUTTURA: 'FORNITO DA INAPP', // Campo non presente nel tipo
-        TIPO_STRUTTURA: '', // Campo non presente nel tipo
+        ID_STRUTTURA: formData.id_struttura || 'FORNITO DA INAPP',
+        TIPO_STRUTTURA: formData.tipo_struttura || '',
         A1: formData.percorso_autonomia ? "1" : "2",
         A1_SPEC: formData.tipo_percorso || '',
         A2: formData.vive_in_struttura ? "1" : "2",
         A3: formData.collocazione_attuale || "1",
-        A3_SPEC: '', // Non presente nel tipo
+        A3_SPEC: formData.collocazione_attuale_spec || '',
         A4_1: formData.fattori_vulnerabilita.fv1_stranieri ? "1" : "2",
         A4_2: formData.fattori_vulnerabilita.fv2_vittime_tratta ? "1" : "2",
         A4_3: formData.fattori_vulnerabilita.fv3_vittime_violenza ? "1" : "2",
@@ -2047,37 +2043,42 @@ export default function QuestionarioGiovaniNew({ fonte, readOnly, initialData }:
         B10_3: formData.attivita_attuali.lavoro ? "1" : "2",
         B10_4: formData.attivita_attuali.ricerca_lavoro ? "1" : "2",
         B10_5: formData.attivita_attuali.nessuna ? "1" : "2",
-        C1: formData.orientamento_lavoro.usufruito ? "1" : "2",
-        C2_1: formData.orientamento_lavoro.dove?.scuola_universita ? "1" : "2",
-        C2_2: formData.orientamento_lavoro.dove?.enti_formazione ? "1" : "2",
-        C2_3: formData.orientamento_lavoro.dove?.servizi_impiego ? "1" : "2",
-        C2_4: formData.orientamento_lavoro.dove?.struttura ? "1" : "2",
-        C2_5: formData.orientamento_lavoro.dove?.altro ? "1" : "2",
-        C2_5SPEC: '', // Non presente nel tipo
-        C3: formData.orientamento_lavoro.utilita || "0",
-        D1: formData.lavoro_attuale.presente ? "1" : "2",
-        D2: formData.lavoro_attuale.descrizione || '',
-        D3: '', // Non presente nel tipo
-        D4_1: formData.aspetti_lavoro.stabilita || "0",
-        D4_2: formData.aspetti_lavoro.flessibilita || "0",
-        D4_3: formData.aspetti_lavoro.valorizzazione || "0",
-        D4_4: formData.aspetti_lavoro.retribuzione || "0",
-        D4_5: formData.aspetti_lavoro.fatica || "0",
-        D4_6: formData.aspetti_lavoro.sicurezza || "0",
-        D4_7: formData.aspetti_lavoro.utilita_sociale || "0",
-        D4_8: formData.aspetti_lavoro.vicinanza_casa || "0",
-        E1_1: formData.ricerca_lavoro.centro_impiego ? "1" : "2",
-        E1_2: formData.ricerca_lavoro.sportelli ? "1" : "2",
-        E1_3: formData.ricerca_lavoro.inps_patronati ? "1" : "2",
-        E1_4: formData.ricerca_lavoro.servizi_sociali ? "1" : "2",
-        E1_5: formData.ricerca_lavoro.agenzie_interinali ? "1" : "2",
-        E1_6: formData.ricerca_lavoro.cooperative ? "1" : "2",
-        E1_7: formData.ricerca_lavoro.struttura ? "1" : "2",
-        E1_8: formData.ricerca_lavoro.conoscenti ? "1" : "2",
-        E1_9: formData.ricerca_lavoro.portali_online ? "1" : "2",
-        E1_10: formData.ricerca_lavoro.social ? "1" : "2",
-        E1_11: formData.ricerca_lavoro.altro ? "1" : "2",
-        E1_11SPEC: formData.ricerca_lavoro.altro_specificare || ''
+        B11: formData.corso_formazione.presente ? "1" : "2",
+        B11_SPEC: formData.corso_formazione.descrizione || '',
+        B12: formData.orientamento_lavoro.usufruito ? "1" : "2",
+        B12_1: formData.orientamento_lavoro.dove.scuola_universita ? "1" : "2",
+        B12_2: formData.orientamento_lavoro.dove.enti_formazione ? "1" : "2",
+        B12_3: formData.orientamento_lavoro.dove.servizi_impiego ? "1" : "2",
+        B12_4: formData.orientamento_lavoro.dove.struttura ? "1" : "2",
+        B12_5: formData.orientamento_lavoro.dove.altro ? "1" : "2",
+        B12_5SPEC: formData.orientamento_lavoro.dove.altro_specificare || '',
+        B13: formData.orientamento_lavoro.utilita || "0",
+        B14: formData.lavoro_attuale.presente ? "1" : "2",
+        B14_1: formData.lavoro_attuale.tipo_contratto || '',
+        B14_2: formData.lavoro_attuale.settore || '',
+        B15: formData.curriculum_vitae || '',
+        B16: formData.centro_impiego || '',
+        B17: formData.lavoro_autonomo || '',
+        B18_1: formData.aspetti_lavoro.stabilita || "0",
+        B18_2: formData.aspetti_lavoro.flessibilita || "0",
+        B18_3: formData.aspetti_lavoro.valorizzazione || "0",
+        B18_4: formData.aspetti_lavoro.retribuzione || "0",
+        B18_5: formData.aspetti_lavoro.fatica || "0",
+        B18_6: formData.aspetti_lavoro.sicurezza || "0",
+        B18_7: formData.aspetti_lavoro.utilita_sociale || "0",
+        B18_8: formData.aspetti_lavoro.vicinanza_casa || "0",
+        B19_1: formData.ricerca_lavoro.centro_impiego ? "1" : "2",
+        B19_2: formData.ricerca_lavoro.sportelli ? "1" : "2",
+        B19_3: formData.ricerca_lavoro.inps_patronati ? "1" : "2",
+        B19_4: formData.ricerca_lavoro.servizi_sociali ? "1" : "2",
+        B19_5: formData.ricerca_lavoro.agenzie_interinali ? "1" : "2",
+        B19_6: formData.ricerca_lavoro.cooperative ? "1" : "2",
+        B19_7: formData.ricerca_lavoro.struttura ? "1" : "2",
+        B19_8: formData.ricerca_lavoro.conoscenti ? "1" : "2",
+        B19_9: formData.ricerca_lavoro.portali_online ? "1" : "2",
+        B19_10: formData.ricerca_lavoro.social ? "1" : "2",
+        B19_11: formData.ricerca_lavoro.altro ? "1" : "2",
+        B19_11SPEC: formData.ricerca_lavoro.altro_specificare || ''
       };
 
       // Creiamo il workbook
