@@ -171,48 +171,91 @@ export default function QuestionariOperatoriLista() {
       return;
     }
 
-    // Prepariamo i dati per l'export
-    const dataToExport = questionari.map(q => ({
-      ID: q.id,
-      'Data Creazione': new Date(q.creato_a).toLocaleDateString('it-IT'),
-      'Codice Operatore': q.creato_da,
-      'ID Struttura': q.id_struttura,
-      'Tipo Struttura': q.tipo_struttura,
-      'Professione': q.professione.tipo,
-      'Professione Altro': q.professione.altro_specificare || '',
-      'Persone Seguite Uomini': q.persone_seguite.uomini,
-      'Persone Seguite Donne': q.persone_seguite.donne,
-      'Persone Seguite Totale': q.persone_seguite.totale,
-      'Persone Maggiorenni Uomini': q.persone_maggiorenni.uomini,
-      'Persone Maggiorenni Donne': q.persone_maggiorenni.donne,
-      'Persone Maggiorenni Totale': q.persone_maggiorenni.totale,
-      'Caratteristiche Persone': Object.entries(q.caratteristiche_persone)
-        .filter(([key, value]) => typeof value === 'boolean' && value === true && !key.includes('spec'))
-        .map(([key]) => key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()))
-        .join(', '),
-      'Caratteristiche Altro': q.caratteristiche_persone.altro_specificare || '',
-      'Tipo Intervento': Object.entries(q.tipo_intervento)
-        .filter(([key, value]) => typeof value === 'boolean' && value === true && !key.includes('spec'))
-        .map(([key]) => key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()))
-        .join(', '),
-      'Tipo Intervento Altro': q.tipo_intervento.altro_specificare || '',
-      'Difficoltà Uscita': Object.entries(q.difficolta_uscita)
-        .filter(([key, value]) => typeof value === 'number' && value > 0 && !key.includes('spec'))
-        .map(([key, value]) => `${key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}: ${value}`)
-        .join(', '),
-      'Difficoltà Altro': q.difficolta_uscita.altro_specificare || '',
-      'Fonte': q.fonte,
-      'Stato': q.stato
-    }));
+    try {
+      const dataToExport = questionari.map(q => {
+        // Mappiamo la professione secondo i codici del tracciato record
+        const professioneMap: { [key: string]: number } = {
+          'Psicologo': 1,
+          'Assistente sociale': 2,
+          'Educatore': 3,
+          'Mediatore': 4,
+          'Medico': 5,
+          'Personale infermieristico/operatore sanitario': 6,
+          'Insegnante/formatore': 7,
+          'Cappellano/operatore religioso e spirituale': 8,
+          'Tutor': 9,
+          'Operatore legale': 10,
+          'Operatore multifunzionale': 11,
+          'Amministrativo': 12,
+          'Altro': 13
+        };
 
-    // Creiamo il workbook
-    const ws = XLSX.utils.json_to_sheet(dataToExport);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Questionari Operatori');
+        return {
+          COD_OPE: q.creato_da || 'FORNITO DA INAPP',
+          ID_QUEST: q.id || 'FORNITO DAL SISTEMA',
+          ID_STRUTTURA: q.id_struttura || 'FORNITO DA INAPP',
+          TIPO_STRUTTURA: q.tipo_struttura || '',
+          PROF: professioneMap[q.professione.tipo] || 13,
+          PROF_SPEC: q.professione.tipo === 'Altro' ? q.professione.altro_specificare : '',
+          B1U: q.persone_seguite.uomini || 0,
+          B1D: q.persone_seguite.donne || 0,
+          B1T: q.persone_seguite.totale || 0,
+          B2U: q.persone_maggiorenni.uomini || 0,
+          B2D: q.persone_maggiorenni.donne || 0,
+          B2T: q.persone_maggiorenni.totale || 0,
+          B3_1: q.caratteristiche_persone.stranieri_migranti ? 1 : 0,
+          B3_2: q.caratteristiche_persone.vittime_tratta ? 1 : 0,
+          B3_3: q.caratteristiche_persone.vittime_violenza ? 1 : 0,
+          B3_4: q.caratteristiche_persone.allontanati_famiglia ? 1 : 0,
+          B3_5: q.caratteristiche_persone.detenuti ? 1 : 0,
+          B3_6: q.caratteristiche_persone.ex_detenuti ? 1 : 0,
+          B3_7: q.caratteristiche_persone.misure_alternative ? 1 : 0,
+          B3_8: q.caratteristiche_persone.indigenti_senzatetto ? 1 : 0,
+          B3_9: q.caratteristiche_persone.rom_sinti ? 1 : 0,
+          B3_10: q.caratteristiche_persone.disabilita_fisica ? 1 : 0,
+          B3_11: q.caratteristiche_persone.disabilita_cognitiva ? 1 : 0,
+          B3_12: q.caratteristiche_persone.disturbi_psichiatrici ? 1 : 0,
+          B3_13: q.caratteristiche_persone.dipendenze ? 1 : 0,
+          B3_14: q.caratteristiche_persone.genitori_precoci ? 1 : 0,
+          B3_15: q.caratteristiche_persone.problemi_orientamento ? 1 : 0,
+          B3_16: q.caratteristiche_persone.altro ? 1 : 0,
+          B3_16SPEC: q.caratteristiche_persone.altro_specificare || '',
+          B4_1: q.tipo_intervento.sostegno_formazione ? 1 : 0,
+          B4_2: q.tipo_intervento.sostegno_lavoro ? 1 : 0,
+          B4_3: q.tipo_intervento.sostegno_abitativo ? 1 : 0,
+          B4_4: q.tipo_intervento.sostegno_famiglia ? 1 : 0,
+          B4_5: q.tipo_intervento.sostegno_coetanei ? 1 : 0,
+          B4_6: q.tipo_intervento.sostegno_competenze ? 1 : 0,
+          B4_7: q.tipo_intervento.sostegno_legale ? 1 : 0,
+          B4_8: q.tipo_intervento.sostegno_sociosanitario ? 1 : 0,
+          B4_9: q.tipo_intervento.mediazione_interculturale ? 1 : 0,
+          B4_10: q.tipo_intervento.altro ? 1 : 0,
+          B4_10SPEC: q.tipo_intervento.altro_specificare || '',
+          C1: q.difficolta_uscita.problemi_economici || 0,
+          C2: q.difficolta_uscita.trovare_lavoro || 0,
+          C3: q.difficolta_uscita.lavori_qualita || 0,
+          C4: q.difficolta_uscita.trovare_casa || 0,
+          C5: q.difficolta_uscita.discriminazioni || 0,
+          C6: q.difficolta_uscita.salute_fisica || 0,
+          C7: q.difficolta_uscita.problemi_psicologici || 0,
+          C8: q.difficolta_uscita.difficolta_linguistiche || 0,
+          C9: q.difficolta_uscita.altro || 0,
+          C9SPEC: q.difficolta_uscita.altro_specificare || ''
+        };
+      });
 
-    // Scarichiamo il file
-    XLSX.writeFile(wb, 'questionari_operatori.xlsx');
-    toast.success('Export completato con successo');
+      // Creiamo il workbook
+      const ws = XLSX.utils.json_to_sheet(dataToExport);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Questionari Operatori');
+
+      // Scarichiamo il file
+      XLSX.writeFile(wb, 'questionari_operatori.xlsx');
+      toast.success('Export completato con successo');
+    } catch (error) {
+      console.error('Errore durante l\'export:', error);
+      toast.error('Errore durante l\'export');
+    }
   };
 
   const renderQuestionarioDettaglio = (questionario: QuestionarioOperatori) => {

@@ -33,6 +33,7 @@ import {
 import { v4 as uuidv4 } from 'uuid' // Aggiungi questo import in cima al file
 import { QuestionarioProps } from '@/types/questionari'
 import { Toaster } from 'react-hot-toast'
+import * as XLSX from 'xlsx'
 
 // Costanti per le opzioni
 const TIPI_PERCORSO = [
@@ -170,16 +171,19 @@ const EMOZIONI_USCITA = [
 const initialFormData: QuestionarioGiovani = {
   // Metadati
   id: undefined,
-  created_at: undefined,     // Cambiato da creato_a a created_at
-  created_by: undefined,     // Cambiato da creato_da a created_by
+  created_at: undefined,
+  created_by: undefined,
   fonte: '',
   stato: '',
+  id_struttura: '',      // Nuovo campo
+  tipo_struttura: '',    // Nuovo campo
 
   // Sezione A
   percorso_autonomia: false,
   tipo_percorso: '',
   vive_in_struttura: false,
   collocazione_attuale: "1",
+  collocazione_attuale_spec: '',  // Nuovo campo
   fattori_vulnerabilita: {
     fv1_stranieri: false,
     fv2_vittime_tratta: false,
@@ -261,7 +265,8 @@ const initialFormData: QuestionarioGiovani = {
       enti_formazione: false,
       servizi_impiego: false,
       struttura: false,
-      altro: false
+      altro: false,
+      altro_specificare: ''  // Nuovo campo
     }
   },
   orientamento_luoghi: [],
@@ -281,7 +286,9 @@ const initialFormData: QuestionarioGiovani = {
   },
   lavoro_attuale: {
     presente: false,
-    descrizione: ''
+    descrizione: '',
+    tipo_contratto: '',    // Nuovo campo
+    settore: ''            // Nuovo campo
   },
   curriculum_vitae: '',
   centro_impiego: '',
@@ -1132,7 +1139,7 @@ const SectionC = ({ formData, setFormData }: {
                 <div key={luogo.id} className="flex items-center space-x-2">
                   <Checkbox
                     id={`luogo-${luogo.id}`}
-                    checked={formData.orientamento_lavoro.dove[luogo.id]}
+                    checked={Boolean(formData.orientamento_lavoro.dove[luogo.id as keyof typeof formData.orientamento_lavoro.dove])}
                     onCheckedChange={(checked) => 
                       setFormData(prev => ({
                         ...prev,
@@ -1151,26 +1158,27 @@ const SectionC = ({ formData, setFormData }: {
               ))}
             </div>
 
-            <Label>C4_BIS. Quanto lo ritieni utile?</Label>
-            <RadioGroup
-              value={formData.orientamento_lavoro.utilita}
-              onValueChange={(value) => 
-                setFormData(prev => ({
-                  ...prev,
-                  orientamento_lavoro: {
-                    ...prev.orientamento_lavoro,
-                    utilita: value as ValutazioneUtilita
+            {formData.orientamento_lavoro.dove.altro && (
+              <div className="mt-2">
+                <Label htmlFor="orientamento-altro-spec">Specificare altro</Label>
+                <Input
+                  id="orientamento-altro-spec"
+                  value={formData.orientamento_lavoro.dove.altro_specificare}
+                  onChange={(e) => 
+                    setFormData(prev => ({
+                      ...prev,
+                      orientamento_lavoro: {
+                        ...prev.orientamento_lavoro,
+                        dove: {
+                          ...prev.orientamento_lavoro.dove,
+                          altro_specificare: e.target.value
+                        }
+                      }
+                    }))
                   }
-                }))
-              }
-            >
-              {VALUTAZIONE_OPTIONS.map(option => (
-                <div key={option.value} className="flex items-center space-x-2">
-                  <RadioGroupItem value={option.value} id={`utilita-${option.value}`} />
-                  <Label htmlFor={`utilita-${option.value}`}>{option.label}</Label>
-                </div>
-              ))}
-            </RadioGroup>
+                />
+              </div>
+            )}
           </>
         )}
       </div>
@@ -1260,18 +1268,47 @@ const SectionC = ({ formData, setFormData }: {
           <p className="text-sm text-gray-500">
             Indicare in sintesi professione o mestiere, tipo di posto di lavoro, tipo di contratto
           </p>
-          <Textarea
-            value={formData.lavoro_attuale.descrizione}
-            onChange={(e) => 
-              setFormData(prev => ({
-                ...prev,
-                lavoro_attuale: {
-                  presente: true,
-                  descrizione: e.target.value
-                }
-              }))
-            }
-          />
+          <div className="space-y-2">
+            <Label>Descrizione</Label>
+            <Textarea
+              value={formData.lavoro_attuale.descrizione}
+              onChange={(e) => 
+                setFormData(prev => ({
+                  ...prev,
+                  lavoro_attuale: {
+                    ...prev.lavoro_attuale,
+                    descrizione: e.target.value
+                  }
+                }))
+              }
+            />
+            <Label>Tipo di contratto</Label>
+            <Input
+              value={formData.lavoro_attuale.tipo_contratto}
+              onChange={(e) => 
+                setFormData(prev => ({
+                  ...prev,
+                  lavoro_attuale: {
+                    ...prev.lavoro_attuale,
+                    tipo_contratto: e.target.value
+                  }
+                }))
+              }
+            />
+            <Label>Settore</Label>
+            <Input
+              value={formData.lavoro_attuale.settore}
+              onChange={(e) => 
+                setFormData(prev => ({
+                  ...prev,
+                  lavoro_attuale: {
+                    ...prev.lavoro_attuale,
+                    settore: e.target.value
+                  }
+                }))
+              }
+            />
+          </div>
         </div>
       )}
 
@@ -1954,6 +1991,108 @@ export default function QuestionarioGiovaniNew({ fonte, readOnly, initialData }:
       </div>
     </div>
   );
+
+  const handleExportXLSX = () => {
+    if (!formData) {
+      toast.error('Nessun dato da esportare');
+      return;
+    }
+
+    try {
+      const dataToExport = {
+        COD_OPE: formData.created_by || 'FORNITO DA INAPP',
+        ID_QUEST: formData.id || 'FORNITO DAL SISTEMA',
+        ID_STRUTTURA: 'FORNITO DA INAPP', // Campo non presente nel tipo
+        TIPO_STRUTTURA: '', // Campo non presente nel tipo
+        A1: formData.percorso_autonomia ? "1" : "2",
+        A1_SPEC: formData.tipo_percorso || '',
+        A2: formData.vive_in_struttura ? "1" : "2",
+        A3: formData.collocazione_attuale || "1",
+        A3_SPEC: '', // Non presente nel tipo
+        A4_1: formData.fattori_vulnerabilita.fv1_stranieri ? "1" : "2",
+        A4_2: formData.fattori_vulnerabilita.fv2_vittime_tratta ? "1" : "2",
+        A4_3: formData.fattori_vulnerabilita.fv3_vittime_violenza ? "1" : "2",
+        A4_4: formData.fattori_vulnerabilita.fv4_allontanati_famiglia ? "1" : "2",
+        A4_5: formData.fattori_vulnerabilita.fv5_detenuti ? "1" : "2",
+        A4_6: formData.fattori_vulnerabilita.fv6_ex_detenuti ? "1" : "2",
+        A4_7: formData.fattori_vulnerabilita.fv7_esecuzione_penale ? "1" : "2",
+        A4_8: formData.fattori_vulnerabilita.fv8_indigenti ? "1" : "2",
+        A4_9: formData.fattori_vulnerabilita.fv9_rom_sinti ? "1" : "2",
+        A4_10: formData.fattori_vulnerabilita.fv10_disabilita_fisica ? "1" : "2",
+        A4_11: formData.fattori_vulnerabilita.fv11_disabilita_cognitiva ? "1" : "2",
+        A4_12: formData.fattori_vulnerabilita.fv12_disturbi_psichiatrici ? "1" : "2",
+        A4_13: formData.fattori_vulnerabilita.fv13_dipendenze ? "1" : "2",
+        A4_14: formData.fattori_vulnerabilita.fv14_genitori_precoci ? "1" : "2",
+        A4_15: formData.fattori_vulnerabilita.fv15_orientamento_sessuale ? "1" : "2",
+        A4_16: formData.fattori_vulnerabilita.fv16_altro ? "1" : "2",
+        A4_16SPEC: formData.fattori_vulnerabilita.fv16_spec || '',
+        B1: formData.sesso || "1",
+        B2: formData.classe_eta || "1",
+        B3: formData.luogo_nascita?.italia ? "1" : "2",
+        B3_SPEC: formData.luogo_nascita?.altro_paese || '',
+        B4: formData.cittadinanza || "1",
+        B5: formData.permesso_soggiorno || "1",
+        B6: formData.tempo_in_struttura || "1",
+        B7: formData.precedenti_strutture || "1",
+        B8: formData.titolo_studio || "1",
+        B9_1: formData.attivita_precedenti.studiavo ? "1" : "2",
+        B9_2: formData.attivita_precedenti.lavoravo_stabilmente ? "1" : "2",
+        B9_3: formData.attivita_precedenti.lavoravo_saltuariamente ? "1" : "2",
+        B9_4: formData.attivita_precedenti.corso_formazione ? "1" : "2",
+        B9_5: formData.attivita_precedenti.altro ? "1" : "2",
+        B9_6: formData.attivita_precedenti.nessuna ? "1" : "2",
+        B9_5SPEC: formData.attivita_precedenti.altro_specificare || '',
+        B10_1: formData.attivita_attuali.studio ? "1" : "2",
+        B10_2: formData.attivita_attuali.formazione ? "1" : "2",
+        B10_3: formData.attivita_attuali.lavoro ? "1" : "2",
+        B10_4: formData.attivita_attuali.ricerca_lavoro ? "1" : "2",
+        B10_5: formData.attivita_attuali.nessuna ? "1" : "2",
+        C1: formData.orientamento_lavoro.usufruito ? "1" : "2",
+        C2_1: formData.orientamento_lavoro.dove?.scuola_universita ? "1" : "2",
+        C2_2: formData.orientamento_lavoro.dove?.enti_formazione ? "1" : "2",
+        C2_3: formData.orientamento_lavoro.dove?.servizi_impiego ? "1" : "2",
+        C2_4: formData.orientamento_lavoro.dove?.struttura ? "1" : "2",
+        C2_5: formData.orientamento_lavoro.dove?.altro ? "1" : "2",
+        C2_5SPEC: '', // Non presente nel tipo
+        C3: formData.orientamento_lavoro.utilita || "0",
+        D1: formData.lavoro_attuale.presente ? "1" : "2",
+        D2: formData.lavoro_attuale.descrizione || '',
+        D3: '', // Non presente nel tipo
+        D4_1: formData.aspetti_lavoro.stabilita || "0",
+        D4_2: formData.aspetti_lavoro.flessibilita || "0",
+        D4_3: formData.aspetti_lavoro.valorizzazione || "0",
+        D4_4: formData.aspetti_lavoro.retribuzione || "0",
+        D4_5: formData.aspetti_lavoro.fatica || "0",
+        D4_6: formData.aspetti_lavoro.sicurezza || "0",
+        D4_7: formData.aspetti_lavoro.utilita_sociale || "0",
+        D4_8: formData.aspetti_lavoro.vicinanza_casa || "0",
+        E1_1: formData.ricerca_lavoro.centro_impiego ? "1" : "2",
+        E1_2: formData.ricerca_lavoro.sportelli ? "1" : "2",
+        E1_3: formData.ricerca_lavoro.inps_patronati ? "1" : "2",
+        E1_4: formData.ricerca_lavoro.servizi_sociali ? "1" : "2",
+        E1_5: formData.ricerca_lavoro.agenzie_interinali ? "1" : "2",
+        E1_6: formData.ricerca_lavoro.cooperative ? "1" : "2",
+        E1_7: formData.ricerca_lavoro.struttura ? "1" : "2",
+        E1_8: formData.ricerca_lavoro.conoscenti ? "1" : "2",
+        E1_9: formData.ricerca_lavoro.portali_online ? "1" : "2",
+        E1_10: formData.ricerca_lavoro.social ? "1" : "2",
+        E1_11: formData.ricerca_lavoro.altro ? "1" : "2",
+        E1_11SPEC: formData.ricerca_lavoro.altro_specificare || ''
+      };
+
+      // Creiamo il workbook
+      const ws = XLSX.utils.json_to_sheet([dataToExport]);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Questionario Giovani');
+
+      // Scarichiamo il file
+      XLSX.writeFile(wb, 'questionario_giovani.xlsx');
+      toast.success('Export completato con successo');
+    } catch (error) {
+      console.error('Errore durante l\'export:', error);
+      toast.error('Errore durante l\'export');
+    }
+  };
 
   return (
     <div className="container mx-auto p-4">

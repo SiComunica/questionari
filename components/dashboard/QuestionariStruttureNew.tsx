@@ -37,6 +37,16 @@ type QuestionarioStrutture = {
   fonti_finanziamento: string[];
   collaborazioni: string[];
   note: string;
+  persone_ospitate?: {
+    fino_16?: { uomini: number; donne: number; totale: number };
+    da_16_a_18?: { uomini: number; donne: number; totale: number };
+    maggiorenni?: { uomini: number; donne: number; totale: number };
+  };
+  persone_non_ospitate?: {
+    fino_16?: { uomini: number; donne: number; totale: number };
+    da_16_a_18?: { uomini: number; donne: number; totale: number };
+    maggiorenni?: { uomini: number; donne: number; totale: number };
+  };
 }
 
 export default function QuestionariStruttureNew() {
@@ -132,33 +142,62 @@ export default function QuestionariStruttureNew() {
     }
 
     try {
-      // Prepariamo i dati per l'export
-      const dataToExport = questionari.map(q => ({
-        ID: q.id,
-        'Data Creazione': new Date(q.creato_a).toLocaleDateString('it-IT'),
-        'Codice Operatore': q.creato_da,
-        'Nome Struttura': q.nome_struttura,
-        'ID Struttura': q.id_struttura,
-        'Forma Giuridica': q.forma_giuridica,
-        'Tipo Struttura': q.tipo_struttura,
-        'Anno Inizio': q.anno_inizio,
-        'Missione': q.missione,
-        'Stato': q.stato,
-        'Personale Retribuito Uomini': q.personale_retribuito_uomini,
-        'Personale Retribuito Donne': q.personale_retribuito_donne,
-        'Personale Volontario Uomini': q.personale_volontario_uomini,
-        'Personale Volontario Donne': q.personale_volontario_donne,
-        'Figure Professionali': Array.isArray(q.figure_professionali) ? q.figure_professionali.join(', ') : '',
-        'Servizi Offerti': Array.isArray(q.servizi_offerti) ? q.servizi_offerti.join(', ') : '',
-        'Tipologia Utenti': Array.isArray(q.tipologia_utenti) ? q.tipologia_utenti.join(', ') : '',
-        'Modalità Accesso': q.modalita_accesso,
-        'Durata Media Accoglienza': q.durata_media_accoglienza,
-        'Numero Posti': q.numero_posti,
-        'Costi Mensili': q.costi_mensili,
-        'Fonti Finanziamento': Array.isArray(q.fonti_finanziamento) ? q.fonti_finanziamento.join(', ') : '',
-        'Collaborazioni': Array.isArray(q.collaborazioni) ? q.collaborazioni.join(', ') : '',
-        'Note': q.note
-      }));
+      // Mappiamo i dati secondo il tracciato record
+      const dataToExport = questionari.map(q => {
+        // Convertiamo le figure professionali in campi 0/1
+        const figure_professionali = {
+          B1_1: q.figure_professionali.includes('Psicologi') ? 1 : 0,
+          B1_2: q.figure_professionali.includes('Assistenti sociali') ? 1 : 0,
+          B1_3: q.figure_professionali.includes('Educatori') ? 1 : 0,
+          B1_4: q.figure_professionali.includes('Mediatori') ? 1 : 0,
+          B1_5: q.figure_professionali.includes('Medici') ? 1 : 0,
+          B1_6: q.figure_professionali.includes('Personale infermieristico') ? 1 : 0,
+          B1_7: q.figure_professionali.includes('Insegnanti') ? 1 : 0,
+          B1_8: q.figure_professionali.includes('Operatori religiosi') ? 1 : 0,
+          B1_9: q.figure_professionali.includes('Tutor') ? 1 : 0,
+          B1_10: q.figure_professionali.includes('Operatori legali') ? 1 : 0,
+          B1_11: q.figure_professionali.includes('Operatori multifunzionali') ? 1 : 0,
+          B1_12: q.figure_professionali.includes('Amministrativi') ? 1 : 0,
+          B1_13: q.figure_professionali.includes('Altro') ? 1 : 0
+        };
+
+        return {
+          ID: q.id,
+          'Data Creazione': new Date(q.creato_a).toLocaleDateString('it-IT'),
+          'Codice Operatore': q.creato_da,
+          'Nome Struttura': q.nome_struttura,
+          'ID Struttura': q.id_struttura,
+          'Forma Giuridica': q.forma_giuridica,
+          'Tipo Struttura': q.tipo_struttura,
+          'Anno Inizio': q.anno_inizio,
+          'Missione': q.missione,
+          'Stato': q.stato,
+          'Personale Retribuito Uomini': q.personale_retribuito_uomini,
+          'Personale Retribuito Donne': q.personale_retribuito_donne,
+          'Personale Volontario Uomini': q.personale_volontario_uomini,
+          'Personale Volontario Donne': q.personale_volontario_donne,
+          ...figure_professionali,
+          'C1.A': q.persone_ospitate?.fino_16?.uomini || 0,
+          'C1.B': q.persone_ospitate?.fino_16?.donne || 0,
+          'C1.C': q.persone_ospitate?.fino_16?.totale || 0,
+          'C2.A': q.persone_ospitate?.da_16_a_18?.uomini || 0,
+          'C2.B': q.persone_ospitate?.da_16_a_18?.donne || 0,
+          'C2.C': q.persone_ospitate?.da_16_a_18?.totale || 0,
+          'C3.A': q.persone_ospitate?.maggiorenni?.uomini || 0,
+          'C3.B': q.persone_ospitate?.maggiorenni?.donne || 0,
+          'C3.C': q.persone_ospitate?.maggiorenni?.totale || 0,
+          'C4.A': q.persone_non_ospitate?.fino_16?.uomini || 0,
+          'C4.B': q.persone_non_ospitate?.fino_16?.donne || 0,
+          'C4.C': q.persone_non_ospitate?.fino_16?.totale || 0,
+          'C5.A': q.persone_non_ospitate?.da_16_a_18?.uomini || 0,
+          'C5.B': q.persone_non_ospitate?.da_16_a_18?.donne || 0,
+          'C5.C': q.persone_non_ospitate?.da_16_a_18?.totale || 0,
+          'C6.A': q.persone_non_ospitate?.maggiorenni?.uomini || 0,
+          'C6.B': q.persone_non_ospitate?.maggiorenni?.donne || 0,
+          'C6.C': q.persone_non_ospitate?.maggiorenni?.totale || 0,
+          'Note': q.note
+        };
+      });
 
       // Creiamo il workbook
       const ws = XLSX.utils.json_to_sheet(dataToExport);

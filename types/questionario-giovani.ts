@@ -55,12 +55,15 @@ export interface QuestionarioGiovani {
   created_by: string | undefined
   fonte: string
   stato: string
+  id_struttura: string
+  tipo_struttura: string
 
   // Sezione A
   percorso_autonomia: boolean
   tipo_percorso: string
   vive_in_struttura: boolean
   collocazione_attuale: CollocazioneAttuale
+  collocazione_attuale_spec: string
   fattori_vulnerabilita: {
     fv1_stranieri: boolean
     fv2_vittime_tratta: boolean
@@ -115,12 +118,25 @@ export interface QuestionarioGiovani {
     presente: boolean
     descrizione?: string
   }
-  orientamento_lavoro: OrientamentoLavoro
+  orientamento_lavoro: {
+    usufruito: boolean
+    utilita: string
+    dove: {
+      scuola_universita: boolean
+      enti_formazione: boolean
+      servizi_impiego: boolean
+      struttura: boolean
+      altro: boolean
+      altro_specificare: string
+    }
+  }
   orientamento_luoghi: string[]
   ricerca_lavoro: RicercaLavoro
   lavoro_attuale: {
     presente: boolean
-    descrizione?: string
+    descrizione: string
+    tipo_contratto: string
+    settore: string
   }
   curriculum_vitae: string
   centro_impiego: string
