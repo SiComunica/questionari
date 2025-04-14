@@ -386,6 +386,8 @@ export default function QuestionariStruttureNew() {
 
   return (
     <div className="space-y-4">
+      <h1 className="text-2xl font-bold mb-4">Questionari Strutture</h1>
+      
       {loading ? (
         <div>Caricamento...</div>
       ) : (
@@ -394,6 +396,10 @@ export default function QuestionariStruttureNew() {
             <Button onClick={() => handleExportXLSX()}>
               <FileSpreadsheet className="mr-2 h-4 w-4" />
               Esporta XLSX
+            </Button>
+            <Button onClick={() => handleExportPDF()}>
+              <FileText className="mr-2 h-4 w-4" />
+              Esporta PDF
             </Button>
           </div>
 
@@ -446,7 +452,6 @@ export default function QuestionariStruttureNew() {
               </DialogHeader>
               {selectedQuestionario && (
                 <div className="space-y-4">
-                  {/* Mostra i dettagli del questionario */}
                   <pre>{JSON.stringify(selectedQuestionario, null, 2)}</pre>
                 </div>
               )}
