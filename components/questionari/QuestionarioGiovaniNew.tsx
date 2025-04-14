@@ -1316,6 +1316,7 @@ const SectionC = ({ formData, setFormData }: {
       <div className="space-y-4">
         <Label>C8. Quanto ritieni utili le attività che stai svolgendo per il tuo futuro?</Label>
         
+        {/* C8.1 Studio - condizionale su C5.1 */}
         {formData.attivita_attuali.studio && (
           <div className="space-y-2">
             <Label>C8.1 Studiare</Label>
@@ -1338,6 +1339,7 @@ const SectionC = ({ formData, setFormData }: {
           </div>
         )}
 
+        {/* C8.2 Formazione - condizionale su C5.2 */}
         {formData.attivita_attuali.formazione && (
           <div className="space-y-2">
             <Label>C8.2 Frequentare un corso di formazione</Label>
@@ -1363,6 +1365,7 @@ const SectionC = ({ formData, setFormData }: {
           </div>
         )}
 
+        {/* C8.3 Lavoro - condizionale su C5.3 */}
         {formData.attivita_attuali.lavoro && (
           <div className="space-y-2">
             <Label>C8.3 Lavorare</Label>
@@ -1389,32 +1392,31 @@ const SectionC = ({ formData, setFormData }: {
           </div>
         )}
 
-        {formData.attivita_attuali.ricerca_lavoro && (
-          <div className="space-y-2">
-            <Label>C8.4 Ricerca attiva del lavoro</Label>
-            <RadioGroup
-              value={formData.livelli_utilita[3] || "0"}
-              onValueChange={(value) => 
-                setFormData(prev => ({
-                  ...prev,
-                  livelli_utilita: [
-                    formData.livelli_utilita[0] || "0",
-                    formData.livelli_utilita[1] || "0",
-                    formData.livelli_utilita[2] || "0",
-                    value as ValutazioneUtilita
-                  ]
-                }))
-              }
-            >
-              {VALUTAZIONE_OPTIONS.map(option => (
-                <div key={option.value} className="flex items-center space-x-2">
-                  <RadioGroupItem value={option.value} id={`util-ric-${option.value}`} />
-                  <Label htmlFor={`util-ric-${option.value}`}>{option.label}</Label>
-                </div>
-              ))}
-            </RadioGroup>
-          </div>
-        )}
+        {/* C8.4 Ricerca lavoro - sempre visibile */}
+        <div className="space-y-2">
+          <Label>C8.4 Ricerca attiva del lavoro</Label>
+          <RadioGroup
+            value={formData.livelli_utilita[3] || "0"}
+            onValueChange={(value) => 
+              setFormData(prev => ({
+                ...prev,
+                livelli_utilita: [
+                  formData.livelli_utilita[0] || "0",
+                  formData.livelli_utilita[1] || "0",
+                  formData.livelli_utilita[2] || "0",
+                  value as ValutazioneUtilita
+                ]
+              }))
+            }
+          >
+            {VALUTAZIONE_OPTIONS.map(option => (
+              <div key={option.value} className="flex items-center space-x-2">
+                <RadioGroupItem value={option.value} id={`util-ric-${option.value}`} />
+                <Label htmlFor={`util-ric-${option.value}`}>{option.label}</Label>
+              </div>
+            ))}
+          </RadioGroup>
+        </div>
       </div>
 
       {/* C9. Canali ricerca lavoro */}
