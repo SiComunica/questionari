@@ -206,11 +206,8 @@ const handleExportXLSX = async (questionari: QuestionarioGiovani[]) => {
       return;
     }
 
-    // Mappiamo i dati secondo il tracciato record
+    // Creiamo l'array con tutti i dati secondo il tracciato record
     const data = questionari.map(q => ({
-      'COD_SPE': q.id || '',
-      'creato_a': q.creato_a ? format(new Date(q.creato_a), 'yyyy-MM-dd') : '',
-      'fonte': q.fonte || '',
       'PERCAUT': q.percorso_autonomia ? 1 : 0,
       'PERCAUT_SPEC': q.percorso_autonomia_spec || '',
       'VIVE': q.vive_in_struttura ? 1 : 0,
@@ -356,7 +353,7 @@ const handleExportXLSX = async (questionari: QuestionarioGiovani[]) => {
       'E7': q.aggiungere || ''
     }));
 
-    // Creiamo il foglio con i dati
+    // Creiamo il foglio Excel
     const worksheet = XLSX.utils.json_to_sheet(data);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Questionari");
@@ -369,4 +366,4 @@ const handleExportXLSX = async (questionari: QuestionarioGiovani[]) => {
     console.error("Errore durante l'esportazione:", error);
     toast.error("Errore durante l'esportazione del file Excel");
   }
-} 
+}; 
