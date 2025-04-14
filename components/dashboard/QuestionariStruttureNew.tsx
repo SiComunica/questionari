@@ -20,7 +20,9 @@ type QuestionarioStrutture = {
   nome_struttura: string;
   id_struttura: string;
   forma_giuridica: string;
+  forma_giuridica_altro: string;
   tipo_struttura: string;
+  tipo_struttura_altro: string;
   anno_inizio: number;
   missione: string;
   personale_retribuito_uomini: number;
@@ -28,6 +30,7 @@ type QuestionarioStrutture = {
   personale_volontario_uomini: number;
   personale_volontario_donne: number;
   figure_professionali: string[];
+  figure_professionali_altro: string;
   servizi_offerti: string[];
   tipologia_utenti: string[];
   modalita_accesso: string;
@@ -141,76 +144,57 @@ export default function QuestionariStruttureNew() {
       return;
     }
 
-    try {
-      // Mappiamo i dati secondo il tracciato record
-      const dataToExport = questionari.map(q => {
-        // Convertiamo le figure professionali in campi 0/1
-        const figure_professionali = {
-          B1_1: q.figure_professionali.includes('Psicologi') ? 1 : 0,
-          B1_2: q.figure_professionali.includes('Assistenti sociali') ? 1 : 0,
-          B1_3: q.figure_professionali.includes('Educatori') ? 1 : 0,
-          B1_4: q.figure_professionali.includes('Mediatori') ? 1 : 0,
-          B1_5: q.figure_professionali.includes('Medici') ? 1 : 0,
-          B1_6: q.figure_professionali.includes('Personale infermieristico') ? 1 : 0,
-          B1_7: q.figure_professionali.includes('Insegnanti') ? 1 : 0,
-          B1_8: q.figure_professionali.includes('Operatori religiosi') ? 1 : 0,
-          B1_9: q.figure_professionali.includes('Tutor') ? 1 : 0,
-          B1_10: q.figure_professionali.includes('Operatori legali') ? 1 : 0,
-          B1_11: q.figure_professionali.includes('Operatori multifunzionali') ? 1 : 0,
-          B1_12: q.figure_professionali.includes('Amministrativi') ? 1 : 0,
-          B1_13: q.figure_professionali.includes('Altro') ? 1 : 0
-        };
+    const dataToExport = questionari.map(q => ({
+      'ID_STRUTTURA': q.id_struttura || '',
+      'FORMAGIU': q.forma_giuridica || '',
+      'FORMAGIU_SPEC': q.forma_giuridica_altro || '',
+      'TIPO_STRUTTURA': q.tipo_struttura || '',
+      'ANNO_INIZIO': q.anno_inizio || '',
+      'MISSION': q.missione || '',
+      'B1U': q.personale_retribuito_uomini || 0,
+      'B1D': q.personale_retribuito_donne || 0,
+      'B1T': (q.personale_retribuito_uomini || 0) + (q.personale_retribuito_donne || 0),
+      'B2U': q.personale_volontario_uomini || 0,
+      'B2D': q.personale_volontario_donne || 0,
+      'B2T': (q.personale_volontario_uomini || 0) + (q.personale_volontario_donne || 0),
+      'B3.1': q.figure_professionali?.includes('Psicologi') ? 1 : 0,
+      'B3.2': q.figure_professionali?.includes('Assistenti sociali') ? 1 : 0,
+      'B3.3': q.figure_professionali?.includes('Educatori') ? 1 : 0,
+      'B3.4': q.figure_professionali?.includes('Mediatori') ? 1 : 0,
+      'B3.5': q.figure_professionali?.includes('Medici') ? 1 : 0,
+      'B3.6': q.figure_professionali?.includes('Personale infermieristico/operatori sanitari') ? 1 : 0,
+      'B3.7': q.figure_professionali?.includes('Insegnanti/formatori') ? 1 : 0,
+      'B3.8': q.figure_professionali?.includes('Cappellano/operatori religiosi e spirituali') ? 1 : 0,
+      'B3.9': q.figure_professionali?.includes('Tutor') ? 1 : 0,
+      'B3.10': q.figure_professionali?.includes('Operatore legale') ? 1 : 0,
+      'B3.11': q.figure_professionali?.includes('Operatore multifunzionale') ? 1 : 0,
+      'B3.12': q.figure_professionali?.includes('Amministrativo') ? 1 : 0,
+      'B3.13': q.figure_professionali?.includes('Altro') ? 1 : 0,
+      'B3.13_SPEC': q.figure_professionali_altro || '',
+      // Persone ospitate
+      'C1A.U': q.persone_ospitate?.fino_16?.uomini || 0,
+      'C1B.U': q.persone_ospitate?.da_16_a_18?.uomini || 0,
+      'C1C.U': q.persone_ospitate?.maggiorenni?.uomini || 0,
+      'C1A.D': q.persone_ospitate?.fino_16?.donne || 0,
+      'C1B.D': q.persone_ospitate?.da_16_a_18?.donne || 0,
+      'C1C.D': q.persone_ospitate?.maggiorenni?.donne || 0,
+      // Persone non ospitate
+      'C3A.U': q.persone_non_ospitate?.fino_16?.uomini || 0,
+      'C3B.U': q.persone_non_ospitate?.da_16_a_18?.uomini || 0,
+      'C3C.U': q.persone_non_ospitate?.maggiorenni?.uomini || 0,
+      'C3A.D': q.persone_non_ospitate?.fino_16?.donne || 0,
+      'C3B.D': q.persone_non_ospitate?.da_16_a_18?.donne || 0,
+      'C3C.D': q.persone_non_ospitate?.maggiorenni?.donne || 0,
+    }));
 
-        return {
-          ID: q.id,
-          'Data Creazione': new Date(q.creato_a).toLocaleDateString('it-IT'),
-          'Codice Operatore': q.creato_da,
-          'Nome Struttura': q.nome_struttura,
-          'ID Struttura': q.id_struttura,
-          'Forma Giuridica': q.forma_giuridica,
-          'Tipo Struttura': q.tipo_struttura,
-          'Anno Inizio': q.anno_inizio,
-          'Missione': q.missione,
-          'Stato': q.stato,
-          'Personale Retribuito Uomini': q.personale_retribuito_uomini,
-          'Personale Retribuito Donne': q.personale_retribuito_donne,
-          'Personale Volontario Uomini': q.personale_volontario_uomini,
-          'Personale Volontario Donne': q.personale_volontario_donne,
-          ...figure_professionali,
-          'C1.A': q.persone_ospitate?.fino_16?.uomini || 0,
-          'C1.B': q.persone_ospitate?.fino_16?.donne || 0,
-          'C1.C': q.persone_ospitate?.fino_16?.totale || 0,
-          'C2.A': q.persone_ospitate?.da_16_a_18?.uomini || 0,
-          'C2.B': q.persone_ospitate?.da_16_a_18?.donne || 0,
-          'C2.C': q.persone_ospitate?.da_16_a_18?.totale || 0,
-          'C3.A': q.persone_ospitate?.maggiorenni?.uomini || 0,
-          'C3.B': q.persone_ospitate?.maggiorenni?.donne || 0,
-          'C3.C': q.persone_ospitate?.maggiorenni?.totale || 0,
-          'C4.A': q.persone_non_ospitate?.fino_16?.uomini || 0,
-          'C4.B': q.persone_non_ospitate?.fino_16?.donne || 0,
-          'C4.C': q.persone_non_ospitate?.fino_16?.totale || 0,
-          'C5.A': q.persone_non_ospitate?.da_16_a_18?.uomini || 0,
-          'C5.B': q.persone_non_ospitate?.da_16_a_18?.donne || 0,
-          'C5.C': q.persone_non_ospitate?.da_16_a_18?.totale || 0,
-          'C6.A': q.persone_non_ospitate?.maggiorenni?.uomini || 0,
-          'C6.B': q.persone_non_ospitate?.maggiorenni?.donne || 0,
-          'C6.C': q.persone_non_ospitate?.maggiorenni?.totale || 0,
-          'Note': q.note
-        };
-      });
+    // Creiamo il workbook
+    const ws = XLSX.utils.json_to_sheet(dataToExport);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Questionari Strutture');
 
-      // Creiamo il workbook
-      const ws = XLSX.utils.json_to_sheet(dataToExport);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, 'Questionari Strutture');
-
-      // Scarichiamo il file
-      XLSX.writeFile(wb, 'questionari_strutture.xlsx');
-      toast.success('Export completato con successo');
-    } catch (error) {
-      console.error('Errore durante l\'export:', error);
-      toast.error('Errore durante l\'export');
-    }
+    // Scarichiamo il file
+    XLSX.writeFile(wb, `questionari_strutture_${new Date().toISOString()}.xlsx`);
+    toast.success('Export completato con successo');
   };
 
   const renderQuestionarioDettaglio = (questionario: QuestionarioStrutture) => {
