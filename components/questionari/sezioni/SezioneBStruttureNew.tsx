@@ -12,6 +12,17 @@ interface Props {
   setFormData: React.Dispatch<React.SetStateAction<QuestionarioStruttureNew>>;
 }
 
+const opzioniTipoStruttura = [
+  { value: 1, label: "Casa famiglia" },
+  { value: 2, label: "Comunità educativa" },
+  { value: 3, label: "Comunità familiare" },
+  { value: 4, label: "Alloggio per l'autonomia" },
+  { value: 5, label: "Centro diurno" },
+  { value: 6, label: "Centro di aggregazione" },
+  { value: 7, label: "Comunità mamma-bambino" },
+  { value: 8, label: "Altro" }
+];
+
 export default function SezioneBStruttureNew({ formData, setFormData }: Props) {
   const handlePersonaleRetribuitoChange = (field: keyof PersonaleRetribuito, value: number) => {
     setFormData(prev => ({
@@ -153,12 +164,18 @@ export default function SezioneBStruttureNew({ formData, setFormData }: Props) {
             <h4 className="font-medium mb-2">Figure professionali presenti</h4>
             <div className="space-y-2">
               {[
-                'Educatori professionali',
                 'Psicologi',
                 'Assistenti sociali',
+                'Educatori',
                 'Mediatori',
-                'Operatori di strada',
-                'Amministrativi'
+                'Medici',
+                'Personale infermieristico/operatori sanitari',
+                'Insegnanti/formatori',
+                'Cappellano/operatori religiosi e spirituali',
+                'Tutor',
+                'Operatore legale',
+                'Operatore multifunzionale',
+                'Amministrativo'
               ].map((figura) => (
                 <div key={figura} className="flex items-center space-x-2">
                   <Checkbox

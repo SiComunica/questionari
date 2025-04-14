@@ -23,23 +23,42 @@ const opzioniTipoStruttura = [
   { value: 8, label: "Altro" }
 ];
 
-const opzioniCaratteristichePersone = [
-  { id: 'C2.1', label: 'Stranieri con problemi legati alla condizione migratoria' },
-  { id: 'C2.2', label: 'Vittime di tratta' },
-  { id: 'C2.3', label: 'Vittime di violenza domestica' },
-  { id: 'C2.4', label: 'Persone allontanate dalla famiglia' },
-  { id: 'C2.5', label: 'Detenuti' },
-  { id: 'C2.6', label: 'Ex detenuti' },
-  { id: 'C2.7', label: 'Persone in esecuzione penale esterna' },
-  { id: 'C2.8', label: 'Indigenti e/o senza dimora' },
-  { id: 'C2.9', label: 'Rom e Sinti' },
-  { id: 'C2.10', label: 'Persone con disabilità fisica' },
-  { id: 'C2.11', label: 'Persone con disabilità cognitiva' },
-  { id: 'C2.12', label: 'Persone con disturbi psichiatrici' },
-  { id: 'C2.13', label: 'Persone con dipendenze' },
-  { id: 'C2.14', label: 'Genitori precoci' },
-  { id: 'C2.15', label: 'Persone con problemi legati all\'orientamento sessuale' },
-  { id: 'C2.16', label: 'Altro' }
+const opzioniPersoneTrattateAdolescenti = [
+  { id: 'C2.1A', label: 'Stranieri con problemi legati alla condizione migratoria' },
+  { id: 'C2.2A', label: 'Vittime di tratta' },
+  { id: 'C2.3A', label: 'Vittime di violenza domestica' },
+  { id: 'C2.4A', label: 'Persone allontanate dalla famiglia' },
+  { id: 'C2.5A', label: 'Detenuti' },
+  { id: 'C2.6A', label: 'Ex detenuti' },
+  { id: 'C2.7A', label: 'Persone in esecuzione penale esterna /misura alternativa alla detenzione' },
+  { id: 'C2.8A', label: 'Indigenti e/o senza dimora' },
+  { id: 'C2.9A', label: 'Rom e Sinti' },
+  { id: 'C2.10A', label: 'Persone con disabilità fisica' },
+  { id: 'C2.11A', label: 'Persone con disabilità cognitiva' },
+  { id: 'C2.12A', label: 'Persone con disturbi psichiatrici' },
+  { id: 'C2.13A', label: 'Persone con dipendenze' },
+  { id: 'C2.14A', label: 'Genitori precoci' },
+  { id: 'C2.15A', label: 'Persone con problemi legati all\'orientamento sessuale' },
+  { id: 'C2.16A', label: 'Altro' }
+];
+
+const opzioniPersoneTrattateGiovani = [
+  { id: 'C2.1B', label: 'Stranieri con problemi legati alla condizione migratoria' },
+  { id: 'C2.2B', label: 'Vittime di tratta' },
+  { id: 'C2.3B', label: 'Vittime di violenza domestica' },
+  { id: 'C2.4B', label: 'Persone allontanate dalla famiglia' },
+  { id: 'C2.5B', label: 'Detenuti' },
+  { id: 'C2.6B', label: 'Ex detenuti' },
+  { id: 'C2.7B', label: 'Persone in esecuzione penale esterna /misura alternativa alla detenzione' },
+  { id: 'C2.8B', label: 'Indigenti e/o senza dimora' },
+  { id: 'C2.9B', label: 'Rom e Sinti' },
+  { id: 'C2.10B', label: 'Persone con disabilità fisica' },
+  { id: 'C2.11B', label: 'Persone con disabilità cognitiva' },
+  { id: 'C2.12B', label: 'Persone con disturbi psichiatrici' },
+  { id: 'C2.13B', label: 'Persone con dipendenze' },
+  { id: 'C2.14B', label: 'Genitori precoci' },
+  { id: 'C2.15B', label: 'Persone con problemi legati all\'orientamento sessuale' },
+  { id: 'C2.16B', label: 'Altro' }
 ];
 
 export default function SezioneAStruttureNew({ formData, setFormData }: Props) {

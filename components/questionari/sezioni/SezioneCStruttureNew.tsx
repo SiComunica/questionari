@@ -166,6 +166,21 @@ export default function SezioneCStruttureNew({ formData, setFormData }: Props) {
     "Altro"
   ];
 
+  const opzioniServizi = [
+    { id: 'D1.1', label: 'Alloggio', hasDesc: false },
+    { id: 'D1.2', label: 'Vitto', hasDesc: false },
+    { id: 'D1.3', label: 'Altri servizi a bassa soglia', hasDesc: true },
+    { id: 'D1.4', label: 'Ospitalità solo diurna', hasDesc: true },
+    { id: 'D1.5', label: 'Supporto psicologico', hasDesc: true },
+    { id: 'D1.6', label: 'Sostegno all\'autonomia abitativa', hasDesc: true },
+    { id: 'D1.7', label: 'Orientamento lavorativo', hasDesc: true },
+    { id: 'D1.8', label: 'Orientamento scolastico', hasDesc: true },
+    { id: 'D1.9', label: 'Istruzione scolastica', hasDesc: true },
+    { id: 'D1.10', label: 'Formazione professionale', hasDesc: true },
+    { id: 'D1.11', label: 'Attività ricreative', hasDesc: true },
+    { id: 'D1.12', label: 'Altro', hasDesc: true }
+  ];
+
   return (
     <div className="space-y-6">
       <Card>

@@ -54,6 +54,11 @@ export default function SezioneDStruttureNew({ formData, setFormData }: Props) {
     }));
   };
 
+  const opzioniTipoCollaborazione = [
+    { value: 1, label: 'Ricorrente' },
+    { value: 2, label: 'Occasionale' }
+  ];
+
   return (
     <div className="space-y-6">
       <Card>
