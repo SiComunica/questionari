@@ -29,7 +29,153 @@ interface QuestionarioGiovani {
     altro?: boolean;
     altro_spec?: string;
   };
-  // ... resto dell'interfaccia con tutti i campi necessari
+  sesso: number;
+  classe_eta: number;
+  luogo_nascita: number;
+  luogo_nascita_spec?: string;
+  cittadinanza: number;
+  permesso_soggiorno: number;
+  tempo_in_struttura: number;
+  ospite_precedente: number;
+  familiari?: {
+    padre?: boolean;
+    madre?: boolean;
+    fratelli?: boolean;
+    nonni?: boolean;
+    altri_parenti?: boolean;
+    non_parenti?: boolean;
+  };
+  titolo_studio_madre: number;
+  situazione_lavorativa_madre: number;
+  titolo_studio_padre: number;
+  situazione_lavorativa_padre: number;
+  titolo_studio: number;
+  prima_entrata?: {
+    studiavo?: boolean;
+    lavoravo_stabile?: boolean;
+    lavoravo_saltuario?: boolean;
+    corso_formazione?: boolean;
+    altro?: boolean;
+    nessuna?: boolean;
+    altro_spec?: string;
+  };
+  orientamento_lavoro: boolean;
+  dove_orientamento?: {
+    scuola?: boolean;
+    enti_formazione?: boolean;
+    servizi_impiego?: boolean;
+    struttura?: boolean;
+    altro?: boolean;
+    altro_spec?: string;
+  };
+  utilita_servizio: number;
+  attualmente?: {
+    studio?: boolean;
+    formazione?: boolean;
+    lavoro?: boolean;
+    ricerca_lavoro?: boolean;
+    nessuna?: boolean;
+  };
+  motivo_non_studio: number;
+  corso_frequentato?: string;
+  lavoro_attuale?: string;
+  utilita?: {
+    studiare: number;
+    formazione: number;
+    lavorare: number;
+    cercare_lavoro: number;
+  };
+  ricerca_lavoro?: {
+    centro_impiego?: boolean;
+    sportelli?: boolean;
+    inps?: boolean;
+    servizi_sociali?: boolean;
+    agenzie?: boolean;
+    cooperative?: boolean;
+    struttura?: boolean;
+    conoscenti?: boolean;
+    portali?: boolean;
+    social?: boolean;
+    altro?: boolean;
+    altro_spec?: string;
+  };
+  curriculum: boolean;
+  centro_impiego: boolean;
+  lavoro_autonomo: boolean;
+  importanza?: {
+    stabilita: number;
+    flessibilita: number;
+    valorizzazione: number;
+    retribuzione: number;
+    fatica: number;
+    sicurezza: number;
+    utilita_sociale: number;
+    vicinanza: number;
+  };
+  abitazione_precedente?: {
+    solo?: boolean;
+    struttura?: boolean;
+    madre?: boolean;
+    padre?: boolean;
+    partner?: boolean;
+    figli?: boolean;
+    fratelli?: boolean;
+    nonni?: boolean;
+    altri_parenti?: boolean;
+    amici?: boolean;
+  };
+  supporto?: {
+    padre?: boolean;
+    madre?: boolean;
+    fratelli?: boolean;
+    altri_parenti?: boolean;
+    amici?: boolean;
+    tutore?: boolean;
+    insegnanti?: boolean;
+    figure_sostegno?: boolean;
+    volontari?: boolean;
+    altre_persone?: boolean;
+    altre_persone_spec?: string;
+  };
+  preoccupazioni?: {
+    pregiudizi: number;
+    mancanza_lavoro: number;
+    mancanza_aiuto: number;
+    mancanza_casa: number;
+    solitudine: number;
+    salute: number;
+    perdita_persone: number;
+    altro: number;
+    altro_spec?: string;
+  };
+  realizzabile?: {
+    lavoro_piacevole: number;
+    autonomia: number;
+    famiglia: number;
+    trovare_lavoro: number;
+    salute: number;
+    casa: number;
+  };
+  aiuto_futuro?: string;
+  pronto: boolean;
+  non_pronto_perche?: string;
+  pronto_perche?: string;
+  emozioni?: {
+    felicita?: boolean;
+    tristezza?: boolean;
+    curiosita?: boolean;
+    preoccupazione?: boolean;
+    paura?: boolean;
+    liberazione?: boolean;
+    solitudine?: boolean;
+    rabbia?: boolean;
+    speranza?: boolean;
+    determinazione?: boolean;
+  };
+  desiderio?: string;
+  aggiungere?: string;
+  creato_da?: string;
+  creato_a?: string;
 }
 
 const handleExportXLSX = async (questionari: QuestionarioGiovani[]) => {
