@@ -1334,23 +1334,21 @@ const SectionC = ({ formData, setFormData }: {
                 }))
               }
             >
-              <div className="flex flex-col space-y-2">
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="0" id="util-studio-0" />
-                  <Label htmlFor="util-studio-0">Per niente</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="1" id="util-studio-1" />
-                  <Label htmlFor="util-studio-1">Poco</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="2" id="util-studio-2" />
-                  <Label htmlFor="util-studio-2">Abbastanza</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="3" id="util-studio-3" />
-                  <Label htmlFor="util-studio-3">Molto</Label>
-                </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="0" id="util-studio-0" />
+                <Label htmlFor="util-studio-0">0. Per niente</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="1" id="util-studio-1" />
+                <Label htmlFor="util-studio-1">1. Poco</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="2" id="util-studio-2" />
+                <Label htmlFor="util-studio-2">2. Abbastanza</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="3" id="util-studio-3" />
+                <Label htmlFor="util-studio-3">3. Molto</Label>
               </div>
             </RadioGroup>
           </div>
@@ -1374,23 +1372,21 @@ const SectionC = ({ formData, setFormData }: {
                 }))
               }
             >
-              <div className="flex flex-col space-y-2">
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="0" id="util-form-0" />
-                  <Label htmlFor="util-form-0">Per niente</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="1" id="util-form-1" />
-                  <Label htmlFor="util-form-1">Poco</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="2" id="util-form-2" />
-                  <Label htmlFor="util-form-2">Abbastanza</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="3" id="util-form-3" />
-                  <Label htmlFor="util-form-3">Molto</Label>
-                </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="0" id="util-form-0" />
+                <Label htmlFor="util-form-0">0. Per niente</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="1" id="util-form-1" />
+                <Label htmlFor="util-form-1">1. Poco</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="2" id="util-form-2" />
+                <Label htmlFor="util-form-2">2. Abbastanza</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="3" id="util-form-3" />
+                <Label htmlFor="util-form-3">3. Molto</Label>
               </div>
             </RadioGroup>
           </div>
@@ -1414,65 +1410,63 @@ const SectionC = ({ formData, setFormData }: {
                 }))
               }
             >
-              <div className="flex flex-col space-y-2">
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="0" id="util-lav-0" />
-                  <Label htmlFor="util-lav-0">Per niente</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="1" id="util-lav-1" />
-                  <Label htmlFor="util-lav-1">Poco</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="2" id="util-lav-2" />
-                  <Label htmlFor="util-lav-2">Abbastanza</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="3" id="util-lav-3" />
-                  <Label htmlFor="util-lav-3">Molto</Label>
-                </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="0" id="util-lav-0" />
+                <Label htmlFor="util-lav-0">0. Per niente</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="1" id="util-lav-1" />
+                <Label htmlFor="util-lav-1">1. Poco</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="2" id="util-lav-2" />
+                <Label htmlFor="util-lav-2">2. Abbastanza</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="3" id="util-lav-3" />
+                <Label htmlFor="util-lav-3">3. Molto</Label>
               </div>
             </RadioGroup>
           </div>
         )}
 
         {/* C8.4 Ricerca lavoro */}
-        <div className="space-y-2">
-          <Label>C8.4 Ricerca attiva del lavoro</Label>
-          <RadioGroup
-            value={formData.livelli_utilita[3] || "0"}
-            onValueChange={(value) => 
-              setFormData(prev => ({
-                ...prev,
-                livelli_utilita: [
-                  prev.livelli_utilita[0] || "0",
-                  prev.livelli_utilita[1] || "0",
-                  prev.livelli_utilita[2] || "0",
-                  value
-                ]
-              }))
-            }
-          >
-            <div className="flex flex-col space-y-2">
+        {formData.attivita_attuali.ricerca_lavoro && (
+          <div className="space-y-2">
+            <Label>C8.4 Ricerca attiva del lavoro</Label>
+            <RadioGroup
+              value={formData.livelli_utilita[3] || "0"}
+              onValueChange={(value) => 
+                setFormData(prev => ({
+                  ...prev,
+                  livelli_utilita: [
+                    prev.livelli_utilita[0] || "0",
+                    prev.livelli_utilita[1] || "0",
+                    prev.livelli_utilita[2] || "0",
+                    value
+                  ]
+                }))
+              }
+            >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="0" id="util-ric-0" />
-                <Label htmlFor="util-ric-0">Per niente</Label>
+                <Label htmlFor="util-ric-0">0. Per niente</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="1" id="util-ric-1" />
-                <Label htmlFor="util-ric-1">Poco</Label>
+                <Label htmlFor="util-ric-1">1. Poco</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="2" id="util-ric-2" />
-                <Label htmlFor="util-ric-2">Abbastanza</Label>
+                <Label htmlFor="util-ric-2">2. Abbastanza</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="3" id="util-ric-3" />
-                <Label htmlFor="util-ric-3">Molto</Label>
+                <Label htmlFor="util-ric-3">3. Molto</Label>
               </div>
-            </div>
-          </RadioGroup>
-        </div>
+            </RadioGroup>
+          </div>
+        )}
       </div>
 
       {/* C9. Canali ricerca lavoro */}
