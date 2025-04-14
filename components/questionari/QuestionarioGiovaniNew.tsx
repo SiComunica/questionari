@@ -1314,41 +1314,40 @@ const SectionC = ({ formData, setFormData }: {
 
       {/* C8. Utilità attività */}
       <div className="space-y-4">
-        <Label>C8. Quanto ritieni utili le attività che stai svolgendo per il tuo futuro?</Label>
+        <Label className="font-bold">C8. Quanto ritieni utili le attività che stai svolgendo per il tuo futuro?</Label>
         
         {/* C8.1 Studio */}
         {formData.attivita_attuali.studio && (
-          <div className="space-y-2">
+          <div className="space-y-2 bg-gray-50 p-4 rounded-md">
             <Label>C8.1 Studiare</Label>
             <RadioGroup
               value={formData.livelli_utilita[0] || "0"}
-              onValueChange={(value) => 
+              onValueChange={(value) => {
+                const newLivelli = [...(formData.livelli_utilita || [])];
+                newLivelli[0] = value;
                 setFormData(prev => ({
                   ...prev,
-                  livelli_utilita: [
-                    value,
-                    prev.livelli_utilita[1] || "0",
-                    prev.livelli_utilita[2] || "0",
-                    prev.livelli_utilita[3] || "0"
-                  ]
-                }))
-              }
+                  livelli_utilita: newLivelli
+                }));
+              }}
             >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="0" id="util-studio-0" />
-                <Label htmlFor="util-studio-0">0. Per niente</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="1" id="util-studio-1" />
-                <Label htmlFor="util-studio-1">1. Poco</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="2" id="util-studio-2" />
-                <Label htmlFor="util-studio-2">2. Abbastanza</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="3" id="util-studio-3" />
-                <Label htmlFor="util-studio-3">3. Molto</Label>
+              <div className="grid grid-cols-1 gap-2">
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="0" id="util-studio-0" />
+                  <Label htmlFor="util-studio-0">0. Per niente</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="1" id="util-studio-1" />
+                  <Label htmlFor="util-studio-1">1. Poco</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="2" id="util-studio-2" />
+                  <Label htmlFor="util-studio-2">2. Abbastanza</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="3" id="util-studio-3" />
+                  <Label htmlFor="util-studio-3">3. Molto</Label>
+                </div>
               </div>
             </RadioGroup>
           </div>
@@ -1356,37 +1355,36 @@ const SectionC = ({ formData, setFormData }: {
 
         {/* C8.2 Formazione */}
         {formData.attivita_attuali.formazione && (
-          <div className="space-y-2">
+          <div className="space-y-2 bg-gray-50 p-4 rounded-md">
             <Label>C8.2 Frequentare un corso di formazione</Label>
             <RadioGroup
               value={formData.livelli_utilita[1] || "0"}
-              onValueChange={(value) => 
+              onValueChange={(value) => {
+                const newLivelli = [...(formData.livelli_utilita || [])];
+                newLivelli[1] = value;
                 setFormData(prev => ({
                   ...prev,
-                  livelli_utilita: [
-                    prev.livelli_utilita[0] || "0",
-                    value,
-                    prev.livelli_utilita[2] || "0",
-                    prev.livelli_utilita[3] || "0"
-                  ]
-                }))
-              }
+                  livelli_utilita: newLivelli
+                }));
+              }}
             >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="0" id="util-form-0" />
-                <Label htmlFor="util-form-0">0. Per niente</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="1" id="util-form-1" />
-                <Label htmlFor="util-form-1">1. Poco</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="2" id="util-form-2" />
-                <Label htmlFor="util-form-2">2. Abbastanza</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="3" id="util-form-3" />
-                <Label htmlFor="util-form-3">3. Molto</Label>
+              <div className="grid grid-cols-1 gap-2">
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="0" id="util-form-0" />
+                  <Label htmlFor="util-form-0">0. Per niente</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="1" id="util-form-1" />
+                  <Label htmlFor="util-form-1">1. Poco</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="2" id="util-form-2" />
+                  <Label htmlFor="util-form-2">2. Abbastanza</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="3" id="util-form-3" />
+                  <Label htmlFor="util-form-3">3. Molto</Label>
+                </div>
               </div>
             </RadioGroup>
           </div>
@@ -1394,37 +1392,36 @@ const SectionC = ({ formData, setFormData }: {
 
         {/* C8.3 Lavoro */}
         {formData.attivita_attuali.lavoro && (
-          <div className="space-y-2">
+          <div className="space-y-2 bg-gray-50 p-4 rounded-md">
             <Label>C8.3 Lavorare</Label>
             <RadioGroup
               value={formData.livelli_utilita[2] || "0"}
-              onValueChange={(value) => 
+              onValueChange={(value) => {
+                const newLivelli = [...(formData.livelli_utilita || [])];
+                newLivelli[2] = value;
                 setFormData(prev => ({
                   ...prev,
-                  livelli_utilita: [
-                    prev.livelli_utilita[0] || "0",
-                    prev.livelli_utilita[1] || "0",
-                    value,
-                    prev.livelli_utilita[3] || "0"
-                  ]
-                }))
-              }
+                  livelli_utilita: newLivelli
+                }));
+              }}
             >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="0" id="util-lav-0" />
-                <Label htmlFor="util-lav-0">0. Per niente</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="1" id="util-lav-1" />
-                <Label htmlFor="util-lav-1">1. Poco</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="2" id="util-lav-2" />
-                <Label htmlFor="util-lav-2">2. Abbastanza</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="3" id="util-lav-3" />
-                <Label htmlFor="util-lav-3">3. Molto</Label>
+              <div className="grid grid-cols-1 gap-2">
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="0" id="util-lav-0" />
+                  <Label htmlFor="util-lav-0">0. Per niente</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="1" id="util-lav-1" />
+                  <Label htmlFor="util-lav-1">1. Poco</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="2" id="util-lav-2" />
+                  <Label htmlFor="util-lav-2">2. Abbastanza</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="3" id="util-lav-3" />
+                  <Label htmlFor="util-lav-3">3. Molto</Label>
+                </div>
               </div>
             </RadioGroup>
           </div>
@@ -1432,37 +1429,36 @@ const SectionC = ({ formData, setFormData }: {
 
         {/* C8.4 Ricerca lavoro */}
         {formData.attivita_attuali.ricerca_lavoro && (
-          <div className="space-y-2">
+          <div className="space-y-2 bg-gray-50 p-4 rounded-md">
             <Label>C8.4 Ricerca attiva del lavoro</Label>
             <RadioGroup
               value={formData.livelli_utilita[3] || "0"}
-              onValueChange={(value) => 
+              onValueChange={(value) => {
+                const newLivelli = [...(formData.livelli_utilita || [])];
+                newLivelli[3] = value;
                 setFormData(prev => ({
                   ...prev,
-                  livelli_utilita: [
-                    prev.livelli_utilita[0] || "0",
-                    prev.livelli_utilita[1] || "0",
-                    prev.livelli_utilita[2] || "0",
-                    value
-                  ]
-                }))
-              }
+                  livelli_utilita: newLivelli
+                }));
+              }}
             >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="0" id="util-ric-0" />
-                <Label htmlFor="util-ric-0">0. Per niente</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="1" id="util-ric-1" />
-                <Label htmlFor="util-ric-1">1. Poco</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="2" id="util-ric-2" />
-                <Label htmlFor="util-ric-2">2. Abbastanza</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="3" id="util-ric-3" />
-                <Label htmlFor="util-ric-3">3. Molto</Label>
+              <div className="grid grid-cols-1 gap-2">
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="0" id="util-ric-0" />
+                  <Label htmlFor="util-ric-0">0. Per niente</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="1" id="util-ric-1" />
+                  <Label htmlFor="util-ric-1">1. Poco</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="2" id="util-ric-2" />
+                  <Label htmlFor="util-ric-2">2. Abbastanza</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="3" id="util-ric-3" />
+                  <Label htmlFor="util-ric-3">3. Molto</Label>
+                </div>
               </div>
             </RadioGroup>
           </div>
