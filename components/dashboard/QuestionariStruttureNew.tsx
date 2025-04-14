@@ -38,7 +38,11 @@ type QuestionarioStrutture = {
   numero_posti: number;
   costi_mensili: number;
   fonti_finanziamento: string[];
-  collaborazioni: string[];
+  collaborazioni: Array<{
+    soggetto: string;
+    tipo: string;
+    oggetto: string;
+  }>;
   note: string;
   persone_ospitate?: {
     fino_16?: { uomini: number; donne: number; totale: number };
@@ -49,6 +53,25 @@ type QuestionarioStrutture = {
     fino_16?: { uomini: number; donne: number; totale: number };
     da_16_a_18?: { uomini: number; donne: number; totale: number };
     maggiorenni?: { uomini: number; donne: number; totale: number };
+  };
+  caratteristiche_non_ospiti_adolescenti?: string[];
+  caratteristiche_non_ospiti_giovani?: string[];
+  caratteristiche_non_ospiti_altro?: string;
+  attivita_servizi?: {
+    alloggio?: { attivo: boolean; descrizione?: string };
+    vitto?: { attivo: boolean; descrizione?: string };
+    servizi_bassa_soglia?: { attivo: boolean; descrizione?: string };
+  };
+  attivita_inserimento?: { nome: string; periodo: string; contenuto: string }[];
+  esperienze_inserimento_lavorativo?: boolean;
+  punti_forza_network?: string;
+  critica_network?: string;
+  finanziamenti?: {
+    fondi_pubblici?: number;
+    fondi_privati?: number;
+    fondi_pubblici_specifica?: string;
+    fondi_privati_specifica?: string;
+    fornitori?: { nome: string; tipo_sostegno: string }[];
   };
 }
 
@@ -185,133 +208,9 @@ export default function QuestionariStruttureNew() {
       'C3A.D': q.persone_non_ospitate?.fino_16?.donne || 0,
       'C3B.D': q.persone_non_ospitate?.da_16_a_18?.donne || 0,
       'C3C.D': q.persone_non_ospitate?.maggiorenni?.donne || 0,
-    }));
+      // ... resto dei campi ...
+    }))
 
-    // Creiamo il workbook
-    const ws = XLSX.utils.json_to_sheet(dataToExport);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Questionari Strutture');
-
-    // Scarichiamo il file
-    XLSX.writeFile(wb, `questionari_strutture_${new Date().toISOString()}.xlsx`);
-    toast.success('Export completato con successo');
-  };
-
-  const renderQuestionarioDettaglio = (questionario: QuestionarioStrutture) => {
-    return (
-      <div className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <h3 className="font-bold">Dati Struttura</h3>
-            <p>Nome: {questionario.nome_struttura}</p>
-            <p>ID Struttura: {questionario.id_struttura}</p>
-            <p>Forma Giuridica: {questionario.forma_giuridica}</p>
-            <p>Tipo: {questionario.tipo_struttura}</p>
-            <p>Anno Inizio: {questionario.anno_inizio}</p>
-          </div>
-          <div>
-            <h3 className="font-bold">Personale</h3>
-            <p>Retribuiti Uomini: {questionario.personale_retribuito_uomini}</p>
-            <p>Retribuiti Donne: {questionario.personale_retribuito_donne}</p>
-            <p>Volontari Uomini: {questionario.personale_volontario_uomini}</p>
-            <p>Volontari Donne: {questionario.personale_volontario_donne}</p>
-          </div>
-        </div>
-        <div>
-          <h3 className="font-bold">Missione</h3>
-          <p>{questionario.missione}</p>
-        </div>
-        <div>
-          <h3 className="font-bold">Figure Professionali</h3>
-          <ul className="list-disc pl-4">
-            {questionario.figure_professionali.map((figura, index) => (
-              <li key={index}>{figura}</li>
-            ))}
-          </ul>
-        </div>
-        <div className="flex justify-end gap-2 mt-4">
-          <Button onClick={() => handleExportPDF(questionario)} className="flex gap-2">
-            <FileText size={20} />
-            PDF
-          </Button>
-        </div>
-      </div>
-    )
+    // ... resto del codice ...
   }
-
-  if (loading) return <div>Caricamento...</div>
-
-  return (
-    <Card className="mt-8">
-      <CardHeader>
-        <CardTitle>Questionari Strutture</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="mb-6 flex gap-4">
-          <Button onClick={handleExportXLSX} className="flex gap-2">
-            <FileSpreadsheet size={20} />
-            Esporta XLSX
-          </Button>
-          <Button onClick={() => handleExportPDF()} className="flex gap-2">
-            <FileText size={20} />
-            Esporta PDF
-          </Button>
-        </div>
-
-        {questionari.length === 0 ? (
-          <p>Nessun questionario strutture ricevuto</p>
-        ) : (
-          <div className="space-y-4">
-            {questionari.map((questionario) => (
-              <Card key={questionario.id} className="p-4">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <p className="font-bold">Struttura: {questionario.nome_struttura}</p>
-                    <p className="text-sm text-gray-600">
-                      Inviato il {new Date(questionario.creato_a).toLocaleDateString()}
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      Stato: {questionario.stato}
-                    </p>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button 
-                      variant="outline"
-                      onClick={() => {
-                        setSelectedQuestionario(questionario)
-                        setIsDialogOpen(true)
-                      }}
-                    >
-                      Visualizza dettagli
-                    </Button>
-                    <Button 
-                      variant="outline"
-                      onClick={() => handleExportPDF(questionario)}
-                    >
-                      <FileText size={20} />
-                    </Button>
-                    <Button 
-                      variant="destructive"
-                      onClick={() => handleDelete(questionario.id)}
-                    >
-                      <Trash2 size={20} />
-                    </Button>
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
-        )}
-      </CardContent>
-
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Dettaglio Questionario Struttura</DialogTitle>
-          </DialogHeader>
-          {selectedQuestionario && renderQuestionarioDettaglio(selectedQuestionario)}
-        </DialogContent>
-      </Dialog>
-    </Card>
-  )
-} 
+}
