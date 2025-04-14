@@ -383,4 +383,77 @@ export default function QuestionariStruttureNew() {
     XLSX.writeFile(wb, `questionari_strutture_${new Date().toISOString()}.xlsx`);
     toast.success('Export completato con successo');
   };
+
+  return (
+    <div className="space-y-4">
+      {loading ? (
+        <div>Caricamento...</div>
+      ) : (
+        <>
+          <div className="flex justify-end space-x-2 mb-4">
+            <Button onClick={() => handleExportXLSX()}>
+              <FileSpreadsheet className="mr-2 h-4 w-4" />
+              Esporta XLSX
+            </Button>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {questionari.map((questionario) => (
+              <Card key={questionario.id}>
+                <CardHeader>
+                  <CardTitle className="flex justify-between items-center">
+                    <span>Questionario {questionario.id_struttura}</span>
+                    <div className="flex space-x-2">
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => handleExportPDF(questionario)}
+                      >
+                        <FileText className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => {
+                          setSelectedQuestionario(questionario)
+                          setIsDialogOpen(true)
+                        }}
+                      >
+                        <FileText className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => handleDelete(questionario.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p>Data: {new Date(questionario.creato_a).toLocaleDateString()}</p>
+                  <p>Operatore: {questionario.creato_da}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>Dettagli Questionario</DialogTitle>
+              </DialogHeader>
+              {selectedQuestionario && (
+                <div className="space-y-4">
+                  {/* Mostra i dettagli del questionario */}
+                  <pre>{JSON.stringify(selectedQuestionario, null, 2)}</pre>
+                </div>
+              )}
+            </DialogContent>
+          </Dialog>
+        </>
+      )}
+    </div>
+  );
 }
