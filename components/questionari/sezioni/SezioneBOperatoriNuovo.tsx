@@ -1,5 +1,7 @@
 import React from 'react';
 import type { QuestionarioOperatoriNuovo } from '@/types/questionari';
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 interface Props {
   formData: QuestionarioOperatoriNuovo;
@@ -76,7 +78,8 @@ export default function SezioneBOperatoriNuovo({ formData, setFormData }: Props)
     { key: 'sostegno_competenze' as InterventoKey, label: 'Sostegno alla valorizzazione delle competenze' },
     { key: 'sostegno_legale' as InterventoKey, label: 'Sostegno legale' },
     { key: 'sostegno_sociosanitario' as InterventoKey, label: 'Sostegno socio-sanitario' },
-    { key: 'mediazione_interculturale' as InterventoKey, label: 'Mediazione linguistica e interculturale' }
+    { key: 'mediazione_interculturale' as InterventoKey, label: 'Mediazione linguistica e interculturale' },
+    { key: 'altro' as InterventoKey, label: 'Altro' }
   ];
 
   return (
@@ -213,6 +216,19 @@ export default function SezioneBOperatoriNuovo({ formData, setFormData }: Props)
                 {label}
               </label>
             ))}
+            {formData.tipo_intervento.altro && (
+              <div className="ml-6">
+                <label className="block mb-2">Specificare altro tipo di intervento</label>
+                <input
+                  type="text"
+                  name="altro_specificare"
+                  value={formData.tipo_intervento.altro_specificare || ''}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleTextChange(e, 'tipo_intervento')}
+                  className="w-full p-2 border rounded"
+                  placeholder="Specificare..."
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -233,6 +249,19 @@ export default function SezioneBOperatoriNuovo({ formData, setFormData }: Props)
                 {label}
               </label>
             ))}
+            {formData.interventi_potenziare.altro && (
+              <div className="ml-6">
+                <label className="block mb-2">Specificare altro intervento da potenziare</label>
+                <input
+                  type="text"
+                  name="altro_specificare"
+                  value={formData.interventi_potenziare.altro_specificare || ''}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleTextChange(e, 'interventi_potenziare')}
+                  className="w-full p-2 border rounded"
+                  placeholder="Specificare..."
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>
