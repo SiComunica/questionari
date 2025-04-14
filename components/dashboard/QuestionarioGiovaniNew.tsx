@@ -510,4 +510,4 @@ const handleExportXLSX = async (questionari: QuestionarioGiovani[]) => {
     console.error("Errore durante l'esportazione:", error);
     toast.error("Errore durante l'esportazione del file Excel");
   }
-}; 
+} 
