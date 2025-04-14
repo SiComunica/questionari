@@ -4,13 +4,43 @@ import React from 'react';
 import type { QuestionarioStruttureNew } from '@/types/questionari';
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
 interface Props {
   formData: QuestionarioStruttureNew;
   setFormData: React.Dispatch<React.SetStateAction<QuestionarioStruttureNew>>;
 }
+
+const opzioniTipoStruttura = [
+  { value: 1, label: "Casa famiglia" },
+  { value: 2, label: "Comunità educativa" },
+  { value: 3, label: "Comunità familiare" },
+  { value: 4, label: "Alloggio per l'autonomia" },
+  { value: 5, label: "Centro diurno" },
+  { value: 6, label: "Centro di aggregazione" },
+  { value: 7, label: "Comunità mamma-bambino" },
+  { value: 8, label: "Altro" }
+];
+
+const opzioniCaratteristichePersone = [
+  { id: 'C2.1', label: 'Stranieri con problemi legati alla condizione migratoria' },
+  { id: 'C2.2', label: 'Vittime di tratta' },
+  { id: 'C2.3', label: 'Vittime di violenza domestica' },
+  { id: 'C2.4', label: 'Persone allontanate dalla famiglia' },
+  { id: 'C2.5', label: 'Detenuti' },
+  { id: 'C2.6', label: 'Ex detenuti' },
+  { id: 'C2.7', label: 'Persone in esecuzione penale esterna' },
+  { id: 'C2.8', label: 'Indigenti e/o senza dimora' },
+  { id: 'C2.9', label: 'Rom e Sinti' },
+  { id: 'C2.10', label: 'Persone con disabilità fisica' },
+  { id: 'C2.11', label: 'Persone con disabilità cognitiva' },
+  { id: 'C2.12', label: 'Persone con disturbi psichiatrici' },
+  { id: 'C2.13', label: 'Persone con dipendenze' },
+  { id: 'C2.14', label: 'Genitori precoci' },
+  { id: 'C2.15', label: 'Persone con problemi legati all\'orientamento sessuale' },
+  { id: 'C2.16', label: 'Altro' }
+];
 
 export default function SezioneAStruttureNew({ formData, setFormData }: Props) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -84,13 +114,25 @@ export default function SezioneAStruttureNew({ formData, setFormData }: Props) {
 
         <div>
           <Label>Tipo di struttura (casa-famiglia, centro diurno, semiautonomia, ecc.)</Label>
-          <Input
+          <Select
             name="tipo_struttura"
             value={formData.tipo_struttura}
-            onChange={handleChange}
-            className="w-full"
-            placeholder="Inserisci il tipo di struttura..."
-          />
+            onValueChange={(value) => setFormData(prev => ({
+              ...prev,
+              tipo_struttura: value
+            }))}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Seleziona tipo di struttura" />
+            </SelectTrigger>
+            <SelectContent>
+              {opzioniTipoStruttura.map((opzione) => (
+                <SelectItem key={opzione.value} value={opzione.value.toString()}>
+                  {opzione.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div>
