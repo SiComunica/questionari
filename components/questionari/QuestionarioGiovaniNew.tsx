@@ -304,7 +304,7 @@ const initialFormData: QuestionarioGiovani = {
     vicinanza_casa: "0"
   },
   condizioni_lavoro: [],
-  livelli_utilita: [],  // cambiato da livelli_utilità a livelli_utilita
+  livelli_utilita: [], // Modifica qui: inizializza come array vuoto
   livelli_obiettivi: [],
 
   // Sezione D
@@ -1312,11 +1312,11 @@ const SectionC = ({ formData, setFormData }: {
         </div>
       )}
 
-      {/* C8.1-C8.4 Utilità attività */}
+      {/* C8. Utilità attività */}
       <div className="space-y-4">
         <Label>C8. Quanto ritieni utili le attività che stai svolgendo per il tuo futuro?</Label>
         
-        {/* C8.1 Studio - condizionale su C5.1 */}
+        {/* C8.1 Studio */}
         {formData.attivita_attuali.studio && (
           <div className="space-y-2">
             <Label>C8.1 Studiare</Label>
@@ -1325,21 +1325,38 @@ const SectionC = ({ formData, setFormData }: {
               onValueChange={(value) => 
                 setFormData(prev => ({
                   ...prev,
-                  livelli_utilita: [value as ValutazioneUtilita]
+                  livelli_utilita: [
+                    value,
+                    prev.livelli_utilita[1] || "0",
+                    prev.livelli_utilita[2] || "0",
+                    prev.livelli_utilita[3] || "0"
+                  ]
                 }))
               }
             >
-              {VALUTAZIONE_OPTIONS.map(option => (
-                <div key={option.value} className="flex items-center space-x-2">
-                  <RadioGroupItem value={option.value} id={`util-studio-${option.value}`} />
-                  <Label htmlFor={`util-studio-${option.value}`}>{option.label}</Label>
+              <div className="flex flex-col space-y-2">
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="0" id="util-studio-0" />
+                  <Label htmlFor="util-studio-0">Per niente</Label>
                 </div>
-              ))}
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="1" id="util-studio-1" />
+                  <Label htmlFor="util-studio-1">Poco</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="2" id="util-studio-2" />
+                  <Label htmlFor="util-studio-2">Abbastanza</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="3" id="util-studio-3" />
+                  <Label htmlFor="util-studio-3">Molto</Label>
+                </div>
+              </div>
             </RadioGroup>
           </div>
         )}
 
-        {/* C8.2 Formazione - condizionale su C5.2 */}
+        {/* C8.2 Formazione */}
         {formData.attivita_attuali.formazione && (
           <div className="space-y-2">
             <Label>C8.2 Frequentare un corso di formazione</Label>
@@ -1349,23 +1366,37 @@ const SectionC = ({ formData, setFormData }: {
                 setFormData(prev => ({
                   ...prev,
                   livelli_utilita: [
-                    formData.livelli_utilita[0] || "0", 
-                    value as ValutazioneUtilita
+                    prev.livelli_utilita[0] || "0",
+                    value,
+                    prev.livelli_utilita[2] || "0",
+                    prev.livelli_utilita[3] || "0"
                   ]
                 }))
               }
             >
-              {VALUTAZIONE_OPTIONS.map(option => (
-                <div key={option.value} className="flex items-center space-x-2">
-                  <RadioGroupItem value={option.value} id={`util-form-${option.value}`} />
-                  <Label htmlFor={`util-form-${option.value}`}>{option.label}</Label>
+              <div className="flex flex-col space-y-2">
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="0" id="util-form-0" />
+                  <Label htmlFor="util-form-0">Per niente</Label>
                 </div>
-              ))}
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="1" id="util-form-1" />
+                  <Label htmlFor="util-form-1">Poco</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="2" id="util-form-2" />
+                  <Label htmlFor="util-form-2">Abbastanza</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="3" id="util-form-3" />
+                  <Label htmlFor="util-form-3">Molto</Label>
+                </div>
+              </div>
             </RadioGroup>
           </div>
         )}
 
-        {/* C8.3 Lavoro - condizionale su C5.3 */}
+        {/* C8.3 Lavoro */}
         {formData.attivita_attuali.lavoro && (
           <div className="space-y-2">
             <Label>C8.3 Lavorare</Label>
@@ -1375,24 +1406,37 @@ const SectionC = ({ formData, setFormData }: {
                 setFormData(prev => ({
                   ...prev,
                   livelli_utilita: [
-                    formData.livelli_utilita[0] || "0",
-                    formData.livelli_utilita[1] || "0",
-                    value as ValutazioneUtilita
+                    prev.livelli_utilita[0] || "0",
+                    prev.livelli_utilita[1] || "0",
+                    value,
+                    prev.livelli_utilita[3] || "0"
                   ]
                 }))
               }
             >
-              {VALUTAZIONE_OPTIONS.map(option => (
-                <div key={option.value} className="flex items-center space-x-2">
-                  <RadioGroupItem value={option.value} id={`util-lav-${option.value}`} />
-                  <Label htmlFor={`util-lav-${option.value}`}>{option.label}</Label>
+              <div className="flex flex-col space-y-2">
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="0" id="util-lav-0" />
+                  <Label htmlFor="util-lav-0">Per niente</Label>
                 </div>
-              ))}
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="1" id="util-lav-1" />
+                  <Label htmlFor="util-lav-1">Poco</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="2" id="util-lav-2" />
+                  <Label htmlFor="util-lav-2">Abbastanza</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="3" id="util-lav-3" />
+                  <Label htmlFor="util-lav-3">Molto</Label>
+                </div>
+              </div>
             </RadioGroup>
           </div>
         )}
 
-        {/* C8.4 Ricerca lavoro - sempre visibile */}
+        {/* C8.4 Ricerca lavoro */}
         <div className="space-y-2">
           <Label>C8.4 Ricerca attiva del lavoro</Label>
           <RadioGroup
@@ -1401,20 +1445,32 @@ const SectionC = ({ formData, setFormData }: {
               setFormData(prev => ({
                 ...prev,
                 livelli_utilita: [
-                  formData.livelli_utilita[0] || "0",
-                  formData.livelli_utilita[1] || "0",
-                  formData.livelli_utilita[2] || "0",
-                  value as ValutazioneUtilita
+                  prev.livelli_utilita[0] || "0",
+                  prev.livelli_utilita[1] || "0",
+                  prev.livelli_utilita[2] || "0",
+                  value
                 ]
               }))
             }
           >
-            {VALUTAZIONE_OPTIONS.map(option => (
-              <div key={option.value} className="flex items-center space-x-2">
-                <RadioGroupItem value={option.value} id={`util-ric-${option.value}`} />
-                <Label htmlFor={`util-ric-${option.value}`}>{option.label}</Label>
+            <div className="flex flex-col space-y-2">
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="0" id="util-ric-0" />
+                <Label htmlFor="util-ric-0">Per niente</Label>
               </div>
-            ))}
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="1" id="util-ric-1" />
+                <Label htmlFor="util-ric-1">Poco</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="2" id="util-ric-2" />
+                <Label htmlFor="util-ric-2">Abbastanza</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="3" id="util-ric-3" />
+                <Label htmlFor="util-ric-3">Molto</Label>
+              </div>
+            </div>
           </RadioGroup>
         </div>
       </div>
