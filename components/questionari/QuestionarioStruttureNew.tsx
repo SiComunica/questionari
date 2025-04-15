@@ -34,7 +34,7 @@ const defaultFormData: QuestionarioStruttureNew = {
   
   // Sezione A
   id_struttura: '',
-  forma_giuridica: '',
+  forma_giuridica: '1',
   forma_giuridica_altro: '',
   tipo_struttura: '',
   anno_inizio: 0,

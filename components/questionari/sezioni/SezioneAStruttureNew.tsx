@@ -104,7 +104,6 @@ export default function SezioneAStruttureNew({ formData, setFormData }: Props) {
             onChange={handleChange}
             className="w-full p-2 border rounded"
           >
-            <option value="">Seleziona forma giuridica</option>
             <option value="1">1. Ente pubblico</option>
             <option value="2">2. Impresa for profit (ditta individuale, SNC, SAS, SS, SRL, SRLS, SPA, SAPA)</option>
             <option value="3">3. Cooperativa</option>
@@ -118,7 +117,7 @@ export default function SezioneAStruttureNew({ formData, setFormData }: Props) {
           </select>
         </div>
 
-        {formData.forma_giuridica === 'altro' && (
+        {formData.forma_giuridica === '10' && (
           <div>
             <Label>Specificare altra forma giuridica</Label>
             <Input

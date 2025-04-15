@@ -710,4 +710,88 @@ export type QuestionarioStruttureNew = {
       tipo_sostegno: string;
     }>;
   };
-}
+};
+
+const defaultFormData: QuestionarioStruttureNew = {
+  id: '',
+  creato_a: '',
+  creato_da: '',
+  stato: '',
+  nome_struttura: '',
+  id_struttura: '',
+  forma_giuridica: '1',
+  forma_giuridica_altro: '',
+  tipo_struttura: '',
+  anno_inizio: 0,
+  missione: '',
+  
+  personale_retribuito: {
+    uomini: 0,
+    donne: 0,
+    totale: 0,
+    part_time: 0,
+    full_time: 0,
+  },
+  
+  personale_volontario: {
+    uomini: 0,
+    donne: 0,
+    totale: 0,
+  },
+  
+  figure_professionali: [],
+  figure_professionali_altro: '',
+  
+  persone_ospitate: {
+    fino_16: { uomini: 0, donne: 0, totale: 0 },
+    da_16_a_18: { uomini: 0, donne: 0, totale: 0 },
+    maggiorenni: { uomini: 0, donne: 0, totale: 0 },
+    totale: { uomini: 0, donne: 0, totale: 0 },
+  },
+  
+  persone_non_ospitate: {
+    fino_16: { uomini: 0, donne: 0, totale: 0 },
+    da_16_a_18: { uomini: 0, donne: 0, totale: 0 },
+    maggiorenni: { uomini: 0, donne: 0, totale: 0 },
+    totale: { uomini: 0, donne: 0, totale: 0 },
+  },
+  
+  caratteristiche_ospiti_adolescenti: [],
+  caratteristiche_ospiti_giovani: [],
+  caratteristiche_ospiti_altro: '',
+  caratteristiche_non_ospiti_adolescenti: [],
+  caratteristiche_non_ospiti_giovani: [],
+  caratteristiche_non_ospiti_altro: '',
+  
+  attivita_servizi: {
+    alloggio: { attivo: false, descrizione: '' },
+    vitto: { attivo: false, descrizione: '' },
+    servizi_bassa_soglia: { attivo: false, descrizione: '' },
+    ospitalita_diurna: { attivo: false, descrizione: '' },
+    supporto_psicologico: { attivo: false, descrizione: '' },
+    sostegno_autonomia: { attivo: false, descrizione: '' },
+    orientamento_lavoro: { attivo: false, descrizione: '' },
+    orientamento_formazione: { attivo: false, descrizione: '' },
+    istruzione: { attivo: false, descrizione: '' },
+    formazione_professionale: { attivo: false, descrizione: '' },
+    attivita_socializzazione: { attivo: false, descrizione: '' },
+    altro: { attivo: false, descrizione: '' },
+  },
+  
+  esperienze_inserimento_lavorativo: false,
+  attivita_inserimento: [],
+  nuove_attivita: [],
+  
+  collaborazioni: [],
+  punti_forza_network: '',
+  critica_network: '',
+  
+  finanziamenti: {
+    fondi_pubblici: 0,
+    fondi_privati: 0,
+    totale: 0,
+    fondi_pubblici_specifiche: '',
+    fondi_privati_specifiche: '',
+    fornitori: [],
+  },
+};
