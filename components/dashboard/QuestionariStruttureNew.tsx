@@ -195,11 +195,11 @@ export default function QuestionariStruttureNew() {
                    (q.persone_non_ospitate?.maggiorenni?.donne || 0);
 
       return {
-        // Campi esistenti...
-        'ID_STRUTTURA': q.id_struttura || '',
+        COD_OPE: q.creato_da || 'FORNITO DA INAPP',
+        ID_QUEST: q.id || 'FORNITO DAL SISTEMA',
+        TIPO_STRUTTURA: q.tipo_struttura || '',
         'FORMAGIU': Number(q.forma_giuridica) || 0,
         'FORMAGIU_SPEC': q.forma_giuridica_altro || '',
-        'TIPO_STRUTTURA': q.tipo_struttura || '',
         'ANNO_INIZIO': q.anno_inizio || '',
         'MISSION': q.missione || '',
         'B1U': q.personale_retribuito_uomini || 0,
