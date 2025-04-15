@@ -18,6 +18,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from 'react-hot-toast';
 import { supabase } from '@/lib/supabaseClient';
 import { Toaster } from 'react-hot-toast';
+import { Select } from "@/components/ui/select";
 
 interface Props {
   initialData?: QuestionarioStruttureNew;
@@ -34,7 +35,7 @@ const defaultFormData: QuestionarioStruttureNew = {
   
   // Sezione A
   id_struttura: '',
-  forma_giuridica: '1',
+  forma_giuridica: 1,
   forma_giuridica_altro: '',
   tipo_struttura: '',
   anno_inizio: 0,
@@ -147,6 +148,13 @@ export default function QuestionarioStruttureNew({ initialData, readOnly, setFor
     setInternalFormData(prev => ({
       ...prev,
       [name]: value
+    }));
+  };
+
+  const handleFormaGiuridicaChange = (value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      forma_giuridica: Number(value)
     }));
   };
 
