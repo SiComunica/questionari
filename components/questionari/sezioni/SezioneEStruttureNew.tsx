@@ -18,7 +18,7 @@ export default function SezioneEStruttureNew({ formData, setFormData }: Props) {
     setFormData(prev => {
       const newCollaborazioni = [...prev.collaborazioni];
       if (!newCollaborazioni[index]) {
-        newCollaborazioni[index] = { denominazione: '', tipo: 'ricorrente', oggetto: '' };
+        newCollaborazioni[index] = { denominazione: '', tipo: '1', oggetto: '' };
       }
       newCollaborazioni[index] = {
         ...newCollaborazioni[index],
@@ -67,15 +67,15 @@ export default function SezioneEStruttureNew({ formData, setFormData }: Props) {
                 <div>
                   <Label>Tipo di collaborazione</Label>
                   <Select
-                    value={formData.collaborazioni[index]?.tipo || 'ricorrente'}
+                    value={formData.collaborazioni[index]?.tipo || '1'}
                     onValueChange={(value) => handleCollaborazioneChange(index, 'tipo', value)}
                   >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="ricorrente">Ricorrente</SelectItem>
-                      <SelectItem value="occasionale">Occasionale</SelectItem>
+                      <SelectItem value="1">Ricorrente</SelectItem>
+                      <SelectItem value="2">Occasionale</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

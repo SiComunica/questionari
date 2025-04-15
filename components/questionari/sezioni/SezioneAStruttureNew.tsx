@@ -105,16 +105,16 @@ export default function SezioneAStruttureNew({ formData, setFormData }: Props) {
             className="w-full p-2 border rounded"
           >
             <option value="">Seleziona forma giuridica</option>
-            <option value="ente_pubblico">1. Ente pubblico</option>
-            <option value="impresa_profit">2. Impresa for profit (ditta individuale, SNC, SAS, SS, SRL, SRLS, SPA, SAPA)</option>
-            <option value="cooperativa">3. Cooperativa</option>
-            <option value="impresa_sociale">4. Impresa sociale (o Cooperativa sociale)</option>
-            <option value="ente_filantropico">5. Ente filantropico (o Fondazione)</option>
-            <option value="aps">6. Associazione di promozione sociale</option>
-            <option value="odv">7. Organizzazione di volontariato</option>
-            <option value="rete_associativa">8. Rete associativa</option>
-            <option value="mutuo_soccorso">9. Società di mutuo soccorso</option>
-            <option value="altro">10. Altro</option>
+            <option value="1">1. Ente pubblico</option>
+            <option value="2">2. Impresa for profit (ditta individuale, SNC, SAS, SS, SRL, SRLS, SPA, SAPA)</option>
+            <option value="3">3. Cooperativa</option>
+            <option value="4">4. Impresa sociale (o Cooperativa sociale)</option>
+            <option value="5">5. Ente filantropico (o Fondazione)</option>
+            <option value="6">6. Associazione di promozione sociale</option>
+            <option value="7">7. Organizzazione di volontariato</option>
+            <option value="8">8. Rete associativa</option>
+            <option value="9">9. Società di mutuo soccorso</option>
+            <option value="10">10. Altro</option>
           </select>
         </div>
 
