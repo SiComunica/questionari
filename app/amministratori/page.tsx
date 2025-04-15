@@ -6,7 +6,6 @@ import { LogOut } from 'lucide-react'
 import QuestionariStruttureNew from '@/components/dashboard/QuestionariStruttureNew'
 import QuestionariOperatoriLista from '@/components/dashboard/QuestionariOperatoriLista'
 import QuestionariGiovaniOperatori from '@/components/dashboard/QuestionariGiovaniOperatori'
-import QuestionariGiovaniAnonimi from '@/components/dashboard/QuestionariGiovaniAnonimi'
 
 export default function AmministratoriDashboard() {
   const router = useRouter()
@@ -39,7 +38,6 @@ export default function AmministratoriDashboard() {
         </div>
       </div>
 
-      <QuestionariGiovaniAnonimi />
       <QuestionariGiovaniOperatori />
       <QuestionariStruttureNew />
       <QuestionariOperatoriLista />
