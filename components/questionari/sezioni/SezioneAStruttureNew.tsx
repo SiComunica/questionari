@@ -6,6 +6,10 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { utils, writeFile } from 'xlsx'
+import jsPDF from 'jspdf'
+import 'jspdf-autotable'
+import type { Database } from '@/types/database'
 
 interface Props {
   formData: QuestionarioStruttureNew;
@@ -64,10 +68,17 @@ const opzioniPersoneTrattateGiovani = [
 export default function SezioneAStruttureNew({ formData, setFormData }: Props) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    if (name === 'forma_giuridica') {
+      setFormData(prev => ({
+        ...prev,
+        [name]: Number(value)
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
   const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -104,20 +115,20 @@ export default function SezioneAStruttureNew({ formData, setFormData }: Props) {
             onChange={handleChange}
             className="w-full p-2 border rounded"
           >
-            <option value="1">1. Ente pubblico</option>
-            <option value="2">2. Impresa for profit (ditta individuale, SNC, SAS, SS, SRL, SRLS, SPA, SAPA)</option>
-            <option value="3">3. Cooperativa</option>
-            <option value="4">4. Impresa sociale (o Cooperativa sociale)</option>
-            <option value="5">5. Ente filantropico (o Fondazione)</option>
-            <option value="6">6. Associazione di promozione sociale</option>
-            <option value="7">7. Organizzazione di volontariato</option>
-            <option value="8">8. Rete associativa</option>
-            <option value="9">9. Società di mutuo soccorso</option>
-            <option value="10">10. Altro</option>
+            <option value={1}>Ente pubblico</option>
+            <option value={2}>Impresa for profit</option>
+            <option value={3}>Cooperativa</option>
+            <option value={4}>Impresa sociale</option>
+            <option value={5}>Ente filantropico</option>
+            <option value={6}>Associazione di promozione sociale</option>
+            <option value={7}>Organizzazione di volontariato</option>
+            <option value={8}>Rete associativa</option>
+            <option value={9}>Società di mutuo soccorso</option>
+            <option value={10}>Altro</option>
           </select>
         </div>
 
-        {formData.forma_giuridica === '10' && (
+        {formData.forma_giuridica === 10 && (
           <div>
             <Label>Specificare altra forma giuridica</Label>
             <Input
