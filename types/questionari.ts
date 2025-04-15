@@ -199,7 +199,7 @@ export interface QuestionarioStrutture {
   // Sezione E: Reti/collaborazioni
   collaborazioni: Array<{
     denominazione: string;
-    tipo: '1' | '2';  // 1 = ricorrente, 2 = occasionale
+    tipo: number;
     oggetto: string;
   }>;
 
@@ -558,11 +558,11 @@ export interface AttivitaSignificativa {
   criticita: string;
 }
 
-export interface SoggettoCollaborazione {
+export type SoggettoCollaborazione = {
   denominazione: string;
-  tipo: 'ricorrente' | 'occasionale';
+  tipo: "1" | "2";  // Cambiato da number a union type di stringhe
   oggetto: string;
-}
+};
 
 export interface Fornitore {
   nome: string;
@@ -620,7 +620,7 @@ export type QuestionarioStruttureNew = {
   stato: string;
   nome_struttura: string;
   id_struttura: string;
-  forma_giuridica: '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10';
+  forma_giuridica: number;
   forma_giuridica_altro: string;
   tipo_struttura: string;
   anno_inizio: number;
@@ -693,7 +693,7 @@ export type QuestionarioStruttureNew = {
   
   collaborazioni: Array<{
     denominazione: string;
-    tipo: '1' | '2';  // 1 = ricorrente, 2 = occasionale
+    tipo: number;
     oggetto: string;
   }>;
   punti_forza_network: string;
@@ -719,7 +719,7 @@ const defaultFormData: QuestionarioStruttureNew = {
   stato: '',
   nome_struttura: '',
   id_struttura: '',
-  forma_giuridica: '1',
+  forma_giuridica: 1,
   forma_giuridica_altro: '',
   tipo_struttura: '',
   anno_inizio: 0,
