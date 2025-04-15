@@ -197,7 +197,7 @@ export default function QuestionariStruttureNew() {
       return {
         // Campi esistenti...
         'ID_STRUTTURA': q.id_struttura || '',
-        'FORMAGIU': q.forma_giuridica || '',
+        'FORMAGIU': Number(q.forma_giuridica) || 0,
         'FORMAGIU_SPEC': q.forma_giuridica_altro || '',
         'TIPO_STRUTTURA': q.tipo_struttura || '',
         'ANNO_INIZIO': q.anno_inizio || '',
@@ -351,13 +351,13 @@ export default function QuestionariStruttureNew() {
 
         // Collaborazioni
         'E1.1SOGG': q.collaborazioni?.[0]?.soggetto || '',
-        'E1.1TIPO': q.collaborazioni?.[0]?.tipo || '',
+        'E1.1TIPO': Number(q.collaborazioni?.[0]?.tipo) || 0,
         'E1.1OGGETTO': q.collaborazioni?.[0]?.oggetto || '',
         'E1.2SOGG': q.collaborazioni?.[1]?.soggetto || '',
-        'E1.2TIPO': q.collaborazioni?.[1]?.tipo || '',
+        'E1.2TIPO': Number(q.collaborazioni?.[1]?.tipo) || 0,
         'E1.2OGGETTO': q.collaborazioni?.[1]?.oggetto || '',
         'E1.3SOGG': q.collaborazioni?.[2]?.soggetto || '',
-        'E1.3TIPO': q.collaborazioni?.[2]?.tipo || '',
+        'E1.3TIPO': Number(q.collaborazioni?.[2]?.tipo) || 0,
         'E1.3OGGETTO': q.collaborazioni?.[2]?.oggetto || '',
 
         // Network
