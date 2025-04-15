@@ -14,15 +14,15 @@ interface Props {
 }
 
 export default function SezioneEStruttureNew({ formData, setFormData }: Props) {
-  const handleCollaborazioneChange = (index: number, field: keyof SoggettoCollaborazione, value: string) => {
+  const handleCollaborazioneChange = (index: number, field: keyof SoggettoCollaborazione, value: string | number) => {
     setFormData(prev => {
       const newCollaborazioni = [...prev.collaborazioni];
       if (!newCollaborazioni[index]) {
-        newCollaborazioni[index] = { denominazione: '', tipo: '1', oggetto: '' };
+        newCollaborazioni[index] = { denominazione: '', tipo: 1, oggetto: '' };
       }
       newCollaborazioni[index] = {
         ...newCollaborazioni[index],
-        [field]: value
+        [field]: field === 'tipo' ? Number(value) : value
       };
       return {
         ...prev,
@@ -67,8 +67,8 @@ export default function SezioneEStruttureNew({ formData, setFormData }: Props) {
                 <div>
                   <Label>Tipo di collaborazione</Label>
                   <Select
-                    value={formData.collaborazioni[index]?.tipo || '1'}
-                    onValueChange={(value) => handleCollaborazioneChange(index, 'tipo', value)}
+                    value={String(formData.collaborazioni[index]?.tipo || 1)}
+                    onValueChange={(value) => handleCollaborazioneChange(index, 'tipo', Number(value))}
                   >
                     <SelectTrigger>
                       <SelectValue />

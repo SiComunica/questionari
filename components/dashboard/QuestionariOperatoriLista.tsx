@@ -193,7 +193,6 @@ export default function QuestionariOperatoriLista() {
         return {
           COD_OPE: q.creato_da || 'FORNITO DA INAPP',
           ID_QUEST: q.id || 'FORNITO DAL SISTEMA',
-          ID_STRUTTURA: q.id_struttura || 'FORNITO DA INAPP',
           TIPO_STRUTTURA: q.tipo_struttura || '',
           PROF: professioneMap[q.professione.tipo] || 13,
           PROF_SPEC: q.professione.tipo === 'Altro' ? q.professione.altro_specificare : '',
