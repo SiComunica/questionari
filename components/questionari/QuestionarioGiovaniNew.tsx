@@ -2033,20 +2033,26 @@ export default function QuestionarioGiovaniNew({ fonte, readOnly, initialData }:
   };
 
   // Modifica il componente CodiceOperatoreInput
-  const CodiceOperatoreInput = () => (
-    <div className="mb-6 bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-xl font-semibold mb-4">Codice Operatore</h2>
-      <div className="flex gap-4 items-center">
-        <Input
-          type="text"
-          value={codiceOperatore}
-          onChange={(e) => setCodiceOperatore(e.target.value)}
-          placeholder="Inserisci il codice operatore (es: operatore 1)"
-          className="flex-1"
-        />
+  const CodiceOperatoreInput = () => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setCodiceOperatore(e.target.value);
+    };
+
+    return (
+      <div className="mb-6 bg-white p-6 rounded-lg shadow-md">
+        <h2 className="text-xl font-semibold mb-4">Codice Operatore</h2>
+        <div className="flex gap-4 items-center">
+          <Input
+            type="text"
+            value={codiceOperatore}
+            onChange={handleInputChange}
+            placeholder="Inserisci il codice operatore (es: operatore 1)"
+            className="flex-1"
+          />
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const handleExportXLSX = () => {
     try {
