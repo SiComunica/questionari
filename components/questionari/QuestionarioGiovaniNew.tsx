@@ -34,6 +34,7 @@ import { v4 as uuidv4 } from 'uuid' // Aggiungi questo import in cima al file
 import { QuestionarioProps } from '@/types/questionari'
 import { Toaster } from 'react-hot-toast'
 import * as XLSX from 'xlsx'
+import { CodiceOperatoreInput } from './CodiceOperatoreInput'
 
 // Costanti per le opzioni
 const TIPI_PERCORSO = [
@@ -2032,28 +2033,6 @@ export default function QuestionarioGiovaniNew({ fonte, readOnly, initialData }:
     }
   };
 
-  // Modifica il componente CodiceOperatoreInput
-  const CodiceOperatoreInput = () => {
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      setCodiceOperatore(e.target.value);
-    };
-
-    return (
-      <div className="mb-6 bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-xl font-semibold mb-4">Codice Operatore</h2>
-        <div className="flex gap-4 items-center">
-          <input
-            type="text"
-            value={codiceOperatore}
-            onChange={handleChange}
-            placeholder="es: operatore1"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-      </div>
-    );
-  };
-
   const handleExportXLSX = () => {
     try {
       const dataToExport = {
@@ -2161,7 +2140,10 @@ export default function QuestionarioGiovaniNew({ fonte, readOnly, initialData }:
     <div className="container mx-auto p-4">
       <Toaster position="top-right" />
       <div className="max-w-4xl mx-auto">
-        <CodiceOperatoreInput />
+        <CodiceOperatoreInput 
+          value={codiceOperatore}
+          onChange={setCodiceOperatore}
+        />
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
             {error}
