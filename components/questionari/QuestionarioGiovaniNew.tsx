@@ -2038,12 +2038,12 @@ export default function QuestionarioGiovaniNew({ fonte, readOnly, initialData }:
       <div className="mb-6 bg-white p-6 rounded-lg shadow-md">
         <h2 className="text-xl font-semibold mb-4">Codice Operatore</h2>
         <div className="flex gap-4 items-center">
-          <input
+          <Input
             type="text"
             value={codiceOperatore}
             onChange={(e) => setCodiceOperatore(e.target.value)}
             placeholder="es: operatore1"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1"
           />
         </div>
       </div>
