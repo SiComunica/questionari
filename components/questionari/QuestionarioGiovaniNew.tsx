@@ -2034,6 +2034,10 @@ export default function QuestionarioGiovaniNew({ fonte, readOnly, initialData }:
 
   // Modifica il componente CodiceOperatoreInput
   const CodiceOperatoreInput = () => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setCodiceOperatore(e.target.value);
+    };
+
     return (
       <div className="mb-6 bg-white p-6 rounded-lg shadow-md">
         <h2 className="text-xl font-semibold mb-4">Codice Operatore</h2>
@@ -2041,7 +2045,7 @@ export default function QuestionarioGiovaniNew({ fonte, readOnly, initialData }:
           <input
             type="text"
             value={codiceOperatore}
-            onChange={(e) => setCodiceOperatore(e.target.value)}
+            onChange={handleChange}
             placeholder="es: operatore1"
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
