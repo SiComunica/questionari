@@ -1317,13 +1317,15 @@ const SectionC = ({ formData, setFormData }: {
         <Label className="font-bold">C8. Quanto ritieni utili le attività che stai svolgendo per il tuo futuro?</Label>
         
         {/* C8.1 Studio */}
-        {formData.attivita_attuali.studio && (
+        {formData.attivita_attuali?.studio && (
           <div className="space-y-2 bg-gray-50 p-4 rounded-md">
             <Label>C8.1 Studiare</Label>
             <RadioGroup
-              value={formData.livelli_utilita[0] || "0"}
+              value={formData.livelli_utilita?.[0] || "0"}
               onValueChange={(value) => {
-                const newLivelli = [...(formData.livelli_utilita || [])];
+                const newLivelli = Array.isArray(formData.livelli_utilita) ? 
+                  [...formData.livelli_utilita] : 
+                  new Array(4).fill("0");
                 newLivelli[0] = value;
                 setFormData(prev => ({
                   ...prev,
@@ -1354,13 +1356,15 @@ const SectionC = ({ formData, setFormData }: {
         )}
 
         {/* C8.2 Formazione */}
-        {formData.attivita_attuali.formazione && (
+        {formData.attivita_attuali?.formazione && (
           <div className="space-y-2 bg-gray-50 p-4 rounded-md">
             <Label>C8.2 Frequentare un corso di formazione</Label>
             <RadioGroup
-              value={formData.livelli_utilita[1] || "0"}
+              value={formData.livelli_utilita?.[1] || "0"}
               onValueChange={(value) => {
-                const newLivelli = [...(formData.livelli_utilita || [])];
+                const newLivelli = Array.isArray(formData.livelli_utilita) ? 
+                  [...formData.livelli_utilita] : 
+                  new Array(4).fill("0");
                 newLivelli[1] = value;
                 setFormData(prev => ({
                   ...prev,
@@ -1391,13 +1395,15 @@ const SectionC = ({ formData, setFormData }: {
         )}
 
         {/* C8.3 Lavoro */}
-        {formData.attivita_attuali.lavoro && (
+        {formData.attivita_attuali?.lavoro && (
           <div className="space-y-2 bg-gray-50 p-4 rounded-md">
             <Label>C8.3 Lavorare</Label>
             <RadioGroup
-              value={formData.livelli_utilita[2] || "0"}
+              value={formData.livelli_utilita?.[2] || "0"}
               onValueChange={(value) => {
-                const newLivelli = [...(formData.livelli_utilita || [])];
+                const newLivelli = Array.isArray(formData.livelli_utilita) ? 
+                  [...formData.livelli_utilita] : 
+                  new Array(4).fill("0");
                 newLivelli[2] = value;
                 setFormData(prev => ({
                   ...prev,
@@ -1428,13 +1434,15 @@ const SectionC = ({ formData, setFormData }: {
         )}
 
         {/* C8.4 Ricerca lavoro */}
-        {formData.attivita_attuali.ricerca_lavoro && (
+        {formData.attivita_attuali?.ricerca_lavoro && (
           <div className="space-y-2 bg-gray-50 p-4 rounded-md">
             <Label>C8.4 Ricerca attiva del lavoro</Label>
             <RadioGroup
-              value={formData.livelli_utilita[3] || "0"}
+              value={formData.livelli_utilita?.[3] || "0"}
               onValueChange={(value) => {
-                const newLivelli = [...(formData.livelli_utilita || [])];
+                const newLivelli = Array.isArray(formData.livelli_utilita) ? 
+                  [...formData.livelli_utilita] : 
+                  new Array(4).fill("0");
                 newLivelli[3] = value;
                 setFormData(prev => ({
                   ...prev,
@@ -2029,12 +2037,12 @@ export default function QuestionarioGiovaniNew({ fonte, readOnly, initialData }:
     <div className="mb-6 bg-white p-6 rounded-lg shadow-md">
       <h2 className="text-xl font-semibold mb-4">Codice Operatore</h2>
       <div className="flex gap-4 items-center">
-        <input  // Usa l'elemento input HTML nativo invece del componente Input
+        <Input
           type="text"
           value={codiceOperatore}
           onChange={(e) => setCodiceOperatore(e.target.value)}
           placeholder="Inserisci il codice operatore (es: operatore 1)"
-          className="flex-1 p-2 border rounded-md"
+          className="flex-1"
         />
       </div>
     </div>
