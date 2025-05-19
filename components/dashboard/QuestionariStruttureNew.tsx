@@ -186,30 +186,36 @@ export default function QuestionariStruttureNew() {
 
       console.log('Record trovato:', checkData)
       
-      // Procediamo con l'eliminazione usando una query più specifica
-      const { data, error } = await supabase
+      // Procediamo con l'eliminazione usando una query più semplice
+      const { error: deleteError } = await supabase
         .from('strutture')
         .delete()
-        .match({ 
-          id: id,
-          creato_da: checkData.creato_da,
-          stato: checkData.stato
-        })
-        .select()
+        .eq('id', id)
 
-      if (error) {
-        console.error('Errore durante l\'eliminazione:', error)
-        throw error
+      if (deleteError) {
+        console.error('Errore durante l\'eliminazione:', deleteError)
+        throw deleteError
       }
 
-      console.log('Risultato eliminazione:', data)
-      
-      if (data && data.length > 0) {
+      // Verifichiamo se il record è stato effettivamente eliminato
+      const { data: verifyData, error: verifyError } = await supabase
+        .from('strutture')
+        .select('*')
+        .eq('id', id)
+        .single()
+
+      if (verifyError && verifyError.code !== 'PGRST116') {
+        console.error('Errore durante la verifica:', verifyError)
+        throw verifyError
+      }
+
+      if (!verifyData) {
+        console.log('Record eliminato con successo')
         setQuestionari(prev => prev.filter(q => q.id !== id))
         toast.success('Questionario eliminato con successo')
       } else {
-        console.error('Nessun record eliminato')
-        toast.error('Errore: nessun record eliminato')
+        console.error('Il record esiste ancora dopo l\'eliminazione')
+        toast.error('Errore: il record non è stato eliminato')
       }
     } catch (error) {
       console.error('Errore durante l\'eliminazione:', error)
