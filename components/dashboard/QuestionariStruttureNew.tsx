@@ -164,15 +164,28 @@ export default function QuestionariStruttureNew() {
 
   const handleDelete = async (id: string) => {
     try {
-      const { error } = await supabase
+      console.log('Tentativo di eliminazione del questionario:', id)
+      
+      const { data, error } = await supabase
         .from('strutture')
         .delete()
         .eq('id', id)
+        .select()
 
-      if (error) throw error
+      if (error) {
+        console.error('Errore durante l\'eliminazione:', error)
+        throw error
+      }
+
+      console.log('Risultato eliminazione:', data)
       
-      setQuestionari(prev => prev.filter(q => q.id !== id))
-      toast.success('Questionario eliminato con successo')
+      if (data && data.length > 0) {
+        setQuestionari(prev => prev.filter(q => q.id !== id))
+        toast.success('Questionario eliminato con successo')
+      } else {
+        console.error('Nessun record eliminato')
+        toast.error('Errore: nessun record eliminato')
+      }
     } catch (error) {
       console.error('Errore durante l\'eliminazione:', error)
       toast.error('Errore durante l\'eliminazione')
