@@ -222,6 +222,7 @@ export default function QuestionariGiovaniOperatori() {
       const dataToExport = questionario ? [questionario] : questionari;
       
       const mappedData = dataToExport.map(q => ({
+        'FONTE': q.fonte || '',
         'PERCAUT': q.percorso_autonomia ? 1 : 0,
         'PERCAUT_SPEC': q.percorso_autonomia_spec || '',
         'VIVE': q.vive_in_struttura ? 1 : 0,
