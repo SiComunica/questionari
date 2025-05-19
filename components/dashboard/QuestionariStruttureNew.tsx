@@ -166,13 +166,9 @@ export default function QuestionariStruttureNew() {
     try {
       console.log('Tentativo di eliminazione del questionario:', id)
       
-      // Procediamo direttamente con l'eliminazione
+      // Usiamo una query SQL diretta
       const { data: deleteData, error: deleteError } = await supabase
-        .from('strutture')
-        .delete()
-        .eq('id', id)
-        .select()
-        .throwOnError()
+        .rpc('delete_struttura', { struttura_id: id })
 
       if (deleteError) {
         console.error('Errore durante l\'eliminazione:', deleteError)
