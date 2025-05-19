@@ -166,6 +166,27 @@ export default function QuestionariStruttureNew() {
     try {
       console.log('Tentativo di eliminazione del questionario:', id)
       
+      // Prima verifichiamo se il record esiste
+      const { data: checkData, error: checkError } = await supabase
+        .from('strutture')
+        .select('*')
+        .eq('id', id)
+        .single()
+
+      if (checkError) {
+        console.error('Errore durante la verifica del record:', checkError)
+        throw checkError
+      }
+
+      if (!checkData) {
+        console.error('Record non trovato')
+        toast.error('Record non trovato')
+        return
+      }
+
+      console.log('Record trovato:', checkData)
+      
+      // Procediamo con l'eliminazione
       const { data, error } = await supabase
         .from('strutture')
         .delete()
