@@ -186,11 +186,15 @@ export default function QuestionariStruttureNew() {
 
       console.log('Record trovato:', checkData)
       
-      // Procediamo con l'eliminazione
+      // Procediamo con l'eliminazione usando una query più specifica
       const { data, error } = await supabase
         .from('strutture')
         .delete()
-        .eq('id', id)
+        .match({ 
+          id: id,
+          creato_da: checkData.creato_da,
+          stato: checkData.stato
+        })
         .select()
 
       if (error) {
