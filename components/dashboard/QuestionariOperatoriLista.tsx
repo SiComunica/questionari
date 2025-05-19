@@ -94,6 +94,7 @@ export default function QuestionariOperatoriLista() {
           .from('operatorinew')
           .select('*')
           .order('creato_a', { ascending: false })
+          .eq('fonte', 'operatori')
 
         if (error) throw error
         setQuestionari(data || [])
