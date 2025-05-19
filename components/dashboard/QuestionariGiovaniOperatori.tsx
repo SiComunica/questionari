@@ -201,7 +201,10 @@ export default function QuestionariGiovaniOperatori() {
       try {
         const { data, error } = await supabase
           .from('operatorinew')
-          .select('*')
+          .select(`
+            *,
+            operatori:fonte
+          `)
           .order('creato_a', { ascending: false })
 
         if (error) throw error
@@ -222,7 +225,7 @@ export default function QuestionariGiovaniOperatori() {
       const dataToExport = questionario ? [questionario] : questionari;
       
       const mappedData = dataToExport.map(q => ({
-        'FONTE': q.fonte || '',
+        'FONTE': q.creato_da || '',
         'PERCAUT': q.percorso_autonomia ? 1 : 0,
         'PERCAUT_SPEC': q.percorso_autonomia_spec || '',
         'VIVE': q.vive_in_struttura ? 1 : 0,
