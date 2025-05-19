@@ -10,6 +10,7 @@ import { toast } from 'react-hot-toast'
 import jsPDF from 'jspdf'
 import 'jspdf-autotable'
 import * as XLSX from 'xlsx'
+import { format } from 'date-fns'
 
 type QuestionarioOperatori = {
   id: string;
@@ -250,7 +251,8 @@ export default function QuestionariOperatoriLista() {
       XLSX.utils.book_append_sheet(wb, ws, 'Questionari Operatori');
 
       // Scarichiamo il file
-      XLSX.writeFile(wb, 'questionari_operatori.xlsx');
+      const fileName = `questionari_operatori_${format(new Date(), 'yyyy-MM-dd_HH-mm')}.xlsx`;
+      XLSX.writeFile(wb, fileName);
       toast.success('Export completato con successo');
     } catch (error) {
       console.error('Errore durante l\'export:', error);
