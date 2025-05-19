@@ -103,7 +103,7 @@ export default function QuestionariStruttureNew() {
     const fetchQuestionari = async () => {
       try {
         const { data, error } = await supabase
-          .from('strutturenew')
+          .from('strutture')
           .select('*')
           .order('creato_a', { ascending: false })
 
@@ -165,7 +165,7 @@ export default function QuestionariStruttureNew() {
   const handleDelete = async (id: string) => {
     try {
       const { error } = await supabase
-        .from('strutturenew')
+        .from('strutture')
         .delete()
         .eq('id', id)
 
