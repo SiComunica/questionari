@@ -91,10 +91,9 @@ export default function QuestionariOperatoriLista() {
     const fetchQuestionari = async () => {
       try {
         const { data, error } = await supabase
-          .from('operatorinew')
+          .from('operatori')
           .select('*')
           .order('creato_a', { ascending: false })
-          .eq('fonte', 'operatori')
 
         if (error) throw error
         setQuestionari(data || [])
