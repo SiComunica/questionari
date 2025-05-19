@@ -103,7 +103,7 @@ export default function QuestionariStruttureNew() {
     const fetchQuestionari = async () => {
       try {
         const { data, error } = await supabase
-          .from('strutture')
+          .from('strutturenew')
           .select('*')
           .order('creato_a', { ascending: false })
 
@@ -165,7 +165,7 @@ export default function QuestionariStruttureNew() {
   const handleDelete = async (id: string) => {
     try {
       const { error } = await supabase
-        .from('strutture')
+        .from('strutturenew')
         .delete()
         .eq('id', id)
 
@@ -174,6 +174,7 @@ export default function QuestionariStruttureNew() {
       setQuestionari(prev => prev.filter(q => q.id !== id))
       toast.success('Questionario eliminato con successo')
     } catch (error) {
+      console.error('Errore durante l\'eliminazione:', error)
       toast.error('Errore durante l\'eliminazione')
     }
   }

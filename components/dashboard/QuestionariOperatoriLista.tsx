@@ -90,7 +90,7 @@ export default function QuestionariOperatoriLista() {
     const fetchQuestionari = async () => {
       try {
         const { data, error } = await supabase
-          .from('operatori')
+          .from('operatorinew')
           .select('*')
           .order('creato_a', { ascending: false })
 
