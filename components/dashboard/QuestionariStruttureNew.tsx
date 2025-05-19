@@ -166,6 +166,22 @@ export default function QuestionariStruttureNew() {
     try {
       console.log('Tentativo di eliminazione del questionario:', id)
       
+      // Verifichiamo prima l'utente corrente
+      const { data: { user }, error: userError } = await supabase.auth.getUser()
+      
+      if (userError) {
+        console.error('Errore nel recupero dell\'utente:', userError)
+        throw userError
+      }
+
+      if (!user) {
+        console.error('Nessun utente autenticato')
+        toast.error('Devi essere autenticato per eliminare un questionario')
+        return
+      }
+
+      console.log('Utente autenticato:', user)
+      
       // Prima verifichiamo se il record esiste
       const { data: checkData, error: checkError } = await supabase
         .from('strutture')
@@ -186,7 +202,7 @@ export default function QuestionariStruttureNew() {
 
       console.log('Record trovato:', checkData)
       
-      // Procediamo con l'eliminazione usando una query più specifica
+      // Procediamo con l'eliminazione
       const { data: deleteData, error: deleteError } = await supabase
         .from('strutture')
         .delete()
