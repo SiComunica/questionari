@@ -112,22 +112,29 @@ export default function AmministratoriDashboard() {
     }
 
     // Personale retribuito/volontario
-    (['personale_retribuito','personale_volontario'] as const).forEach((key: 'personale_retribuito'|'personale_volontario') => {
-      (['uomini','donne','totale','part_time','full_time'] as const).forEach((sub: 'uomini'|'donne'|'totale'|'part_time'|'full_time') => {
+    const personaleKeys = ['personale_retribuito','personale_volontario'] as const
+    const personaleSubKeys = ['uomini','donne','totale','part_time','full_time'] as const
+    
+    for (const key of personaleKeys) {
+      for (const sub of personaleSubKeys) {
         if (data[0][key] && data[0][key][sub] !== undefined)
           stats.push(...getNumericStatsStrutture(data.map((x:any)=>x[key]?.[sub]), `${key} ${sub}`, `${key} - ${sub}`))
-      })
-    })
+      }
+    }
 
     // Persone ospitate/non ospitate
-    (['persone_ospitate','persone_non_ospitate'] as const).forEach((key: 'persone_ospitate'|'persone_non_ospitate') => {
-      (['fino_16','da_16_a_18','maggiorenni','totale'] as const).forEach((gruppo: 'fino_16'|'da_16_a_18'|'maggiorenni'|'totale') => {
-        (['uomini','donne','totale'] as const).forEach((sub: 'uomini'|'donne'|'totale') => {
+    const personeKeys = ['persone_ospitate','persone_non_ospitate'] as const
+    const personeGruppi = ['fino_16','da_16_a_18','maggiorenni','totale'] as const
+    const personeSubKeys = ['uomini','donne','totale'] as const
+    
+    for (const key of personeKeys) {
+      for (const gruppo of personeGruppi) {
+        for (const sub of personeSubKeys) {
           if (data[0][key] && data[0][key][gruppo] && data[0][key][gruppo][sub] !== undefined)
             stats.push(...getNumericStatsStrutture(data.map((x:any)=>x[key]?.[gruppo]?.[sub]), `${key} ${gruppo} ${sub}`, `${key} - ${gruppo} - ${sub}`))
-        })
-      })
-    })
+        }
+      }
+    }
 
     // Caratteristiche altro
     stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.caratteristiche_ospiti_altro), 'Caratt. Ospiti Altro', 'Caratteristiche Ospiti Altro'))
@@ -144,9 +151,10 @@ export default function AmministratoriDashboard() {
 
     // Finanziamenti
     if (data[0].finanziamenti) {
-      (['fondi_pubblici','fondi_privati','totale'] as const).forEach((f: 'fondi_pubblici'|'fondi_privati'|'totale') => {
+      const finanziamentiKeys = ['fondi_pubblici','fondi_privati','totale'] as const
+      for (const f of finanziamentiKeys) {
         stats.push(...getNumericStatsStrutture(data.map((x:any)=>x.finanziamenti?.[f]), `Finanziamenti ${f}`, `Finanziamenti - ${f}`))
-      })
+      }
       stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.finanziamenti?.fondi_pubblici_specifiche), 'Fondi Pubblici Specifiche', 'Fondi Pubblici Specifiche'))
       stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.finanziamenti?.fondi_privati_specifiche), 'Fondi Privati Specifiche', 'Fondi Privati Specifiche'))
       stats.push(...getTextStatsStruttureCustom(data.flatMap((x:any)=>x.finanziamenti?.fornitori||[]), 'Fornitori', 'Fornitori'))
