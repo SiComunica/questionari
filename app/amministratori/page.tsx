@@ -27,9 +27,9 @@ export default function AmministratoriDashboard() {
     try {
       // Recupera tutti i dati
       const [struttureData, operatoriData, giovaniData] = await Promise.all([
-        supabase.from('strutturenew').select('*'),
+        supabase.from('strutture').select('*'),
         supabase.from('operatori').select('*'),
-        supabase.from('operatorinew').select('*')
+        supabase.from('giovani').select('*')
       ])
 
       if (struttureData.error) throw struttureData.error
@@ -90,10 +90,48 @@ export default function AmministratoriDashboard() {
       })
     })
 
+    // Forma giuridica
+    const formaGiuridica = data.reduce((acc, item) => {
+      acc[item.forma_giuridica || 'Non specificato'] = (acc[item.forma_giuridica || 'Non specificato'] || 0) + 1
+      return acc
+    }, {} as Record<string, number>)
+
+    Object.entries(formaGiuridica).forEach(([key, value]) => {
+      stats.push({
+        Domanda: 'Forma Giuridica',
+        Risposta: key,
+        Frequenza: value as number,
+        Percentuale: `${((value as number / total) * 100).toFixed(1)}%`
+      })
+    })
+
+    // Anno inizio
+    const annoInizio = data.reduce((acc, item) => {
+      acc[item.anno_inizio || 'Non specificato'] = (acc[item.anno_inizio || 'Non specificato'] || 0) + 1
+      return acc
+    }, {} as Record<string, number>)
+
+    Object.entries(annoInizio).forEach(([key, value]) => {
+      stats.push({
+        Domanda: 'Anno Inizio',
+        Risposta: key,
+        Frequenza: value as number,
+        Percentuale: `${((value as number / total) * 100).toFixed(1)}%`
+      })
+    })
+
+    return stats
+  }
+
+  const generateOperatoriStats = (data: any[]) => {
+    if (data.length === 0) return [{ Domanda: 'Nessun dato disponibile', Risposta: '', Frequenza: 0, Percentuale: '0%' }]
+
+    const stats: Array<{Domanda: string, Risposta: string, Frequenza: number, Percentuale: string}> = []
+    const total = data.length
+
     // Professione
     const professione = data.reduce((acc, item) => {
-      const prof = item.professione?.tipo || 'Non specificato'
-      acc[prof] = (acc[prof] || 0) + 1
+      acc[item.professione || 'Non specificato'] = (acc[item.professione || 'Non specificato'] || 0) + 1
       return acc
     }, {} as Record<string, number>)
 
@@ -106,11 +144,11 @@ export default function AmministratoriDashboard() {
       })
     })
 
-    // Caratteristiche persone
+    // Caratteristiche persone seguite
     const caratteristiche = ['stranieri_migranti', 'vittime_tratta', 'vittime_violenza', 'allontanati_famiglia', 'detenuti', 'ex_detenuti', 'misure_alternative', 'indigenti_senzatetto', 'rom_sinti', 'disabilita_fisica', 'disabilita_cognitiva', 'disturbi_psichiatrici', 'dipendenze', 'genitori_precoci', 'problemi_orientamento']
     
     caratteristiche.forEach(car => {
-      const count = data.filter(item => item.caratteristiche_persone?.[car]).length
+      const count = data.filter(item => item.caratteristiche_persone_seguite?.includes(car)).length
       stats.push({
         Domanda: `Caratteristiche - ${car.replace(/_/g, ' ')}`,
         Risposta: 'Sì',
@@ -128,81 +166,11 @@ export default function AmministratoriDashboard() {
     return stats
   }
 
-  const generateOperatoriStats = (data: any[]) => {
-    if (data.length === 0) return [{ Domanda: 'Nessun dato disponibile', Risposta: '', Frequenza: 0, Percentuale: '0%' }]
-
-    const stats: Array<{Domanda: string, Risposta: string, Frequenza: number, Percentuale: string}> = []
-    const total = data.length
-
-    // Fonte
-    const fonte = data.reduce((acc, item) => {
-      acc[item.fonte || 'Non specificato'] = (acc[item.fonte || 'Non specificato'] || 0) + 1
-      return acc
-    }, {} as Record<string, number>)
-
-    Object.entries(fonte).forEach(([key, value]) => {
-      stats.push({
-        Domanda: 'Fonte',
-        Risposta: key,
-        Frequenza: value as number,
-        Percentuale: `${((value as number / total) * 100).toFixed(1)}%`
-      })
-    })
-
-    // Tipo struttura
-    const tipoStruttura = data.reduce((acc, item) => {
-      acc[item.tipo_struttura || 'Non specificato'] = (acc[item.tipo_struttura || 'Non specificato'] || 0) + 1
-      return acc
-    }, {} as Record<string, number>)
-
-    Object.entries(tipoStruttura).forEach(([key, value]) => {
-      stats.push({
-        Domanda: 'Tipo Struttura',
-        Risposta: key,
-        Frequenza: value as number,
-        Percentuale: `${((value as number / total) * 100).toFixed(1)}%`
-      })
-    })
-
-    // Professione
-    const professione = data.reduce((acc, item) => {
-      const prof = item.professione?.tipo || 'Non specificato'
-      acc[prof] = (acc[prof] || 0) + 1
-      return acc
-    }, {} as Record<string, number>)
-
-    Object.entries(professione).forEach(([key, value]) => {
-      stats.push({
-        Domanda: 'Professione',
-        Risposta: key,
-        Frequenza: value as number,
-        Percentuale: `${((value as number / total) * 100).toFixed(1)}%`
-      })
-    })
-
-    return stats
-  }
-
   const generateGiovaniStats = (data: any[]) => {
     if (data.length === 0) return [{ Domanda: 'Nessun dato disponibile', Risposta: '', Frequenza: 0, Percentuale: '0%' }]
 
     const stats: Array<{Domanda: string, Risposta: string, Frequenza: number, Percentuale: string}> = []
     const total = data.length
-
-    // Operatore (creato_da)
-    const operatore = data.reduce((acc, item) => {
-      acc[item.creato_da || 'Non specificato'] = (acc[item.creato_da || 'Non specificato'] || 0) + 1
-      return acc
-    }, {} as Record<string, number>)
-
-    Object.entries(operatore).forEach(([key, value]) => {
-      stats.push({
-        Domanda: 'Operatore',
-        Risposta: key,
-        Frequenza: value as number,
-        Percentuale: `${((value as number / total) * 100).toFixed(1)}%`
-      })
-    })
 
     // Percorso autonomia
     const percAut = data.filter(item => item.percorso_autonomia).length
@@ -236,8 +204,7 @@ export default function AmministratoriDashboard() {
 
     // Sesso
     const sesso = data.reduce((acc, item) => {
-      const sessoValue = item.sesso === 1 ? 'Uomo' : item.sesso === 2 ? 'Donna' : 'Non specificato'
-      acc[sessoValue] = (acc[sessoValue] || 0) + 1
+      acc[item.sesso || 'Non specificato'] = (acc[item.sesso || 'Non specificato'] || 0) + 1
       return acc
     }, {} as Record<string, number>)
 
@@ -252,8 +219,7 @@ export default function AmministratoriDashboard() {
 
     // Classe età
     const classeEta = data.reduce((acc, item) => {
-      const etaValue = item.classe_eta === 1 ? '18-25' : item.classe_eta === 2 ? '26-30' : item.classe_eta === 3 ? '31-35' : 'Non specificato'
-      acc[etaValue] = (acc[etaValue] || 0) + 1
+      acc[item.classe_eta || 'Non specificato'] = (acc[item.classe_eta || 'Non specificato'] || 0) + 1
       return acc
     }, {} as Record<string, number>)
 
@@ -270,7 +236,7 @@ export default function AmministratoriDashboard() {
     const fattoriVuln = ['stranieri', 'vittime_tratta', 'vittime_violenza', 'allontanati_famiglia', 'detenuti', 'ex_detenuti', 'misura_alternativa', 'senza_dimora', 'rom_sinti', 'disabilita_fisica', 'disabilita_cognitiva', 'disturbi_psichiatrici', 'dipendenze', 'genitori_precoci', 'orientamento_sessuale']
     
     fattoriVuln.forEach(fattore => {
-      const count = data.filter(item => item.fattori_vulnerabilita?.[fattore]).length
+      const count = data.filter(item => item.fattori_vulnerabilita?.includes(fattore)).length
       stats.push({
         Domanda: `Fattori Vulnerabilità - ${fattore.replace(/_/g, ' ')}`,
         Risposta: 'Sì',
