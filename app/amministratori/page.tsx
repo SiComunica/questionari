@@ -120,23 +120,108 @@ export default function AmministratoriDashboard() {
       })
     })
 
+    // Missione
+    const missione = data.reduce((acc, item) => {
+      acc[item.missione || 'Non specificato'] = (acc[item.missione || 'Non specificato'] || 0) + 1
+      return acc
+    }, {} as Record<string, number>)
+
+    Object.entries(missione).forEach(([key, value]) => {
+      stats.push({
+        Domanda: 'Missione',
+        Risposta: key,
+        Frequenza: value as number,
+        Percentuale: `${((value as number / total) * 100).toFixed(1)}%`
+      })
+    })
+
     // Figure professionali
-    const figureProf = ['psicologi', 'assistenti_sociali', 'educatori', 'mediatori', 'medici', 'personale_infermieristico', 'insegnanti', 'operatori_religiosi', 'tutor', 'operatori_legali', 'operatori_multifunzionali', 'amministrativi']
+    const figureProf = ['Psicologi', 'Assistenti sociali', 'Educatori', 'Mediatori', 'Medici', 'Personale infermieristico/operatori sanitari', 'Insegnanti/formatori', 'Cappellano/operatori religiosi e spirituali', 'Tutor', 'Operatore legale', 'Operatore multifunzionale', 'Amministrativo', 'Altro']
     
     figureProf.forEach(figura => {
       const count = data.filter(item => item.figure_professionali?.includes(figura)).length
       stats.push({
-        Domanda: `Figure Professionali - ${figura.replace(/_/g, ' ')}`,
+        Domanda: `Figure Professionali - ${figura}`,
         Risposta: 'Sì',
         Frequenza: count,
         Percentuale: `${((count / total) * 100).toFixed(1)}%`
       })
       stats.push({
-        Domanda: `Figure Professionali - ${figura.replace(/_/g, ' ')}`,
+        Domanda: `Figure Professionali - ${figura}`,
         Risposta: 'No',
         Frequenza: total - count,
         Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
       })
+    })
+
+    // Persone ospitate - caratteristiche
+    const caratteristicheOspiti = ['stranieri_migranti', 'vittime_tratta', 'vittime_violenza', 'allontanati_famiglia', 'detenuti', 'ex_detenuti', 'misure_alternative', 'indigenti_senzatetto', 'rom_sinti', 'disabilita_fisica', 'disabilita_cognitiva', 'disturbi_psichiatrici', 'dipendenze', 'genitori_precoci', 'problemi_orientamento']
+    
+    caratteristicheOspiti.forEach(car => {
+      const count = data.filter(item => item.caratteristiche_ospiti_adolescenti?.includes(car) || item.caratteristiche_ospiti_giovani?.includes(car)).length
+      stats.push({
+        Domanda: `Caratteristiche Ospiti - ${car.replace(/_/g, ' ')}`,
+        Risposta: 'Sì',
+        Frequenza: count,
+        Percentuale: `${((count / total) * 100).toFixed(1)}%`
+      })
+      stats.push({
+        Domanda: `Caratteristiche Ospiti - ${car.replace(/_/g, ' ')}`,
+        Risposta: 'No',
+        Frequenza: total - count,
+        Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
+      })
+    })
+
+    // Persone non ospitate - caratteristiche
+    caratteristicheOspiti.forEach(car => {
+      const count = data.filter(item => item.caratteristiche_non_ospiti_adolescenti?.includes(car) || item.caratteristiche_non_ospiti_giovani?.includes(car)).length
+      stats.push({
+        Domanda: `Caratteristiche Non Ospiti - ${car.replace(/_/g, ' ')}`,
+        Risposta: 'Sì',
+        Frequenza: count,
+        Percentuale: `${((count / total) * 100).toFixed(1)}%`
+      })
+      stats.push({
+        Domanda: `Caratteristiche Non Ospiti - ${car.replace(/_/g, ' ')}`,
+        Risposta: 'No',
+        Frequenza: total - count,
+        Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
+      })
+    })
+
+    // Attività servizi
+    const attivitaServizi = ['alloggio', 'vitto', 'servizi_bassa_soglia', 'ospitalita_diurna', 'supporto_psicologico', 'sostegno_autonomia', 'orientamento_lavoro', 'orientamento_formazione', 'istruzione', 'formazione_professionale', 'attivita_socializzazione', 'altro']
+    
+    attivitaServizi.forEach(servizio => {
+      const count = data.filter(item => item.attivita_servizi?.[servizio]?.attivo).length
+      stats.push({
+        Domanda: `Attività Servizi - ${servizio.replace(/_/g, ' ')}`,
+        Risposta: 'Sì',
+        Frequenza: count,
+        Percentuale: `${((count / total) * 100).toFixed(1)}%`
+      })
+      stats.push({
+        Domanda: `Attività Servizi - ${servizio.replace(/_/g, ' ')}`,
+        Risposta: 'No',
+        Frequenza: total - count,
+        Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
+      })
+    })
+
+    // Esperienze inserimento lavorativo
+    const esperienzeLavoro = data.filter(item => item.esperienze_inserimento_lavorativo).length
+    stats.push({
+      Domanda: 'Esperienze Inserimento Lavorativo',
+      Risposta: 'Sì',
+      Frequenza: esperienzeLavoro,
+      Percentuale: `${((esperienzeLavoro / total) * 100).toFixed(1)}%`
+    })
+    stats.push({
+      Domanda: 'Esperienze Inserimento Lavorativo',
+      Risposta: 'No',
+      Frequenza: total - esperienzeLavoro,
+      Percentuale: `${(((total - esperienzeLavoro) / total) * 100).toFixed(1)}%`
     })
 
     return stats
@@ -201,6 +286,25 @@ export default function AmministratoriDashboard() {
       })
     })
 
+    // Interventi da potenziare
+    const interventiPotenziare = ['sostegno_formazione', 'sostegno_lavoro', 'sostegno_abitativo', 'sostegno_famiglia', 'sostegno_coetanei', 'sostegno_competenze', 'sostegno_legale', 'sostegno_sociosanitario', 'mediazione_interculturale', 'nessuno', 'altro']
+    
+    interventiPotenziare.forEach(intervento => {
+      const count = data.filter(item => item.interventi_potenziare?.[intervento]).length
+      stats.push({
+        Domanda: `Interventi da Potenziare - ${intervento.replace(/_/g, ' ')}`,
+        Risposta: 'Sì',
+        Frequenza: count,
+        Percentuale: `${((count / total) * 100).toFixed(1)}%`
+      })
+      stats.push({
+        Domanda: `Interventi da Potenziare - ${intervento.replace(/_/g, ' ')}`,
+        Risposta: 'No',
+        Frequenza: total - count,
+        Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
+      })
+    })
+
     return stats
   }
 
@@ -225,6 +329,21 @@ export default function AmministratoriDashboard() {
       Percentuale: `${(((total - percAut) / total) * 100).toFixed(1)}%`
     })
 
+    // Tipo percorso
+    const tipoPercorso = data.reduce((acc, item) => {
+      acc[item.tipo_percorso || 'Non specificato'] = (acc[item.tipo_percorso || 'Non specificato'] || 0) + 1
+      return acc
+    }, {} as Record<string, number>)
+
+    Object.entries(tipoPercorso).forEach(([key, value]) => {
+      stats.push({
+        Domanda: 'Tipo Percorso',
+        Risposta: key,
+        Frequenza: value as number,
+        Percentuale: `${((value as number / total) * 100).toFixed(1)}%`
+      })
+    })
+
     // Vive in struttura
     const viveStruttura = data.filter(item => item.vive_in_struttura).length
     stats.push({
@@ -238,6 +357,21 @@ export default function AmministratoriDashboard() {
       Risposta: 'No',
       Frequenza: total - viveStruttura,
       Percentuale: `${(((total - viveStruttura) / total) * 100).toFixed(1)}%`
+    })
+
+    // Collocazione attuale
+    const collocazioneAttuale = data.reduce((acc, item) => {
+      acc[item.collocazione_attuale || 'Non specificato'] = (acc[item.collocazione_attuale || 'Non specificato'] || 0) + 1
+      return acc
+    }, {} as Record<string, number>)
+
+    Object.entries(collocazioneAttuale).forEach(([key, value]) => {
+      stats.push({
+        Domanda: 'Collocazione Attuale',
+        Risposta: key,
+        Frequenza: value as number,
+        Percentuale: `${((value as number / total) * 100).toFixed(1)}%`
+      })
     })
 
     // Sesso
@@ -270,6 +404,21 @@ export default function AmministratoriDashboard() {
       })
     })
 
+    // Luogo nascita
+    const luogoNascita = data.reduce((acc, item) => {
+      acc[item.luogo_nascita || 'Non specificato'] = (acc[item.luogo_nascita || 'Non specificato'] || 0) + 1
+      return acc
+    }, {} as Record<string, number>)
+
+    Object.entries(luogoNascita).forEach(([key, value]) => {
+      stats.push({
+        Domanda: 'Luogo Nascita',
+        Risposta: key,
+        Frequenza: value as number,
+        Percentuale: `${((value as number / total) * 100).toFixed(1)}%`
+      })
+    })
+
     // Cittadinanza
     const cittadinanza = data.reduce((acc, item) => {
       acc[item.cittadinanza || 'Non specificato'] = (acc[item.cittadinanza || 'Non specificato'] || 0) + 1
@@ -279,6 +428,21 @@ export default function AmministratoriDashboard() {
     Object.entries(cittadinanza).forEach(([key, value]) => {
       stats.push({
         Domanda: 'Cittadinanza',
+        Risposta: key,
+        Frequenza: value as number,
+        Percentuale: `${((value as number / total) * 100).toFixed(1)}%`
+      })
+    })
+
+    // Permesso soggiorno
+    const permessoSoggiorno = data.reduce((acc, item) => {
+      acc[item.permesso_soggiorno || 'Non specificato'] = (acc[item.permesso_soggiorno || 'Non specificato'] || 0) + 1
+      return acc
+    }, {} as Record<string, number>)
+
+    Object.entries(permessoSoggiorno).forEach(([key, value]) => {
+      stats.push({
+        Domanda: 'Permesso Soggiorno',
         Risposta: key,
         Frequenza: value as number,
         Percentuale: `${((value as number / total) * 100).toFixed(1)}%`
@@ -315,6 +479,21 @@ export default function AmministratoriDashboard() {
       })
     })
 
+    // Precedenti strutture
+    const precedentiStrutture = data.reduce((acc, item) => {
+      acc[item.precedenti_strutture || 'Non specificato'] = (acc[item.precedenti_strutture || 'Non specificato'] || 0) + 1
+      return acc
+    }, {} as Record<string, number>)
+
+    Object.entries(precedentiStrutture).forEach(([key, value]) => {
+      stats.push({
+        Domanda: 'Precedenti Strutture',
+        Risposta: key,
+        Frequenza: value as number,
+        Percentuale: `${((value as number / total) * 100).toFixed(1)}%`
+      })
+    })
+
     // Fattori vulnerabilità
     const fattoriVuln = ['stranieri', 'vittime_tratta', 'vittime_violenza', 'allontanati_famiglia', 'detenuti', 'ex_detenuti', 'misura_alternativa', 'senza_dimora', 'rom_sinti', 'disabilita_fisica', 'disabilita_cognitiva', 'disturbi_psichiatrici', 'dipendenze', 'genitori_precoci', 'orientamento_sessuale']
     
@@ -328,6 +507,25 @@ export default function AmministratoriDashboard() {
       })
       stats.push({
         Domanda: `Fattori Vulnerabilità - ${fattore.replace(/_/g, ' ')}`,
+        Risposta: 'No',
+        Frequenza: total - count,
+        Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
+      })
+    })
+
+    // Famiglia origine
+    const famigliaOrigine = ['padre', 'madre', 'fratelli_sorelle', 'nonni', 'altri_parenti', 'altri_conviventi']
+    
+    famigliaOrigine.forEach(membro => {
+      const count = data.filter(item => item.famiglia_origine?.includes(membro)).length
+      stats.push({
+        Domanda: `Famiglia Origine - ${membro.replace(/_/g, ' ')}`,
+        Risposta: 'Sì',
+        Frequenza: count,
+        Percentuale: `${((count / total) * 100).toFixed(1)}%`
+      })
+      stats.push({
+        Domanda: `Famiglia Origine - ${membro.replace(/_/g, ' ')}`,
         Risposta: 'No',
         Frequenza: total - count,
         Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
@@ -370,6 +568,85 @@ export default function AmministratoriDashboard() {
         Frequenza: total - count,
         Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
       })
+    })
+
+    // Orientamento lavoro
+    const orientamentoLavoro = data.filter(item => item.orientamento_lavoro?.usufruito).length
+    stats.push({
+      Domanda: 'Orientamento Lavoro',
+      Risposta: 'Sì',
+      Frequenza: orientamentoLavoro,
+      Percentuale: `${((orientamentoLavoro / total) * 100).toFixed(1)}%`
+    })
+    stats.push({
+      Domanda: 'Orientamento Lavoro',
+      Risposta: 'No',
+      Frequenza: total - orientamentoLavoro,
+      Percentuale: `${(((total - orientamentoLavoro) / total) * 100).toFixed(1)}%`
+    })
+
+    // Ricerca lavoro
+    const ricercaLavoro = ['centro_impiego', 'sportelli', 'inps_patronati', 'servizi_sociali', 'agenzie_interinali', 'cooperative', 'struttura', 'conoscenti', 'portali_online', 'social', 'altro']
+    
+    ricercaLavoro.forEach(metodo => {
+      const count = data.filter(item => item.ricerca_lavoro?.[metodo]).length
+      stats.push({
+        Domanda: `Ricerca Lavoro - ${metodo.replace(/_/g, ' ')}`,
+        Risposta: 'Sì',
+        Frequenza: count,
+        Percentuale: `${((count / total) * 100).toFixed(1)}%`
+      })
+      stats.push({
+        Domanda: `Ricerca Lavoro - ${metodo.replace(/_/g, ' ')}`,
+        Risposta: 'No',
+        Frequenza: total - count,
+        Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
+      })
+    })
+
+    // Curriculum vitae
+    const curriculum = data.filter(item => item.curriculum_vitae).length
+    stats.push({
+      Domanda: 'Curriculum Vitae',
+      Risposta: 'Sì',
+      Frequenza: curriculum,
+      Percentuale: `${((curriculum / total) * 100).toFixed(1)}%`
+    })
+    stats.push({
+      Domanda: 'Curriculum Vitae',
+      Risposta: 'No',
+      Frequenza: total - curriculum,
+      Percentuale: `${(((total - curriculum) / total) * 100).toFixed(1)}%`
+    })
+
+    // Centro impiego
+    const centroImpiego = data.filter(item => item.centro_impiego).length
+    stats.push({
+      Domanda: 'Centro Impiego',
+      Risposta: 'Sì',
+      Frequenza: centroImpiego,
+      Percentuale: `${((centroImpiego / total) * 100).toFixed(1)}%`
+    })
+    stats.push({
+      Domanda: 'Centro Impiego',
+      Risposta: 'No',
+      Frequenza: total - centroImpiego,
+      Percentuale: `${(((total - centroImpiego) / total) * 100).toFixed(1)}%`
+    })
+
+    // Lavoro autonomo
+    const lavoroAutonomo = data.filter(item => item.lavoro_autonomo).length
+    stats.push({
+      Domanda: 'Lavoro Autonomo',
+      Risposta: 'Sì',
+      Frequenza: lavoroAutonomo,
+      Percentuale: `${((lavoroAutonomo / total) * 100).toFixed(1)}%`
+    })
+    stats.push({
+      Domanda: 'Lavoro Autonomo',
+      Risposta: 'No',
+      Frequenza: total - lavoroAutonomo,
+      Percentuale: `${(((total - lavoroAutonomo) / total) * 100).toFixed(1)}%`
     })
 
     return stats
