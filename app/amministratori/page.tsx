@@ -70,7 +70,7 @@ export default function AmministratoriDashboard() {
   }
 
   // Utility per statistiche numeriche
-  function getNumericStatsStrutture(arr: number[], label: string, domanda: string) {
+  function getNumericStatsStrutture(arr: number[], label: string, domanda: string): Array<{Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}> {
     const valid = arr.filter((x: number) => typeof x === 'number' && !isNaN(x))
     if (valid.length === 0) return []
     return [
@@ -82,7 +82,7 @@ export default function AmministratoriDashboard() {
   }
 
   // Utility per testo libero
-  function getTextStatsStruttureCustom(arr: string[], label: string, domanda: string) {
+  function getTextStatsStruttureCustom(arr: string[], label: string, domanda: string): Array<{Domanda: string, Risposta: string, Frequenza: number, Percentuale: string}> {
     const valid = arr.filter((x: string) => typeof x === 'string' && x.trim() !== '')
     if (valid.length === 0) return []
     const counts = valid.reduce((acc: Record<string, number>, v: string) => { acc[v] = (acc[v]||0)+1; return acc }, {})
@@ -94,7 +94,7 @@ export default function AmministratoriDashboard() {
     }))
   }
 
-  function generateStruttureStats(data: any[]) {
+  function generateStruttureStats(data: any[]): Array<{Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}> {
     if (data.length === 0) return [{ Domanda: 'Nessun dato disponibile', Risposta: '', Frequenza: 0, Percentuale: '0%' }]
     const stats: Array<{Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}> = []
     const total = data.length
@@ -107,7 +107,9 @@ export default function AmministratoriDashboard() {
 
     // Forma giuridica altro
     const formaGiuridicaAltroStats = getTextStatsStruttureCustom(data.map((x:any)=>x.forma_giuridica_altro), 'Forma Giuridica Altro', 'Forma Giuridica Altro')
-    stats.push(...formaGiuridicaAltroStats)
+    for (const stat of formaGiuridicaAltroStats) {
+      stats.push(stat)
+    }
 
     // Personale retribuito/volontario
     (['personale_retribuito','personale_volontario'] as const).forEach((key: 'personale_retribuito'|'personale_volontario') => {
@@ -157,7 +159,7 @@ export default function AmministratoriDashboard() {
   }
 
   // Copia la vecchia funzione con nome diverso per non perdere la logica delle domande chiuse
-  function generateStruttureStats_OLD(data: any[]) {
+  function generateStruttureStats_OLD(data: any[]): Array<{Domanda: string, Risposta: string, Frequenza: number, Percentuale: string}> {
     if (data.length === 0) return []
     
     const stats: Array<{Domanda: string, Risposta: string, Frequenza: number, Percentuale: string}> = []
@@ -307,7 +309,7 @@ export default function AmministratoriDashboard() {
   }
 
   // Utility per statistiche numeriche Operatori
-  function getNumericStatsOperatori(arr: number[], label: string, domanda: string) {
+  function getNumericStatsOperatori(arr: number[], label: string, domanda: string): Array<{Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}> {
     const valid = arr.filter((x: number) => typeof x === 'number' && !isNaN(x))
     if (valid.length === 0) return []
     return [
@@ -319,7 +321,7 @@ export default function AmministratoriDashboard() {
   }
 
   // Utility per testo libero Operatori
-  function getTextStatsOperatori(arr: string[], label: string, domanda: string) {
+  function getTextStatsOperatori(arr: string[], label: string, domanda: string): Array<{Domanda: string, Risposta: string, Frequenza: number, Percentuale: string}> {
     const valid = arr.filter((x: string) => typeof x === 'string' && x.trim() !== '')
     if (valid.length === 0) return []
     const counts = valid.reduce((acc: Record<string, number>, v: string) => { acc[v] = (acc[v]||0)+1; return acc }, {})
@@ -331,16 +333,22 @@ export default function AmministratoriDashboard() {
     }))
   }
 
-  function generateOperatoriStats(data: any[]) {
+  function generateOperatoriStats(data: any[]): Array<{Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}> {
     if (data.length === 0) return [{ Domanda: 'Nessun dato disponibile', Risposta: '', Frequenza: 0, Percentuale: '0%' }]
     
     const stats: Array<{Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}> = []
     const total = data.length
 
     // Campi base
-    stats.push(...getTextStatsOperatori(data.map((x:any)=>x.id_struttura), 'ID Struttura', 'ID Struttura'))
-    stats.push(...getTextStatsOperatori(data.map((x:any)=>x.tipo_struttura), 'Tipo Struttura', 'Tipo Struttura'))
-    stats.push(...getTextStatsOperatori(data.map((x:any)=>x.professione?.altro_specificare), 'Professione Altro', 'Professione Altro'))
+    for (const stat of getTextStatsOperatori(data.map((x:any)=>x.id_struttura), 'ID Struttura', 'ID Struttura')) {
+      stats.push(stat)
+    }
+    for (const stat of getTextStatsOperatori(data.map((x:any)=>x.tipo_struttura), 'Tipo Struttura', 'Tipo Struttura')) {
+      stats.push(stat)
+    }
+    for (const stat of getTextStatsOperatori(data.map((x:any)=>x.professione?.altro_specificare), 'Professione Altro', 'Professione Altro')) {
+      stats.push(stat)
+    }
 
     // Persone seguite (numerici)
     (['persone_seguite','persone_maggiorenni'] as const).forEach((key: 'persone_seguite'|'persone_maggiorenni') => {
@@ -374,7 +382,7 @@ export default function AmministratoriDashboard() {
   }
 
   // Copia la vecchia funzione per le domande chiuse
-  function generateOperatoriStats_OLD(data: any[]) {
+  function generateOperatoriStats_OLD(data: any[]): Array<{Domanda: string, Risposta: string, Frequenza: number, Percentuale: string}> {
     if (data.length === 0) return []
     
     const stats: Array<{Domanda: string, Risposta: string, Frequenza: number, Percentuale: string}> = []
@@ -475,7 +483,7 @@ export default function AmministratoriDashboard() {
   }
 
   // Utility per statistiche numeriche Giovani
-  function getNumericStatsGiovani(arr: number[], label: string, domanda: string) {
+  function getNumericStatsGiovani(arr: number[], label: string, domanda: string): Array<{Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}> {
     const valid = arr.filter((x: number) => typeof x === 'number' && !isNaN(x))
     if (valid.length === 0) return []
     return [
@@ -487,7 +495,7 @@ export default function AmministratoriDashboard() {
   }
 
   // Utility per testo libero Giovani
-  function getTextStatsGiovani(arr: string[], label: string, domanda: string) {
+  function getTextStatsGiovani(arr: string[], label: string, domanda: string): Array<{Domanda: string, Risposta: string, Frequenza: number, Percentuale: string}> {
     const valid = arr.filter((x: string) => typeof x === 'string' && x.trim() !== '')
     if (valid.length === 0) return []
     const counts = valid.reduce((acc: Record<string, number>, v: string) => { acc[v] = (acc[v]||0)+1; return acc }, {})
@@ -499,7 +507,7 @@ export default function AmministratoriDashboard() {
     }))
   }
 
-  function generateGiovaniStats(data: any[]) {
+  function generateGiovaniStats(data: any[]): Array<{Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}> {
     if (data.length === 0) return [{ Domanda: 'Nessun dato disponibile', Risposta: '', Frequenza: 0, Percentuale: '0%' }]
     
     const stats: Array<{Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}> = []
@@ -617,7 +625,7 @@ export default function AmministratoriDashboard() {
   }
 
   // Copia la vecchia funzione per le domande chiuse
-  function generateGiovaniStats_OLD(data: any[]) {
+  function generateGiovaniStats_OLD(data: any[]): Array<{Domanda: string, Risposta: string, Frequenza: number, Percentuale: string}> {
     if (data.length === 0) return []
     
     const stats: Array<{Domanda: string, Risposta: string, Frequenza: number, Percentuale: string}> = []
