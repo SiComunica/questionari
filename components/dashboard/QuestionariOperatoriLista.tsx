@@ -294,15 +294,15 @@ export default function QuestionariOperatoriLista() {
         };
       });
 
-      // Creiamo il workbook
-      const ws = XLSX.utils.json_to_sheet(dataToExport);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, 'Questionari Operatori');
+    // Creiamo il workbook
+    const ws = XLSX.utils.json_to_sheet(dataToExport);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Questionari Operatori');
 
-      // Scarichiamo il file
+    // Scarichiamo il file
       const fileName = `questionari_operatori_${format(new Date(), 'yyyy-MM-dd_HH-mm')}.xlsx`;
       XLSX.writeFile(wb, fileName);
-      toast.success('Export completato con successo');
+    toast.success('Export completato con successo');
     } catch (error) {
       console.error('Errore durante l\'export:', error);
       toast.error('Errore durante l\'export');

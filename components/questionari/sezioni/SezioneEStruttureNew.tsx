@@ -14,7 +14,7 @@ interface Props {
 }
 
 export default function SezioneEStruttureNew({ formData, setFormData }: Props) {
-  const handleCollaborazioneChange = (index: number, field: keyof SoggettoCollaborazione, value: string | number) => {
+  const handleCollaborazioneChange = (index: number, field: keyof SoggettoCollaborazione, value: string) => {
     setFormData(prev => {
       const newCollaborazioni = [...prev.collaborazioni];
       if (!newCollaborazioni[index]) {
@@ -67,8 +67,8 @@ export default function SezioneEStruttureNew({ formData, setFormData }: Props) {
                 <div>
                   <Label>Tipo di collaborazione</Label>
                   <Select
-                    value={String(formData.collaborazioni[index]?.tipo || 1)}
-                    onValueChange={(value) => handleCollaborazioneChange(index, 'tipo', Number(value))}
+                    value={String(formData.collaborazioni[index]?.tipo || '1')}
+                    onValueChange={(value) => handleCollaborazioneChange(index, 'tipo', value)}
                   >
                     <SelectTrigger>
                       <SelectValue />

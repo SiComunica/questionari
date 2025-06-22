@@ -188,11 +188,11 @@ export default function QuestionariStruttureNew() {
         console.error('Errore durante la verifica:', verifyError)
         throw verifyError
       }
-
+      
       if (!verifyData) {
         console.log('Record eliminato con successo')
-        setQuestionari(prev => prev.filter(q => q.id !== id))
-        toast.success('Questionario eliminato con successo')
+      setQuestionari(prev => prev.filter(q => q.id !== id))
+      toast.success('Questionario eliminato con successo')
       } else {
         console.error('Il record esiste ancora dopo l\'eliminazione:', verifyData)
         toast.error('Errore: il record non è stato eliminato')
@@ -409,8 +409,8 @@ export default function QuestionariStruttureNew() {
     toast.success('Export completato con successo');
   };
 
-  return (
-    <div className="space-y-4">
+    return (
+      <div className="space-y-4">
       <h1 className="text-2xl font-bold mb-4">Questionari Strutture</h1>
       
       {loading ? (
@@ -420,13 +420,13 @@ export default function QuestionariStruttureNew() {
           <div className="flex justify-end space-x-2 mb-4">
             <Button onClick={() => handleExportXLSX()}>
               <FileSpreadsheet className="mr-2 h-4 w-4" />
-              Esporta XLSX
-            </Button>
+            Esporta XLSX
+          </Button>
             <Button onClick={() => handleExportPDF()}>
               <FileText className="mr-2 h-4 w-4" />
               Esporta PDF
-            </Button>
-          </div>
+          </Button>
+        </div>
 
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {questionari.map((questionario) => (
@@ -442,24 +442,24 @@ export default function QuestionariStruttureNew() {
                       >
                         <FileText className="h-4 w-4" />
                       </Button>
-                      <Button
-                        variant="outline"
+                    <Button 
+                      variant="outline"
                         size="icon"
-                        onClick={() => {
-                          setSelectedQuestionario(questionario)
-                          setIsDialogOpen(true)
-                        }}
-                      >
+                      onClick={() => {
+                        setSelectedQuestionario(questionario)
+                        setIsDialogOpen(true)
+                      }}
+                    >
                         <FileText className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
+                    </Button>
+                    <Button 
+                      variant="outline"
                         size="icon"
-                        onClick={() => handleDelete(questionario.id)}
-                      >
+                      onClick={() => handleDelete(questionario.id)}
+                    >
                         <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
+                    </Button>
+                  </div>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -470,20 +470,20 @@ export default function QuestionariStruttureNew() {
             ))}
           </div>
 
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
-              <DialogHeader>
+          <DialogHeader>
                 <DialogTitle>Dettagli Questionario</DialogTitle>
-              </DialogHeader>
+          </DialogHeader>
               {selectedQuestionario && (
                 <div className="space-y-4">
                   <pre>{JSON.stringify(selectedQuestionario, null, 2)}</pre>
                 </div>
               )}
-            </DialogContent>
-          </Dialog>
+        </DialogContent>
+      </Dialog>
         </>
       )}
     </div>
   );
-}
+} 

@@ -181,6 +181,21 @@ export default function SezioneCStruttureNew({ formData, setFormData }: Props) {
     { id: 'D1.12', label: 'Altro', hasDesc: true }
   ];
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    if (name === 'forma_giuridica') {
+      setFormData({
+        ...formData,
+        [name]: Number(value)
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value
+      });
+    }
+  };
+
   return (
     <div className="space-y-6">
       <Card>
@@ -396,6 +411,32 @@ export default function SezioneCStruttureNew({ formData, setFormData }: Props) {
               options={opzioniCaratteristicheGiovani}
             />
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="pt-6">
+          <h3 className="text-lg font-semibold mb-4">
+            C7. Forma giuridica
+          </h3>
+          
+          <select
+            name="forma_giuridica"
+            value={formData.forma_giuridica}
+            onChange={handleChange}
+            className="w-full p-2 border rounded"
+          >
+            <option value={1}>Ente pubblico</option>
+            <option value={2}>Impresa for profit</option>
+            <option value={3}>Cooperativa</option>
+            <option value={4}>Impresa sociale</option>
+            <option value={5}>Ente filantropico</option>
+            <option value={6}>Associazione di promozione sociale</option>
+            <option value={7}>Organizzazione di volontariato</option>
+            <option value={8}>Rete associativa</option>
+            <option value={9}>Società di mutuo soccorso</option>
+            <option value={10}>Altro</option>
+          </select>
         </CardContent>
       </Card>
     </div>

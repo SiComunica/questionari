@@ -1166,19 +1166,19 @@ const SectionC = ({ formData, setFormData }: {
                   id="orientamento-altro-spec"
                   value={formData.orientamento_lavoro.dove.altro_specificare}
                   onChange={(e) => 
-                    setFormData(prev => ({
-                      ...prev,
-                      orientamento_lavoro: {
-                        ...prev.orientamento_lavoro,
+                setFormData(prev => ({
+                  ...prev,
+                  orientamento_lavoro: {
+                    ...prev.orientamento_lavoro,
                         dove: {
                           ...prev.orientamento_lavoro.dove,
                           altro_specificare: e.target.value
                         }
-                      }
-                    }))
                   }
+                }))
+              }
                 />
-              </div>
+                </div>
             )}
           </>
         )}
@@ -1271,18 +1271,18 @@ const SectionC = ({ formData, setFormData }: {
           </p>
           <div className="space-y-2">
             <Label>Descrizione</Label>
-            <Textarea
-              value={formData.lavoro_attuale.descrizione}
-              onChange={(e) => 
-                setFormData(prev => ({
-                  ...prev,
-                  lavoro_attuale: {
+          <Textarea
+            value={formData.lavoro_attuale.descrizione}
+            onChange={(e) => 
+              setFormData(prev => ({
+                ...prev,
+                lavoro_attuale: {
                     ...prev.lavoro_attuale,
-                    descrizione: e.target.value
-                  }
-                }))
-              }
-            />
+                  descrizione: e.target.value
+                }
+              }))
+            }
+          />
             <Label>Tipo di contratto</Label>
             <Input
               value={formData.lavoro_attuale.tipo_contratto}
@@ -1305,10 +1305,10 @@ const SectionC = ({ formData, setFormData }: {
                   lavoro_attuale: {
                     ...prev.lavoro_attuale,
                     settore: e.target.value
-                  }
-                }))
-              }
-            />
+                }
+              }))
+            }
+          />
           </div>
         </div>
       )}
