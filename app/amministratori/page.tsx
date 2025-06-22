@@ -135,11 +135,19 @@ export default function AmministratoriDashboard() {
       })
     })
 
-    // Figure professionali
+    // Figure professionali - gestisco sia array che oggetti
     const figureProf = ['Psicologi', 'Assistenti sociali', 'Educatori', 'Mediatori', 'Medici', 'Personale infermieristico/operatori sanitari', 'Insegnanti/formatori', 'Cappellano/operatori religiosi e spirituali', 'Tutor', 'Operatore legale', 'Operatore multifunzionale', 'Amministrativo', 'Altro']
     
     figureProf.forEach(figura => {
-      const count = data.filter(item => item.figure_professionali?.includes(figura)).length
+      const count = data.filter(item => {
+        if (Array.isArray(item.figure_professionali)) {
+          return item.figure_professionali.includes(figura)
+        } else if (typeof item.figure_professionali === 'object' && item.figure_professionali !== null) {
+          return item.figure_professionali[figura.toLowerCase().replace(/[^a-z]/g, '_')] === true
+        }
+        return false
+      }).length
+      
       stats.push({
         Domanda: `Figure Professionali - ${figura}`,
         Risposta: 'Sì',
@@ -158,7 +166,12 @@ export default function AmministratoriDashboard() {
     const caratteristicheOspiti = ['stranieri_migranti', 'vittime_tratta', 'vittime_violenza', 'allontanati_famiglia', 'detenuti', 'ex_detenuti', 'misure_alternative', 'indigenti_senzatetto', 'rom_sinti', 'disabilita_fisica', 'disabilita_cognitiva', 'disturbi_psichiatrici', 'dipendenze', 'genitori_precoci', 'problemi_orientamento']
     
     caratteristicheOspiti.forEach(car => {
-      const count = data.filter(item => item.caratteristiche_ospiti_adolescenti?.includes(car) || item.caratteristiche_ospiti_giovani?.includes(car)).length
+      const count = data.filter(item => {
+        const ospitiAdolescenti = Array.isArray(item.caratteristiche_ospiti_adolescenti) ? item.caratteristiche_ospiti_adolescenti : []
+        const ospitiGiovani = Array.isArray(item.caratteristiche_ospiti_giovani) ? item.caratteristiche_ospiti_giovani : []
+        return ospitiAdolescenti.includes(car) || ospitiGiovani.includes(car)
+      }).length
+      
       stats.push({
         Domanda: `Caratteristiche Ospiti - ${car.replace(/_/g, ' ')}`,
         Risposta: 'Sì',
@@ -175,7 +188,12 @@ export default function AmministratoriDashboard() {
 
     // Persone non ospitate - caratteristiche
     caratteristicheOspiti.forEach(car => {
-      const count = data.filter(item => item.caratteristiche_non_ospiti_adolescenti?.includes(car) || item.caratteristiche_non_ospiti_giovani?.includes(car)).length
+      const count = data.filter(item => {
+        const nonOspitiAdolescenti = Array.isArray(item.caratteristiche_non_ospiti_adolescenti) ? item.caratteristiche_non_ospiti_adolescenti : []
+        const nonOspitiGiovani = Array.isArray(item.caratteristiche_non_ospiti_giovani) ? item.caratteristiche_non_ospiti_giovani : []
+        return nonOspitiAdolescenti.includes(car) || nonOspitiGiovani.includes(car)
+      }).length
+      
       stats.push({
         Domanda: `Caratteristiche Non Ospiti - ${car.replace(/_/g, ' ')}`,
         Risposta: 'Sì',
@@ -194,7 +212,10 @@ export default function AmministratoriDashboard() {
     const attivitaServizi = ['alloggio', 'vitto', 'servizi_bassa_soglia', 'ospitalita_diurna', 'supporto_psicologico', 'sostegno_autonomia', 'orientamento_lavoro', 'orientamento_formazione', 'istruzione', 'formazione_professionale', 'attivita_socializzazione', 'altro']
     
     attivitaServizi.forEach(servizio => {
-      const count = data.filter(item => item.attivita_servizi?.[servizio]?.attivo).length
+      const count = data.filter(item => {
+        return item.attivita_servizi?.[servizio]?.attivo === true
+      }).length
+      
       stats.push({
         Domanda: `Attività Servizi - ${servizio.replace(/_/g, ' ')}`,
         Risposta: 'Sì',
@@ -210,7 +231,7 @@ export default function AmministratoriDashboard() {
     })
 
     // Esperienze inserimento lavorativo
-    const esperienzeLavoro = data.filter(item => item.esperienze_inserimento_lavorativo).length
+    const esperienzeLavoro = data.filter(item => item.esperienze_inserimento_lavorativo === true).length
     stats.push({
       Domanda: 'Esperienze Inserimento Lavorativo',
       Risposta: 'Sì',
@@ -252,7 +273,15 @@ export default function AmministratoriDashboard() {
     const caratteristiche = ['stranieri_migranti', 'vittime_tratta', 'vittime_violenza', 'allontanati_famiglia', 'detenuti', 'ex_detenuti', 'misure_alternative', 'indigenti_senzatetto', 'rom_sinti', 'disabilita_fisica', 'disabilita_cognitiva', 'disturbi_psichiatrici', 'dipendenze', 'genitori_precoci', 'problemi_orientamento']
     
     caratteristiche.forEach(car => {
-      const count = data.filter(item => item.caratteristiche_persone_seguite?.includes(car)).length
+      const count = data.filter(item => {
+        if (Array.isArray(item.caratteristiche_persone_seguite)) {
+          return item.caratteristiche_persone_seguite.includes(car)
+        } else if (typeof item.caratteristiche_persone === 'object' && item.caratteristiche_persone !== null) {
+          return item.caratteristiche_persone[car] === true
+        }
+        return false
+      }).length
+      
       stats.push({
         Domanda: `Caratteristiche - ${car.replace(/_/g, ' ')}`,
         Risposta: 'Sì',
@@ -271,7 +300,15 @@ export default function AmministratoriDashboard() {
     const tipoInterventi = ['sostegno_formazione', 'sostegno_lavoro', 'sostegno_abitativo', 'sostegno_famiglia', 'sostegno_coetanei', 'sostegno_competenze', 'sostegno_legale', 'sostegno_sociosanitario', 'mediazione_interculturale']
     
     tipoInterventi.forEach(intervento => {
-      const count = data.filter(item => item.tipo_interventi?.includes(intervento)).length
+      const count = data.filter(item => {
+        if (Array.isArray(item.tipo_interventi)) {
+          return item.tipo_interventi.includes(intervento)
+        } else if (typeof item.tipo_intervento === 'object' && item.tipo_intervento !== null) {
+          return item.tipo_intervento[intervento] === true
+        }
+        return false
+      }).length
+      
       stats.push({
         Domanda: `Tipo Intervento - ${intervento.replace(/_/g, ' ')}`,
         Risposta: 'Sì',
@@ -290,7 +327,10 @@ export default function AmministratoriDashboard() {
     const interventiPotenziare = ['sostegno_formazione', 'sostegno_lavoro', 'sostegno_abitativo', 'sostegno_famiglia', 'sostegno_coetanei', 'sostegno_competenze', 'sostegno_legale', 'sostegno_sociosanitario', 'mediazione_interculturale', 'nessuno', 'altro']
     
     interventiPotenziare.forEach(intervento => {
-      const count = data.filter(item => item.interventi_potenziare?.[intervento]).length
+      const count = data.filter(item => {
+        return item.interventi_potenziare?.[intervento] === true
+      }).length
+      
       stats.push({
         Domanda: `Interventi da Potenziare - ${intervento.replace(/_/g, ' ')}`,
         Risposta: 'Sì',
@@ -315,7 +355,7 @@ export default function AmministratoriDashboard() {
     const total = data.length
 
     // Percorso autonomia
-    const percAut = data.filter(item => item.percorso_autonomia).length
+    const percAut = data.filter(item => item.percorso_autonomia === true).length
     stats.push({
       Domanda: 'Percorso Autonomia',
       Risposta: 'Sì',
@@ -345,7 +385,7 @@ export default function AmministratoriDashboard() {
     })
 
     // Vive in struttura
-    const viveStruttura = data.filter(item => item.vive_in_struttura).length
+    const viveStruttura = data.filter(item => item.vive_in_struttura === true).length
     stats.push({
       Domanda: 'Vive in Struttura',
       Risposta: 'Sì',
@@ -498,7 +538,15 @@ export default function AmministratoriDashboard() {
     const fattoriVuln = ['stranieri', 'vittime_tratta', 'vittime_violenza', 'allontanati_famiglia', 'detenuti', 'ex_detenuti', 'misura_alternativa', 'senza_dimora', 'rom_sinti', 'disabilita_fisica', 'disabilita_cognitiva', 'disturbi_psichiatrici', 'dipendenze', 'genitori_precoci', 'orientamento_sessuale']
     
     fattoriVuln.forEach(fattore => {
-      const count = data.filter(item => item.fattori_vulnerabilita?.includes(fattore)).length
+      const count = data.filter(item => {
+        if (Array.isArray(item.fattori_vulnerabilita)) {
+          return item.fattori_vulnerabilita.includes(fattore)
+        } else if (typeof item.fattori_vulnerabilita === 'object' && item.fattori_vulnerabilita !== null) {
+          return item.fattori_vulnerabilita[`fv${fattoriVuln.indexOf(fattore) + 1}_${fattore}`] === true
+        }
+        return false
+      }).length
+      
       stats.push({
         Domanda: `Fattori Vulnerabilità - ${fattore.replace(/_/g, ' ')}`,
         Risposta: 'Sì',
@@ -517,7 +565,15 @@ export default function AmministratoriDashboard() {
     const famigliaOrigine = ['padre', 'madre', 'fratelli_sorelle', 'nonni', 'altri_parenti', 'altri_conviventi']
     
     famigliaOrigine.forEach(membro => {
-      const count = data.filter(item => item.famiglia_origine?.includes(membro)).length
+      const count = data.filter(item => {
+        if (Array.isArray(item.famiglia_origine)) {
+          return item.famiglia_origine.includes(membro)
+        } else if (typeof item.famiglia_origine === 'object' && item.famiglia_origine !== null) {
+          return item.famiglia_origine[membro] === true
+        }
+        return false
+      }).length
+      
       stats.push({
         Domanda: `Famiglia Origine - ${membro.replace(/_/g, ' ')}`,
         Risposta: 'Sì',
@@ -536,7 +592,15 @@ export default function AmministratoriDashboard() {
     const attivitaPrecedenti = ['studio', 'lavoro_stabile', 'lavoro_saltuario', 'formazione', 'altro', 'nessuna']
     
     attivitaPrecedenti.forEach(attivita => {
-      const count = data.filter(item => item.attivita_precedenti?.includes(attivita)).length
+      const count = data.filter(item => {
+        if (Array.isArray(item.attivita_precedenti)) {
+          return item.attivita_precedenti.includes(attivita)
+        } else if (typeof item.attivita_precedenti === 'object' && item.attivita_precedenti !== null) {
+          return item.attivita_precedenti[attivita] === true
+        }
+        return false
+      }).length
+      
       stats.push({
         Domanda: `Attività Precedenti - ${attivita.replace(/_/g, ' ')}`,
         Risposta: 'Sì',
@@ -555,7 +619,15 @@ export default function AmministratoriDashboard() {
     const attivitaAttuali = ['studio', 'formazione', 'lavoro', 'ricerca_lavoro', 'nessuna']
     
     attivitaAttuali.forEach(attivita => {
-      const count = data.filter(item => item.attivita_attuali?.includes(attivita)).length
+      const count = data.filter(item => {
+        if (Array.isArray(item.attivita_attuali)) {
+          return item.attivita_attuali.includes(attivita)
+        } else if (typeof item.attivita_attuali === 'object' && item.attivita_attuali !== null) {
+          return item.attivita_attuali[attivita] === true
+        }
+        return false
+      }).length
+      
       stats.push({
         Domanda: `Attività Attuali - ${attivita.replace(/_/g, ' ')}`,
         Risposta: 'Sì',
@@ -571,7 +643,7 @@ export default function AmministratoriDashboard() {
     })
 
     // Orientamento lavoro
-    const orientamentoLavoro = data.filter(item => item.orientamento_lavoro?.usufruito).length
+    const orientamentoLavoro = data.filter(item => item.orientamento_lavoro?.usufruito === true).length
     stats.push({
       Domanda: 'Orientamento Lavoro',
       Risposta: 'Sì',
@@ -589,7 +661,10 @@ export default function AmministratoriDashboard() {
     const ricercaLavoro = ['centro_impiego', 'sportelli', 'inps_patronati', 'servizi_sociali', 'agenzie_interinali', 'cooperative', 'struttura', 'conoscenti', 'portali_online', 'social', 'altro']
     
     ricercaLavoro.forEach(metodo => {
-      const count = data.filter(item => item.ricerca_lavoro?.[metodo]).length
+      const count = data.filter(item => {
+        return item.ricerca_lavoro?.[metodo] === true
+      }).length
+      
       stats.push({
         Domanda: `Ricerca Lavoro - ${metodo.replace(/_/g, ' ')}`,
         Risposta: 'Sì',
@@ -605,7 +680,7 @@ export default function AmministratoriDashboard() {
     })
 
     // Curriculum vitae
-    const curriculum = data.filter(item => item.curriculum_vitae).length
+    const curriculum = data.filter(item => item.curriculum_vitae === true).length
     stats.push({
       Domanda: 'Curriculum Vitae',
       Risposta: 'Sì',
@@ -620,7 +695,7 @@ export default function AmministratoriDashboard() {
     })
 
     // Centro impiego
-    const centroImpiego = data.filter(item => item.centro_impiego).length
+    const centroImpiego = data.filter(item => item.centro_impiego === true).length
     stats.push({
       Domanda: 'Centro Impiego',
       Risposta: 'Sì',
@@ -635,7 +710,7 @@ export default function AmministratoriDashboard() {
     })
 
     // Lavoro autonomo
-    const lavoroAutonomo = data.filter(item => item.lavoro_autonomo).length
+    const lavoroAutonomo = data.filter(item => item.lavoro_autonomo === true).length
     stats.push({
       Domanda: 'Lavoro Autonomo',
       Risposta: 'Sì',
