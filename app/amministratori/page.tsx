@@ -76,10 +76,7 @@ export default function AmministratoriDashboard() {
     const total = arr.length
     const validCount = valid.length
     return [
-      { Domanda: domanda, Risposta: `${label} (valori validi)`, Frequenza: validCount, Percentuale: `${((validCount / total) * 100).toFixed(1)}%` },
-      { Domanda: domanda, Risposta: `${label} (media)`, Frequenza: (valid.reduce((a: number,b: number)=>a+b,0)/valid.length).toFixed(2), Percentuale: '' },
-      { Domanda: domanda, Risposta: `${label} (min)`, Frequenza: Math.min(...valid), Percentuale: '' },
-      { Domanda: domanda, Risposta: `${label} (max)`, Frequenza: Math.max(...valid), Percentuale: '' },
+      { Domanda: domanda, Risposta: `${label}`, Frequenza: validCount, Percentuale: `${((validCount / total) * 100).toFixed(1)}%` },
     ]
   }
 
@@ -326,10 +323,7 @@ export default function AmministratoriDashboard() {
     const total = arr.length
     const validCount = valid.length
     return [
-      { Domanda: domanda, Risposta: `${label} (valori validi)`, Frequenza: validCount, Percentuale: `${((validCount / total) * 100).toFixed(1)}%` },
-      { Domanda: domanda, Risposta: `${label} (media)`, Frequenza: (valid.reduce((a: number,b: number)=>a+b,0)/valid.length).toFixed(2), Percentuale: '' },
-      { Domanda: domanda, Risposta: `${label} (min)`, Frequenza: Math.min(...valid), Percentuale: '' },
-      { Domanda: domanda, Risposta: `${label} (max)`, Frequenza: Math.max(...valid), Percentuale: '' },
+      { Domanda: domanda, Risposta: `${label}`, Frequenza: validCount, Percentuale: `${((validCount / total) * 100).toFixed(1)}%` },
     ]
   }
 
