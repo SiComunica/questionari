@@ -73,9 +73,11 @@ export default function AmministratoriDashboard() {
   function getNumericStatsStrutture(arr: number[], label: string, domanda: string): Array<{Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}> {
     const valid = arr.filter((x: number) => typeof x === 'number' && !isNaN(x))
     if (valid.length === 0) return []
+    const total = arr.length
+    const validCount = valid.length
     return [
+      { Domanda: domanda, Risposta: `${label} (valori validi)`, Frequenza: validCount, Percentuale: `${((validCount / total) * 100).toFixed(1)}%` },
       { Domanda: domanda, Risposta: `${label} (media)`, Frequenza: (valid.reduce((a: number,b: number)=>a+b,0)/valid.length).toFixed(2), Percentuale: '' },
-      { Domanda: domanda, Risposta: `${label} (somma)`, Frequenza: valid.reduce((a: number,b: number)=>a+b,0), Percentuale: '' },
       { Domanda: domanda, Risposta: `${label} (min)`, Frequenza: Math.min(...valid), Percentuale: '' },
       { Domanda: domanda, Risposta: `${label} (max)`, Frequenza: Math.max(...valid), Percentuale: '' },
     ]
@@ -85,12 +87,13 @@ export default function AmministratoriDashboard() {
   function getTextStatsStruttureCustom(arr: string[], label: string, domanda: string): Array<{Domanda: string, Risposta: string, Frequenza: number, Percentuale: string}> {
     const valid = arr.filter((x: string) => typeof x === 'string' && x.trim() !== '')
     if (valid.length === 0) return []
+    const total = arr.length
     const counts = valid.reduce((acc: Record<string, number>, v: string) => { acc[v] = (acc[v]||0)+1; return acc }, {})
     return Object.entries(counts).map(([val, freq]) => ({
       Domanda: domanda,
       Risposta: `${label}: ${val}`,
       Frequenza: freq,
-      Percentuale: ''
+      Percentuale: `${((freq / total) * 100).toFixed(1)}%`
     }))
   }
 
@@ -316,28 +319,31 @@ export default function AmministratoriDashboard() {
     return stats
   }
 
-  // Utility per statistiche numeriche Operatori
+  // Utility per statistiche numeriche operatori
   function getNumericStatsOperatori(arr: number[], label: string, domanda: string): Array<{Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}> {
     const valid = arr.filter((x: number) => typeof x === 'number' && !isNaN(x))
     if (valid.length === 0) return []
+    const total = arr.length
+    const validCount = valid.length
     return [
+      { Domanda: domanda, Risposta: `${label} (valori validi)`, Frequenza: validCount, Percentuale: `${((validCount / total) * 100).toFixed(1)}%` },
       { Domanda: domanda, Risposta: `${label} (media)`, Frequenza: (valid.reduce((a: number,b: number)=>a+b,0)/valid.length).toFixed(2), Percentuale: '' },
-      { Domanda: domanda, Risposta: `${label} (somma)`, Frequenza: valid.reduce((a: number,b: number)=>a+b,0), Percentuale: '' },
       { Domanda: domanda, Risposta: `${label} (min)`, Frequenza: Math.min(...valid), Percentuale: '' },
       { Domanda: domanda, Risposta: `${label} (max)`, Frequenza: Math.max(...valid), Percentuale: '' },
     ]
   }
 
-  // Utility per testo libero Operatori
+  // Utility per testo libero operatori
   function getTextStatsOperatori(arr: string[], label: string, domanda: string): Array<{Domanda: string, Risposta: string, Frequenza: number, Percentuale: string}> {
     const valid = arr.filter((x: string) => typeof x === 'string' && x.trim() !== '')
     if (valid.length === 0) return []
+    const total = arr.length
     const counts = valid.reduce((acc: Record<string, number>, v: string) => { acc[v] = (acc[v]||0)+1; return acc }, {})
     return Object.entries(counts).map(([val, freq]) => ({
       Domanda: domanda,
       Risposta: `${label}: ${val}`,
       Frequenza: freq,
-      Percentuale: ''
+      Percentuale: `${((freq / total) * 100).toFixed(1)}%`
     }))
   }
 
@@ -490,28 +496,31 @@ export default function AmministratoriDashboard() {
     return stats
   }
 
-  // Utility per statistiche numeriche Giovani
+  // Utility per statistiche numeriche giovani
   function getNumericStatsGiovani(arr: number[], label: string, domanda: string): Array<{Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}> {
     const valid = arr.filter((x: number) => typeof x === 'number' && !isNaN(x))
     if (valid.length === 0) return []
+    const total = arr.length
+    const validCount = valid.length
     return [
+      { Domanda: domanda, Risposta: `${label} (valori validi)`, Frequenza: validCount, Percentuale: `${((validCount / total) * 100).toFixed(1)}%` },
       { Domanda: domanda, Risposta: `${label} (media)`, Frequenza: (valid.reduce((a: number,b: number)=>a+b,0)/valid.length).toFixed(2), Percentuale: '' },
-      { Domanda: domanda, Risposta: `${label} (somma)`, Frequenza: valid.reduce((a: number,b: number)=>a+b,0), Percentuale: '' },
       { Domanda: domanda, Risposta: `${label} (min)`, Frequenza: Math.min(...valid), Percentuale: '' },
       { Domanda: domanda, Risposta: `${label} (max)`, Frequenza: Math.max(...valid), Percentuale: '' },
     ]
   }
 
-  // Utility per testo libero Giovani
+  // Utility per testo libero giovani
   function getTextStatsGiovani(arr: string[], label: string, domanda: string): Array<{Domanda: string, Risposta: string, Frequenza: number, Percentuale: string}> {
     const valid = arr.filter((x: string) => typeof x === 'string' && x.trim() !== '')
     if (valid.length === 0) return []
+    const total = arr.length
     const counts = valid.reduce((acc: Record<string, number>, v: string) => { acc[v] = (acc[v]||0)+1; return acc }, {})
     return Object.entries(counts).map(([val, freq]) => ({
       Domanda: domanda,
       Risposta: `${label}: ${val}`,
       Frequenza: freq,
-      Percentuale: ''
+      Percentuale: `${((freq / total) * 100).toFixed(1)}%`
     }))
   }
 
