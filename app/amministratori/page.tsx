@@ -553,17 +553,91 @@ export default function AmministratoriDashboard() {
     // Ricerca lavoro altro specificare
     stats.push(...getTextStatsGiovani(data.map((x:any)=>x.ricerca_lavoro?.altro_specificare), 'Ricerca Lavoro Altro', 'Ricerca Lavoro Altro'))
 
-    // Curriculum vitae, centro impiego, lavoro autonomo (come testo)
-    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.curriculum_vitae), 'Curriculum Vitae', 'Curriculum Vitae'))
-    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.centro_impiego), 'Centro Impiego', 'Centro Impiego'))
-    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.lavoro_autonomo), 'Lavoro Autonomo', 'Lavoro Autonomo'))
-
     // Aspetti lavoro (numerici)
     if (data[0].aspetti_lavoro) {
       (['stabilita','flessibilita','valorizzazione','retribuzione','fatica','sicurezza','utilita_sociale','vicinanza_casa'] as const).forEach((f: any) => {
         stats.push(...getNumericStatsGiovani(data.map((x:any)=>x.aspetti_lavoro?.[f]), `Aspetti Lavoro ${f}`, `Aspetti Lavoro - ${f}`))
       })
     }
+
+    // Livelli utilità (C8.1-C8.4)
+    if (data[0].livelli_utilita) {
+      const livelliLabels = ['Studiare', 'Formazione', 'Lavorare', 'Ricerca Lavoro']
+      livelliLabels.forEach((label, index) => {
+        const count = data.filter(item => item.livelli_utilita?.[index] !== undefined && item.livelli_utilita?.[index] !== '').length
+        if (count > 0) {
+          stats.push({
+            Domanda: `Livelli Utilità - ${label}`,
+            Risposta: 'Valore presente',
+            Frequenza: count,
+            Percentuale: `${((count / total) * 100).toFixed(1)}%`
+          })
+        }
+      })
+    }
+
+    // Canali ricerca lavoro (C9)
+    if (data[0].ricerca_lavoro) {
+      (['centro_impiego','sportelli','inps_patronati','servizi_sociali','agenzie_interinali','cooperative','struttura','conoscenti','portali_online','social','altro'] as const).forEach((f: any) => {
+        const count = data.filter(item => item.ricerca_lavoro?.[f] === true).length
+        stats.push({
+          Domanda: `Canali Ricerca Lavoro - ${f.replace(/_/g, ' ')}`,
+          Risposta: 'Sì',
+          Frequenza: count,
+          Percentuale: `${((count / total) * 100).toFixed(1)}%`
+        })
+        stats.push({
+          Domanda: `Canali Ricerca Lavoro - ${f.replace(/_/g, ' ')}`,
+          Risposta: 'No',
+          Frequenza: total - count,
+          Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
+        })
+      })
+      stats.push(...getTextStatsGiovani(data.map((x:any)=>x.ricerca_lavoro?.altro_specificare), 'Canali Ricerca Lavoro Altro', 'Canali Ricerca Lavoro Altro'))
+    }
+
+    // Curriculum vitae, centro impiego, lavoro autonomo (C10-C12)
+    const cvCount = data.filter(item => item.curriculum_vitae === '1').length
+    stats.push({
+      Domanda: 'Curriculum Vitae',
+      Risposta: 'Sì',
+      Frequenza: cvCount,
+      Percentuale: `${((cvCount / total) * 100).toFixed(1)}%`
+    })
+    stats.push({
+      Domanda: 'Curriculum Vitae',
+      Risposta: 'No',
+      Frequenza: total - cvCount,
+      Percentuale: `${(((total - cvCount) / total) * 100).toFixed(1)}%`
+    })
+
+    const centroCount = data.filter(item => item.centro_impiego === '1').length
+    stats.push({
+      Domanda: 'Centro Impiego',
+      Risposta: 'Sì',
+      Frequenza: centroCount,
+      Percentuale: `${((centroCount / total) * 100).toFixed(1)}%`
+    })
+    stats.push({
+      Domanda: 'Centro Impiego',
+      Risposta: 'No',
+      Frequenza: total - centroCount,
+      Percentuale: `${(((total - centroCount) / total) * 100).toFixed(1)}%`
+    })
+
+    const autonomoCount = data.filter(item => item.lavoro_autonomo === '1').length
+    stats.push({
+      Domanda: 'Lavoro Autonomo',
+      Risposta: 'Sì',
+      Frequenza: autonomoCount,
+      Percentuale: `${((autonomoCount / total) * 100).toFixed(1)}%`
+    })
+    stats.push({
+      Domanda: 'Lavoro Autonomo',
+      Risposta: 'No',
+      Frequenza: total - autonomoCount,
+      Percentuale: `${(((total - autonomoCount) / total) * 100).toFixed(1)}%`
+    })
 
     // Abitazione precedente
     if (data[0].abitazione_precedente) {
@@ -584,7 +658,7 @@ export default function AmministratoriDashboard() {
       })
     }
 
-    // Figura aiuto
+    // Figura aiuto (D2)
     if (data[0].figura_aiuto) {
       (['padre','madre','fratelli','altri_parenti','amici','tutore','insegnanti','figure_sostegno','volontari','altri'] as const).forEach((f: any) => {
         const count = data.filter(item => item.figura_aiuto?.[f] === true).length
