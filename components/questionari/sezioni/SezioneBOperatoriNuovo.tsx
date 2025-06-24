@@ -1,8 +1,8 @@
+// Forza deploy Vercel
 import React from 'react';
 import type { QuestionarioOperatoriNuovo } from '@/types/questionari';
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 interface Props {
   formData: QuestionarioOperatoriNuovo;
@@ -81,21 +81,6 @@ export default function SezioneBOperatoriNuovo({ formData, setFormData }: Props)
     { key: 'sostegno_sociosanitario' as InterventoKey, label: 'Sostegno socio-sanitario' },
     { key: 'mediazione_interculturale' as InterventoKey, label: 'Mediazione linguistica e interculturale' },
     { key: 'altro' as InterventoKey, label: 'Altro' }
-  ];
-
-  const CLASSE_ETA_OPTIONS = [
-    { value: "1", label: "18-21 anni" },
-    { value: "2", label: "22-24 anni" },
-    { value: "3", label: "25-27 anni" },
-    { value: "4", label: "28-34 anni" }
-  ];
-
-  const VALUTAZIONE_OBIETTIVI_OPTIONS = [
-    { value: "0", label: "Per niente" },
-    { value: "1", label: "Poco" },
-    { value: "2", label: "Abbastanza" },
-    { value: "3", label: "Molto" },
-    { value: "9", label: "Non è mio obiettivo" }
   ];
 
   return (
@@ -280,24 +265,6 @@ export default function SezioneBOperatoriNuovo({ formData, setFormData }: Props)
             )}
           </div>
         </div>
-      </div>
-
-      <div className="space-y-4">
-        <Label>B7. In precedenza, sei stato ospite di altre strutture o preso in carico da altro progetto?</Label>
-        <RadioGroup>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="0" id="prec-0" />
-            <Label htmlFor="prec-0">No, mai</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="1" id="prec-1" />
-            <Label htmlFor="prec-1">Sì, una volta</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="2" id="prec-2" />
-            <Label htmlFor="prec-2">Sì, più di una volta</Label>
-          </div>
-        </RadioGroup>
       </div>
     </div>
   );
