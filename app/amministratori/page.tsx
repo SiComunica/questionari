@@ -629,6 +629,37 @@ export default function AmministratoriDashboard() {
     stats.push(...getTextStatsGiovani(data.map((x:any)=>x.desiderio), 'Desiderio', 'Desiderio'))
     stats.push(...getTextStatsGiovani(data.map((x:any)=>x.nota_aggiuntiva), 'Nota Aggiuntiva', 'Nota Aggiuntiva'))
 
+    // Preoccupazioni futuro (Sezione E1)
+    if (data[0].preoccupazioni_futuro) {
+      (['pregiudizi','mancanza_lavoro','mancanza_aiuto','mancanza_casa','solitudine','salute','perdita_persone'] as const).forEach((f: any) => {
+        const count = data.filter(item => item.preoccupazioni_futuro?.[f] !== undefined && item.preoccupazioni_futuro?.[f] !== '').length
+        if (count > 0) {
+          stats.push({
+            Domanda: `Preoccupazioni Futuro - ${f.replace(/_/g, ' ')}`,
+            Risposta: 'Valore presente',
+            Frequenza: count,
+            Percentuale: `${((count / total) * 100).toFixed(1)}%`
+          })
+        }
+      })
+      stats.push(...getTextStatsGiovani(data.map((x:any)=>x.preoccupazioni_futuro?.altro_specificare), 'Preoccupazioni Futuro Altro', 'Preoccupazioni Futuro Altro'))
+    }
+
+    // Obiettivi realizzabili (Sezione E2)
+    if (data[0].obiettivi_realizzabili) {
+      (['lavoro_piacevole','autonomia','famiglia','trovare_lavoro','salute','casa'] as const).forEach((f: any) => {
+        const count = data.filter(item => item.obiettivi_realizzabili?.[f] !== undefined && item.obiettivi_realizzabili?.[f] !== '').length
+        if (count > 0) {
+          stats.push({
+            Domanda: `Obiettivi Realizzabili - ${f.replace(/_/g, ' ')}`,
+            Risposta: 'Valore presente',
+            Frequenza: count,
+            Percentuale: `${((count / total) * 100).toFixed(1)}%`
+          })
+        }
+      })
+    }
+
     // Aggiungo le statistiche già esistenti (domande chiuse)
     stats.push(...generateGiovaniStats_OLD(data))
 
@@ -876,97 +907,6 @@ export default function AmministratoriDashboard() {
       })
     })
 
-    // Attività precedenti
-    const attivitaPrecedenti = ['studio', 'lavoro_stabile', 'lavoro_saltuario', 'formazione', 'altro', 'nessuna']
-    
-    attivitaPrecedenti.forEach(attivita => {
-      const count = data.filter(item => {
-        if (Array.isArray(item.attivita_precedenti)) {
-          return item.attivita_precedenti.includes(attivita)
-        } else if (typeof item.attivita_precedenti === 'object' && item.attivita_precedenti !== null) {
-          return item.attivita_precedenti[attivita] === true
-        }
-        return false
-      }).length
-      
-      stats.push({
-        Domanda: `Attività Precedenti - ${attivita.replace(/_/g, ' ')}`,
-        Risposta: 'Sì',
-        Frequenza: count,
-        Percentuale: `${((count / total) * 100).toFixed(1)}%`
-      })
-      stats.push({
-        Domanda: `Attività Precedenti - ${attivita.replace(/_/g, ' ')}`,
-        Risposta: 'No',
-        Frequenza: total - count,
-        Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
-      })
-    })
-
-    // Attività attuali
-    const attivitaAttuali = ['studio', 'formazione', 'lavoro', 'ricerca_lavoro', 'nessuna']
-    
-    attivitaAttuali.forEach(attivita => {
-      const count = data.filter(item => {
-        if (Array.isArray(item.attivita_attuali)) {
-          return item.attivita_attuali.includes(attivita)
-        } else if (typeof item.attivita_attuali === 'object' && item.attivita_attuali !== null) {
-          return item.attivita_attuali[attivita] === true
-        }
-        return false
-      }).length
-      
-      stats.push({
-        Domanda: `Attività Attuali - ${attivita.replace(/_/g, ' ')}`,
-        Risposta: 'Sì',
-        Frequenza: count,
-        Percentuale: `${((count / total) * 100).toFixed(1)}%`
-      })
-      stats.push({
-        Domanda: `Attività Attuali - ${attivita.replace(/_/g, ' ')}`,
-        Risposta: 'No',
-        Frequenza: total - count,
-        Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
-      })
-    })
-
-    // Orientamento lavoro
-    const orientamentoLavoro = data.filter(item => item.orientamento_lavoro?.usufruito === true).length
-    stats.push({
-      Domanda: 'Orientamento Lavoro',
-      Risposta: 'Sì',
-      Frequenza: orientamentoLavoro,
-      Percentuale: `${((orientamentoLavoro / total) * 100).toFixed(1)}%`
-    })
-    stats.push({
-      Domanda: 'Orientamento Lavoro',
-      Risposta: 'No',
-      Frequenza: total - orientamentoLavoro,
-      Percentuale: `${(((total - orientamentoLavoro) / total) * 100).toFixed(1)}%`
-    })
-
-    // Ricerca lavoro
-    const ricercaLavoro = ['centro_impiego', 'sportelli', 'inps_patronati', 'servizi_sociali', 'agenzie_interinali', 'cooperative', 'struttura', 'conoscenti', 'portali_online', 'social', 'altro']
-    
-    ricercaLavoro.forEach(metodo => {
-      const count = data.filter(item => {
-        return item.ricerca_lavoro?.[metodo] === true
-      }).length
-      
-      stats.push({
-        Domanda: `Ricerca Lavoro - ${metodo.replace(/_/g, ' ')}`,
-        Risposta: 'Sì',
-        Frequenza: count,
-        Percentuale: `${((count / total) * 100).toFixed(1)}%`
-      })
-      stats.push({
-        Domanda: `Ricerca Lavoro - ${metodo.replace(/_/g, ' ')}`,
-        Risposta: 'No',
-        Frequenza: total - count,
-        Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
-      })
-    })
-
     return stats
   }
 
@@ -995,4 +935,4 @@ export default function AmministratoriDashboard() {
       <QuestionariOperatoriLista />
     </div>
   )
-} 
+}
