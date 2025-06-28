@@ -29,7 +29,7 @@ export default function AmministratoriDashboard() {
       const [struttureData, operatoriData, giovaniData] = await Promise.all([
         supabase.from('strutture').select('*'),
         supabase.from('operatori').select('*'),
-        supabase.from('giovani').select('*')
+        supabase.from('operatorinew').select('*')
       ])
 
       if (struttureData.error) throw struttureData.error
