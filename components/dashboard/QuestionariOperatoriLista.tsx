@@ -153,7 +153,7 @@ export default function QuestionariOperatoriLista() {
   const handleDelete = async (id: string) => {
     try {
       const { error } = await supabase
-        .from('operatorinew')
+        .from('operatori')
         .delete()
         .eq('id', id)
 
@@ -162,7 +162,6 @@ export default function QuestionariOperatoriLista() {
       setQuestionari(prev => prev.filter(q => q.id !== id))
       toast.success('Questionario eliminato con successo')
     } catch (error) {
-      console.error('Errore durante l\'eliminazione:', error)
       toast.error('Errore durante l\'eliminazione')
     }
   }
