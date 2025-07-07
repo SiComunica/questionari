@@ -154,28 +154,15 @@ export default function QuestionariOperatoriLista() {
     try {
       console.log('🔄 Tentativo di eliminazione del questionario:', id)
       
-      // Verifica l'autenticazione dell'utente
-      const { data: { user }, error: authError } = await supabase.auth.getUser()
-      console.log('👤 Utente autenticato:', user?.email)
-      console.log('🔑 Ruolo utente:', user?.user_metadata?.role)
-      
-      if (authError) {
-        console.error('❌ Errore autenticazione:', authError)
-      }
-      
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('operatori')
         .delete()
         .eq('id', id)
-        .select()
 
-      console.log('📡 Risposta Supabase - data:', data)
       console.log('📡 Risposta Supabase - error:', error)
 
       if (error) {
         console.error('❌ Errore Supabase:', error)
-        console.error('❌ Messaggio errore:', error.message)
-        console.error('❌ Codice errore:', error.code)
         throw error
       }
       
