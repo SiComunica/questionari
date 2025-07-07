@@ -152,16 +152,29 @@ export default function QuestionariOperatoriLista() {
 
   const handleDelete = async (id: string) => {
     try {
-      const { error } = await supabase
+      console.log('🔄 Tentativo di eliminazione del questionario:', id)
+      
+      const { data, error } = await supabase
         .from('operatori')
         .delete()
         .eq('id', id)
+        .select()
 
-      if (error) throw error
+      console.log('📡 Risposta Supabase - data:', data)
+      console.log('📡 Risposta Supabase - error:', error)
+
+      if (error) {
+        console.error('❌ Errore Supabase:', error)
+        console.error('❌ Messaggio errore:', error.message)
+        console.error('❌ Codice errore:', error.code)
+        throw error
+      }
       
+      console.log('✅ Questionario eliminato con successo')
       setQuestionari(prev => prev.filter(q => q.id !== id))
       toast.success('Questionario eliminato con successo')
     } catch (error) {
+      console.error('💥 Errore durante l\'eliminazione:', error)
       toast.error('Errore durante l\'eliminazione')
     }
   }
@@ -386,7 +399,10 @@ export default function QuestionariOperatoriLista() {
                     </Button>
                     <Button 
                       variant="destructive"
-                      onClick={() => handleDelete(questionario.id)}
+                      onClick={() => {
+                        console.log('🎯 Click sul cestino rilevato per ID:', questionario.id)
+                        handleDelete(questionario.id)
+                      }}
                     >
                       <Trash2 size={20} />
                     </Button>
