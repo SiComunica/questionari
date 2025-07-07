@@ -155,22 +155,15 @@ export default function QuestionariOperatoriLista() {
     try {
       console.log('🔄 Tentativo di eliminazione del questionario:', id)
       
-      // Prova con client anonimo per bypassare le policies
-      const { createClient } = await import('@supabase/supabase-js')
-      const supabaseAnon = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      )
-      
-      const { error } = await supabaseAnon
+      const { error } = await supabase
         .from('operatori')
         .delete()
         .eq('id', id)
 
-      console.log('📡 Risposta Supabase anonimo - error:', error)
+      console.log('📡 Risposta Supabase - error:', error)
 
       if (error) {
-        console.error('❌ Errore Supabase anonimo:', error)
+        console.error('❌ Errore Supabase:', error)
         throw error
       }
       
