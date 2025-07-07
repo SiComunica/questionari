@@ -93,6 +93,7 @@ export default function QuestionariOperatoriLista() {
         const { data, error } = await supabase
           .from('operatori')
           .select('*')
+          .neq('stato', 'cancellato')
           .order('creato_a', { ascending: false })
 
         if (error) throw error
@@ -156,7 +157,7 @@ export default function QuestionariOperatoriLista() {
       
       const { error } = await supabase
         .from('operatori')
-        .delete()
+        .update({ stato: 'cancellato' })
         .eq('id', id)
 
       console.log('📡 Risposta Supabase - error:', error)
