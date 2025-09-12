@@ -71,13 +71,28 @@ export default function AmministratoriDashboard() {
 
   // Utility per statistiche numeriche
   function getNumericStatsStrutture(arr: number[], label: string, domanda: string): Array<{Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}> {
-    const valid = arr.filter((x: number) => typeof x === 'number' && !isNaN(x))
+    const valid = arr.filter((x: number) => typeof x === 'number' && !isNaN(x) && x !== null && x !== undefined)
     if (valid.length === 0) return []
     const total = arr.length
-    const validCount = valid.length
-    return [
-      { Domanda: domanda, Risposta: `${label}`, Frequenza: validCount, Percentuale: `${((validCount / total) * 100).toFixed(1)}%` },
-    ]
+    
+    // Raggruppa per valore per mostrare la distribuzione
+    const valueCounts = valid.reduce((acc: Record<number, number>, val) => {
+      acc[val] = (acc[val] || 0) + 1
+      return acc
+    }, {})
+    
+    const results: Array<{Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}> = []
+    
+    Object.entries(valueCounts).forEach(([value, count]) => {
+      results.push({
+        Domanda: domanda,
+        Risposta: `${label}: ${value}`,
+        Frequenza: count,
+        Percentuale: `${((count / total) * 100).toFixed(1)}%`
+      })
+    })
+    
+    return results
   }
 
   // Utility per testo libero
@@ -106,9 +121,12 @@ export default function AmministratoriDashboard() {
     stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.missione), 'Missione', 'Missione'))
 
     // Forma giuridica altro
-    const formaGiuridicaAltroStats = getTextStatsStruttureCustom(data.map((x:any)=>x.forma_giuridica_altro), 'Forma Giuridica Altro', 'Forma Giuridica Altro')
-    for (const stat of formaGiuridicaAltroStats) {
-      stats.push(stat)
+    const formaGiuridicaAltro = data.map((x:any)=>x.forma_giuridica_altro).filter(val => val && val.trim() !== '')
+    if (formaGiuridicaAltro.length > 0) {
+      const formaGiuridicaAltroStats = getTextStatsStruttureCustom(formaGiuridicaAltro, 'Forma Giuridica Altro', 'Forma Giuridica Altro')
+      for (const stat of formaGiuridicaAltroStats) {
+        stats.push(stat)
+      }
     }
 
     // Personale retribuito/volontario
@@ -137,8 +155,15 @@ export default function AmministratoriDashboard() {
     }
 
     // Caratteristiche altro
-    stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.caratteristiche_ospiti_altro), 'Caratt. Ospiti Altro', 'Caratteristiche Ospiti Altro'))
-    stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.caratteristiche_non_ospiti_altro), 'Caratt. Non Ospiti Altro', 'Caratteristiche Non Ospiti Altro'))
+    const caratteristicheOspitiAltro = data.map((x:any)=>x.caratteristiche_ospiti_altro).filter(val => val && val.trim() !== '')
+    if (caratteristicheOspitiAltro.length > 0) {
+      stats.push(...getTextStatsStruttureCustom(caratteristicheOspitiAltro, 'Caratt. Ospiti Altro', 'Caratteristiche Ospiti Altro'))
+    }
+    
+    const caratteristicheNonOspitiAltro = data.map((x:any)=>x.caratteristiche_non_ospiti_altro).filter(val => val && val.trim() !== '')
+    if (caratteristicheNonOspitiAltro.length > 0) {
+      stats.push(...getTextStatsStruttureCustom(caratteristicheNonOspitiAltro, 'Caratt. Non Ospiti Altro', 'Caratteristiche Non Ospiti Altro'))
+    }
 
     // Attività inserimento, nuove attività, collaborazioni
     stats.push(...getTextStatsStruttureCustom(data.flatMap((x:any)=>x.attivita_inserimento||[]), 'Attività Inserimento', 'Attività Inserimento'))
@@ -318,13 +343,28 @@ export default function AmministratoriDashboard() {
 
   // Utility per statistiche numeriche operatori
   function getNumericStatsOperatori(arr: number[], label: string, domanda: string): Array<{Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}> {
-    const valid = arr.filter((x: number) => typeof x === 'number' && !isNaN(x))
+    const valid = arr.filter((x: number) => typeof x === 'number' && !isNaN(x) && x !== null && x !== undefined)
     if (valid.length === 0) return []
     const total = arr.length
-    const validCount = valid.length
-    return [
-      { Domanda: domanda, Risposta: `${label}`, Frequenza: validCount, Percentuale: `${((validCount / total) * 100).toFixed(1)}%` },
-    ]
+    
+    // Raggruppa per valore per mostrare la distribuzione
+    const valueCounts = valid.reduce((acc: Record<number, number>, val) => {
+      acc[val] = (acc[val] || 0) + 1
+      return acc
+    }, {})
+    
+    const results: Array<{Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}> = []
+    
+    Object.entries(valueCounts).forEach(([value, count]) => {
+      results.push({
+        Domanda: domanda,
+        Risposta: `${label}: ${value}`,
+        Frequenza: count,
+        Percentuale: `${((count / total) * 100).toFixed(1)}%`
+      })
+    })
+    
+    return results
   }
 
   // Utility per testo libero operatori
@@ -367,20 +407,49 @@ export default function AmministratoriDashboard() {
     })
 
     // Caratteristiche altro specificare
-    stats.push(...getTextStatsOperatori(data.map((x:any)=>x.caratteristiche_persone?.altro_specificare), 'Caratteristiche Altro', 'Caratteristiche Altro'))
+    const caratteristicheAltro = data.map((x:any)=>x.caratteristiche_persone?.altro_specificare).filter(val => val && val.trim() !== '')
+    if (caratteristicheAltro.length > 0) {
+      stats.push(...getTextStatsOperatori(caratteristicheAltro, 'Caratteristiche Altro', 'Caratteristiche Altro'))
+    }
 
     // Tipo intervento altro specificare
-    stats.push(...getTextStatsOperatori(data.map((x:any)=>x.tipo_intervento?.altro_specificare), 'Tipo Intervento Altro', 'Tipo Intervento Altro'))
+    const tipoInterventoAltro = data.map((x:any)=>x.tipo_intervento?.altro_specificare).filter(val => val && val.trim() !== '')
+    if (tipoInterventoAltro.length > 0) {
+      stats.push(...getTextStatsOperatori(tipoInterventoAltro, 'Tipo Intervento Altro', 'Tipo Intervento Altro'))
+    }
 
     // Interventi potenziare altro specificare
-    stats.push(...getTextStatsOperatori(data.map((x:any)=>x.interventi_potenziare?.altro_specificare), 'Interventi Potenziare Altro', 'Interventi Potenziare Altro'))
+    const interventiPotenziareAltro = data.map((x:any)=>x.interventi_potenziare?.altro_specificare).filter(val => val && val.trim() !== '')
+    if (interventiPotenziareAltro.length > 0) {
+      stats.push(...getTextStatsOperatori(interventiPotenziareAltro, 'Interventi Potenziare Altro', 'Interventi Potenziare Altro'))
+    }
 
-    // Difficoltà uscita (numerici)
+    // Difficoltà uscita (numerici da 1 a 10)
     if (data[0].difficolta_uscita) {
       (['problemi_economici','trovare_lavoro','lavori_qualita','trovare_casa','discriminazioni','salute_fisica','problemi_psicologici','difficolta_linguistiche','altro'] as const).forEach((f: any) => {
-        stats.push(...getNumericStatsOperatori(data.map((x:any)=>x.difficolta_uscita?.[f]), `Difficoltà Uscita ${f}`, `Difficoltà Uscita - ${f}`))
+        const values = data.map((x:any)=>x.difficolta_uscita?.[f]).filter(val => val !== undefined && val !== null && val !== '')
+        
+        if (values.length > 0) {
+          // Raggruppa per grado di difficoltà (1-10)
+          const valueCounts = values.reduce((acc: Record<number, number>, val) => {
+            acc[val] = (acc[val] || 0) + 1
+            return acc
+          }, {})
+          
+          Object.entries(valueCounts).forEach(([grado, count]) => {
+            stats.push({
+              Domanda: `Difficoltà Uscita - ${f.replace(/_/g, ' ')}`,
+              Risposta: `Grado ${grado}`,
+              Frequenza: count,
+              Percentuale: `${((count / data.length) * 100).toFixed(1)}%`
+            })
+          })
+        }
       })
-      stats.push(...getTextStatsOperatori(data.map((x:any)=>x.difficolta_uscita?.altro_specificare), 'Difficoltà Uscita Altro', 'Difficoltà Uscita Altro'))
+      const difficoltaAltro = data.map((x:any)=>x.difficolta_uscita?.altro_specificare).filter(val => val && val.trim() !== '')
+      if (difficoltaAltro.length > 0) {
+        stats.push(...getTextStatsOperatori(difficoltaAltro, 'Difficoltà Uscita Altro', 'Difficoltà Uscita Altro'))
+      }
     }
 
     // Aggiungo le statistiche già esistenti (domande chiuse)
@@ -492,16 +561,28 @@ export default function AmministratoriDashboard() {
 
   // Utility per statistiche numeriche giovani
   function getNumericStatsGiovani(arr: number[], label: string, domanda: string): Array<{Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}> {
-    const valid = arr.filter((x: number) => typeof x === 'number' && !isNaN(x))
+    const valid = arr.filter((x: number) => typeof x === 'number' && !isNaN(x) && x !== null && x !== undefined)
     if (valid.length === 0) return []
     const total = arr.length
-    const validCount = valid.length
-    return [
-      { Domanda: domanda, Risposta: `${label} (valori validi)`, Frequenza: validCount, Percentuale: `${((validCount / total) * 100).toFixed(1)}%` },
-      { Domanda: domanda, Risposta: `${label} (media)`, Frequenza: (valid.reduce((a: number,b: number)=>a+b,0)/valid.length).toFixed(2), Percentuale: '' },
-      { Domanda: domanda, Risposta: `${label} (min)`, Frequenza: Math.min(...valid), Percentuale: '' },
-      { Domanda: domanda, Risposta: `${label} (max)`, Frequenza: Math.max(...valid), Percentuale: '' },
-    ]
+    
+    // Raggruppa per valore per mostrare la distribuzione
+    const valueCounts = valid.reduce((acc: Record<number, number>, val) => {
+      acc[val] = (acc[val] || 0) + 1
+      return acc
+    }, {})
+    
+    const results: Array<{Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}> = []
+    
+    Object.entries(valueCounts).forEach(([value, count]) => {
+      results.push({
+        Domanda: domanda,
+        Risposta: `${label}: ${value}`,
+        Frequenza: count,
+        Percentuale: `${((count / total) * 100).toFixed(1)}%`
+      })
+    })
+    
+    return results
   }
 
   // Utility per testo libero giovani
@@ -540,7 +621,10 @@ export default function AmministratoriDashboard() {
     stats.push(...getTextStatsGiovani(data.map((x:any)=>x.padre?.lavoro), 'Padre Lavoro', 'Padre Lavoro'))
 
     // Motivi non studio, corso formazione, lavoro attuale
-    stats.push(...getTextStatsGiovani(data.flatMap((x:any)=>x.motivi_non_studio||[]), 'Motivi Non Studio', 'Motivi Non Studio'))
+    const motiviNonStudio = data.flatMap((x:any)=>x.motivi_non_studio||[])
+    if (motiviNonStudio.length > 0) {
+      stats.push(...getTextStatsGiovani(motiviNonStudio, 'Motivi Non Studio', 'Motivi Non Studio'))
+    }
     stats.push(...getTextStatsGiovani(data.map((x:any)=>x.corso_formazione?.descrizione), 'Corso Formazione Descrizione', 'Corso Formazione Descrizione'))
     stats.push(...getTextStatsGiovani(data.map((x:any)=>x.lavoro_attuale?.descrizione), 'Lavoro Attuale Descrizione', 'Lavoro Attuale Descrizione'))
     stats.push(...getTextStatsGiovani(data.map((x:any)=>x.lavoro_attuale?.tipo_contratto), 'Lavoro Attuale Tipo Contratto', 'Lavoro Attuale Tipo Contratto'))
@@ -548,10 +632,17 @@ export default function AmministratoriDashboard() {
 
     // Orientamento lavoro
     stats.push(...getTextStatsGiovani(data.map((x:any)=>x.orientamento_lavoro?.utilita), 'Orientamento Lavoro Utilità', 'Orientamento Lavoro Utilità'))
-    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.orientamento_lavoro?.dove?.altro_specificare), 'Orientamento Lavoro Dove Altro', 'Orientamento Lavoro Dove Altro'))
+    
+    const orientamentoLavoroDoveAltro = data.map((x:any)=>x.orientamento_lavoro?.dove?.altro_specificare)
+    if (orientamentoLavoroDoveAltro.some(val => val && val.trim() !== '')) {
+      stats.push(...getTextStatsGiovani(orientamentoLavoroDoveAltro, 'Orientamento Lavoro Dove Altro', 'Orientamento Lavoro Dove Altro'))
+    }
 
     // Ricerca lavoro altro specificare
-    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.ricerca_lavoro?.altro_specificare), 'Ricerca Lavoro Altro', 'Ricerca Lavoro Altro'))
+    const ricercaLavoroAltro = data.map((x:any)=>x.ricerca_lavoro?.altro_specificare)
+    if (ricercaLavoroAltro.some(val => val && val.trim() !== '')) {
+      stats.push(...getTextStatsGiovani(ricercaLavoroAltro, 'Ricerca Lavoro Altro', 'Ricerca Lavoro Altro'))
+    }
 
     // Aspetti lavoro (numerici)
     if (data[0].aspetti_lavoro) {
@@ -563,14 +654,26 @@ export default function AmministratoriDashboard() {
     // Livelli utilità (C8.1-C8.4)
     if (data[0].livelli_utilita) {
       const livelliLabels = ['Studiare', 'Formazione', 'Lavorare', 'Ricerca Lavoro']
+      const utilitaLabels = ['Per niente', 'Poco', 'Abbastanza', 'Molto']
+      
       livelliLabels.forEach((label, index) => {
-        const count = data.filter(item => item.livelli_utilita?.[index] !== undefined && item.livelli_utilita?.[index] !== '').length
-        if (count > 0) {
-          stats.push({
-            Domanda: `Livelli Utilità - ${label}`,
-            Risposta: 'Valore presente',
-            Frequenza: count,
-            Percentuale: `${((count / total) * 100).toFixed(1)}%`
+        const values = data.map(item => item.livelli_utilita?.[index]).filter(val => val !== undefined && val !== '' && val !== null)
+        
+        if (values.length > 0) {
+          // Raggruppa per valore di utilità
+          const valueCounts = values.reduce((acc: Record<string, number>, val) => {
+            const utilitaLabel = utilitaLabels[val] || `Valore ${val}`
+            acc[utilitaLabel] = (acc[utilitaLabel] || 0) + 1
+            return acc
+          }, {})
+          
+          Object.entries(valueCounts).forEach(([utilitaLabel, count]) => {
+            stats.push({
+              Domanda: `Livelli Utilità - ${label}`,
+              Risposta: utilitaLabel,
+              Frequenza: count,
+              Percentuale: `${((count / total) * 100).toFixed(1)}%`
+            })
           })
         }
       })
@@ -593,7 +696,10 @@ export default function AmministratoriDashboard() {
           Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
         })
       })
-      stats.push(...getTextStatsGiovani(data.map((x:any)=>x.ricerca_lavoro?.altro_specificare), 'Canali Ricerca Lavoro Altro', 'Canali Ricerca Lavoro Altro'))
+      const canaliRicercaLavoroAltro = data.map((x:any)=>x.ricerca_lavoro?.altro_specificare)
+      if (canaliRicercaLavoroAltro.some(val => val && val.trim() !== '')) {
+        stats.push(...getTextStatsGiovani(canaliRicercaLavoroAltro, 'Canali Ricerca Lavoro Altro', 'Canali Ricerca Lavoro Altro'))
+      }
     }
 
     // Curriculum vitae, centro impiego, lavoro autonomo (C10-C12)
@@ -675,7 +781,10 @@ export default function AmministratoriDashboard() {
           Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
         })
       })
-      stats.push(...getTextStatsGiovani(data.map((x:any)=>x.figura_aiuto?.altri_specificare), 'Figura Aiuto Altri Spec', 'Figura Aiuto Altri Spec'))
+      const figuraAiutoAltriSpec = data.map((x:any)=>x.figura_aiuto?.altri_specificare)
+      if (figuraAiutoAltriSpec.some(val => val && val.trim() !== '')) {
+        stats.push(...getTextStatsGiovani(figuraAiutoAltriSpec, 'Figura Aiuto Altri Spec', 'Figura Aiuto Altri Spec'))
+      }
     }
 
     // Emozioni uscita
@@ -705,30 +814,57 @@ export default function AmministratoriDashboard() {
 
     // Preoccupazioni futuro (Sezione E1)
     if (data[0].preoccupazioni_futuro) {
+      const preoccupazioniLabels = ['Per niente', 'Poco', 'Abbastanza', 'Molto'];
+      
       (['pregiudizi','mancanza_lavoro','mancanza_aiuto','mancanza_casa','solitudine','salute','perdita_persone'] as const).forEach((f: any) => {
-        const count = data.filter(item => item.preoccupazioni_futuro?.[f] !== undefined && item.preoccupazioni_futuro?.[f] !== '').length
-        if (count > 0) {
-          stats.push({
-            Domanda: `Preoccupazioni Futuro - ${f.replace(/_/g, ' ')}`,
-            Risposta: 'Valore presente',
-            Frequenza: count,
-            Percentuale: `${((count / total) * 100).toFixed(1)}%`
+        const values = data.map(item => item.preoccupazioni_futuro?.[f]).filter(val => val !== undefined && val !== '' && val !== null)
+        
+        if (values.length > 0) {
+          // Raggruppa per valore di preoccupazione
+          const valueCounts = values.reduce((acc: Record<string, number>, val) => {
+            const preoccupazioneLabel = preoccupazioniLabels[val] || `Valore ${val}`
+            acc[preoccupazioneLabel] = (acc[preoccupazioneLabel] || 0) + 1
+            return acc
+          }, {})
+          
+          Object.entries(valueCounts).forEach(([preoccupazioneLabel, count]) => {
+            stats.push({
+              Domanda: `Preoccupazioni Futuro - ${f.replace(/_/g, ' ')}`,
+              Risposta: preoccupazioneLabel,
+              Frequenza: count,
+              Percentuale: `${((count / total) * 100).toFixed(1)}%`
+            })
           })
         }
       })
-      stats.push(...getTextStatsGiovani(data.map((x:any)=>x.preoccupazioni_futuro?.altro_specificare), 'Preoccupazioni Futuro Altro', 'Preoccupazioni Futuro Altro'))
+      const preoccupazioniFuturoAltro = data.map((x:any)=>x.preoccupazioni_futuro?.altro_specificare)
+      if (preoccupazioniFuturoAltro.some(val => val && val.trim() !== '')) {
+        stats.push(...getTextStatsGiovani(preoccupazioniFuturoAltro, 'Preoccupazioni Futuro Altro', 'Preoccupazioni Futuro Altro'))
+      }
     }
 
     // Obiettivi realizzabili (Sezione E2)
     if (data[0].obiettivi_realizzabili) {
+      const obiettiviLabels = ['Per niente', 'Poco', 'Abbastanza', 'Molto'];
+      
       (['lavoro_piacevole','autonomia','famiglia','trovare_lavoro','salute','casa'] as const).forEach((f: any) => {
-        const count = data.filter(item => item.obiettivi_realizzabili?.[f] !== undefined && item.obiettivi_realizzabili?.[f] !== '').length
-        if (count > 0) {
-          stats.push({
-            Domanda: `Obiettivi Realizzabili - ${f.replace(/_/g, ' ')}`,
-            Risposta: 'Valore presente',
-            Frequenza: count,
-            Percentuale: `${((count / total) * 100).toFixed(1)}%`
+        const values = data.map(item => item.obiettivi_realizzabili?.[f]).filter(val => val !== undefined && val !== '' && val !== null)
+        
+        if (values.length > 0) {
+          // Raggruppa per valore di obiettivo
+          const valueCounts = values.reduce((acc: Record<string, number>, val) => {
+            const obiettivoLabel = obiettiviLabels[val] || `Valore ${val}`
+            acc[obiettivoLabel] = (acc[obiettivoLabel] || 0) + 1
+            return acc
+          }, {})
+          
+          Object.entries(valueCounts).forEach(([obiettivoLabel, count]) => {
+            stats.push({
+              Domanda: `Obiettivi Realizzabili - ${f.replace(/_/g, ' ')}`,
+              Risposta: obiettivoLabel,
+              Frequenza: count,
+              Percentuale: `${((count / total) * 100).toFixed(1)}%`
+            })
           })
         }
       })
