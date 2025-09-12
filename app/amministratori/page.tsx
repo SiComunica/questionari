@@ -124,8 +124,8 @@ export default function AmministratoriDashboard() {
     const formaGiuridicaAltro = data.map((x:any)=>x.forma_giuridica_altro).filter(val => val && val.trim() !== '')
     if (formaGiuridicaAltro.length > 0) {
       const formaGiuridicaAltroStats = getTextStatsStruttureCustom(formaGiuridicaAltro, 'Forma Giuridica Altro', 'Forma Giuridica Altro')
-      for (const stat of formaGiuridicaAltroStats) {
-        stats.push(stat)
+    for (const stat of formaGiuridicaAltroStats) {
+      stats.push(stat)
       }
     }
 
@@ -668,11 +668,11 @@ export default function AmministratoriDashboard() {
           }, {})
           
           Object.entries(valueCounts).forEach(([utilitaLabel, count]) => {
-            stats.push({
-              Domanda: `Livelli Utilità - ${label}`,
+          stats.push({
+            Domanda: `Livelli Utilità - ${label}`,
               Risposta: utilitaLabel,
-              Frequenza: count,
-              Percentuale: `${((count / total) * 100).toFixed(1)}%`
+            Frequenza: count,
+            Percentuale: `${((count / total) * 100).toFixed(1)}%`
             })
           })
         }
@@ -828,11 +828,11 @@ export default function AmministratoriDashboard() {
           }, {})
           
           Object.entries(valueCounts).forEach(([preoccupazioneLabel, count]) => {
-            stats.push({
-              Domanda: `Preoccupazioni Futuro - ${f.replace(/_/g, ' ')}`,
+          stats.push({
+            Domanda: `Preoccupazioni Futuro - ${f.replace(/_/g, ' ')}`,
               Risposta: preoccupazioneLabel,
-              Frequenza: count,
-              Percentuale: `${((count / total) * 100).toFixed(1)}%`
+            Frequenza: count,
+            Percentuale: `${((count / total) * 100).toFixed(1)}%`
             })
           })
         }
@@ -859,11 +859,11 @@ export default function AmministratoriDashboard() {
           }, {})
           
           Object.entries(valueCounts).forEach(([obiettivoLabel, count]) => {
-            stats.push({
-              Domanda: `Obiettivi Realizzabili - ${f.replace(/_/g, ' ')}`,
+          stats.push({
+            Domanda: `Obiettivi Realizzabili - ${f.replace(/_/g, ' ')}`,
               Risposta: obiettivoLabel,
-              Frequenza: count,
-              Percentuale: `${((count / total) * 100).toFixed(1)}%`
+            Frequenza: count,
+            Percentuale: `${((count / total) * 100).toFixed(1)}%`
             })
           })
         }
