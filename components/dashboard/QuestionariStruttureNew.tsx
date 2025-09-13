@@ -254,26 +254,6 @@ export default function QuestionariStruttureNew() {
         'B3.12': q.figure_professionali?.includes('Amministrativo') ? 1 : 0,
         'B3.13': q.figure_professionali?.includes('Altro') ? 1 : 0,
         'B3.13_SPEC': q.figure_professionali_altro || '',
-        
-        // Campi aggiuntivi dal database reale
-        'CARATTERISTICHE_OSPITI_ADOLESCENTI': Array.isArray(q.caratteristiche_ospiti_adolescenti) ? q.caratteristiche_ospiti_adolescenti.join(', ') : '',
-        'CARATTERISTICHE_OSPITI_GIOVANI': Array.isArray(q.caratteristiche_ospiti_giovani) ? q.caratteristiche_ospiti_giovani.join(', ') : '',
-        'CARATTERISTICHE_OSPITI_ALTRO': q.caratteristiche_ospiti_altro || '',
-        'CARATTERISTICHE_NON_OSPITI_ADOLESCENTI': Array.isArray(q.caratteristiche_non_ospiti_adolescenti) ? q.caratteristiche_non_ospiti_adolescenti.join(', ') : '',
-        'CARATTERISTICHE_NON_OSPITI_GIOVANI': Array.isArray(q.caratteristiche_non_ospiti_giovani) ? q.caratteristiche_non_ospiti_giovani.join(', ') : '',
-        'CARATTERISTICHE_NON_OSPITI_ALTRO': q.caratteristiche_non_ospiti_altro || '',
-        'ATTIVITA_SERVIZI_NEW': Array.isArray(q.attivita_servizi_new) ? q.attivita_servizi_new.join(', ') : '',
-        'ESPERIENZE_INSERIMENTO_LAVORATIVO': q.esperienze_inserimento_lavorativo ? 1 : 0,
-        'ATTIVITA_INSERIMENTO': Array.isArray(q.attivita_inserimento) ? q.attivita_inserimento.map(a => a?.nome || '').join(', ') : '',
-        'NUOVE_ATTIVITA': Array.isArray(q.nuove_attivita) ? q.nuove_attivita.join(', ') : '',
-        'COLLABORAZIONI': Array.isArray(q.collaborazioni) ? q.collaborazioni.map(c => c?.soggetto || '').join(', ') : '',
-        'PUNTI_FORZA_NETWORK': q.punti_forza_network || '',
-        'CRITICA_NETWORK': q.critica_network || '',
-        'FINANZIAMENTI_PUBBLICI': q.finanziamenti?.fondi_pubblici || 0,
-        'FINANZIAMENTI_PRIVATI': q.finanziamenti?.fondi_privati || 0,
-        'FINANZIAMENTI_PUBBLICI_SPEC': q.finanziamenti?.fondi_pubblici_specifica || '',
-        'FINANZIAMENTI_PRIVATI_SPEC': q.finanziamenti?.fondi_privati_specifica || '',
-        'NOME_STRUTTURA': q.nome_struttura || '',
 
         // Persone ospitate e totali
         'C1A.U': q.persone_ospitate?.fino_16?.uomini || 0,
