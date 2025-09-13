@@ -17,12 +17,36 @@ type QuestionarioOperatori = {
   creato_a: string;
   creato_da: string;
   stato: string;
+  fonte: string;
+  
+  // Sezione A - Dati anagrafici e professionali
+  nome?: string;
+  cognome?: string;
+  eta?: string;
+  genere?: string;
+  titolo_studio?: string;
+  anni_esperienza?: string;
+  tipo_contratto?: string;
+  ruolo_attuale?: string;
+  email?: string;
+  telefono?: string;
+  
+  // Sezione B - Struttura e ruolo
   id_struttura: string;
   tipo_struttura: string;
   professione: {
     tipo: string;
     altro_specificare: string;
   };
+  professione_altro?: string;
+  mansioni_principali?: string[];
+  competenze_specifiche?: string[];
+  formazione_specialistica?: string;
+  certificazioni?: string[];
+  lingue_conosciute?: string[];
+  
+  // Sezione C - Esperienza con giovani
+  esperienza_giovani?: string;
   persone_seguite: {
     uomini: number;
     donne: number;
@@ -52,6 +76,17 @@ type QuestionarioOperatori = {
     altro: boolean;
     altro_specificare: string;
   };
+  caratteristiche_altro?: string;
+  
+  // Sezione D - Approccio e metodologia
+  approccio_educativo?: string;
+  metodologie_utilizzate?: string[];
+  strumenti_lavoro?: string[];
+  modalita_coinvolgimento?: string;
+  sfide_principali?: string[];
+  strategie_motivazionali?: string;
+  gestione_conflitti?: string;
+  valutazione_impatto?: string;
   tipo_intervento: {
     sostegno_formazione: boolean;
     sostegno_lavoro: boolean;
@@ -65,6 +100,24 @@ type QuestionarioOperatori = {
     altro: boolean;
     altro_specificare: string;
   };
+  intervento_altro?: string;
+  strategie_supporto?: string[];
+  strategie_altro?: string;
+  metodi_valutazione?: string[];
+  metodi_altro?: string;
+  risorse_utilizzate?: string[];
+  risorse_altro?: string;
+  frequenza_incontri?: string;
+  durata_media_incontri?: string;
+  setting_lavoro?: string[];
+  setting_altro?: string;
+  casi_successo?: string;
+  lezioni_apprese?: string;
+  buone_pratiche?: string[];
+  feedback_giovani?: string;
+  
+  // Sezione E - Difficoltà riscontrate
+  difficolta_incontrate?: string[];
   difficolta_uscita: {
     problemi_economici: number;
     trovare_lavoro: number;
@@ -77,7 +130,33 @@ type QuestionarioOperatori = {
     altro: number;
     altro_specificare: string;
   };
-  fonte: string;
+  difficolta_altro_spec?: string;
+  
+  // Sezione F - Sviluppo professionale
+  punti_forza?: string[];
+  aree_miglioramento?: string[];
+  obiettivi_professionali?: string;
+  formazione_desiderata?: string[];
+  suggerimenti?: string;
+  
+  // Interventi da potenziare (se disponibili)
+  interventi_potenziare?: {
+    sostegno_formazione: boolean;
+    sostegno_lavoro: boolean;
+    sostegno_abitativo: boolean;
+    sostegno_famiglia: boolean;
+    sostegno_coetanei: boolean;
+    sostegno_competenze: boolean;
+    sostegno_legale: boolean;
+    sostegno_sociosanitario: boolean;
+    mediazione_interculturale: boolean;
+    nessuno: boolean;
+    altro: boolean;
+    altro_specificare: string;
+  };
+  
+  // Networking
+  networking_interesse?: string[];
 }
 
 export default function QuestionariOperatoriLista() {
@@ -251,17 +330,37 @@ export default function QuestionariOperatoriLista() {
         };
 
         return {
+          // Metadati
           COD_OPE: q.creato_da || 'FORNITO DA INAPP',
           ID_QUEST: q.id || 'FORNITO DAL SISTEMA',
           TIPO_STRUTTURA: q.tipo_struttura || '',
+          
+          // Sezione A - Dati anagrafici (se disponibili)
+          NOME: q.nome || '',
+          COGNOME: q.cognome || '',
+          EMAIL: q.email || '',
+          TELEFONO: q.telefono || '',
+          ETA: q.eta || '',
+          GENERE: q.genere || '',
+          TITOLO_STUDIO: q.titolo_studio || '',
+          ANNI_ESPERIENZA: q.anni_esperienza || '',
+          TIPO_CONTRATTO: q.tipo_contratto || '',
+          RUOLO_ATTUALE: q.ruolo_attuale || '',
+          
+          // Sezione B - Struttura e ruolo
+          ID_STRUTTURA: q.id_struttura || '',
           PROF: professioneMap[professione.tipo] || 13,
           PROF_SPEC: professione.tipo === 'Altro' ? professione.altro_specificare : '',
+          
+          // Persone seguite
           B1U: persone_seguite.uomini || 0,
           B1D: persone_seguite.donne || 0,
           B1T: persone_seguite.totale || 0,
           B2U: persone_maggiorenni.uomini || 0,
           B2D: persone_maggiorenni.donne || 0,
           B2T: persone_maggiorenni.totale || 0,
+          
+          // Caratteristiche persone seguite
           B3_1: caratteristiche_persone.stranieri_migranti ? 1 : 0,
           B3_2: caratteristiche_persone.vittime_tratta ? 1 : 0,
           B3_3: caratteristiche_persone.vittime_violenza ? 1 : 0,
@@ -279,6 +378,8 @@ export default function QuestionariOperatoriLista() {
           B3_15: caratteristiche_persone.problemi_orientamento ? 1 : 0,
           B3_16: caratteristiche_persone.altro ? 1 : 0,
           B3_16SPEC: caratteristiche_persone.altro_specificare || '',
+          
+          // Tipo interventi
           B4_1: tipo_intervento.sostegno_formazione ? 1 : 0,
           B4_2: tipo_intervento.sostegno_lavoro ? 1 : 0,
           B4_3: tipo_intervento.sostegno_abitativo ? 1 : 0,
@@ -290,6 +391,22 @@ export default function QuestionariOperatoriLista() {
           B4_9: tipo_intervento.mediazione_interculturale ? 1 : 0,
           B4_10: tipo_intervento.altro ? 1 : 0,
           B4_10SPEC: tipo_intervento.altro_specificare || '',
+          
+          // Interventi da potenziare (se disponibili)
+          B5_1: q.interventi_potenziare?.sostegno_formazione ? 1 : 0,
+          B5_2: q.interventi_potenziare?.sostegno_lavoro ? 1 : 0,
+          B5_3: q.interventi_potenziare?.sostegno_abitativo ? 1 : 0,
+          B5_4: q.interventi_potenziare?.sostegno_famiglia ? 1 : 0,
+          B5_5: q.interventi_potenziare?.sostegno_coetanei ? 1 : 0,
+          B5_6: q.interventi_potenziare?.sostegno_competenze ? 1 : 0,
+          B5_7: q.interventi_potenziare?.sostegno_legale ? 1 : 0,
+          B5_8: q.interventi_potenziare?.sostegno_sociosanitario ? 1 : 0,
+          B5_9: q.interventi_potenziare?.mediazione_interculturale ? 1 : 0,
+          B5_10: q.interventi_potenziare?.nessuno ? 1 : 0,
+          B5_11: q.interventi_potenziare?.altro ? 1 : 0,
+          B5_11SPEC: q.interventi_potenziare?.altro_specificare || '',
+          
+          // Difficoltà uscita (valori numerici 1-10)
           C1: difficolta_uscita.problemi_economici || 0,
           C2: difficolta_uscita.trovare_lavoro || 0,
           C3: difficolta_uscita.lavori_qualita || 0,
@@ -299,7 +416,26 @@ export default function QuestionariOperatoriLista() {
           C7: difficolta_uscita.problemi_psicologici || 0,
           C8: difficolta_uscita.difficolta_linguistiche || 0,
           C9: difficolta_uscita.altro || 0,
-          C9SPEC: difficolta_uscita.altro_specificare || ''
+          C9SPEC: difficolta_uscita.altro_specificare || '',
+          
+          // Altri campi se disponibili
+          APPROCCIO_EDUCATIVO: q.approccio_educativo || '',
+          METODOLOGIE_UTILIZZATE: Array.isArray(q.metodologie_utilizzate) ? q.metodologie_utilizzate.join(', ') : '',
+          STRUMENTI_LAVORO: Array.isArray(q.strumenti_lavoro) ? q.strumenti_lavoro.join(', ') : '',
+          MODALITA_COINVOLGIMENTO: q.modalita_coinvolgimento || '',
+          SFIDE_PRINCIPALI: Array.isArray(q.sfide_principali) ? q.sfide_principali.join(', ') : '',
+          STRATEGIE_MOTIVAZIONALI: q.strategie_motivazionali || '',
+          GESTIONE_CONFLITTI: q.gestione_conflitti || '',
+          VALUTAZIONE_IMPATTO: q.valutazione_impatto || '',
+          FREQUENZA_INCONTRI: q.frequenza_incontri || '',
+          DURATA_MEDIA_INCONTRI: q.durata_media_incontri || '',
+          SETTING_LAVORO: Array.isArray(q.setting_lavoro) ? q.setting_lavoro.join(', ') : '',
+          CASI_SUCCESSO: q.casi_successo || '',
+          LEZIONI_APPRESE: q.lezioni_apprese || '',
+          BUONE_PRATICHE: Array.isArray(q.buone_pratiche) ? q.buone_pratiche.join(', ') : '',
+          FEEDBACK_GIOVANI: q.feedback_giovani || '',
+          DIFFICOLTA_INCONTRATE: Array.isArray(q.difficolta_incontrate) ? q.difficolta_incontrate.join(', ') : '',
+          NETWORKING_INTERESSE: Array.isArray(q.networking_interesse) ? q.networking_interesse.join(', ') : ''
         };
       });
 
