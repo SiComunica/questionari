@@ -49,21 +49,23 @@ type QuestionarioGiovani = {
   cittadinanza: number;
   permesso_soggiorno: number;
   tempo_in_struttura: number;
-  ospite_precedente: number;
-  familiari: {
-    padre: boolean;
-    madre: boolean;
+  precedenti_strutture: number;
+  madre: {
+    titolo_studio: number;
+    situazione: number;
+  };
+  padre: {
+    titolo_studio: number;
+    situazione: number;
+  };
+  famiglia_origine: {
     fratelli: boolean;
     nonni: boolean;
     altri_parenti: boolean;
     non_parenti: boolean;
   };
-  titolo_studio_madre: number;
-  situazione_madre: number;
-  titolo_studio_padre: number;
-  situazione_padre: number;
   titolo_studio: number;
-  prima_entrata: {
+  attivita_precedenti: {
     studiavo: boolean;
     lavoravo_stabile: boolean;
     lavoravo_saltuario: boolean;
@@ -73,7 +75,7 @@ type QuestionarioGiovani = {
     altro_spec: string;
   };
   orientamento_lavoro: boolean;
-  dove_orientamento: {
+  orientamento_luoghi: {
     scuola: boolean;
     enti_formazione: boolean;
     servizi_impiego: boolean;
@@ -82,37 +84,17 @@ type QuestionarioGiovani = {
     altro_spec: string;
   };
   utilita_servizio: number;
-  attualmente: {
+  attivita_attuali: {
     studio: boolean;
     formazione: boolean;
     lavoro: boolean;
     ricerca_lavoro: boolean;
     nessuna: boolean;
   };
-  motivo_non_studio: number;
-  corso_frequentato: string;
+  motivi_non_studio: number;
+  corso_formazione: string;
   lavoro_attuale: string;
-  utilita: {
-    studiare: number;
-    formazione: number;
-    lavorare: number;
-    cercare_lavoro: number;
-  };
-  utilita_studiare?: number;
-  utilita_formazione?: number;
-  utilita_lavorare?: number;
-  utilita_cercare_lavoro?: number;
-  livelli_utilita?: number[];
-  aspetti_lavoro?: {
-    stabilita: number;
-    flessibilita: number;
-    valorizzazione: number;
-    retribuzione: number;
-    fatica: number;
-    sicurezza: number;
-    utilita_sociale: number;
-    vicinanza_casa: number;
-  };
+  livelli_utilita: number[];
   ricerca_lavoro: {
     centro_impiego: boolean;
     sportelli: boolean;
@@ -127,10 +109,10 @@ type QuestionarioGiovani = {
     altro: boolean;
     altro_spec: string;
   };
-  curriculum: boolean;
+  curriculum_vitae: boolean;
   centro_impiego: boolean;
   lavoro_autonomo: boolean;
-  importanza: {
+  condizioni_lavoro: {
     stabilita: number;
     flessibilita: number;
     valorizzazione: number;
@@ -138,7 +120,17 @@ type QuestionarioGiovani = {
     fatica: number;
     sicurezza: number;
     utilita_sociale: number;
-    vicinanza: number;
+    vicinanza_casa: number;
+  };
+  aspetti_lavoro: {
+    stabilita: number;
+    flessibilita: number;
+    valorizzazione: number;
+    retribuzione: number;
+    fatica: number;
+    sicurezza: number;
+    utilita_sociale: number;
+    vicinanza_casa: number;
   };
   abitazione_precedente: {
     solo: boolean;
@@ -152,7 +144,7 @@ type QuestionarioGiovani = {
     altri_parenti: boolean;
     amici: boolean;
   };
-  supporto: {
+  figura_aiuto: {
     padre: boolean;
     madre: boolean;
     fratelli: boolean;
@@ -165,7 +157,7 @@ type QuestionarioGiovani = {
     altre_persone: boolean;
     altre_persone_spec: string;
   };
-  preoccupazioni: {
+  preoccupazioni_futuro: {
     pregiudizi: number;
     mancanza_lavoro: number;
     mancanza_aiuto: number;
@@ -176,7 +168,7 @@ type QuestionarioGiovani = {
     altro: number;
     altro_spec: string;
   };
-  realizzabile: {
+  obiettivi_realizzabili: {
     lavoro_piacevole: number;
     autonomia: number;
     famiglia: number;
@@ -185,10 +177,10 @@ type QuestionarioGiovani = {
     casa: number;
   };
   aiuto_futuro: string;
-  pronto: boolean;
-  non_pronto_perche: string;
-  pronto_perche: string;
-  emozioni: {
+  pronto_uscita: boolean;
+  pronto_uscita_perche_no: string;
+  pronto_uscita_perche_si: string;
+  emozioni_uscita: {
     felicita: boolean;
     tristezza: boolean;
     curiosita: boolean;
@@ -201,7 +193,10 @@ type QuestionarioGiovani = {
     determinazione: boolean;
   };
   desiderio: string;
-  aggiungere: string;
+  nota_aggiuntiva: string;
+  id_struttura: string;
+  tipo_struttura: string;
+  operatori: string;
 }
 
 export default function QuestionariGiovaniOperatori() {
@@ -242,7 +237,7 @@ export default function QuestionariGiovaniOperatori() {
       // Debug: controlliamo la struttura dei dati
       console.log('Dati giovani per export:', dataToExport[0]);
       console.log('Struttura fattori_vulnerabilita:', dataToExport[0]?.fattori_vulnerabilita);
-      console.log('Struttura utilita:', dataToExport[0]?.utilita);
+      console.log('Struttura livelli_utilita:', dataToExport[0]?.livelli_utilita);
       console.log('Tutti i campi disponibili:', Object.keys(dataToExport[0] || {}));
       console.log('Campi che iniziano con utilita:', Object.keys(dataToExport[0] || {}).filter(k => k.includes('utilita')));
       
@@ -277,40 +272,40 @@ export default function QuestionariGiovaniOperatori() {
         'B4': q.cittadinanza || 0,
         'B5': q.permesso_soggiorno || 0,
         'B6': q.tempo_in_struttura || 0,
-        'B7': q.ospite_precedente || 0,
-        'B8.1': q.familiari?.padre ? 1 : 0,
-        'B8.2': q.familiari?.madre ? 1 : 0,
-        'B8.3': q.familiari?.fratelli ? 1 : 0,
-        'B8.4': q.familiari?.nonni ? 1 : 0,
-        'B8.5': q.familiari?.altri_parenti ? 1 : 0,
-        'B8.6': q.familiari?.non_parenti ? 1 : 0,
-        'B9': q.titolo_studio_madre || 0,
-        'B10': q.situazione_madre || 0,
-        'B11': q.titolo_studio_padre || 0,
-        'B12': q.situazione_padre || 0,
+        'B7': q.precedenti_strutture || 0,
+        'B8.1': q.padre ? 1 : 0,
+        'B8.2': q.madre ? 1 : 0,
+        'B8.3': q.famiglia_origine?.fratelli ? 1 : 0,
+        'B8.4': q.famiglia_origine?.nonni ? 1 : 0,
+        'B8.5': q.famiglia_origine?.altri_parenti ? 1 : 0,
+        'B8.6': q.famiglia_origine?.non_parenti ? 1 : 0,
+        'B9': q.madre?.titolo_studio || 0,
+        'B10': q.madre?.situazione || 0,
+        'B11': q.padre?.titolo_studio || 0,
+        'B12': q.padre?.situazione || 0,
         'C1': q.titolo_studio || 0,
-        'C2.1': q.prima_entrata?.studiavo ? 1 : 0,
-        'C2.2': q.prima_entrata?.lavoravo_stabile ? 1 : 0,
-        'C2.3': q.prima_entrata?.lavoravo_saltuario ? 1 : 0,
-        'C2.4': q.prima_entrata?.corso_formazione ? 1 : 0,
-        'C2.5': q.prima_entrata?.altro ? 1 : 0,
-        'C2.6': q.prima_entrata?.nessuna ? 1 : 0,
-        'C2.5SPEC': q.prima_entrata?.altro_spec || '',
+        'C2.1': q.attivita_precedenti?.studiavo ? 1 : 0,
+        'C2.2': q.attivita_precedenti?.lavoravo_stabile ? 1 : 0,
+        'C2.3': q.attivita_precedenti?.lavoravo_saltuario ? 1 : 0,
+        'C2.4': q.attivita_precedenti?.corso_formazione ? 1 : 0,
+        'C2.5': q.attivita_precedenti?.altro ? 1 : 0,
+        'C2.6': q.attivita_precedenti?.nessuna ? 1 : 0,
+        'C2.5SPEC': q.attivita_precedenti?.altro_spec || '',
         'C3': q.orientamento_lavoro ? 1 : 0,
-        'C4.1': q.dove_orientamento?.scuola ? 1 : 0,
-        'C4.2': q.dove_orientamento?.enti_formazione ? 1 : 0,
-        'C4.3': q.dove_orientamento?.servizi_impiego ? 1 : 0,
-        'C4.4': q.dove_orientamento?.struttura ? 1 : 0,
-        'C4.5': q.dove_orientamento?.altro ? 1 : 0,
-        'C4.5SPEC': q.dove_orientamento?.altro_spec || '',
+        'C4.1': q.orientamento_luoghi?.scuola ? 1 : 0,
+        'C4.2': q.orientamento_luoghi?.enti_formazione ? 1 : 0,
+        'C4.3': q.orientamento_luoghi?.servizi_impiego ? 1 : 0,
+        'C4.4': q.orientamento_luoghi?.struttura ? 1 : 0,
+        'C4.5': q.orientamento_luoghi?.altro ? 1 : 0,
+        'C4.5SPEC': q.orientamento_luoghi?.altro_spec || '',
         'C4_BIS': q.utilita_servizio || 0,
-        'C5.1': q.attualmente?.studio ? 1 : 0,
-        'C5.2': q.attualmente?.formazione ? 1 : 0,
-        'C5.3': q.attualmente?.lavoro ? 1 : 0,
-        'C5.4': q.attualmente?.ricerca_lavoro ? 1 : 0,
-        'C5.5': q.attualmente?.nessuna ? 1 : 0,
-        'C6': q.motivo_non_studio || 0,
-        'C7': q.corso_frequentato || '',
+        'C5.1': q.attivita_attuali?.studio ? 1 : 0,
+        'C5.2': q.attivita_attuali?.formazione ? 1 : 0,
+        'C5.3': q.attivita_attuali?.lavoro ? 1 : 0,
+        'C5.4': q.attivita_attuali?.ricerca_lavoro ? 1 : 0,
+        'C5.5': q.attivita_attuali?.nessuna ? 1 : 0,
+        'C6': q.motivi_non_studio || 0,
+        'C7': q.corso_formazione || '',
         'C8': q.lavoro_attuale || '',
         'C8.1': q.livelli_utilita?.[0] || 0,
         'C8.2': q.livelli_utilita?.[1] || 0,
@@ -328,17 +323,17 @@ export default function QuestionariGiovaniOperatori() {
         'C9.10': q.ricerca_lavoro?.social ? 1 : 0,
         'C9.11': q.ricerca_lavoro?.altro ? 1 : 0,
         'C9.11SPEC': q.ricerca_lavoro?.altro_spec || '',
-        'C10': q.curriculum ? 1 : 0,
+        'C10': q.curriculum_vitae ? 1 : 0,
         'C11': q.centro_impiego ? 1 : 0,
         'C12': q.lavoro_autonomo ? 1 : 0,
-        'C13.1': q.importanza?.stabilita || 0,
-        'C13.2': q.importanza?.flessibilita || 0,
-        'C13.3': q.importanza?.valorizzazione || 0,
-        'C13.4': q.importanza?.retribuzione || 0,
-        'C13.5': q.importanza?.fatica || 0,
-        'C13.6': q.importanza?.sicurezza || 0,
-        'C13.7': q.importanza?.utilita_sociale || 0,
-        'C13.8': q.importanza?.vicinanza || 0,
+        'C13.1': q.condizioni_lavoro?.stabilita || 0,
+        'C13.2': q.condizioni_lavoro?.flessibilita || 0,
+        'C13.3': q.condizioni_lavoro?.valorizzazione || 0,
+        'C13.4': q.condizioni_lavoro?.retribuzione || 0,
+        'C13.5': q.condizioni_lavoro?.fatica || 0,
+        'C13.6': q.condizioni_lavoro?.sicurezza || 0,
+        'C13.7': q.condizioni_lavoro?.utilita_sociale || 0,
+        'C13.8': q.condizioni_lavoro?.vicinanza_casa || 0,
         // Aspetti lavoro (se disponibili)
         'C13.1_ASP': q.aspetti_lavoro?.stabilita || 0,
         'C13.2_ASP': q.aspetti_lavoro?.flessibilita || 0,
@@ -358,48 +353,48 @@ export default function QuestionariGiovaniOperatori() {
         'D1.8': q.abitazione_precedente?.nonni ? 1 : 0,
         'D1.9': q.abitazione_precedente?.altri_parenti ? 1 : 0,
         'D1.10': q.abitazione_precedente?.amici ? 1 : 0,
-        'D2.1': q.supporto?.padre ? 1 : 0,
-        'D2.2': q.supporto?.madre ? 1 : 0,
-        'D2.3': q.supporto?.fratelli ? 1 : 0,
-        'D2.4': q.supporto?.altri_parenti ? 1 : 0,
-        'D2.5': q.supporto?.amici ? 1 : 0,
-        'D2.6': q.supporto?.tutore ? 1 : 0,
-        'D2.7': q.supporto?.insegnanti ? 1 : 0,
-        'D2.8': q.supporto?.figure_sostegno ? 1 : 0,
-        'D2.9': q.supporto?.volontari ? 1 : 0,
-        'D2.10': q.supporto?.altre_persone ? 1 : 0,
-        'D2.10SPEC': q.supporto?.altre_persone_spec || '',
-        'E1.1': q.preoccupazioni?.pregiudizi || 0,
-        'E1.2': q.preoccupazioni?.mancanza_lavoro || 0,
-        'E1.3': q.preoccupazioni?.mancanza_aiuto || 0,
-        'E1.4': q.preoccupazioni?.mancanza_casa || 0,
-        'E1.5': q.preoccupazioni?.solitudine || 0,
-        'E1.6': q.preoccupazioni?.salute || 0,
-        'E1.7': q.preoccupazioni?.perdita_persone || 0,
-        'E1.8': q.preoccupazioni?.altro || 0,
-        'E1.8SPEC': q.preoccupazioni?.altro_spec || '',
-        'E2.1': q.realizzabile?.lavoro_piacevole || 0,
-        'E2.2': q.realizzabile?.autonomia || 0,
-        'E2.3': q.realizzabile?.famiglia || 0,
-        'E2.4': q.realizzabile?.trovare_lavoro || 0,
-        'E2.5': q.realizzabile?.salute || 0,
-        'E2.6': q.realizzabile?.casa || 0,
+        'D2.1': q.figura_aiuto?.padre ? 1 : 0,
+        'D2.2': q.figura_aiuto?.madre ? 1 : 0,
+        'D2.3': q.figura_aiuto?.fratelli ? 1 : 0,
+        'D2.4': q.figura_aiuto?.altri_parenti ? 1 : 0,
+        'D2.5': q.figura_aiuto?.amici ? 1 : 0,
+        'D2.6': q.figura_aiuto?.tutore ? 1 : 0,
+        'D2.7': q.figura_aiuto?.insegnanti ? 1 : 0,
+        'D2.8': q.figura_aiuto?.figure_sostegno ? 1 : 0,
+        'D2.9': q.figura_aiuto?.volontari ? 1 : 0,
+        'D2.10': q.figura_aiuto?.altre_persone ? 1 : 0,
+        'D2.10SPEC': q.figura_aiuto?.altre_persone_spec || '',
+        'E1.1': q.preoccupazioni_futuro?.pregiudizi || 0,
+        'E1.2': q.preoccupazioni_futuro?.mancanza_lavoro || 0,
+        'E1.3': q.preoccupazioni_futuro?.mancanza_aiuto || 0,
+        'E1.4': q.preoccupazioni_futuro?.mancanza_casa || 0,
+        'E1.5': q.preoccupazioni_futuro?.solitudine || 0,
+        'E1.6': q.preoccupazioni_futuro?.salute || 0,
+        'E1.7': q.preoccupazioni_futuro?.perdita_persone || 0,
+        'E1.8': q.preoccupazioni_futuro?.altro || 0,
+        'E1.8SPEC': q.preoccupazioni_futuro?.altro_spec || '',
+        'E2.1': q.obiettivi_realizzabili?.lavoro_piacevole || 0,
+        'E2.2': q.obiettivi_realizzabili?.autonomia || 0,
+        'E2.3': q.obiettivi_realizzabili?.famiglia || 0,
+        'E2.4': q.obiettivi_realizzabili?.trovare_lavoro || 0,
+        'E2.5': q.obiettivi_realizzabili?.salute || 0,
+        'E2.6': q.obiettivi_realizzabili?.casa || 0,
         'E3': q.aiuto_futuro || '',
-        'E4': q.pronto ? 1 : 0,
-        'E4.1': q.non_pronto_perche || '',
-        'E4.2': q.pronto_perche || '',
-        'E5.1': q.emozioni?.felicita ? 1 : 0,
-        'E5.2': q.emozioni?.tristezza ? 1 : 0,
-        'E5.3': q.emozioni?.curiosita ? 1 : 0,
-        'E5.4': q.emozioni?.preoccupazione ? 1 : 0,
-        'E5.5': q.emozioni?.paura ? 1 : 0,
-        'E5.6': q.emozioni?.liberazione ? 1 : 0,
-        'E5.7': q.emozioni?.solitudine ? 1 : 0,
-        'E5.8': q.emozioni?.rabbia ? 1 : 0,
-        'E5.9': q.emozioni?.speranza ? 1 : 0,
-        'E5.10': q.emozioni?.determinazione ? 1 : 0,
+        'E4': q.pronto_uscita ? 1 : 0,
+        'E4.1': q.pronto_uscita_perche_no || '',
+        'E4.2': q.pronto_uscita_perche_si || '',
+        'E5.1': q.emozioni_uscita?.felicita ? 1 : 0,
+        'E5.2': q.emozioni_uscita?.tristezza ? 1 : 0,
+        'E5.3': q.emozioni_uscita?.curiosita ? 1 : 0,
+        'E5.4': q.emozioni_uscita?.preoccupazione ? 1 : 0,
+        'E5.5': q.emozioni_uscita?.paura ? 1 : 0,
+        'E5.6': q.emozioni_uscita?.liberazione ? 1 : 0,
+        'E5.7': q.emozioni_uscita?.solitudine ? 1 : 0,
+        'E5.8': q.emozioni_uscita?.rabbia ? 1 : 0,
+        'E5.9': q.emozioni_uscita?.speranza ? 1 : 0,
+        'E5.10': q.emozioni_uscita?.determinazione ? 1 : 0,
         'E6': q.desiderio || '',
-        'E7': q.aggiungere || ''
+        'E7': q.nota_aggiuntiva || ''
       }));
 
       const worksheet = XLSX.utils.json_to_sheet(mappedData);
