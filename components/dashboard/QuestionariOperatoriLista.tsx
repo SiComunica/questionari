@@ -269,25 +269,9 @@ export default function QuestionariOperatoriLista() {
 
     try {
       const dataToExport = questionari.map(q => {
-        // Mappiamo la professione secondo i codici del tracciato record
-        const professioneMap: { [key: string]: number } = {
-          'Psicologo': 1,
-          'Assistente sociale': 2,
-          'Educatore': 3,
-          'Mediatore': 4,
-          'Medico': 5,
-          'Personale infermieristico/operatore sanitario': 6,
-          'Insegnante/formatore': 7,
-          'Cappellano/operatore religioso e spirituale': 8,
-          'Tutor': 9,
-          'Operatore legale': 10,
-          'Operatore multifunzionale': 11,
-          'Amministrativo': 12,
-          'Altro': 13
-        };
-
-        // Controlli di sicurezza per i campi undefined
-        const professione = q.professione || { tipo: 'Altro', altro_specificare: '' };
+        // La professione è già un numero nel database
+        const professioneTipo = q.professione?.tipo || '13';
+        const professioneSpec = q.professione?.altro_specificare || '';
         const persone_seguite = q.persone_seguite || { uomini: 0, donne: 0, totale: 0 };
         const persone_maggiorenni = q.persone_maggiorenni || { uomini: 0, donne: 0, totale: 0 };
         const caratteristiche_persone = q.caratteristiche_persone || {
@@ -355,8 +339,8 @@ export default function QuestionariOperatoriLista() {
           
           // Sezione B - Struttura e ruolo
           ID_STRUTTURA: q.id_struttura || '',
-          PROF: professioneMap[professione.tipo] || 13,
-          PROF_SPEC: professione.tipo === 'Altro' ? professione.altro_specificare : '',
+          PROF: parseInt(professioneTipo) || 13,
+          PROF_SPEC: professioneSpec,
           
           // Persone seguite
           B1U: persone_seguite.uomini || 0,

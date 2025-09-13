@@ -24,23 +24,23 @@ type QuestionarioGiovani = {
   collocazione_attuale: number;
   collocazione_attuale_spec: string;
   fattori_vulnerabilita: {
-    stranieri: boolean;
-    vittime_tratta: boolean;
-    vittime_violenza: boolean;
-    allontanati_famiglia: boolean;
-    detenuti: boolean;
-    ex_detenuti: boolean;
-    misura_alternativa: boolean;
-    senza_dimora: boolean;
-    rom_sinti: boolean;
-    disabilita_fisica: boolean;
-    disabilita_cognitiva: boolean;
-    disturbi_psichiatrici: boolean;
-    dipendenze: boolean;
-    genitori_precoci: boolean;
-    orientamento_sessuale: boolean;
-    altro: boolean;
-    altro_spec: string;
+    fv1_stranieri: boolean;
+    fv2_tratta: boolean;
+    fv3_violenza: boolean;
+    fv4_allontanati: boolean;
+    fv5_detenuti: boolean;
+    fv6_ex_detenuti: boolean;
+    fv7_misura_alternativa: boolean;
+    fv8_indigenti: boolean;
+    fv9_rom_sinti: boolean;
+    fv10_disabilita_fisica: boolean;
+    fv11_disabilita_cognitiva: boolean;
+    fv12_disturbi_psichiatrici: boolean;
+    fv13_dipendenze: boolean;
+    fv14_genitori_precoci: boolean;
+    fv15_orientamento_sessuale: boolean;
+    fv16_altro: boolean;
+    fv16_spec: string;
   };
   sesso: number;
   classe_eta: number;
@@ -98,6 +98,10 @@ type QuestionarioGiovani = {
     lavorare: number;
     cercare_lavoro: number;
   };
+  utilita_studiare?: number;
+  utilita_formazione?: number;
+  utilita_lavorare?: number;
+  utilita_cercare_lavoro?: number;
   livelli_utilita?: number[];
   aspetti_lavoro?: {
     stabilita: number;
@@ -247,23 +251,23 @@ export default function QuestionariGiovaniOperatori() {
         'VIVE': q.vive_in_struttura ? 1 : 0,
         'CONDATT': q.collocazione_attuale || 0,
         'CONDATT_SPEC': q.collocazione_attuale_spec || '',
-        'FV.1': q.fattori_vulnerabilita?.stranieri ? 1 : 0,
-        'FV.2': q.fattori_vulnerabilita?.vittime_tratta ? 1 : 0,
-        'FV.3': q.fattori_vulnerabilita?.vittime_violenza ? 1 : 0,
-        'FV.4': q.fattori_vulnerabilita?.allontanati_famiglia ? 1 : 0,
-        'FV.5': q.fattori_vulnerabilita?.detenuti ? 1 : 0,
-        'FV.6': q.fattori_vulnerabilita?.ex_detenuti ? 1 : 0,
-        'FV.7': q.fattori_vulnerabilita?.misura_alternativa ? 1 : 0,
-        'FV.8': q.fattori_vulnerabilita?.senza_dimora ? 1 : 0,
-        'FV.9': q.fattori_vulnerabilita?.rom_sinti ? 1 : 0,
-        'FV.10': q.fattori_vulnerabilita?.disabilita_fisica ? 1 : 0,
-        'FV.11': q.fattori_vulnerabilita?.disabilita_cognitiva ? 1 : 0,
-        'FV.12': q.fattori_vulnerabilita?.disturbi_psichiatrici ? 1 : 0,
-        'FV.13': q.fattori_vulnerabilita?.dipendenze ? 1 : 0,
-        'FV.14': q.fattori_vulnerabilita?.genitori_precoci ? 1 : 0,
-        'FV.15': q.fattori_vulnerabilita?.orientamento_sessuale ? 1 : 0,
-        'FV.16': q.fattori_vulnerabilita?.altro ? 1 : 0,
-        'FV.16_SPEC': q.fattori_vulnerabilita?.altro_spec || '',
+        'FV.1': q.fattori_vulnerabilita?.fv1_stranieri ? 1 : 0,
+        'FV.2': q.fattori_vulnerabilita?.fv2_tratta ? 1 : 0,
+        'FV.3': q.fattori_vulnerabilita?.fv3_violenza ? 1 : 0,
+        'FV.4': q.fattori_vulnerabilita?.fv4_allontanati ? 1 : 0,
+        'FV.5': q.fattori_vulnerabilita?.fv5_detenuti ? 1 : 0,
+        'FV.6': q.fattori_vulnerabilita?.fv6_ex_detenuti ? 1 : 0,
+        'FV.7': q.fattori_vulnerabilita?.fv7_misura_alternativa ? 1 : 0,
+        'FV.8': q.fattori_vulnerabilita?.fv8_indigenti ? 1 : 0,
+        'FV.9': q.fattori_vulnerabilita?.fv9_rom_sinti ? 1 : 0,
+        'FV.10': q.fattori_vulnerabilita?.fv10_disabilita_fisica ? 1 : 0,
+        'FV.11': q.fattori_vulnerabilita?.fv11_disabilita_cognitiva ? 1 : 0,
+        'FV.12': q.fattori_vulnerabilita?.fv12_disturbi_psichiatrici ? 1 : 0,
+        'FV.13': q.fattori_vulnerabilita?.fv13_dipendenze ? 1 : 0,
+        'FV.14': q.fattori_vulnerabilita?.fv14_genitori_precoci ? 1 : 0,
+        'FV.15': q.fattori_vulnerabilita?.fv15_orientamento_sessuale ? 1 : 0,
+        'FV.16': q.fattori_vulnerabilita?.fv16_altro ? 1 : 0,
+        'FV.16_SPEC': q.fattori_vulnerabilita?.fv16_spec || '',
         'B1': q.sesso || 0,
         'B2': q.classe_eta || 0,
         'B3': q.luogo_nascita || 0,
@@ -306,10 +310,10 @@ export default function QuestionariGiovaniOperatori() {
         'C6': q.motivo_non_studio || 0,
         'C7': q.corso_frequentato || '',
         'C8': q.lavoro_attuale || '',
-        'C8.1': q.utilita?.studiare || 0,
-        'C8.2': q.utilita?.formazione || 0,
-        'C8.3': q.utilita?.lavorare || 0,
-        'C8.4': q.utilita?.cercare_lavoro || 0,
+        'C8.1': q.utilita_studiare || 0,
+        'C8.2': q.utilita_formazione || 0,
+        'C8.3': q.utilita_lavorare || 0,
+        'C8.4': q.utilita_cercare_lavoro || 0,
         // Livelli utilità (se disponibili)
         'C8.1_LIV': q.livelli_utilita?.[0] || 0,
         'C8.2_LIV': q.livelli_utilita?.[1] || 0,

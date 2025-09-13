@@ -209,6 +209,11 @@ export default function QuestionariStruttureNew() {
       return;
     }
 
+    // Debug: controlliamo la struttura dei dati
+    console.log('Dati strutture per export:', questionari[0]);
+    console.log('Struttura figure_professionali:', questionari[0]?.figure_professionali);
+    console.log('Struttura persone_ospitate:', questionari[0]?.persone_ospitate);
+
     const dataToExport = questionari.map(q => {
       // Calcoliamo i totali per le persone non ospitate
       const c3tu = (q.persone_non_ospitate?.fino_16?.uomini || 0) + 
