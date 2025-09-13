@@ -98,6 +98,17 @@ type QuestionarioGiovani = {
     lavorare: number;
     cercare_lavoro: number;
   };
+  livelli_utilita?: number[];
+  aspetti_lavoro?: {
+    stabilita: number;
+    flessibilita: number;
+    valorizzazione: number;
+    retribuzione: number;
+    fatica: number;
+    sicurezza: number;
+    utilita_sociale: number;
+    vicinanza_casa: number;
+  };
   ricerca_lavoro: {
     centro_impiego: boolean;
     sportelli: boolean;
@@ -294,6 +305,11 @@ export default function QuestionariGiovaniOperatori() {
         'C8.2': q.utilita?.formazione || 0,
         'C8.3': q.utilita?.lavorare || 0,
         'C8.4': q.utilita?.cercare_lavoro || 0,
+        // Livelli utilità (se disponibili)
+        'C8.1_LIV': q.livelli_utilita?.[0] || 0,
+        'C8.2_LIV': q.livelli_utilita?.[1] || 0,
+        'C8.3_LIV': q.livelli_utilita?.[2] || 0,
+        'C8.4_LIV': q.livelli_utilita?.[3] || 0,
         'C9.1': q.ricerca_lavoro?.centro_impiego ? 1 : 0,
         'C9.2': q.ricerca_lavoro?.sportelli ? 1 : 0,
         'C9.3': q.ricerca_lavoro?.inps ? 1 : 0,
@@ -317,6 +333,15 @@ export default function QuestionariGiovaniOperatori() {
         'C13.6': q.importanza?.sicurezza || 0,
         'C13.7': q.importanza?.utilita_sociale || 0,
         'C13.8': q.importanza?.vicinanza || 0,
+        // Aspetti lavoro (se disponibili)
+        'C13.1_ASP': q.aspetti_lavoro?.stabilita || 0,
+        'C13.2_ASP': q.aspetti_lavoro?.flessibilita || 0,
+        'C13.3_ASP': q.aspetti_lavoro?.valorizzazione || 0,
+        'C13.4_ASP': q.aspetti_lavoro?.retribuzione || 0,
+        'C13.5_ASP': q.aspetti_lavoro?.fatica || 0,
+        'C13.6_ASP': q.aspetti_lavoro?.sicurezza || 0,
+        'C13.7_ASP': q.aspetti_lavoro?.utilita_sociale || 0,
+        'C13.8_ASP': q.aspetti_lavoro?.vicinanza_casa || 0,
         'D1.1': q.abitazione_precedente?.solo ? 1 : 0,
         'D1.2': q.abitazione_precedente?.struttura ? 1 : 0,
         'D1.3': q.abitazione_precedente?.madre ? 1 : 0,
