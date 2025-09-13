@@ -213,6 +213,8 @@ export default function QuestionariStruttureNew() {
     console.log('Dati strutture per export:', questionari[0]);
     console.log('Struttura figure_professionali:', questionari[0]?.figure_professionali);
     console.log('Struttura persone_ospitate:', questionari[0]?.persone_ospitate);
+    console.log('Tutti i campi disponibili:', Object.keys(questionari[0] || {}));
+    console.log('Campi che contengono figure:', Object.keys(questionari[0] || {}).filter(k => k.includes('figure')));
 
     const dataToExport = questionari.map(q => {
       // Calcoliamo i totali per le persone non ospitate
