@@ -261,6 +261,12 @@ export default function QuestionariOperatoriLista() {
       return;
     }
 
+    // Debug: controlliamo la struttura dei dati
+    console.log('Dati questionari per export:', questionari[0]);
+    console.log('Struttura professione:', questionari[0]?.professione);
+    console.log('Struttura persone_seguite:', questionari[0]?.persone_seguite);
+    console.log('Struttura caratteristiche_persone:', questionari[0]?.caratteristiche_persone);
+
     try {
       const dataToExport = questionari.map(q => {
         // Mappiamo la professione secondo i codici del tracciato record

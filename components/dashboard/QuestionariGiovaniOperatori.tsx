@@ -235,6 +235,11 @@ export default function QuestionariGiovaniOperatori() {
     try {
       const dataToExport = questionario ? [questionario] : questionari;
       
+      // Debug: controlliamo la struttura dei dati
+      console.log('Dati giovani per export:', dataToExport[0]);
+      console.log('Struttura fattori_vulnerabilita:', dataToExport[0]?.fattori_vulnerabilita);
+      console.log('Struttura utilita:', dataToExport[0]?.utilita);
+      
       const mappedData = dataToExport.map(q => ({
         'FONTE': q.creato_da || '',
         'PERCAUT': q.percorso_autonomia ? 1 : 0,
