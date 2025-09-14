@@ -73,7 +73,7 @@ export default function AmministratoriDashboard() {
   function getNumericStatsStrutture(arr: number[], label: string, domanda: string): Array<{Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}> {
     const valid = arr.filter((x: number) => typeof x === 'number' && !isNaN(x) && x !== null && x !== undefined)
     if (valid.length === 0) return []
-    const total = arr.length
+    const total = valid.length
     
     // Raggruppa per valore per mostrare la distribuzione
     const valueCounts = valid.reduce((acc: Record<number, number>, val) => {
@@ -99,7 +99,7 @@ export default function AmministratoriDashboard() {
   function getTextStatsStruttureCustom(arr: string[], label: string, domanda: string): Array<{Domanda: string, Risposta: string, Frequenza: number, Percentuale: string}> {
     const valid = arr.filter((x: string) => typeof x === 'string' && x.trim() !== '')
     if (valid.length === 0) return []
-    const total = arr.length
+    const total = valid.length
     const counts = valid.reduce((acc: Record<string, number>, v: string) => { acc[v] = (acc[v]||0)+1; return acc }, {})
     return Object.entries(counts).map(([val, freq]) => ({
       Domanda: domanda,
