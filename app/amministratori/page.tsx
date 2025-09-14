@@ -256,7 +256,7 @@ export default function AmministratoriDashboard() {
     })
 
     // Persone ospitate - caratteristiche
-    const caratteristicheOspiti = ['stranieri_migranti', 'vittime_tratta', 'vittime_violenza', 'allontanati_famiglia', 'detenuti', 'ex_detenuti', 'misure_alternative', 'indigenti_senzatetto', 'rom_sinti', 'disabilita_fisica', 'disabilita_cognitiva', 'disturbi_psichiatrici', 'dipendenze', 'genitori_precoci', 'problemi_orientamento']
+    const caratteristicheOspiti = ['MSNA', 'Vittime di tratta', 'Vittime di violenza domestica', 'Persone allontanate dalla famiglia', 'Detenuti', 'Ex detenuti', 'Misure alternative alla detenzione', 'Indigenti/senzatetto', 'Rom/Sinti', 'Disabilità fisica', 'Disabilità cognitiva', 'Disturbi psichiatrici', 'Dipendenze', 'Genitori precoci', 'Problemi di orientamento sessuale']
     
     caratteristicheOspiti.forEach(car => {
       const count = data.filter(item => {
@@ -279,7 +279,7 @@ export default function AmministratoriDashboard() {
       })
     })
 
-    // Persone non ospitate - caratteristiche
+    // Persone non ospitate - caratteristiche  
     caratteristicheOspiti.forEach(car => {
       const count = data.filter(item => {
         const nonOspitiAdolescenti = Array.isArray(item.caratteristiche_non_ospiti_adolescenti) ? item.caratteristiche_non_ospiti_adolescenti : []
