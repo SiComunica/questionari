@@ -255,46 +255,103 @@ export default function AmministratoriDashboard() {
       })
     })
 
-    // Persone ospitate - caratteristiche
-    const caratteristicheOspiti = ['MSNA', 'Vittime di tratta', 'Vittime di violenza domestica', 'Persone allontanate dalla famiglia', 'Detenuti', 'Ex detenuti', 'Misure alternative alla detenzione', 'Indigenti/senzatetto', 'Rom/Sinti', 'Disabilità fisica', 'Disabilità cognitiva', 'Disturbi psichiatrici', 'Dipendenze', 'Genitori precoci', 'Problemi di orientamento sessuale']
+    // Persone ospitate - caratteristiche (adolescenti)
+    const caratteristicheOspitiAdolescenti = [
+      "MSNA",
+      "Minori stranieri accompagnati", 
+      "Minori italiani",
+      "Minori vittime di tratta",
+      "Minori con problemi di giustizia",
+      "Altro"
+    ]
     
-    caratteristicheOspiti.forEach(car => {
+    // Persone ospitate - caratteristiche (giovani)
+    const caratteristicheOspitiGiovani = [
+      "Giovani italiani",
+      "Giovani stranieri", 
+      "Giovani vittime di tratta",
+      "Giovani con problemi di giustizia",
+      "Altro"
+    ]
+    
+    // Caratteristiche ospiti adolescenti
+    caratteristicheOspitiAdolescenti.forEach(car => {
       const count = data.filter(item => {
         const ospitiAdolescenti = Array.isArray(item.caratteristiche_ospiti_adolescenti) ? item.caratteristiche_ospiti_adolescenti : []
-        const ospitiGiovani = Array.isArray(item.caratteristiche_ospiti_giovani) ? item.caratteristiche_ospiti_giovani : []
-        return ospitiAdolescenti.includes(car) || ospitiGiovani.includes(car)
+        return ospitiAdolescenti.includes(car)
       }).length
       
       stats.push({
-        Domanda: `Caratteristiche Ospiti - ${car.replace(/_/g, ' ')}`,
+        Domanda: `Caratteristiche Ospiti Adolescenti - ${car}`,
         Risposta: 'Sì',
         Frequenza: count,
         Percentuale: `${((count / total) * 100).toFixed(1)}%`
       })
       stats.push({
-        Domanda: `Caratteristiche Ospiti - ${car.replace(/_/g, ' ')}`,
+        Domanda: `Caratteristiche Ospiti Adolescenti - ${car}`,
+        Risposta: 'No',
+        Frequenza: total - count,
+        Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
+      })
+    })
+    
+    // Caratteristiche ospiti giovani
+    caratteristicheOspitiGiovani.forEach(car => {
+      const count = data.filter(item => {
+        const ospitiGiovani = Array.isArray(item.caratteristiche_ospiti_giovani) ? item.caratteristiche_ospiti_giovani : []
+        return ospitiGiovani.includes(car)
+      }).length
+      
+      stats.push({
+        Domanda: `Caratteristiche Ospiti Giovani - ${car}`,
+        Risposta: 'Sì',
+        Frequenza: count,
+        Percentuale: `${((count / total) * 100).toFixed(1)}%`
+      })
+      stats.push({
+        Domanda: `Caratteristiche Ospiti Giovani - ${car}`,
         Risposta: 'No',
         Frequenza: total - count,
         Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
       })
     })
 
-    // Persone non ospitate - caratteristiche  
-    caratteristicheOspiti.forEach(car => {
+    // Caratteristiche non ospiti adolescenti
+    caratteristicheOspitiAdolescenti.forEach(car => {
       const count = data.filter(item => {
         const nonOspitiAdolescenti = Array.isArray(item.caratteristiche_non_ospiti_adolescenti) ? item.caratteristiche_non_ospiti_adolescenti : []
-        const nonOspitiGiovani = Array.isArray(item.caratteristiche_non_ospiti_giovani) ? item.caratteristiche_non_ospiti_giovani : []
-        return nonOspitiAdolescenti.includes(car) || nonOspitiGiovani.includes(car)
+        return nonOspitiAdolescenti.includes(car)
       }).length
       
       stats.push({
-        Domanda: `Caratteristiche Non Ospiti - ${car.replace(/_/g, ' ')}`,
+        Domanda: `Caratteristiche Non Ospiti Adolescenti - ${car}`,
         Risposta: 'Sì',
         Frequenza: count,
         Percentuale: `${((count / total) * 100).toFixed(1)}%`
       })
       stats.push({
-        Domanda: `Caratteristiche Non Ospiti - ${car.replace(/_/g, ' ')}`,
+        Domanda: `Caratteristiche Non Ospiti Adolescenti - ${car}`,
+        Risposta: 'No',
+        Frequenza: total - count,
+        Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
+      })
+    })
+    
+    // Caratteristiche non ospiti giovani
+    caratteristicheOspitiGiovani.forEach(car => {
+      const count = data.filter(item => {
+        const nonOspitiGiovani = Array.isArray(item.caratteristiche_non_ospiti_giovani) ? item.caratteristiche_non_ospiti_giovani : []
+        return nonOspitiGiovani.includes(car)
+      }).length
+      
+      stats.push({
+        Domanda: `Caratteristiche Non Ospiti Giovani - ${car}`,
+        Risposta: 'Sì',
+        Frequenza: count,
+        Percentuale: `${((count / total) * 100).toFixed(1)}%`
+      })
+      stats.push({
+        Domanda: `Caratteristiche Non Ospiti Giovani - ${car}`,
         Risposta: 'No',
         Frequenza: total - count,
         Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
