@@ -363,6 +363,10 @@ export default function AmministratoriDashboard() {
     
     attivitaServizi.forEach(servizio => {
       const count = data.filter(item => {
+        // Debug: controlla la struttura dei dati
+        if (servizio === 'vitto' && item.attivita_servizi) {
+          console.log('Debug attivita_servizi:', item.attivita_servizi)
+        }
         return item.attivita_servizi?.[servizio]?.attivo === true
       }).length
       
