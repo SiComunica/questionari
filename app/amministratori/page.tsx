@@ -259,66 +259,46 @@ export default function AmministratoriDashboard() {
     const caratteristicheOspiti = ['stranieri_migranti', 'vittime_tratta', 'vittime_violenza', 'allontanati_famiglia', 'detenuti', 'ex_detenuti', 'misure_alternative', 'indigenti_senzatetto', 'rom_sinti', 'disabilita_fisica', 'disabilita_cognitiva', 'disturbi_psichiatrici', 'dipendenze', 'genitori_precoci', 'problemi_orientamento']
     
     caratteristicheOspiti.forEach(car => {
-      const validItems = data.filter(item => {
-        const ospitiAdolescenti = Array.isArray(item.caratteristiche_ospiti_adolescenti) ? item.caratteristiche_ospiti_adolescenti : []
-        const ospitiGiovani = Array.isArray(item.caratteristiche_ospiti_giovani) ? item.caratteristiche_ospiti_giovani : []
-        return ospitiAdolescenti.length > 0 || ospitiGiovani.length > 0
-      })
-      
-      const count = validItems.filter(item => {
+      const count = data.filter(item => {
         const ospitiAdolescenti = Array.isArray(item.caratteristiche_ospiti_adolescenti) ? item.caratteristiche_ospiti_adolescenti : []
         const ospitiGiovani = Array.isArray(item.caratteristiche_ospiti_giovani) ? item.caratteristiche_ospiti_giovani : []
         return ospitiAdolescenti.includes(car) || ospitiGiovani.includes(car)
       }).length
       
-      const validTotal = validItems.length
-      
-      if (validTotal > 0) {
-        stats.push({
-          Domanda: `Caratteristiche Ospiti - ${car.replace(/_/g, ' ')}`,
-          Risposta: 'Sì',
-          Frequenza: count,
-          Percentuale: `${((count / validTotal) * 100).toFixed(1)}%`
-        })
-        stats.push({
-          Domanda: `Caratteristiche Ospiti - ${car.replace(/_/g, ' ')}`,
-          Risposta: 'No',
-          Frequenza: validTotal - count,
-          Percentuale: `${(((validTotal - count) / validTotal) * 100).toFixed(1)}%`
-        })
-      }
+      stats.push({
+        Domanda: `Caratteristiche Ospiti - ${car.replace(/_/g, ' ')}`,
+        Risposta: 'Sì',
+        Frequenza: count,
+        Percentuale: `${((count / total) * 100).toFixed(1)}%`
+      })
+      stats.push({
+        Domanda: `Caratteristiche Ospiti - ${car.replace(/_/g, ' ')}`,
+        Risposta: 'No',
+        Frequenza: total - count,
+        Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
+      })
     })
 
     // Persone non ospitate - caratteristiche
     caratteristicheOspiti.forEach(car => {
-      const validItems = data.filter(item => {
-        const nonOspitiAdolescenti = Array.isArray(item.caratteristiche_non_ospiti_adolescenti) ? item.caratteristiche_non_ospiti_adolescenti : []
-        const nonOspitiGiovani = Array.isArray(item.caratteristiche_non_ospiti_giovani) ? item.caratteristiche_non_ospiti_giovani : []
-        return nonOspitiAdolescenti.length > 0 || nonOspitiGiovani.length > 0
-      })
-      
-      const count = validItems.filter(item => {
+      const count = data.filter(item => {
         const nonOspitiAdolescenti = Array.isArray(item.caratteristiche_non_ospiti_adolescenti) ? item.caratteristiche_non_ospiti_adolescenti : []
         const nonOspitiGiovani = Array.isArray(item.caratteristiche_non_ospiti_giovani) ? item.caratteristiche_non_ospiti_giovani : []
         return nonOspitiAdolescenti.includes(car) || nonOspitiGiovani.includes(car)
       }).length
       
-      const validTotal = validItems.length
-      
-      if (validTotal > 0) {
-        stats.push({
-          Domanda: `Caratteristiche Non Ospiti - ${car.replace(/_/g, ' ')}`,
-          Risposta: 'Sì',
-          Frequenza: count,
-          Percentuale: `${((count / validTotal) * 100).toFixed(1)}%`
-        })
-        stats.push({
-          Domanda: `Caratteristiche Non Ospiti - ${car.replace(/_/g, ' ')}`,
-          Risposta: 'No',
-          Frequenza: validTotal - count,
-          Percentuale: `${(((validTotal - count) / validTotal) * 100).toFixed(1)}%`
-        })
-      }
+      stats.push({
+        Domanda: `Caratteristiche Non Ospiti - ${car.replace(/_/g, ' ')}`,
+        Risposta: 'Sì',
+        Frequenza: count,
+        Percentuale: `${((count / total) * 100).toFixed(1)}%`
+      })
+      stats.push({
+        Domanda: `Caratteristiche Non Ospiti - ${car.replace(/_/g, ' ')}`,
+        Risposta: 'No',
+        Frequenza: total - count,
+        Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
+      })
     })
 
     // Attività servizi
