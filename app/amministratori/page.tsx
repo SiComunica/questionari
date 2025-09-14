@@ -363,11 +363,14 @@ export default function AmministratoriDashboard() {
     
     attivitaServizi.forEach(servizio => {
       const count = data.filter(item => {
-        // Debug: controlla la struttura dei dati
-        if (servizio === 'vitto' && item.attivita_servizi) {
-          console.log('Debug attivita_servizi:', item.attivita_servizi)
+        const servizioData = item.attivita_servizi?.[servizio]
+        // Gestisce entrambi i casi: oggetto {attivo: boolean} o valore booleano diretto
+        if (typeof servizioData === 'boolean') {
+          return servizioData === true
+        } else if (typeof servizioData === 'object' && servizioData !== null) {
+          return servizioData.attivo === true
         }
-        return item.attivita_servizi?.[servizio]?.attivo === true
+        return false
       }).length
       
       stats.push({
