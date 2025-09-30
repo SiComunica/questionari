@@ -1127,27 +1127,46 @@ export default function AmministratoriDashboard() {
       })
     })
 
-    // Fattori vulnerabilità
-    const fattoriVuln = ['stranieri', 'vittime_tratta', 'vittime_violenza', 'allontanati_famiglia', 'detenuti', 'ex_detenuti', 'misura_alternativa', 'senza_dimora', 'rom_sinti', 'disabilita_fisica', 'disabilita_cognitiva', 'disturbi_psichiatrici', 'dipendenze', 'genitori_precoci', 'orientamento_sessuale']
+    // Fattori vulnerabilità - mappatura corretta con i nomi reali dei campi
+    const fattoriVulnMapping = [
+      { key: 'fv1_stranieri', label: 'stranieri', altKey: 'stranieri' },
+      { key: 'fv2_vittime_tratta', label: 'vittime_tratta', altKey: 'vittime_tratta' },
+      { key: 'fv3_vittime_violenza', label: 'vittime_violenza', altKey: 'vittime_violenza' },
+      { key: 'fv4_allontanati_famiglia', label: 'allontanati_famiglia', altKey: 'allontanati_famiglia' },
+      { key: 'fv5_detenuti', label: 'detenuti', altKey: 'detenuti' },
+      { key: 'fv6_ex_detenuti', label: 'ex_detenuti', altKey: 'ex_detenuti' },
+      { key: 'fv7_esecuzione_penale', label: 'esecuzione_penale', altKey: 'misura_alternativa' },
+      { key: 'fv8_indigenti', label: 'indigenti', altKey: 'senza_dimora' },
+      { key: 'fv9_rom_sinti', label: 'rom_sinti', altKey: 'rom_sinti' },
+      { key: 'fv10_disabilita_fisica', label: 'disabilita_fisica', altKey: 'disabilita_fisica' },
+      { key: 'fv11_disabilita_cognitiva', label: 'disabilita_cognitiva', altKey: 'disabilita_cognitiva' },
+      { key: 'fv12_disturbi_psichiatrici', label: 'disturbi_psichiatrici', altKey: 'disturbi_psichiatrici' },
+      { key: 'fv13_dipendenze', label: 'dipendenze', altKey: 'dipendenze' },
+      { key: 'fv14_genitori_precoci', label: 'genitori_precoci', altKey: 'genitori_precoci' },
+      { key: 'fv15_orientamento_sessuale', label: 'orientamento_sessuale', altKey: 'orientamento_sessuale' }
+    ]
     
-    fattoriVuln.forEach(fattore => {
+    fattoriVulnMapping.forEach(({ key, label, altKey }) => {
       const count = data.filter(item => {
         if (Array.isArray(item.fattori_vulnerabilita)) {
-          return item.fattori_vulnerabilita.includes(fattore)
+          return item.fattori_vulnerabilita.includes(label)
         } else if (typeof item.fattori_vulnerabilita === 'object' && item.fattori_vulnerabilita !== null) {
-          return item.fattori_vulnerabilita[`fv${fattoriVuln.indexOf(fattore) + 1}_${fattore}`] === true
+          // Controlla entrambi i formati: con prefisso fv, senza prefisso, e chiavi alternative
+          return item.fattori_vulnerabilita[key] === true || 
+                 item.fattori_vulnerabilita[label] === true || 
+                 item.fattori_vulnerabilita[altKey] === true
         }
         return false
       }).length
       
       stats.push({
-        Domanda: `Fattori Vulnerabilità - ${fattore.replace(/_/g, ' ')}`,
+        Domanda: `Fattori Vulnerabilità - ${label.replace(/_/g, ' ')}`,
         Risposta: 'Sì',
         Frequenza: count,
         Percentuale: `${((count / total) * 100).toFixed(1)}%`
       })
       stats.push({
-        Domanda: `Fattori Vulnerabilità - ${fattore.replace(/_/g, ' ')}`,
+        Domanda: `Fattori Vulnerabilità - ${label.replace(/_/g, ' ')}`,
         Risposta: 'No',
         Frequenza: total - count,
         Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
