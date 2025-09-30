@@ -1130,12 +1130,12 @@ export default function AmministratoriDashboard() {
     // Fattori vulnerabilità - mappatura corretta con i nomi reali dei campi
     const fattoriVulnMapping = [
       { key: 'fv1_stranieri', label: 'stranieri', altKey: 'stranieri' },
-      { key: 'fv2_vittime_tratta', label: 'vittime_tratta', altKey: 'vittime_tratta' },
-      { key: 'fv3_vittime_violenza', label: 'vittime_violenza', altKey: 'vittime_violenza' },
-      { key: 'fv4_allontanati_famiglia', label: 'allontanati_famiglia', altKey: 'allontanati_famiglia' },
+      { key: 'fv2_tratta', label: 'vittime_tratta', altKey: 'vittime_tratta' },
+      { key: 'fv3_violenza', label: 'vittime_violenza', altKey: 'vittime_violenza' },
+      { key: 'fv4_allontanati', label: 'allontanati_famiglia', altKey: 'allontanati_famiglia' },
       { key: 'fv5_detenuti', label: 'detenuti', altKey: 'detenuti' },
       { key: 'fv6_ex_detenuti', label: 'ex_detenuti', altKey: 'ex_detenuti' },
-      { key: 'fv7_esecuzione_penale', label: 'esecuzione_penale', altKey: 'misura_alternativa' },
+      { key: 'fv7_misura_alternativa', label: 'esecuzione_penale', altKey: 'misura_alternativa' },
       { key: 'fv8_indigenti', label: 'indigenti', altKey: 'senza_dimora' },
       { key: 'fv9_rom_sinti', label: 'rom_sinti', altKey: 'rom_sinti' },
       { key: 'fv10_disabilita_fisica', label: 'disabilita_fisica', altKey: 'disabilita_fisica' },
