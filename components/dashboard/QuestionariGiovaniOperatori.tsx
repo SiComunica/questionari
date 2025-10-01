@@ -25,12 +25,12 @@ type QuestionarioGiovani = {
   collocazione_attuale_spec: string;
   fattori_vulnerabilita: {
     fv1_stranieri: boolean;
-    fv2_tratta: boolean;
+    fv2_vittime_tratta: boolean;
     fv3_vittime_violenza: boolean;
     fv4_allontanati_famiglia: boolean;
     fv5_detenuti: boolean;
     fv6_ex_detenuti: boolean;
-    fv7_misura_alternativa: boolean;
+    fv7_esecuzione_penale: boolean;
     fv8_indigenti: boolean;
     fv9_rom_sinti: boolean;
     fv10_disabilita_fisica: boolean;
@@ -249,12 +249,12 @@ export default function QuestionariGiovaniOperatori() {
         'CONDATT': q.collocazione_attuale || 0,
         'CONDATT_SPEC': q.collocazione_attuale_spec || '',
         'FV.1': q.fattori_vulnerabilita?.fv1_stranieri ? 1 : 0,
-        'FV.2': q.fattori_vulnerabilita?.fv2_tratta ? 1 : 0,
+        'FV.2': q.fattori_vulnerabilita?.fv2_vittime_tratta ? 1 : 0,
         'FV.3': q.fattori_vulnerabilita?.fv3_vittime_violenza ? 1 : 0,
         'FV.4': q.fattori_vulnerabilita?.fv4_allontanati_famiglia ? 1 : 0,
         'FV.5': q.fattori_vulnerabilita?.fv5_detenuti ? 1 : 0,
         'FV.6': q.fattori_vulnerabilita?.fv6_ex_detenuti ? 1 : 0,
-        'FV.7': q.fattori_vulnerabilita?.fv7_misura_alternativa ? 1 : 0,
+        'FV.7': q.fattori_vulnerabilita?.fv7_esecuzione_penale ? 1 : 0,
         'FV.8': q.fattori_vulnerabilita?.fv8_indigenti ? 1 : 0,
         'FV.9': q.fattori_vulnerabilita?.fv9_rom_sinti ? 1 : 0,
         'FV.10': q.fattori_vulnerabilita?.fv10_disabilita_fisica ? 1 : 0,
