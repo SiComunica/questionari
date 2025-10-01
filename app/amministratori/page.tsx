@@ -1135,7 +1135,7 @@ export default function AmministratoriDashboard() {
       { key: 'fv4_allontanati_famiglia', label: 'fv4_allontanati_famiglia', altKey: 'allontanati_famiglia' },
       { key: 'fv5_detenuti', label: 'detenuti', altKey: 'detenuti' },
       { key: 'fv6_ex_detenuti', label: 'ex_detenuti', altKey: 'ex_detenuti' },
-      { key: 'fv7_misura_alternativa', label: 'esecuzione_penale', altKey: 'misura_alternativa' },
+      { key: 'fv7_esecuzione_penale', label: 'fv7_esecuzione_penale', altKey: 'esecuzione_penale' },
       { key: 'fv8_indigenti', label: 'indigenti', altKey: 'senza_dimora' },
       { key: 'fv9_rom_sinti', label: 'rom_sinti', altKey: 'rom_sinti' },
       { key: 'fv10_disabilita_fisica', label: 'disabilita_fisica', altKey: 'disabilita_fisica' },
