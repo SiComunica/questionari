@@ -1130,7 +1130,7 @@ export default function AmministratoriDashboard() {
     // Fattori vulnerabilità - mappatura corretta con i nomi reali dei campi
     const fattoriVulnMapping = [
       { key: 'fv1_stranieri', label: 'stranieri', altKey: 'stranieri' },
-      { key: 'fv2_tratta', label: 'vittime_tratta', altKey: 'vittime_tratta' },
+      { key: 'fv2_tratta', label: 'fv2_tratta', altKey: 'vittime_tratta' },
       { key: 'fv3_vittime_violenza', label: 'vittime_violenza', altKey: 'vittime_violenza' },
       { key: 'fv4_allontanati_famiglia', label: 'fv4_allontanati_famiglia', altKey: 'allontanati_famiglia' },
       { key: 'fv5_detenuti', label: 'detenuti', altKey: 'detenuti' },
