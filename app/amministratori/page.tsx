@@ -1132,7 +1132,7 @@ export default function AmministratoriDashboard() {
       { key: 'fv1_stranieri', label: 'stranieri', altKey: 'stranieri' },
       { key: 'fv2_tratta', label: 'vittime_tratta', altKey: 'vittime_tratta' },
       { key: 'fv3_vittime_violenza', label: 'vittime_violenza', altKey: 'vittime_violenza' },
-      { key: 'fv4_allontanati_famiglia', label: 'allontanati_famiglia', altKey: 'allontanati_famiglia' },
+      { key: 'fv4_allontanati_famiglia', label: 'fv4_allontanati_famiglia', altKey: 'allontanati_famiglia' },
       { key: 'fv5_detenuti', label: 'detenuti', altKey: 'detenuti' },
       { key: 'fv6_ex_detenuti', label: 'ex_detenuti', altKey: 'ex_detenuti' },
       { key: 'fv7_misura_alternativa', label: 'esecuzione_penale', altKey: 'misura_alternativa' },
