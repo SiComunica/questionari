@@ -1131,7 +1131,7 @@ export default function AmministratoriDashboard() {
     const fattoriVulnMapping = [
       { key: 'fv1_stranieri', label: 'stranieri', altKey: 'stranieri' },
       { key: 'fv2_tratta', label: 'vittime_tratta', altKey: 'vittime_tratta' },
-      { key: 'fv3_violenza', label: 'vittime_violenza', altKey: 'vittime_violenza' },
+      { key: 'fv3_vittime_violenza', label: 'vittime_violenza', altKey: 'vittime_violenza' },
       { key: 'fv4_allontanati', label: 'allontanati_famiglia', altKey: 'allontanati_famiglia' },
       { key: 'fv5_detenuti', label: 'detenuti', altKey: 'detenuti' },
       { key: 'fv6_ex_detenuti', label: 'ex_detenuti', altKey: 'ex_detenuti' },

@@ -26,7 +26,7 @@ type QuestionarioGiovani = {
   fattori_vulnerabilita: {
     fv1_stranieri: boolean;
     fv2_tratta: boolean;
-    fv3_violenza: boolean;
+    fv3_vittime_violenza: boolean;
     fv4_allontanati: boolean;
     fv5_detenuti: boolean;
     fv6_ex_detenuti: boolean;
@@ -250,7 +250,7 @@ export default function QuestionariGiovaniOperatori() {
         'CONDATT_SPEC': q.collocazione_attuale_spec || '',
         'FV.1': q.fattori_vulnerabilita?.fv1_stranieri ? 1 : 0,
         'FV.2': q.fattori_vulnerabilita?.fv2_tratta ? 1 : 0,
-        'FV.3': q.fattori_vulnerabilita?.fv3_violenza ? 1 : 0,
+        'FV.3': q.fattori_vulnerabilita?.fv3_vittime_violenza ? 1 : 0,
         'FV.4': q.fattori_vulnerabilita?.fv4_allontanati ? 1 : 0,
         'FV.5': q.fattori_vulnerabilita?.fv5_detenuti ? 1 : 0,
         'FV.6': q.fattori_vulnerabilita?.fv6_ex_detenuti ? 1 : 0,
