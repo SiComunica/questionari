@@ -248,6 +248,8 @@ export default function QuestionariGiovaniOperatori() {
         'VIVE': q.vive_in_struttura ? 1 : 0,
         'CONDATT': q.collocazione_attuale || 0,
         'CONDATT_SPEC': q.collocazione_attuale_spec || '',
+        // Colonna F mancante - aggiunta
+        'F': q.percorso_autonomia_spec || '',
         'FV.1': q.fattori_vulnerabilita?.fv1_stranieri ? 1 : 0,
         'FV.2': q.fattori_vulnerabilita?.fv2_vittime_tratta ? 1 : 0,
         'FV.3': q.fattori_vulnerabilita?.fv3_vittime_violenza ? 1 : 0,
@@ -385,7 +387,20 @@ export default function QuestionariGiovaniOperatori() {
         'E5.9': q.emozioni_uscita?.speranza ? 1 : 0,
         'E5.10': q.emozioni_uscita?.determinazione ? 1 : 0,
         'E6': q.desiderio || '',
-        'E7': q.nota_aggiuntiva || ''
+        'E7': q.nota_aggiuntiva || '',
+        
+        // Colonne mancanti aggiunte
+        'Z': '',
+        'AA': 0,
+        'AW': '',
+        'BD': '',
+        'BE': '',
+        'BK': '',
+        'BL': '',
+        'BM': '',
+        'DR': '',
+        'EA': '',
+        'EB': ''
       }));
 
       const worksheet = XLSX.utils.json_to_sheet(mappedData);
