@@ -680,9 +680,9 @@ export default function AmministratoriDashboard() {
 
     // Madre e Padre
     stats.push(...getTextStatsGiovani(data.map((x:any)=>x.madre?.titolo_studio), 'Madre Titolo Studio', 'Madre Titolo Studio'))
-    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.madre?.lavoro), 'Madre Lavoro', 'Madre Lavoro'))
+    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.madre?.situazione), 'Madre Situazione', 'Madre Situazione'))
     stats.push(...getTextStatsGiovani(data.map((x:any)=>x.padre?.titolo_studio), 'Padre Titolo Studio', 'Padre Titolo Studio'))
-    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.padre?.lavoro), 'Padre Lavoro', 'Padre Lavoro'))
+    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.padre?.situazione), 'Padre Situazione', 'Padre Situazione'))
 
     // Motivi non studio, corso formazione, lavoro attuale
     const motiviNonStudio = data.flatMap((x:any)=>x.motivi_non_studio||[])
@@ -766,8 +766,73 @@ export default function AmministratoriDashboard() {
       }
     }
 
+    // Attività precedenti (C2)
+    if (data[0].attivita_precedenti) {
+      (['studiavo','lavoravo_stabile','lavoravo_saltuario','corso_formazione','altro','nessuna'] as const).forEach((f: any) => {
+        const count = data.filter(item => item.attivita_precedenti?.[f] === true).length
+        stats.push({
+          Domanda: `Attività Precedenti - ${f.replace(/_/g, ' ')}`,
+          Risposta: 'Sì',
+          Frequenza: count,
+          Percentuale: `${((count / total) * 100).toFixed(1)}%`
+        })
+        stats.push({
+          Domanda: `Attività Precedenti - ${f.replace(/_/g, ' ')}`,
+          Risposta: 'No',
+          Frequenza: total - count,
+          Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
+        })
+      })
+      const attivitaPrecedentiAltro = data.map((x:any)=>x.attivita_precedenti?.altro_spec).filter(val => val && val.trim() !== '')
+      if (attivitaPrecedentiAltro.length > 0) {
+        stats.push(...getTextStatsGiovani(attivitaPrecedentiAltro, 'Attività Precedenti Altro', 'Attività Precedenti Altro'))
+      }
+    }
+
+    // Attività attuali (C5)
+    if (data[0].attivita_attuali) {
+      (['studio','formazione','lavoro','ricerca_lavoro','nessuna'] as const).forEach((f: any) => {
+        const count = data.filter(item => item.attivita_attuali?.[f] === true).length
+        stats.push({
+          Domanda: `Attività Attuali - ${f.replace(/_/g, ' ')}`,
+          Risposta: 'Sì',
+          Frequenza: count,
+          Percentuale: `${((count / total) * 100).toFixed(1)}%`
+        })
+        stats.push({
+          Domanda: `Attività Attuali - ${f.replace(/_/g, ' ')}`,
+          Risposta: 'No',
+          Frequenza: total - count,
+          Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
+        })
+      })
+    }
+
+    // Orientamento luoghi (C4)
+    if (data[0].orientamento_luoghi) {
+      (['scuola','enti_formazione','servizi_impiego','struttura','altro'] as const).forEach((f: any) => {
+        const count = data.filter(item => item.orientamento_luoghi?.[f] === true).length
+        stats.push({
+          Domanda: `Orientamento Luoghi - ${f.replace(/_/g, ' ')}`,
+          Risposta: 'Sì',
+          Frequenza: count,
+          Percentuale: `${((count / total) * 100).toFixed(1)}%`
+        })
+        stats.push({
+          Domanda: `Orientamento Luoghi - ${f.replace(/_/g, ' ')}`,
+          Risposta: 'No',
+          Frequenza: total - count,
+          Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
+        })
+      })
+      const orientamentoLuoghiAltro = data.map((x:any)=>x.orientamento_luoghi?.altro_spec).filter(val => val && val.trim() !== '')
+      if (orientamentoLuoghiAltro.length > 0) {
+        stats.push(...getTextStatsGiovani(orientamentoLuoghiAltro, 'Orientamento Luoghi Altro', 'Orientamento Luoghi Altro'))
+      }
+    }
+
     // Curriculum vitae, centro impiego, lavoro autonomo (C10-C12)
-    const cvCount = data.filter(item => item.curriculum_vitae === '1').length
+    const cvCount = data.filter(item => item.curriculum_vitae === true || item.curriculum_vitae === '1').length
     stats.push({
       Domanda: 'Curriculum Vitae',
       Risposta: 'Sì',
@@ -781,7 +846,7 @@ export default function AmministratoriDashboard() {
       Percentuale: `${(((total - cvCount) / total) * 100).toFixed(1)}%`
     })
 
-    const centroCount = data.filter(item => item.centro_impiego === '1').length
+    const centroCount = data.filter(item => item.centro_impiego === true || item.centro_impiego === '1').length
     stats.push({
       Domanda: 'Centro Impiego',
       Risposta: 'Sì',
@@ -795,7 +860,7 @@ export default function AmministratoriDashboard() {
       Percentuale: `${(((total - centroCount) / total) * 100).toFixed(1)}%`
     })
 
-    const autonomoCount = data.filter(item => item.lavoro_autonomo === '1').length
+    const autonomoCount = data.filter(item => item.lavoro_autonomo === true || item.lavoro_autonomo === '1').length
     stats.push({
       Domanda: 'Lavoro Autonomo',
       Risposta: 'Sì',
@@ -1174,14 +1239,17 @@ export default function AmministratoriDashboard() {
     })
 
     // Famiglia origine
-    const famigliaOrigine = ['padre', 'madre', 'fratelli_sorelle', 'nonni', 'altri_parenti', 'altri_conviventi']
+    const famigliaOrigine = ['padre', 'madre', 'fratelli', 'nonni', 'altri_parenti', 'non_parenti']
     
     famigliaOrigine.forEach(membro => {
       const count = data.filter(item => {
         if (Array.isArray(item.famiglia_origine)) {
           return item.famiglia_origine.includes(membro)
         } else if (typeof item.famiglia_origine === 'object' && item.famiglia_origine !== null) {
-          return item.famiglia_origine[membro] === true
+          // Gestisce sia il formato nuovo che quello vecchio
+          return item.famiglia_origine[membro] === true || 
+                 item.famiglia_origine[membro.replace('fratelli', 'fratelli_sorelle')] === true ||
+                 item.famiglia_origine[membro.replace('non_parenti', 'altri_conviventi')] === true
         }
         return false
       }).length
