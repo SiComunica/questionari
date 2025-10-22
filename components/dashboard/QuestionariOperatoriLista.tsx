@@ -325,17 +325,8 @@ export default function QuestionariOperatoriLista() {
           ID_QUEST: q.id || 'FORNITO DAL SISTEMA',
           TIPO_STRUTTURA: q.tipo_struttura || '',
           
-          // Sezione A - Dati anagrafici (se disponibili)
-          NOME: q.nome || '',
-          COGNOME: q.cognome || '',
-          EMAIL: q.email || '',
-          TELEFONO: q.telefono || '',
-          ETA: q.eta || '',
-          GENERE: q.genere || '',
-          TITOLO_STUDIO: q.titolo_studio || '',
-          ANNI_ESPERIENZA: q.anni_esperienza || '',
-          TIPO_CONTRATTO: q.tipo_contratto || '',
-          RUOLO_ATTUALE: q.ruolo_attuale || '',
+          // Sezione A - Dati anagrafici (rimossi campi problematici D-M)
+          // NOME, COGNOME, EMAIL, TELEFONO, ETA, GENERE, TITOLO_STUDIO, ANNI_ESPERIENZA, TIPO_CONTRATTO, RUOLO_ATTUALE rimossi
           
           // Sezione B - Struttura e ruolo
           ID_STRUTTURA: q.id_struttura || '',
@@ -408,7 +399,7 @@ export default function QuestionariOperatoriLista() {
           C9: difficolta_uscita.altro || 0,
           C9SPEC: difficolta_uscita.altro_specificare || '',
           
-          // Altri campi se disponibili
+          // Altri campi se disponibili (rimossi campi problematici BH-CK)
           APPROCCIO_EDUCATIVO: q.approccio_educativo || '',
           METODOLOGIE_UTILIZZATE: Array.isArray(q.metodologie_utilizzate) ? q.metodologie_utilizzate.join(', ') : '',
           STRUMENTI_LAVORO: Array.isArray(q.strumenti_lavoro) ? q.strumenti_lavoro.join(', ') : '',
