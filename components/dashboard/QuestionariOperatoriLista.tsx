@@ -399,24 +399,7 @@ export default function QuestionariOperatoriLista() {
           C9: difficolta_uscita.altro || 0,
           C9SPEC: difficolta_uscita.altro_specificare || '',
           
-          // Altri campi se disponibili (rimossi campi problematici BH-CK)
-          APPROCCIO_EDUCATIVO: q.approccio_educativo || '',
-          METODOLOGIE_UTILIZZATE: Array.isArray(q.metodologie_utilizzate) ? q.metodologie_utilizzate.join(', ') : '',
-          STRUMENTI_LAVORO: Array.isArray(q.strumenti_lavoro) ? q.strumenti_lavoro.join(', ') : '',
-          MODALITA_COINVOLGIMENTO: q.modalita_coinvolgimento || '',
-          SFIDE_PRINCIPALI: Array.isArray(q.sfide_principali) ? q.sfide_principali.join(', ') : '',
-          STRATEGIE_MOTIVAZIONALI: q.strategie_motivazionali || '',
-          GESTIONE_CONFLITTI: q.gestione_conflitti || '',
-          VALUTAZIONE_IMPATTO: q.valutazione_impatto || '',
-          FREQUENZA_INCONTRI: q.frequenza_incontri || '',
-          DURATA_MEDIA_INCONTRI: q.durata_media_incontri || '',
-          SETTING_LAVORO: Array.isArray(q.setting_lavoro) ? q.setting_lavoro.join(', ') : '',
-          CASI_SUCCESSO: q.casi_successo || '',
-          LEZIONI_APPRESE: q.lezioni_apprese || '',
-          BUONE_PRATICHE: Array.isArray(q.buone_pratiche) ? q.buone_pratiche.join(', ') : '',
-          FEEDBACK_GIOVANI: q.feedback_giovani || '',
-          DIFFICOLTA_INCONTRATE: Array.isArray(q.difficolta_incontrate) ? q.difficolta_incontrate.join(', ') : '',
-          NETWORKING_INTERESSE: Array.isArray(q.networking_interesse) ? q.networking_interesse.join(', ') : ''
+          // Altri campi se disponibili (rimossi campi problematici BH-CK e campi non presenti nel tracciato record)
         };
       });
 
