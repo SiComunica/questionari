@@ -322,7 +322,19 @@ export default function AmministratoriDashboard() {
     caratteristicheOspitiAdolescenti.forEach(car => {
       const count = data.filter(item => {
         const ospitiAdolescenti = Array.isArray(item.caratteristiche_ospiti_adolescenti) ? item.caratteristiche_ospiti_adolescenti : []
-        return hasCaratteristica(ospitiAdolescenti, car, mappingAdolescenti[car] || [])
+        // Cerca il valore standard o i valori form mappati
+        if (hasCaratteristica(ospitiAdolescenti, car, mappingAdolescenti[car] || [])) return true
+        // Se è "Altro", cerca anche valori che potrebbero essere in "Altro" 
+        if (car === 'Altro' && ospitiAdolescenti.length > 0) {
+          // Verifica se ci sono valori che non corrispondono a nessuna caratteristica standard
+          const valoriNonMappati = ospitiAdolescenti.filter((val: string) => {
+            const isStandard = caratteristicheOspitiAdolescenti.some(c => c === val)
+            const isMapped = Object.values(mappingAdolescenti).flat().includes(val)
+            return !isStandard && !isMapped
+          })
+          return valoriNonMappati.length > 0
+        }
+        return false
       }).length
       
       stats.push({
@@ -343,7 +355,18 @@ export default function AmministratoriDashboard() {
     caratteristicheOspitiGiovani.forEach(car => {
       const count = data.filter(item => {
         const ospitiGiovani = Array.isArray(item.caratteristiche_ospiti_giovani) ? item.caratteristiche_ospiti_giovani : []
-        return hasCaratteristica(ospitiGiovani, car, mappingGiovani[car] || [])
+        // Cerca il valore standard o i valori form mappati
+        if (hasCaratteristica(ospitiGiovani, car, mappingGiovani[car] || [])) return true
+        // Se è "Altro", cerca anche valori che potrebbero essere in "Altro"
+        if (car === 'Altro' && ospitiGiovani.length > 0) {
+          const valoriNonMappati = ospitiGiovani.filter((val: string) => {
+            const isStandard = caratteristicheOspitiGiovani.some(c => c === val)
+            const isMapped = Object.values(mappingGiovani).flat().includes(val)
+            return !isStandard && !isMapped
+          })
+          return valoriNonMappati.length > 0
+        }
+        return false
       }).length
       
       stats.push({
@@ -364,7 +387,18 @@ export default function AmministratoriDashboard() {
     caratteristicheOspitiAdolescenti.forEach(car => {
       const count = data.filter(item => {
         const nonOspitiAdolescenti = Array.isArray(item.caratteristiche_non_ospiti_adolescenti) ? item.caratteristiche_non_ospiti_adolescenti : []
-        return hasCaratteristica(nonOspitiAdolescenti, car, mappingAdolescenti[car] || [])
+        // Cerca il valore standard o i valori form mappati
+        if (hasCaratteristica(nonOspitiAdolescenti, car, mappingAdolescenti[car] || [])) return true
+        // Se è "Altro", cerca anche valori che potrebbero essere in "Altro"
+        if (car === 'Altro' && nonOspitiAdolescenti.length > 0) {
+          const valoriNonMappati = nonOspitiAdolescenti.filter((val: string) => {
+            const isStandard = caratteristicheOspitiAdolescenti.some(c => c === val)
+            const isMapped = Object.values(mappingAdolescenti).flat().includes(val)
+            return !isStandard && !isMapped
+          })
+          return valoriNonMappati.length > 0
+        }
+        return false
       }).length
       
       stats.push({
@@ -385,7 +419,18 @@ export default function AmministratoriDashboard() {
     caratteristicheOspitiGiovani.forEach(car => {
       const count = data.filter(item => {
         const nonOspitiGiovani = Array.isArray(item.caratteristiche_non_ospiti_giovani) ? item.caratteristiche_non_ospiti_giovani : []
-        return hasCaratteristica(nonOspitiGiovani, car, mappingGiovani[car] || [])
+        // Cerca il valore standard o i valori form mappati
+        if (hasCaratteristica(nonOspitiGiovani, car, mappingGiovani[car] || [])) return true
+        // Se è "Altro", cerca anche valori che potrebbero essere in "Altro"
+        if (car === 'Altro' && nonOspitiGiovani.length > 0) {
+          const valoriNonMappati = nonOspitiGiovani.filter((val: string) => {
+            const isStandard = caratteristicheOspitiGiovani.some(c => c === val)
+            const isMapped = Object.values(mappingGiovani).flat().includes(val)
+            return !isStandard && !isMapped
+          })
+          return valoriNonMappati.length > 0
+        }
+        return false
       }).length
       
       stats.push({
