@@ -255,6 +255,29 @@ export default function AmministratoriDashboard() {
       })
     })
 
+    // Mapping valori form -> valori standard per caratteristiche adolescenti
+    const mappingAdolescenti: Record<string, string[]> = {
+      'Stranieri con problemi legati alla condizione migratoria': ['MSNA', 'Minori stranieri accompagnati'],
+      'Vittime di tratta': ['Minori vittime di tratta'],
+      'Detenuti': ['Minori con problemi di giustizia']
+    };
+
+    // Mapping valori form -> valori standard per caratteristiche giovani
+    const mappingGiovani: Record<string, string[]> = {
+      'Stranieri con problemi legati alla condizione migratoria': ['Giovani stranieri'],
+      'Vittime di tratta': ['Giovani vittime di tratta'],
+      'Detenuti': ['Giovani con problemi di giustizia']
+    };
+
+    // Funzione helper per verificare se un array contiene un valore standard O un valore form che mappa a quel valore
+    const hasCaratteristica = (arr: string[] | undefined, valoreStandard: string, valoriForm: string[]) => {
+      if (!arr || !Array.isArray(arr)) return false;
+      // Verifica se contiene il valore standard
+      if (arr.includes(valoreStandard)) return true;
+      // Verifica se contiene uno dei valori form che mappano a quel valore standard
+      return valoriForm.some(val => arr.includes(val));
+    };
+
     // Persone ospitate - caratteristiche (adolescenti)
     const caratteristicheOspitiAdolescenti = [
       "Stranieri con problemi legati alla condizione migratoria",
@@ -299,7 +322,7 @@ export default function AmministratoriDashboard() {
     caratteristicheOspitiAdolescenti.forEach(car => {
       const count = data.filter(item => {
         const ospitiAdolescenti = Array.isArray(item.caratteristiche_ospiti_adolescenti) ? item.caratteristiche_ospiti_adolescenti : []
-        return ospitiAdolescenti.includes(car)
+        return hasCaratteristica(ospitiAdolescenti, car, mappingAdolescenti[car] || [])
       }).length
       
       stats.push({
@@ -320,7 +343,7 @@ export default function AmministratoriDashboard() {
     caratteristicheOspitiGiovani.forEach(car => {
       const count = data.filter(item => {
         const ospitiGiovani = Array.isArray(item.caratteristiche_ospiti_giovani) ? item.caratteristiche_ospiti_giovani : []
-        return ospitiGiovani.includes(car)
+        return hasCaratteristica(ospitiGiovani, car, mappingGiovani[car] || [])
       }).length
       
       stats.push({
@@ -341,7 +364,7 @@ export default function AmministratoriDashboard() {
     caratteristicheOspitiAdolescenti.forEach(car => {
       const count = data.filter(item => {
         const nonOspitiAdolescenti = Array.isArray(item.caratteristiche_non_ospiti_adolescenti) ? item.caratteristiche_non_ospiti_adolescenti : []
-        return nonOspitiAdolescenti.includes(car)
+        return hasCaratteristica(nonOspitiAdolescenti, car, mappingAdolescenti[car] || [])
       }).length
       
       stats.push({
@@ -362,7 +385,7 @@ export default function AmministratoriDashboard() {
     caratteristicheOspitiGiovani.forEach(car => {
       const count = data.filter(item => {
         const nonOspitiGiovani = Array.isArray(item.caratteristiche_non_ospiti_giovani) ? item.caratteristiche_non_ospiti_giovani : []
-        return nonOspitiGiovani.includes(car)
+        return hasCaratteristica(nonOspitiGiovani, car, mappingGiovani[car] || [])
       }).length
       
       stats.push({
