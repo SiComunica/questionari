@@ -219,6 +219,29 @@ export default function QuestionariStruttureNew() {
     console.log('Tutti i campi disponibili:', Object.keys(questionari[0] || {}));
     console.log('Campi che contengono figure:', Object.keys(questionari[0] || {}).filter(k => k.includes('figure')));
 
+    // Funzione helper per verificare se un array contiene un valore standard O un valore form che mappa a quel valore
+    const hasCaratteristica = (arr: string[] | undefined, valoreStandard: string, valoriForm: string[]) => {
+      if (!arr || !Array.isArray(arr)) return false;
+      // Verifica se contiene il valore standard
+      if (arr.includes(valoreStandard)) return true;
+      // Verifica se contiene uno dei valori form che mappano a quel valore standard
+      return valoriForm.some(val => arr.includes(val));
+    };
+
+    // Mapping valori form -> valori standard per caratteristiche adolescenti
+    const mappingAdolescenti: Record<string, string[]> = {
+      'Stranieri con problemi legati alla condizione migratoria': ['MSNA', 'Minori stranieri accompagnati'],
+      'Vittime di tratta': ['Minori vittime di tratta'],
+      'Detenuti': ['Minori con problemi di giustizia']
+    };
+
+    // Mapping valori form -> valori standard per caratteristiche giovani
+    const mappingGiovani: Record<string, string[]> = {
+      'Stranieri con problemi legati alla condizione migratoria': ['Giovani stranieri'],
+      'Vittime di tratta': ['Giovani vittime di tratta'],
+      'Detenuti': ['Giovani con problemi di giustizia']
+    };
+
     const dataToExport = questionari.map(q => {
       // Calcoliamo i totali per le persone non ospitate
       const c3tu = (q.persone_non_ospitate?.fino_16?.uomini || 0) + 
@@ -282,41 +305,41 @@ export default function QuestionariStruttureNew() {
                  (q.persone_ospitate?.maggiorenni?.donne || 0),
 
         // C2.1A-C2.16A - Caratteristiche persone trattate adolescenti
-        'C2.1A': q.caratteristiche_ospiti_adolescenti?.includes('Stranieri con problemi legati alla condizione migratoria') ? 1 : 0,
-        'C2.2A': q.caratteristiche_ospiti_adolescenti?.includes('Vittime di tratta') ? 1 : 0,
-        'C2.3A': q.caratteristiche_ospiti_adolescenti?.includes('Vittime di violenza domestica') ? 1 : 0,
-        'C2.4A': q.caratteristiche_ospiti_adolescenti?.includes('Persone allontanate dalla famiglia') ? 1 : 0,
-        'C2.5A': q.caratteristiche_ospiti_adolescenti?.includes('Detenuti') ? 1 : 0,
-        'C2.6A': q.caratteristiche_ospiti_adolescenti?.includes('Ex detenuti') ? 1 : 0,
-        'C2.7A': q.caratteristiche_ospiti_adolescenti?.includes('Persone in esecuzione penale esterna') ? 1 : 0,
-        'C2.8A': q.caratteristiche_ospiti_adolescenti?.includes('Indigenti e/o senza dimora') ? 1 : 0,
-        'C2.9A': q.caratteristiche_ospiti_adolescenti?.includes('Rom e Sinti') ? 1 : 0,
-        'C2.10A': q.caratteristiche_ospiti_adolescenti?.includes('Persone con disabilità fisica') ? 1 : 0,
-        'C2.11A': q.caratteristiche_ospiti_adolescenti?.includes('Persone con disabilità cognitiva') ? 1 : 0,
-        'C2.12A': q.caratteristiche_ospiti_adolescenti?.includes('Persone con disturbi psichiatrici') ? 1 : 0,
-        'C2.13A': q.caratteristiche_ospiti_adolescenti?.includes('Persone con dipendenze') ? 1 : 0,
-        'C2.14A': q.caratteristiche_ospiti_adolescenti?.includes('Genitori precoci') ? 1 : 0,
-        'C2.15A': q.caratteristiche_ospiti_adolescenti?.includes('Persone con problemi legati all\'orientamento sessuale') ? 1 : 0,
-        'C2.16A': q.caratteristiche_ospiti_adolescenti?.includes('Altro') ? 1 : 0,
+        'C2.1A': hasCaratteristica(q.caratteristiche_ospiti_adolescenti, 'Stranieri con problemi legati alla condizione migratoria', mappingAdolescenti['Stranieri con problemi legati alla condizione migratoria'] || []) ? 1 : 0,
+        'C2.2A': hasCaratteristica(q.caratteristiche_ospiti_adolescenti, 'Vittime di tratta', mappingAdolescenti['Vittime di tratta'] || []) ? 1 : 0,
+        'C2.3A': hasCaratteristica(q.caratteristiche_ospiti_adolescenti, 'Vittime di violenza domestica', []) ? 1 : 0,
+        'C2.4A': hasCaratteristica(q.caratteristiche_ospiti_adolescenti, 'Persone allontanate dalla famiglia', []) ? 1 : 0,
+        'C2.5A': hasCaratteristica(q.caratteristiche_ospiti_adolescenti, 'Detenuti', mappingAdolescenti['Detenuti'] || []) ? 1 : 0,
+        'C2.6A': hasCaratteristica(q.caratteristiche_ospiti_adolescenti, 'Ex detenuti', []) ? 1 : 0,
+        'C2.7A': hasCaratteristica(q.caratteristiche_ospiti_adolescenti, 'Persone in esecuzione penale esterna', []) ? 1 : 0,
+        'C2.8A': hasCaratteristica(q.caratteristiche_ospiti_adolescenti, 'Indigenti e/o senza dimora', []) ? 1 : 0,
+        'C2.9A': hasCaratteristica(q.caratteristiche_ospiti_adolescenti, 'Rom e Sinti', []) ? 1 : 0,
+        'C2.10A': hasCaratteristica(q.caratteristiche_ospiti_adolescenti, 'Persone con disabilità fisica', []) ? 1 : 0,
+        'C2.11A': hasCaratteristica(q.caratteristiche_ospiti_adolescenti, 'Persone con disabilità cognitiva', []) ? 1 : 0,
+        'C2.12A': hasCaratteristica(q.caratteristiche_ospiti_adolescenti, 'Persone con disturbi psichiatrici', []) ? 1 : 0,
+        'C2.13A': hasCaratteristica(q.caratteristiche_ospiti_adolescenti, 'Persone con dipendenze', []) ? 1 : 0,
+        'C2.14A': hasCaratteristica(q.caratteristiche_ospiti_adolescenti, 'Genitori precoci', []) ? 1 : 0,
+        'C2.15A': hasCaratteristica(q.caratteristiche_ospiti_adolescenti, 'Persone con problemi legati all\'orientamento sessuale', []) ? 1 : 0,
+        'C2.16A': hasCaratteristica(q.caratteristiche_ospiti_adolescenti, 'Altro', []) ? 1 : 0,
         'C2.16A_SPEC': q.caratteristiche_ospiti_altro || '',
 
         // C2.1B-C2.16B - Caratteristiche persone trattate giovani adulti
-        'C2.1B': q.caratteristiche_ospiti_giovani?.includes('Stranieri con problemi legati alla condizione migratoria') ? 1 : 0,
-        'C2.2B': q.caratteristiche_ospiti_giovani?.includes('Vittime di tratta') ? 1 : 0,
-        'C2.3B': q.caratteristiche_ospiti_giovani?.includes('Vittime di violenza domestica') ? 1 : 0,
-        'C2.4B': q.caratteristiche_ospiti_giovani?.includes('Persone allontanate dalla famiglia') ? 1 : 0,
-        'C2.5B': q.caratteristiche_ospiti_giovani?.includes('Detenuti') ? 1 : 0,
-        'C2.6B': q.caratteristiche_ospiti_giovani?.includes('Ex detenuti') ? 1 : 0,
-        'C2.7B': q.caratteristiche_ospiti_giovani?.includes('Persone in esecuzione penale esterna') ? 1 : 0,
-        'C2.8B': q.caratteristiche_ospiti_giovani?.includes('Indigenti e/o senza dimora') ? 1 : 0,
-        'C2.9B': q.caratteristiche_ospiti_giovani?.includes('Rom e Sinti') ? 1 : 0,
-        'C2.10B': q.caratteristiche_ospiti_giovani?.includes('Persone con disabilità fisica') ? 1 : 0,
-        'C2.11B': q.caratteristiche_ospiti_giovani?.includes('Persone con disabilità cognitiva') ? 1 : 0,
-        'C2.12B': q.caratteristiche_ospiti_giovani?.includes('Persone con disturbi psichiatrici') ? 1 : 0,
-        'C2.13B': q.caratteristiche_ospiti_giovani?.includes('Persone con dipendenze') ? 1 : 0,
-        'C2.14B': q.caratteristiche_ospiti_giovani?.includes('Genitori precoci') ? 1 : 0,
-        'C2.15B': q.caratteristiche_ospiti_giovani?.includes('Persone con problemi legati all\'orientamento sessuale') ? 1 : 0,
-        'C2.16B': q.caratteristiche_ospiti_giovani?.includes('Altro') ? 1 : 0,
+        'C2.1B': hasCaratteristica(q.caratteristiche_ospiti_giovani, 'Stranieri con problemi legati alla condizione migratoria', mappingGiovani['Stranieri con problemi legati alla condizione migratoria'] || []) ? 1 : 0,
+        'C2.2B': hasCaratteristica(q.caratteristiche_ospiti_giovani, 'Vittime di tratta', mappingGiovani['Vittime di tratta'] || []) ? 1 : 0,
+        'C2.3B': hasCaratteristica(q.caratteristiche_ospiti_giovani, 'Vittime di violenza domestica', []) ? 1 : 0,
+        'C2.4B': hasCaratteristica(q.caratteristiche_ospiti_giovani, 'Persone allontanate dalla famiglia', []) ? 1 : 0,
+        'C2.5B': hasCaratteristica(q.caratteristiche_ospiti_giovani, 'Detenuti', mappingGiovani['Detenuti'] || []) ? 1 : 0,
+        'C2.6B': hasCaratteristica(q.caratteristiche_ospiti_giovani, 'Ex detenuti', []) ? 1 : 0,
+        'C2.7B': hasCaratteristica(q.caratteristiche_ospiti_giovani, 'Persone in esecuzione penale esterna', []) ? 1 : 0,
+        'C2.8B': hasCaratteristica(q.caratteristiche_ospiti_giovani, 'Indigenti e/o senza dimora', []) ? 1 : 0,
+        'C2.9B': hasCaratteristica(q.caratteristiche_ospiti_giovani, 'Rom e Sinti', []) ? 1 : 0,
+        'C2.10B': hasCaratteristica(q.caratteristiche_ospiti_giovani, 'Persone con disabilità fisica', []) ? 1 : 0,
+        'C2.11B': hasCaratteristica(q.caratteristiche_ospiti_giovani, 'Persone con disabilità cognitiva', []) ? 1 : 0,
+        'C2.12B': hasCaratteristica(q.caratteristiche_ospiti_giovani, 'Persone con disturbi psichiatrici', []) ? 1 : 0,
+        'C2.13B': hasCaratteristica(q.caratteristiche_ospiti_giovani, 'Persone con dipendenze', []) ? 1 : 0,
+        'C2.14B': hasCaratteristica(q.caratteristiche_ospiti_giovani, 'Genitori precoci', []) ? 1 : 0,
+        'C2.15B': hasCaratteristica(q.caratteristiche_ospiti_giovani, 'Persone con problemi legati all\'orientamento sessuale', []) ? 1 : 0,
+        'C2.16B': hasCaratteristica(q.caratteristiche_ospiti_giovani, 'Altro', []) ? 1 : 0,
         'C2.16B_SPEC': q.caratteristiche_ospiti_altro || '',
 
         // Persone non ospitate e totali
@@ -334,40 +357,40 @@ export default function QuestionariStruttureNew() {
         'C3T.T': c3tu + c3td,
 
         // Caratteristiche persone non ospitate - adolescenti
-        'C4.1A': q.caratteristiche_non_ospiti_adolescenti?.includes('Stranieri con problemi legati alla condizione migratoria') ? 1 : 0,
-        'C4.2A': q.caratteristiche_non_ospiti_adolescenti?.includes('Vittime di tratta') ? 1 : 0,
-        'C4.3A': q.caratteristiche_non_ospiti_adolescenti?.includes('Vittime di violenza domestica') ? 1 : 0,
-        'C4.4A': q.caratteristiche_non_ospiti_adolescenti?.includes('Persone allontanate dalla famiglia') ? 1 : 0,
-        'C4.5A': q.caratteristiche_non_ospiti_adolescenti?.includes('Detenuti') ? 1 : 0,
-        'C4.6A': q.caratteristiche_non_ospiti_adolescenti?.includes('Ex detenuti') ? 1 : 0,
-        'C4.7A': q.caratteristiche_non_ospiti_adolescenti?.includes('Persone in esecuzione penale esterna') ? 1 : 0,
-        'C4.8A': q.caratteristiche_non_ospiti_adolescenti?.includes('Indigenti e/o senza dimora') ? 1 : 0,
-        'C4.9A': q.caratteristiche_non_ospiti_adolescenti?.includes('Rom e Sinti') ? 1 : 0,
-        'C4.10A': q.caratteristiche_non_ospiti_adolescenti?.includes('Persone con disabilità fisica') ? 1 : 0,
-        'C4.11A': q.caratteristiche_non_ospiti_adolescenti?.includes('Persone con disabilità cognitiva') ? 1 : 0,
-        'C4.12A': q.caratteristiche_non_ospiti_adolescenti?.includes('Persone con disturbi psichiatrici') ? 1 : 0,
-        'C4.13A': q.caratteristiche_non_ospiti_adolescenti?.includes('Persone con dipendenze') ? 1 : 0,
-        'C4.14A': q.caratteristiche_non_ospiti_adolescenti?.includes('Genitori precoci') ? 1 : 0,
-        'C4.15A': q.caratteristiche_non_ospiti_adolescenti?.includes('Persone con problemi legati all\'orientamento sessuale') ? 1 : 0,
-        'C4.16A': q.caratteristiche_non_ospiti_adolescenti?.includes('Altro') ? 1 : 0,
+        'C4.1A': hasCaratteristica(q.caratteristiche_non_ospiti_adolescenti, 'Stranieri con problemi legati alla condizione migratoria', mappingAdolescenti['Stranieri con problemi legati alla condizione migratoria'] || []) ? 1 : 0,
+        'C4.2A': hasCaratteristica(q.caratteristiche_non_ospiti_adolescenti, 'Vittime di tratta', mappingAdolescenti['Vittime di tratta'] || []) ? 1 : 0,
+        'C4.3A': hasCaratteristica(q.caratteristiche_non_ospiti_adolescenti, 'Vittime di violenza domestica', []) ? 1 : 0,
+        'C4.4A': hasCaratteristica(q.caratteristiche_non_ospiti_adolescenti, 'Persone allontanate dalla famiglia', []) ? 1 : 0,
+        'C4.5A': hasCaratteristica(q.caratteristiche_non_ospiti_adolescenti, 'Detenuti', mappingAdolescenti['Detenuti'] || []) ? 1 : 0,
+        'C4.6A': hasCaratteristica(q.caratteristiche_non_ospiti_adolescenti, 'Ex detenuti', []) ? 1 : 0,
+        'C4.7A': hasCaratteristica(q.caratteristiche_non_ospiti_adolescenti, 'Persone in esecuzione penale esterna', []) ? 1 : 0,
+        'C4.8A': hasCaratteristica(q.caratteristiche_non_ospiti_adolescenti, 'Indigenti e/o senza dimora', []) ? 1 : 0,
+        'C4.9A': hasCaratteristica(q.caratteristiche_non_ospiti_adolescenti, 'Rom e Sinti', []) ? 1 : 0,
+        'C4.10A': hasCaratteristica(q.caratteristiche_non_ospiti_adolescenti, 'Persone con disabilità fisica', []) ? 1 : 0,
+        'C4.11A': hasCaratteristica(q.caratteristiche_non_ospiti_adolescenti, 'Persone con disabilità cognitiva', []) ? 1 : 0,
+        'C4.12A': hasCaratteristica(q.caratteristiche_non_ospiti_adolescenti, 'Persone con disturbi psichiatrici', []) ? 1 : 0,
+        'C4.13A': hasCaratteristica(q.caratteristiche_non_ospiti_adolescenti, 'Persone con dipendenze', []) ? 1 : 0,
+        'C4.14A': hasCaratteristica(q.caratteristiche_non_ospiti_adolescenti, 'Genitori precoci', []) ? 1 : 0,
+        'C4.15A': hasCaratteristica(q.caratteristiche_non_ospiti_adolescenti, 'Persone con problemi legati all\'orientamento sessuale', []) ? 1 : 0,
+        'C4.16A': hasCaratteristica(q.caratteristiche_non_ospiti_adolescenti, 'Altro', []) ? 1 : 0,
 
         // Caratteristiche persone non ospitate - giovani adulti
-        'C4.1B': q.caratteristiche_non_ospiti_giovani?.includes('Stranieri con problemi legati alla condizione migratoria') ? 1 : 0,
-        'C4.2B': q.caratteristiche_non_ospiti_giovani?.includes('Vittime di tratta') ? 1 : 0,
-        'C4.3B': q.caratteristiche_non_ospiti_giovani?.includes('Vittime di violenza domestica') ? 1 : 0,
-        'C4.4B': q.caratteristiche_non_ospiti_giovani?.includes('Persone allontanate dalla famiglia') ? 1 : 0,
-        'C4.5B': q.caratteristiche_non_ospiti_giovani?.includes('Detenuti') ? 1 : 0,
-        'C4.6B': q.caratteristiche_non_ospiti_giovani?.includes('Ex detenuti') ? 1 : 0,
-        'C4.7B': q.caratteristiche_non_ospiti_giovani?.includes('Persone in esecuzione penale esterna') ? 1 : 0,
-        'C4.8B': q.caratteristiche_non_ospiti_giovani?.includes('Indigenti e/o senza dimora') ? 1 : 0,
-        'C4.9B': q.caratteristiche_non_ospiti_giovani?.includes('Rom e Sinti') ? 1 : 0,
-        'C4.10B': q.caratteristiche_non_ospiti_giovani?.includes('Persone con disabilità fisica') ? 1 : 0,
-        'C4.11B': q.caratteristiche_non_ospiti_giovani?.includes('Persone con disabilità cognitiva') ? 1 : 0,
-        'C4.12B': q.caratteristiche_non_ospiti_giovani?.includes('Persone con disturbi psichiatrici') ? 1 : 0,
-        'C4.13B': q.caratteristiche_non_ospiti_giovani?.includes('Persone con dipendenze') ? 1 : 0,
-        'C4.14B': q.caratteristiche_non_ospiti_giovani?.includes('Genitori precoci') ? 1 : 0,
-        'C4.15B': q.caratteristiche_non_ospiti_giovani?.includes('Persone con problemi legati all\'orientamento sessuale') ? 1 : 0,
-        'C4.16B': q.caratteristiche_non_ospiti_giovani?.includes('Altro') ? 1 : 0,
+        'C4.1B': hasCaratteristica(q.caratteristiche_non_ospiti_giovani, 'Stranieri con problemi legati alla condizione migratoria', mappingGiovani['Stranieri con problemi legati alla condizione migratoria'] || []) ? 1 : 0,
+        'C4.2B': hasCaratteristica(q.caratteristiche_non_ospiti_giovani, 'Vittime di tratta', mappingGiovani['Vittime di tratta'] || []) ? 1 : 0,
+        'C4.3B': hasCaratteristica(q.caratteristiche_non_ospiti_giovani, 'Vittime di violenza domestica', []) ? 1 : 0,
+        'C4.4B': hasCaratteristica(q.caratteristiche_non_ospiti_giovani, 'Persone allontanate dalla famiglia', []) ? 1 : 0,
+        'C4.5B': hasCaratteristica(q.caratteristiche_non_ospiti_giovani, 'Detenuti', mappingGiovani['Detenuti'] || []) ? 1 : 0,
+        'C4.6B': hasCaratteristica(q.caratteristiche_non_ospiti_giovani, 'Ex detenuti', []) ? 1 : 0,
+        'C4.7B': hasCaratteristica(q.caratteristiche_non_ospiti_giovani, 'Persone in esecuzione penale esterna', []) ? 1 : 0,
+        'C4.8B': hasCaratteristica(q.caratteristiche_non_ospiti_giovani, 'Indigenti e/o senza dimora', []) ? 1 : 0,
+        'C4.9B': hasCaratteristica(q.caratteristiche_non_ospiti_giovani, 'Rom e Sinti', []) ? 1 : 0,
+        'C4.10B': hasCaratteristica(q.caratteristiche_non_ospiti_giovani, 'Persone con disabilità fisica', []) ? 1 : 0,
+        'C4.11B': hasCaratteristica(q.caratteristiche_non_ospiti_giovani, 'Persone con disabilità cognitiva', []) ? 1 : 0,
+        'C4.12B': hasCaratteristica(q.caratteristiche_non_ospiti_giovani, 'Persone con disturbi psichiatrici', []) ? 1 : 0,
+        'C4.13B': hasCaratteristica(q.caratteristiche_non_ospiti_giovani, 'Persone con dipendenze', []) ? 1 : 0,
+        'C4.14B': hasCaratteristica(q.caratteristiche_non_ospiti_giovani, 'Genitori precoci', []) ? 1 : 0,
+        'C4.15B': hasCaratteristica(q.caratteristiche_non_ospiti_giovani, 'Persone con problemi legati all\'orientamento sessuale', []) ? 1 : 0,
+        'C4.16B': hasCaratteristica(q.caratteristiche_non_ospiti_giovani, 'Altro', []) ? 1 : 0,
         'C4.16ALTRO': q.caratteristiche_non_ospiti_altro || '',
 
         // Attività e servizi
