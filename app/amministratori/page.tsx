@@ -257,20 +257,41 @@ export default function AmministratoriDashboard() {
 
     // Persone ospitate - caratteristiche (adolescenti)
     const caratteristicheOspitiAdolescenti = [
-      "MSNA",
-      "Minori stranieri accompagnati", 
-      "Minori italiani",
-      "Minori vittime di tratta",
-      "Minori con problemi di giustizia",
+      "Stranieri con problemi legati alla condizione migratoria",
+      "Vittime di tratta",
+      "Vittime di violenza domestica",
+      "Persone allontanate dalla famiglia",
+      "Detenuti",
+      "Ex detenuti",
+      "Persone in esecuzione penale esterna",
+      "Indigenti e/o senza dimora",
+      "Rom e Sinti",
+      "Persone con disabilità fisica",
+      "Persone con disabilità cognitiva",
+      "Persone con disturbi psichiatrici",
+      "Persone con dipendenze",
+      "Genitori precoci",
+      "Persone con problemi legati all'orientamento sessuale",
       "Altro"
     ]
     
     // Persone ospitate - caratteristiche (giovani)
     const caratteristicheOspitiGiovani = [
-      "Giovani italiani",
-      "Giovani stranieri", 
-      "Giovani vittime di tratta",
-      "Giovani con problemi di giustizia",
+      "Stranieri con problemi legati alla condizione migratoria",
+      "Vittime di tratta",
+      "Vittime di violenza domestica",
+      "Persone allontanate dalla famiglia",
+      "Detenuti",
+      "Ex detenuti",
+      "Persone in esecuzione penale esterna",
+      "Indigenti e/o senza dimora",
+      "Rom e Sinti",
+      "Persone con disabilità fisica",
+      "Persone con disabilità cognitiva",
+      "Persone con disturbi psichiatrici",
+      "Persone con dipendenze",
+      "Genitori precoci",
+      "Persone con problemi legati all'orientamento sessuale",
       "Altro"
     ]
     

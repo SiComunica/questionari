@@ -54,6 +54,9 @@ type QuestionarioStrutture = {
     da_16_a_18?: { uomini: number; donne: number; totale: number };
     maggiorenni?: { uomini: number; donne: number; totale: number };
   };
+  caratteristiche_ospiti_adolescenti?: string[];
+  caratteristiche_ospiti_giovani?: string[];
+  caratteristiche_ospiti_altro?: string;
   caratteristiche_non_ospiti_adolescenti?: string[];
   caratteristiche_non_ospiti_giovani?: string[];
   caratteristiche_non_ospiti_altro?: string;
@@ -278,43 +281,43 @@ export default function QuestionariStruttureNew() {
                  (q.persone_ospitate?.da_16_a_18?.donne || 0) + 
                  (q.persone_ospitate?.maggiorenni?.donne || 0),
 
-        // C2.1A-C2.16A - Caratteristiche persone trattate adolescenti (MANCANTI!)
-        'C2.1A': 0,
-        'C2.2A': 0,
-        'C2.3A': 0,
-        'C2.4A': 0,
-        'C2.5A': 0,
-        'C2.6A': 0,
-        'C2.7A': 0,
-        'C2.8A': 0,
-        'C2.9A': 0,
-        'C2.10A': 0,
-        'C2.11A': 0,
-        'C2.12A': 0,
-        'C2.13A': 0,
-        'C2.14A': 0,
-        'C2.15A': 0,
-        'C2.16A': 0,
-        'C2.16A_SPEC': '',
+        // C2.1A-C2.16A - Caratteristiche persone trattate adolescenti
+        'C2.1A': q.caratteristiche_ospiti_adolescenti?.includes('Stranieri con problemi legati alla condizione migratoria') ? 1 : 0,
+        'C2.2A': q.caratteristiche_ospiti_adolescenti?.includes('Vittime di tratta') ? 1 : 0,
+        'C2.3A': q.caratteristiche_ospiti_adolescenti?.includes('Vittime di violenza domestica') ? 1 : 0,
+        'C2.4A': q.caratteristiche_ospiti_adolescenti?.includes('Persone allontanate dalla famiglia') ? 1 : 0,
+        'C2.5A': q.caratteristiche_ospiti_adolescenti?.includes('Detenuti') ? 1 : 0,
+        'C2.6A': q.caratteristiche_ospiti_adolescenti?.includes('Ex detenuti') ? 1 : 0,
+        'C2.7A': q.caratteristiche_ospiti_adolescenti?.includes('Persone in esecuzione penale esterna') ? 1 : 0,
+        'C2.8A': q.caratteristiche_ospiti_adolescenti?.includes('Indigenti e/o senza dimora') ? 1 : 0,
+        'C2.9A': q.caratteristiche_ospiti_adolescenti?.includes('Rom e Sinti') ? 1 : 0,
+        'C2.10A': q.caratteristiche_ospiti_adolescenti?.includes('Persone con disabilità fisica') ? 1 : 0,
+        'C2.11A': q.caratteristiche_ospiti_adolescenti?.includes('Persone con disabilità cognitiva') ? 1 : 0,
+        'C2.12A': q.caratteristiche_ospiti_adolescenti?.includes('Persone con disturbi psichiatrici') ? 1 : 0,
+        'C2.13A': q.caratteristiche_ospiti_adolescenti?.includes('Persone con dipendenze') ? 1 : 0,
+        'C2.14A': q.caratteristiche_ospiti_adolescenti?.includes('Genitori precoci') ? 1 : 0,
+        'C2.15A': q.caratteristiche_ospiti_adolescenti?.includes('Persone con problemi legati all\'orientamento sessuale') ? 1 : 0,
+        'C2.16A': q.caratteristiche_ospiti_adolescenti?.includes('Altro') ? 1 : 0,
+        'C2.16A_SPEC': q.caratteristiche_ospiti_altro || '',
 
-        // C2.1B-C2.16B - Caratteristiche persone trattate giovani adulti (MANCANTI!)
-        'C2.1B': 0,
-        'C2.2B': 0,
-        'C2.3B': 0,
-        'C2.4B': 0,
-        'C2.5B': 0,
-        'C2.6B': 0,
-        'C2.7B': 0,
-        'C2.8B': 0,
-        'C2.9B': 0,
-        'C2.10B': 0,
-        'C2.11B': 0,
-        'C2.12B': 0,
-        'C2.13B': 0,
-        'C2.14B': 0,
-        'C2.15B': 0,
-        'C2.16B': 0,
-        'C2.16B_SPEC': '',
+        // C2.1B-C2.16B - Caratteristiche persone trattate giovani adulti
+        'C2.1B': q.caratteristiche_ospiti_giovani?.includes('Stranieri con problemi legati alla condizione migratoria') ? 1 : 0,
+        'C2.2B': q.caratteristiche_ospiti_giovani?.includes('Vittime di tratta') ? 1 : 0,
+        'C2.3B': q.caratteristiche_ospiti_giovani?.includes('Vittime di violenza domestica') ? 1 : 0,
+        'C2.4B': q.caratteristiche_ospiti_giovani?.includes('Persone allontanate dalla famiglia') ? 1 : 0,
+        'C2.5B': q.caratteristiche_ospiti_giovani?.includes('Detenuti') ? 1 : 0,
+        'C2.6B': q.caratteristiche_ospiti_giovani?.includes('Ex detenuti') ? 1 : 0,
+        'C2.7B': q.caratteristiche_ospiti_giovani?.includes('Persone in esecuzione penale esterna') ? 1 : 0,
+        'C2.8B': q.caratteristiche_ospiti_giovani?.includes('Indigenti e/o senza dimora') ? 1 : 0,
+        'C2.9B': q.caratteristiche_ospiti_giovani?.includes('Rom e Sinti') ? 1 : 0,
+        'C2.10B': q.caratteristiche_ospiti_giovani?.includes('Persone con disabilità fisica') ? 1 : 0,
+        'C2.11B': q.caratteristiche_ospiti_giovani?.includes('Persone con disabilità cognitiva') ? 1 : 0,
+        'C2.12B': q.caratteristiche_ospiti_giovani?.includes('Persone con disturbi psichiatrici') ? 1 : 0,
+        'C2.13B': q.caratteristiche_ospiti_giovani?.includes('Persone con dipendenze') ? 1 : 0,
+        'C2.14B': q.caratteristiche_ospiti_giovani?.includes('Genitori precoci') ? 1 : 0,
+        'C2.15B': q.caratteristiche_ospiti_giovani?.includes('Persone con problemi legati all\'orientamento sessuale') ? 1 : 0,
+        'C2.16B': q.caratteristiche_ospiti_giovani?.includes('Altro') ? 1 : 0,
+        'C2.16B_SPEC': q.caratteristiche_ospiti_altro || '',
 
         // Persone non ospitate e totali
         'C3A.U': q.persone_non_ospitate?.fino_16?.uomini || 0,
