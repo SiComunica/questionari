@@ -25,7 +25,7 @@ export default function AmministratoriDashboard() {
 
   const generateStatistics = async () => {
     try {
-      // Recupera tutti i dati
+      // Recupera tutti i dati (esclusi quelli cancellati se hanno campo stato)
       const [struttureData, operatoriData, giovaniData] = await Promise.all([
         supabase.from('strutture').select('*'),
         supabase.from('operatori').select('*'),
@@ -442,35 +442,11 @@ export default function AmministratoriDashboard() {
       "Altro"
     ]
     
-    // Prima raccogliamo TUTTI i valori unici presenti nel database per caratteristiche ospiti adolescenti
-    const tuttiValoriOspitiAdolescenti = new Set<string>()
-    data.forEach(item => {
-      const ospitiAdolescenti = Array.isArray(item.caratteristiche_ospiti_adolescenti) ? item.caratteristiche_ospiti_adolescenti : []
-      ospitiAdolescenti.forEach((val: string) => tuttiValoriOspitiAdolescenti.add(val))
-    })
-
-    // Aggiungiamo i valori non standard trovati alle caratteristiche da cercare
-    const caratteristicheCompleteAdolescenti = [...caratteristicheOspitiAdolescenti]
-    tuttiValoriOspitiAdolescenti.forEach(val => {
-      const isStandard = caratteristicheOspitiAdolescenti.includes(val)
-      const isMapped = Object.values(mappingAdolescenti).flat().includes(val)
-      if (!isStandard && !isMapped && val.trim() !== '') {
-        // Aggiungiamo anche valori vecchi non mappati come statistiche separate
-        caratteristicheCompleteAdolescenti.push(val)
-      }
-    })
-
-    // Caratteristiche ospiti adolescenti - cerchiamo tutti i valori
-    caratteristicheCompleteAdolescenti.forEach(car => {
+    // Caratteristiche ospiti adolescenti - solo valori standard
+    caratteristicheOspitiAdolescenti.forEach(car => {
       const count = data.filter(item => {
         const ospitiAdolescenti = Array.isArray(item.caratteristiche_ospiti_adolescenti) ? item.caratteristiche_ospiti_adolescenti : []
-        // Se è una caratteristica standard, usa il mapping
-        if (caratteristicheOspitiAdolescenti.includes(car)) {
-          return hasCaratteristica(ospitiAdolescenti, car, mappingAdolescenti[car] || [])
-        } else {
-          // Se è un valore vecchio non mappato, cerca direttamente
-          return ospitiAdolescenti.includes(car)
-        }
+        return hasCaratteristica(ospitiAdolescenti, car, mappingAdolescenti[car] || [])
       }).length
       
       stats.push({
@@ -487,34 +463,11 @@ export default function AmministratoriDashboard() {
       })
     })
     
-    // Prima raccogliamo TUTTI i valori unici presenti nel database per caratteristiche ospiti giovani
-    const tuttiValoriOspitiGiovani = new Set<string>()
-    data.forEach(item => {
-      const ospitiGiovani = Array.isArray(item.caratteristiche_ospiti_giovani) ? item.caratteristiche_ospiti_giovani : []
-      ospitiGiovani.forEach((val: string) => tuttiValoriOspitiGiovani.add(val))
-    })
-
-    // Aggiungiamo i valori non standard trovati alle caratteristiche da cercare
-    const caratteristicheCompleteGiovani = [...caratteristicheOspitiGiovani]
-    tuttiValoriOspitiGiovani.forEach(val => {
-      const isStandard = caratteristicheOspitiGiovani.includes(val)
-      const isMapped = Object.values(mappingGiovani).flat().includes(val)
-      if (!isStandard && !isMapped && val.trim() !== '') {
-        caratteristicheCompleteGiovani.push(val)
-      }
-    })
-
-    // Caratteristiche ospiti giovani - cerchiamo tutti i valori
-    caratteristicheCompleteGiovani.forEach(car => {
+    // Caratteristiche ospiti giovani - solo valori standard
+    caratteristicheOspitiGiovani.forEach(car => {
       const count = data.filter(item => {
         const ospitiGiovani = Array.isArray(item.caratteristiche_ospiti_giovani) ? item.caratteristiche_ospiti_giovani : []
-        // Se è una caratteristica standard, usa il mapping
-        if (caratteristicheOspitiGiovani.includes(car)) {
-          return hasCaratteristica(ospitiGiovani, car, mappingGiovani[car] || [])
-        } else {
-          // Se è un valore vecchio non mappato, cerca direttamente
-          return ospitiGiovani.includes(car)
-        }
+        return hasCaratteristica(ospitiGiovani, car, mappingGiovani[car] || [])
       }).length
       
       stats.push({
@@ -531,34 +484,11 @@ export default function AmministratoriDashboard() {
       })
     })
 
-    // Prima raccogliamo TUTTI i valori unici presenti nel database per caratteristiche non ospiti adolescenti
-    const tuttiValoriNonOspitiAdolescenti = new Set<string>()
-    data.forEach(item => {
-      const nonOspitiAdolescenti = Array.isArray(item.caratteristiche_non_ospiti_adolescenti) ? item.caratteristiche_non_ospiti_adolescenti : []
-      nonOspitiAdolescenti.forEach((val: string) => tuttiValoriNonOspitiAdolescenti.add(val))
-    })
-
-    // Aggiungiamo i valori non standard trovati alle caratteristiche da cercare
-    const caratteristicheCompleteNonOspitiAdolescenti = [...caratteristicheOspitiAdolescenti]
-    tuttiValoriNonOspitiAdolescenti.forEach(val => {
-      const isStandard = caratteristicheOspitiAdolescenti.includes(val)
-      const isMapped = Object.values(mappingAdolescenti).flat().includes(val)
-      if (!isStandard && !isMapped && val.trim() !== '') {
-        caratteristicheCompleteNonOspitiAdolescenti.push(val)
-      }
-    })
-
-    // Caratteristiche non ospiti adolescenti - cerchiamo tutti i valori
-    caratteristicheCompleteNonOspitiAdolescenti.forEach(car => {
+    // Caratteristiche non ospiti adolescenti - solo valori standard
+    caratteristicheOspitiAdolescenti.forEach(car => {
       const count = data.filter(item => {
         const nonOspitiAdolescenti = Array.isArray(item.caratteristiche_non_ospiti_adolescenti) ? item.caratteristiche_non_ospiti_adolescenti : []
-        // Se è una caratteristica standard, usa il mapping
-        if (caratteristicheOspitiAdolescenti.includes(car)) {
-          return hasCaratteristica(nonOspitiAdolescenti, car, mappingAdolescenti[car] || [])
-        } else {
-          // Se è un valore vecchio non mappato, cerca direttamente
-          return nonOspitiAdolescenti.includes(car)
-        }
+        return hasCaratteristica(nonOspitiAdolescenti, car, mappingAdolescenti[car] || [])
       }).length
       
       stats.push({
@@ -575,34 +505,11 @@ export default function AmministratoriDashboard() {
       })
     })
     
-    // Prima raccogliamo TUTTI i valori unici presenti nel database per caratteristiche non ospiti giovani
-    const tuttiValoriNonOspitiGiovani = new Set<string>()
-    data.forEach(item => {
-      const nonOspitiGiovani = Array.isArray(item.caratteristiche_non_ospiti_giovani) ? item.caratteristiche_non_ospiti_giovani : []
-      nonOspitiGiovani.forEach((val: string) => tuttiValoriNonOspitiGiovani.add(val))
-    })
-
-    // Aggiungiamo i valori non standard trovati alle caratteristiche da cercare
-    const caratteristicheCompleteNonOspitiGiovani = [...caratteristicheOspitiGiovani]
-    tuttiValoriNonOspitiGiovani.forEach(val => {
-      const isStandard = caratteristicheOspitiGiovani.includes(val)
-      const isMapped = Object.values(mappingGiovani).flat().includes(val)
-      if (!isStandard && !isMapped && val.trim() !== '') {
-        caratteristicheCompleteNonOspitiGiovani.push(val)
-      }
-    })
-
-    // Caratteristiche non ospiti giovani - cerchiamo tutti i valori
-    caratteristicheCompleteNonOspitiGiovani.forEach(car => {
+    // Caratteristiche non ospiti giovani - solo valori standard
+    caratteristicheOspitiGiovani.forEach(car => {
       const count = data.filter(item => {
         const nonOspitiGiovani = Array.isArray(item.caratteristiche_non_ospiti_giovani) ? item.caratteristiche_non_ospiti_giovani : []
-        // Se è una caratteristica standard, usa il mapping
-        if (caratteristicheOspitiGiovani.includes(car)) {
-          return hasCaratteristica(nonOspitiGiovani, car, mappingGiovani[car] || [])
-        } else {
-          // Se è un valore vecchio non mappato, cerca direttamente
-          return nonOspitiGiovani.includes(car)
-        }
+        return hasCaratteristica(nonOspitiGiovani, car, mappingGiovani[car] || [])
       }).length
       
       stats.push({
