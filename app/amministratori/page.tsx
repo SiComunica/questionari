@@ -504,50 +504,52 @@ export default function AmministratoriDashboard() {
     })
 
     // Attività inserimento (D3): array di oggetti con nome, periodo, contenuto, destinatari, attori, punti_forza, criticita
+    // Codici: D3.1NOM, D3.2NOM, D3.3NOM, D3.1PER, ecc. → usiamo D3.NOM, D3.PER, ecc. per aggregare tutti i progetti
     const attivitaInserimentoNomi = data.flatMap((x:any)=>x.attivita_inserimento?.map((a:any)=>a.nome) || []).filter(v => v && v.trim() !== '')
     if (attivitaInserimentoNomi.length > 0) {
-      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoNomi, 'Attività Inserimento Nome (D3.x NOM)', 'Attività Inserimento Nome', 'D3', total))
+      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoNomi, 'Attività Inserimento Nome (D3.NOM)', 'Attività Inserimento Nome', 'D3.NOM', total))
     }
     const attivitaInserimentoPeriodo = data.flatMap((x:any)=>x.attivita_inserimento?.map((a:any)=>a.periodo) || []).filter(v => v && v.trim() !== '')
     if (attivitaInserimentoPeriodo.length > 0) {
-      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoPeriodo, 'Attività Inserimento Periodo (D3.x PER)', 'Attività Inserimento Periodo', 'D3', total))
+      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoPeriodo, 'Attività Inserimento Periodo (D3.PER)', 'Attività Inserimento Periodo', 'D3.PER', total))
     }
     const attivitaInserimentoContenuto = data.flatMap((x:any)=>x.attivita_inserimento?.map((a:any)=>a.contenuto) || []).filter(v => v && v.trim() !== '')
     if (attivitaInserimentoContenuto.length > 0) {
-      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoContenuto, 'Attività Inserimento Contenuto (D3.x CONT)', 'Attività Inserimento Contenuto', 'D3', total))
+      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoContenuto, 'Attività Inserimento Contenuto (D3.CONT)', 'Attività Inserimento Contenuto', 'D3.CONT', total))
     }
     const attivitaInserimentoDestinatari = data.flatMap((x:any)=>x.attivita_inserimento?.map((a:any)=>a.destinatari) || []).filter(v => v && v.trim() !== '')
     if (attivitaInserimentoDestinatari.length > 0) {
-      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoDestinatari, 'Attività Inserimento Destinatari (D3.x DEST)', 'Attività Inserimento Destinatari', 'D3', total))
+      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoDestinatari, 'Attività Inserimento Destinatari (D3.DEST)', 'Attività Inserimento Destinatari', 'D3.DEST', total))
     }
     const attivitaInserimentoAttori = data.flatMap((x:any)=>x.attivita_inserimento?.map((a:any)=>a.attori) || []).filter(v => v && v.trim() !== '')
     if (attivitaInserimentoAttori.length > 0) {
-      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoAttori, 'Attività Inserimento Attori (D3.x ATT)', 'Attività Inserimento Attori', 'D3', total))
+      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoAttori, 'Attività Inserimento Attori (D3.ATT)', 'Attività Inserimento Attori', 'D3.ATT', total))
     }
     const attivitaInserimentoPuntiForza = data.flatMap((x:any)=>x.attivita_inserimento?.map((a:any)=>a.punti_forza) || []).filter(v => v && v.trim() !== '')
     if (attivitaInserimentoPuntiForza.length > 0) {
-      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoPuntiForza, 'Attività Inserimento Punti Forza (D3.x PFOR)', 'Attività Inserimento Punti Forza', 'D3', total))
+      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoPuntiForza, 'Attività Inserimento Punti Forza (D3.PFOR)', 'Attività Inserimento Punti Forza', 'D3.PFOR', total))
     }
     const attivitaInserimentoCriticita = data.flatMap((x:any)=>x.attivita_inserimento?.map((a:any)=>a.criticita) || []).filter(v => v && v.trim() !== '')
     if (attivitaInserimentoCriticita.length > 0) {
-      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoCriticita, 'Attività Inserimento Criticità (D3.x CRIT)', 'Attività Inserimento Criticità', 'D3', total))
+      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoCriticita, 'Attività Inserimento Criticità (D3.CRIT)', 'Attività Inserimento Criticità', 'D3.CRIT', total))
     }
     
     // Nuove attività (D4)
     stats.push(...getTextStatsStruttureCustom(data.flatMap((x:any)=>x.nuove_attivita||[]), 'Nuove Attività', 'Nuove Attività', 'D4', total))
     
     // Collaborazioni (E1): array di oggetti con soggetto, tipo, oggetto
+    // Codici: E1.1SOGG, E1.2SOGG, E1.3SOGG, E1.1TIPO, ecc. → usiamo E1.SOGG, E1.TIPO, E1.OGGETTO per aggregare
     const collaborazioniSoggetto = data.flatMap((x:any)=>x.collaborazioni?.map((c:any)=>c.soggetto) || []).filter(v => v && v.trim() !== '')
     if (collaborazioniSoggetto.length > 0) {
-      stats.push(...getTextStatsStruttureCustom(collaborazioniSoggetto, 'Collaborazioni Soggetto (E1.x SOGG)', 'Collaborazioni Soggetto', 'E1', total))
+      stats.push(...getTextStatsStruttureCustom(collaborazioniSoggetto, 'Collaborazioni Soggetto (E1.SOGG)', 'Collaborazioni Soggetto', 'E1.SOGG', total))
     }
     const collaborazioniTipo = data.flatMap((x:any)=>x.collaborazioni?.map((c:any)=>c.tipo) || []).filter(v => v !== undefined && v !== null && v !== '')
     if (collaborazioniTipo.length > 0) {
-      stats.push(...getNumericStatsStrutture(collaborazioniTipo, 'Collaborazioni Tipo (E1.x TIPO)', 'Collaborazioni Tipo', 'E1', total))
+      stats.push(...getNumericStatsStrutture(collaborazioniTipo, 'Collaborazioni Tipo (E1.TIPO)', 'Collaborazioni Tipo', 'E1.TIPO', total))
     }
     const collaborazioniOggetto = data.flatMap((x:any)=>x.collaborazioni?.map((c:any)=>c.oggetto) || []).filter(v => v && v.trim() !== '')
     if (collaborazioniOggetto.length > 0) {
-      stats.push(...getTextStatsStruttureCustom(collaborazioniOggetto, 'Collaborazioni Oggetto (E1.x OGGETTO)', 'Collaborazioni Oggetto', 'E1', total))
+      stats.push(...getTextStatsStruttureCustom(collaborazioniOggetto, 'Collaborazioni Oggetto (E1.OGGETTO)', 'Collaborazioni Oggetto', 'E1.OGGETTO', total))
     }
 
     // Punti forza, critica network (E2, E3)
