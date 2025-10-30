@@ -279,15 +279,16 @@ export default function AmministratoriDashboard() {
       }
     }
 
-    // Caratteristiche altro
+    // Caratteristiche altro (C2.16A_SPEC per ospiti adolescenti, C2.16B_SPEC per ospiti giovani, C4.16ALTRO per non ospiti)
     const caratteristicheOspitiAltro = data.map((x:any)=>x.caratteristiche_ospiti_altro).filter(val => val && val.trim() !== '')
     if (caratteristicheOspitiAltro.length > 0) {
-      stats.push(...getTextStatsStruttureCustom(caratteristicheOspitiAltro, 'Caratt. Ospiti Altro', 'Caratteristiche Ospiti Altro', 'C2.16A_SPEC', total))
+      stats.push(...getTextStatsStruttureCustom(caratteristicheOspitiAltro, 'Caratt. Ospiti Altro (Adolescenti)', 'Caratteristiche Ospiti Altro', 'C2.16A_SPEC', total))
+      stats.push(...getTextStatsStruttureCustom(caratteristicheOspitiAltro, 'Caratt. Ospiti Altro (Giovani)', 'Caratteristiche Ospiti Altro', 'C2.16B_SPEC', total))
     }
     
     const caratteristicheNonOspitiAltro = data.map((x:any)=>x.caratteristiche_non_ospiti_altro).filter(val => val && val.trim() !== '')
     if (caratteristicheNonOspitiAltro.length > 0) {
-      stats.push(...getTextStatsStruttureCustom(caratteristicheNonOspitiAltro, 'Caratt. Non Ospiti Altro', 'Caratteristiche Non Ospiti Altro', 'C2.16C_SPEC', total))
+      stats.push(...getTextStatsStruttureCustom(caratteristicheNonOspitiAltro, 'Caratt. Non Ospiti Altro', 'Caratteristiche Non Ospiti Altro', 'C4.16ALTRO', total))
     }
 
     // Attività inserimento (D3): array di oggetti con nome, periodo, contenuto, destinatari, attori, punti_forza, criticita
@@ -341,15 +342,38 @@ export default function AmministratoriDashboard() {
     stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.punti_forza_network), 'Punti Forza Network (E2)', 'Punti Forza Network', 'E2', total))
     stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.critica_network), 'Critica Network (E3)', 'Critica Network', 'E3', total))
 
-    // Finanziamenti
+    // Finanziamenti (F1.1, F1.2, F1.1SPEC, F1.2SPEC, F2.xforn, F2.xsost)
     if (data[0].finanziamenti) {
-      const finanziamentiKeys = ['fondi_pubblici','fondi_privati','totale'] as const
-      for (const f of finanziamentiKeys) {
-        stats.push(...getNumericStatsStrutture(data.map((x:any)=>x.finanziamenti?.[f]), `Finanziamenti ${f}`, `Finanziamenti - ${f}`, 'F', total))
+      stats.push(...getNumericStatsStrutture(data.map((x:any)=>x.finanziamenti?.fondi_pubblici), 'Fondi Pubblici', 'Finanziamenti - Fondi Pubblici', 'F1.1', total))
+      stats.push(...getNumericStatsStrutture(data.map((x:any)=>x.finanziamenti?.fondi_privati), 'Fondi Privati', 'Finanziamenti - Fondi Privati', 'F1.2', total))
+      
+      const fondiPubbliciSpec = data.map((x:any)=>x.finanziamenti?.fondi_pubblici_specifica || x.finanziamenti?.fondi_pubblici_specifiche).filter(val => val && val.trim() !== '')
+      if (fondiPubbliciSpec.length > 0) {
+        stats.push(...getTextStatsStruttureCustom(fondiPubbliciSpec, 'Fondi Pubblici Specifiche', 'Fondi Pubblici Specifiche', 'F1.1SPEC', total))
       }
-      stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.finanziamenti?.fondi_pubblici_specifiche), 'Fondi Pubblici Specifiche', 'Fondi Pubblici Specifiche', 'F', total))
-      stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.finanziamenti?.fondi_privati_specifiche), 'Fondi Privati Specifiche', 'Fondi Privati Specifiche', 'F', total))
-      stats.push(...getTextStatsStruttureCustom(data.flatMap((x:any)=>x.finanziamenti?.fornitori||[]), 'Fornitori', 'Fornitori', 'F', total))
+      
+      const fondiPrivatiSpec = data.map((x:any)=>x.finanziamenti?.fondi_privati_specifica || x.finanziamenti?.fondi_privati_specifiche).filter(val => val && val.trim() !== '')
+      if (fondiPrivatiSpec.length > 0) {
+        stats.push(...getTextStatsStruttureCustom(fondiPrivatiSpec, 'Fondi Privati Specifiche', 'Fondi Privati Specifiche', 'F1.2SPEC', total))
+      }
+      
+      // Fornitori (F2.1forn, F2.1sost, F2.2forn, F2.2sost)
+      const fornitore1Nome = data.map((x:any)=>x.finanziamenti?.fornitori?.[0]?.nome).filter(val => val && val.trim() !== '')
+      if (fornitore1Nome.length > 0) {
+        stats.push(...getTextStatsStruttureCustom(fornitore1Nome, 'Fornitore 1 - Nome', 'Fornitore 1 - Nome', 'F2.1forn', total))
+      }
+      const fornitore1Sost = data.map((x:any)=>x.finanziamenti?.fornitori?.[0]?.tipo_sostegno).filter(val => val && val.trim() !== '')
+      if (fornitore1Sost.length > 0) {
+        stats.push(...getTextStatsStruttureCustom(fornitore1Sost, 'Fornitore 1 - Tipo Sostegno', 'Fornitore 1 - Tipo Sostegno', 'F2.1sost', total))
+      }
+      const fornitore2Nome = data.map((x:any)=>x.finanziamenti?.fornitori?.[1]?.nome).filter(val => val && val.trim() !== '')
+      if (fornitore2Nome.length > 0) {
+        stats.push(...getTextStatsStruttureCustom(fornitore2Nome, 'Fornitore 2 - Nome', 'Fornitore 2 - Nome', 'F2.2forn', total))
+      }
+      const fornitore2Sost = data.map((x:any)=>x.finanziamenti?.fornitori?.[1]?.tipo_sostegno).filter(val => val && val.trim() !== '')
+      if (fornitore2Sost.length > 0) {
+        stats.push(...getTextStatsStruttureCustom(fornitore2Sost, 'Fornitore 2 - Tipo Sostegno', 'Fornitore 2 - Tipo Sostegno', 'F2.2sost', total))
+      }
     }
 
     // Mapping valori form -> valori standard per caratteristiche adolescenti
@@ -415,7 +439,7 @@ export default function AmministratoriDashboard() {
       "Altro"
     ]
     
-    // Caratteristiche ospiti adolescenti - solo valori standard
+    // Caratteristiche ospiti adolescenti - solo valori standard (C2.xA nell'export)
     caratteristicheOspitiAdolescenti.forEach((car, idx) => {
       const count = data.filter(item => {
         const ospitiAdolescenti = Array.isArray(item.caratteristiche_ospiti_adolescenti) ? item.caratteristiche_ospiti_adolescenti : []
@@ -425,21 +449,21 @@ export default function AmministratoriDashboard() {
       const codice = `C2.${idx + 1}A`
       stats.push({
         Codice: codice,
-        Domanda: `C4 Caratteristiche Ospiti Adolescenti - ${car}`,
+        Domanda: `Caratteristiche Ospiti Adolescenti - ${car}`,
         Risposta: 'Sì',
         Frequenza: count,
         Percentuale: `${((count / total) * 100).toFixed(1)}%`
       })
       stats.push({
         Codice: codice,
-        Domanda: `C4 Caratteristiche Ospiti Adolescenti - ${car}`,
+        Domanda: `Caratteristiche Ospiti Adolescenti - ${car}`,
         Risposta: 'No',
         Frequenza: total - count,
         Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
       })
     })
     
-    // Caratteristiche ospiti giovani - solo valori standard
+    // Caratteristiche ospiti giovani - solo valori standard (C2.xB nell'export)
     caratteristicheOspitiGiovani.forEach((car, idx) => {
       const count = data.filter(item => {
         const ospitiGiovani = Array.isArray(item.caratteristiche_ospiti_giovani) ? item.caratteristiche_ospiti_giovani : []
@@ -449,21 +473,21 @@ export default function AmministratoriDashboard() {
       const codice = `C2.${idx + 1}B`
       stats.push({
         Codice: codice,
-        Domanda: `C5 Caratteristiche Ospiti Giovani - ${car}`,
+        Domanda: `Caratteristiche Ospiti Giovani - ${car}`,
         Risposta: 'Sì',
         Frequenza: count,
         Percentuale: `${((count / total) * 100).toFixed(1)}%`
       })
       stats.push({
         Codice: codice,
-        Domanda: `C5 Caratteristiche Ospiti Giovani - ${car}`,
+        Domanda: `Caratteristiche Ospiti Giovani - ${car}`,
         Risposta: 'No',
         Frequenza: total - count,
         Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
       })
     })
 
-    // Caratteristiche non ospiti adolescenti - solo valori standard
+    // Caratteristiche non ospiti adolescenti - solo valori standard (C4.xA nell'export)
     caratteristicheOspitiAdolescenti.forEach((car, idx) => {
       const count = data.filter(item => {
         const nonOspitiAdolescenti = Array.isArray(item.caratteristiche_non_ospiti_adolescenti) ? item.caratteristiche_non_ospiti_adolescenti : []
@@ -473,21 +497,21 @@ export default function AmministratoriDashboard() {
       const codice = `C4.${idx + 1}A`
       stats.push({
         Codice: codice,
-        Domanda: `C6 Caratteristiche Non Ospiti Adolescenti - ${car}`,
+        Domanda: `Caratteristiche Non Ospiti Adolescenti - ${car}`,
         Risposta: 'Sì',
         Frequenza: count,
         Percentuale: `${((count / total) * 100).toFixed(1)}%`
       })
       stats.push({
         Codice: codice,
-        Domanda: `C6 Caratteristiche Non Ospiti Adolescenti - ${car}`,
+        Domanda: `Caratteristiche Non Ospiti Adolescenti - ${car}`,
         Risposta: 'No',
         Frequenza: total - count,
         Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
       })
     })
     
-    // Caratteristiche non ospiti giovani - solo valori standard
+    // Caratteristiche non ospiti giovani - solo valori standard (C4.xB nell'export)
     caratteristicheOspitiGiovani.forEach((car, idx) => {
       const count = data.filter(item => {
         const nonOspitiGiovani = Array.isArray(item.caratteristiche_non_ospiti_giovani) ? item.caratteristiche_non_ospiti_giovani : []
@@ -497,14 +521,14 @@ export default function AmministratoriDashboard() {
       const codice = `C4.${idx + 1}B`
       stats.push({
         Codice: codice,
-        Domanda: `C6 Caratteristiche Non Ospiti Giovani - ${car}`,
+        Domanda: `Caratteristiche Non Ospiti Giovani - ${car}`,
         Risposta: 'Sì',
         Frequenza: count,
         Percentuale: `${((count / total) * 100).toFixed(1)}%`
       })
       stats.push({
         Codice: codice,
-        Domanda: `C6 Caratteristiche Non Ospiti Giovani - ${car}`,
+        Domanda: `Caratteristiche Non Ospiti Giovani - ${car}`,
         Risposta: 'No',
         Frequenza: total - count,
         Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
