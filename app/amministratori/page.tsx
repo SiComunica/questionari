@@ -639,18 +639,40 @@ export default function AmministratoriDashboard() {
     const stats: Array<StatRow> = []
     const total = data.length
 
-    // Campi base
+    // Campi base metadati (nell'ordine dell'export)
     for (const stat of getTextStatsOperatori(data.map((x:any)=>x.id_struttura), 'ID Struttura', 'ID Struttura', 'ID_QUEST')) {
       stats.push(stat)
     }
     for (const stat of getTextStatsOperatori(data.map((x:any)=>x.tipo_struttura), 'Tipo Struttura', 'Tipo Struttura', 'TIPO_STRUTTURA')) {
       stats.push(stat)
     }
+
+    // ID_STRUTTURA (campo separato)
+    for (const stat of getTextStatsOperatori(data.map((x:any)=>x.id_struttura), 'ID Struttura', 'ID Struttura (Dettaglio)', 'ID_STRUTTURA')) {
+      stats.push(stat)
+    }
+
+    // Professione (PROF e PROF_SPEC devono venire PRIMA di B1, B2, B3)
+    const professione = data.reduce((acc, item) => {
+      acc[item.professione?.tipo || 'Non specificato'] = (acc[item.professione?.tipo || 'Non specificato'] || 0) + 1
+      return acc
+    }, {} as Record<string, number>)
+
+    Object.entries(professione).forEach(([key, value]) => {
+      stats.push({
+        Codice: 'PROF',
+        Domanda: 'Professione',
+        Risposta: key,
+        Frequenza: value as number,
+        Percentuale: `${((value as number / total) * 100).toFixed(1)}%`
+      })
+    })
+
     for (const stat of getTextStatsOperatori(data.map((x:any)=>x.professione?.altro_specificare), 'Professione Altro', 'Professione Altro', 'PROF_SPEC')) {
       stats.push(stat)
     }
 
-    // Persone seguite (numerici)
+    // Persone seguite (B1U, B1D, B1T)
     const personaleLabels = {
       'persone_seguite': 'Persone Seguite',
       'persone_maggiorenni': 'Persone Maggiorenni'
@@ -667,40 +689,6 @@ export default function AmministratoriDashboard() {
           const codice = personaleCodici[key][sub]
           stats.push(...getNumericStatsOperatori(data.map((x:any)=>x[key]?.[sub]), labelChiara, labelChiara, codice))
         }
-      })
-    })
-
-    // Caratteristiche altro specificare
-    const caratteristicheAltro = data.map((x:any)=>x.caratteristiche_persone?.altro_specificare).filter(val => val && val.trim() !== '')
-    if (caratteristicheAltro.length > 0) {
-      stats.push(...getTextStatsOperatori(caratteristicheAltro, 'Caratteristiche Altro', 'Caratteristiche Altro', 'B3_16SPEC'))
-    }
-
-    // Tipo intervento altro specificare
-    const tipoInterventoAltro = data.map((x:any)=>x.tipo_intervento?.altro_specificare).filter(val => val && val.trim() !== '')
-    if (tipoInterventoAltro.length > 0) {
-      stats.push(...getTextStatsOperatori(tipoInterventoAltro, 'Tipo Intervento Altro', 'Tipo Intervento Altro', 'B4_10SPEC'))
-    }
-
-    // Interventi potenziare altro specificare
-    const interventiPotenziareAltro = data.map((x:any)=>x.interventi_potenziare?.altro_specificare).filter(val => val && val.trim() !== '')
-    if (interventiPotenziareAltro.length > 0) {
-      stats.push(...getTextStatsOperatori(interventiPotenziareAltro, 'Interventi Potenziare Altro', 'Interventi Potenziare Altro', 'B5_11SPEC'))
-    }
-
-    // Professione (aggregato)
-    const professione = data.reduce((acc, item) => {
-      acc[item.professione?.tipo || 'Non specificato'] = (acc[item.professione?.tipo || 'Non specificato'] || 0) + 1
-      return acc
-    }, {} as Record<string, number>)
-
-    Object.entries(professione).forEach(([key, value]) => {
-      stats.push({
-        Codice: 'PROF',
-        Domanda: 'Professione',
-        Risposta: key,
-        Frequenza: value as number,
-        Percentuale: `${((value as number / total) * 100).toFixed(1)}%`
       })
     })
 
@@ -732,6 +720,12 @@ export default function AmministratoriDashboard() {
       })
     })
 
+    // Caratteristiche altro specificare (B3_16SPEC)
+    const caratteristicheAltro = data.map((x:any)=>x.caratteristiche_persone?.altro_specificare).filter(val => val && val.trim() !== '')
+    if (caratteristicheAltro.length > 0) {
+      stats.push(...getTextStatsOperatori(caratteristicheAltro, 'Caratteristiche Altro', 'Caratteristiche Altro', 'B3_16SPEC'))
+    }
+
     // Tipo interventi (B4_1 - B4_10)
     const tipoInterventi = ['sostegno_formazione', 'sostegno_lavoro', 'sostegno_abitativo', 'sostegno_famiglia', 'sostegno_coetanei', 'sostegno_competenze', 'sostegno_legale', 'sostegno_sociosanitario', 'mediazione_interculturale', 'altro']
     
@@ -760,7 +754,13 @@ export default function AmministratoriDashboard() {
       })
     })
 
-    // Interventi da potenziare
+    // Tipo intervento altro specificare (B4_10SPEC)
+    const tipoInterventoAltro = data.map((x:any)=>x.tipo_intervento?.altro_specificare).filter(val => val && val.trim() !== '')
+    if (tipoInterventoAltro.length > 0) {
+      stats.push(...getTextStatsOperatori(tipoInterventoAltro, 'Tipo Intervento Altro', 'Tipo Intervento Altro', 'B4_10SPEC'))
+    }
+
+    // Interventi da potenziare (B5_1 - B5_11)
     const interventiPotenziare = ['sostegno_formazione', 'sostegno_lavoro', 'sostegno_abitativo', 'sostegno_famiglia', 'sostegno_coetanei', 'sostegno_competenze', 'sostegno_legale', 'sostegno_sociosanitario', 'mediazione_interculturale', 'nessuno', 'altro']
     
     interventiPotenziare.forEach((intervento, idx) => {
@@ -785,7 +785,13 @@ export default function AmministratoriDashboard() {
       })
     })
 
-    // Difficoltà uscita (numerici da 1 a 10)
+    // Interventi potenziare altro specificare (B5_11SPEC)
+    const interventiPotenziareAltro = data.map((x:any)=>x.interventi_potenziare?.altro_specificare).filter(val => val && val.trim() !== '')
+    if (interventiPotenziareAltro.length > 0) {
+      stats.push(...getTextStatsOperatori(interventiPotenziareAltro, 'Interventi Potenziare Altro', 'Interventi Potenziare Altro', 'B5_11SPEC'))
+    }
+
+    // Difficoltà uscita (C1 - C9, numerici da 1 a 10)
     if (data[0].difficolta_uscita) {
       const difficoltaKeys = ['problemi_economici','trovare_lavoro','lavori_qualita','trovare_casa','discriminazioni','salute_fisica','problemi_psicologici','difficolta_linguistiche','altro']
       difficoltaKeys.forEach((f: any, idx) => {
