@@ -211,11 +211,7 @@ export default function QuestionariGiovaniOperatori() {
       try {
         const { data, error } = await supabase
           .from('operatorinew')
-          .select(`
-            *,
-            operatori:fonte
-          `)
-          .neq('stato', 'cancellato')
+          .select('*')
           .order('creato_a', { ascending: false })
 
         if (error) throw error

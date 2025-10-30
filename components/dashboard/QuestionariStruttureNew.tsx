@@ -108,7 +108,6 @@ export default function QuestionariStruttureNew() {
         const { data, error } = await supabase
           .from('strutture')
           .select('*')
-          .neq('stato', 'cancellato')
           .order('creato_a', { ascending: false })
 
         if (error) throw error
