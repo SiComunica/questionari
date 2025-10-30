@@ -242,6 +242,29 @@ export default function QuestionariStruttureNew() {
       'Detenuti': ['Giovani con problemi di giustizia']
     };
 
+    // Helper per servizi: gestisce booleani, oggetti {attivo, descrizione}, stringhe e alias
+    const isServizioAttivo = (q: any, ...keys: string[]) => {
+      for (const k of keys) {
+        const v = q?.attivita_servizi?.[k]
+        if (typeof v === 'boolean' && v) return true
+        if (typeof v === 'object' && v && v.attivo === true) return true
+        if (typeof v === 'string' && v.trim() !== '') return true
+      }
+      return false
+    }
+    const getServizioDesc = (q: any, ...keys: string[]) => {
+      for (const k of keys) {
+        const v = q?.attivita_servizi?.[k]
+        if (typeof v === 'object' && v) {
+          if (typeof v.descrizione === 'string' && v.descrizione.trim() !== '') return v.descrizione
+          if (typeof (v as any).desc === 'string' && (v as any).desc.trim() !== '') return (v as any).desc
+          if (typeof (v as any).note === 'string' && (v as any).note.trim() !== '') return (v as any).note
+        }
+        if (typeof v === 'string' && v.trim() !== '') return v
+      }
+      return ''
+    }
+
     const dataToExport = questionari.map(q => {
       // Calcoliamo i totali per le persone non ospitate
       const c3tu = (q.persone_non_ospitate?.fino_16?.uomini || 0) + 
@@ -394,28 +417,28 @@ export default function QuestionariStruttureNew() {
         'C4.16ALTRO': q.caratteristiche_non_ospiti_altro || '',
 
         // Attività e servizi
-        'D1.1': q.attivita_servizi?.alloggio?.attivo ? 1 : 0,
-        'D1.2': q.attivita_servizi?.vitto?.attivo ? 1 : 0,
-        'D1.3': q.attivita_servizi?.servizi_bassa_soglia?.attivo ? 1 : 0,
-        'D1.3DESC': q.attivita_servizi?.servizi_bassa_soglia?.descrizione || '',
-        'D1.4': q.attivita_servizi?.ospitalita_diurna?.attivo ? 1 : 0,
-        'D1.4DESC': q.attivita_servizi?.ospitalita_diurna?.descrizione || '',
-        'D1.5': q.attivita_servizi?.supporto_psicologico?.attivo ? 1 : 0,
-        'D1.5DESC': q.attivita_servizi?.supporto_psicologico?.descrizione || '',
-        'D1.6': ((q.attivita_servizi?.sostegno_autonomia?.attivo) || ((q.attivita_servizi as any)?.sostegno_abitativo?.attivo)) ? 1 : 0,
-        'D1.6DESC': (q.attivita_servizi?.sostegno_autonomia?.descrizione || (q.attivita_servizi as any)?.sostegno_abitativo?.descrizione || ''),
-        'D1.7': ((q.attivita_servizi?.orientamento_lavoro?.attivo) || ((q.attivita_servizi as any)?.inserimento_lavorativo?.attivo)) ? 1 : 0,
-        'D1.7DESC': (q.attivita_servizi?.orientamento_lavoro?.descrizione || (q.attivita_servizi as any)?.inserimento_lavorativo?.descrizione || ''),
-        'D1.8': ((q.attivita_servizi?.orientamento_formazione?.attivo) || ((q.attivita_servizi as any)?.orientamento_scolastico?.attivo)) ? 1 : 0,
-        'D1.8DESC': (q.attivita_servizi?.orientamento_formazione?.descrizione || (q.attivita_servizi as any)?.orientamento_scolastico?.descrizione || ''),
-        'D1.9': ((q.attivita_servizi?.istruzione?.attivo) || ((q.attivita_servizi as any)?.istruzione_scolastica?.attivo)) ? 1 : 0,
-        'D1.9DESC': (q.attivita_servizi?.istruzione?.descrizione || (q.attivita_servizi as any)?.istruzione_scolastica?.descrizione || ''),
-        'D1.10': q.attivita_servizi?.formazione_professionale?.attivo ? 1 : 0,
-        'D1.10DESC': q.attivita_servizi?.formazione_professionale?.descrizione || '',
-        'D1.11': ((q.attivita_servizi?.attivita_socializzazione?.attivo) || ((q.attivita_servizi as any)?.attivita_ricreative?.attivo)) ? 1 : 0,
-        'D1.11DESC': (q.attivita_servizi?.attivita_socializzazione?.descrizione || (q.attivita_servizi as any)?.attivita_ricreative?.descrizione || ''),
-        'D1.12': q.attivita_servizi?.altro?.attivo ? 1 : 0,
-        'D1.12DESC': q.attivita_servizi?.altro?.descrizione || '',
+        'D1.1': isServizioAttivo(q, 'alloggio') ? 1 : 0,
+        'D1.2': isServizioAttivo(q, 'vitto') ? 1 : 0,
+        'D1.3': isServizioAttivo(q, 'servizi_bassa_soglia') ? 1 : 0,
+        'D1.3DESC': getServizioDesc(q, 'servizi_bassa_soglia'),
+        'D1.4': isServizioAttivo(q, 'ospitalita_diurna') ? 1 : 0,
+        'D1.4DESC': getServizioDesc(q, 'ospitalita_diurna'),
+        'D1.5': isServizioAttivo(q, 'supporto_psicologico') ? 1 : 0,
+        'D1.5DESC': getServizioDesc(q, 'supporto_psicologico'),
+        'D1.6': isServizioAttivo(q, 'sostegno_autonomia', 'sostegno_abitativo') ? 1 : 0,
+        'D1.6DESC': getServizioDesc(q, 'sostegno_autonomia', 'sostegno_abitativo'),
+        'D1.7': isServizioAttivo(q, 'orientamento_lavoro', 'inserimento_lavorativo') ? 1 : 0,
+        'D1.7DESC': getServizioDesc(q, 'orientamento_lavoro', 'inserimento_lavorativo'),
+        'D1.8': isServizioAttivo(q, 'orientamento_formazione', 'orientamento_scolastico') ? 1 : 0,
+        'D1.8DESC': getServizioDesc(q, 'orientamento_formazione', 'orientamento_scolastico'),
+        'D1.9': isServizioAttivo(q, 'istruzione', 'istruzione_scolastica') ? 1 : 0,
+        'D1.9DESC': getServizioDesc(q, 'istruzione', 'istruzione_scolastica'),
+        'D1.10': isServizioAttivo(q, 'formazione_professionale') ? 1 : 0,
+        'D1.10DESC': getServizioDesc(q, 'formazione_professionale'),
+        'D1.11': isServizioAttivo(q, 'attivita_socializzazione', 'attivita_ricreative') ? 1 : 0,
+        'D1.11DESC': getServizioDesc(q, 'attivita_socializzazione', 'attivita_ricreative'),
+        'D1.12': isServizioAttivo(q, 'altro') ? 1 : 0,
+        'D1.12DESC': getServizioDesc(q, 'altro'),
 
         // Attività di inserimento
         'D2': q.esperienze_inserimento_lavorativo ? 1 : 0,
