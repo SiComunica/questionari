@@ -854,15 +854,8 @@ export default function AmministratoriDashboard() {
     stats.push(...getTextStatsGiovani(data.map((x:any)=>x.padre?.titolo_studio), 'Padre Titolo Studio', 'Padre Titolo Studio', 'B11'))
     stats.push(...getTextStatsGiovani(data.map((x:any)=>x.padre?.situazione), 'Padre Situazione', 'Padre Situazione', 'B12'))
 
-    // Motivi non studio, corso formazione, lavoro attuale
-    const motiviNonStudio = data.flatMap((x:any)=>x.motivi_non_studio||[])
-    if (motiviNonStudio.length > 0) {
-      stats.push(...getTextStatsGiovani(motiviNonStudio, 'Motivi Non Studio', 'Motivi Non Studio', 'C6'))
-    }
-    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.corso_formazione?.descrizione), 'Corso Formazione Descrizione', 'Corso Formazione Descrizione', 'C7'))
-    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.lavoro_attuale?.descrizione), 'Lavoro Attuale Descrizione', 'Lavoro Attuale Descrizione', 'C8'))
-    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.lavoro_attuale?.tipo_contratto), 'Lavoro Attuale Tipo Contratto', 'Lavoro Attuale Tipo Contratto', 'C8'))
-    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.lavoro_attuale?.settore), 'Lavoro Attuale Settore', 'Lavoro Attuale Settore', 'C8'))
+    // Motivi non studio (C6 è numerico nell'export, non array)
+    // Corso formazione e lavoro attuale sono campi testuali (C7, C8) - non generano statistiche aggregate
 
     // Orientamento lavoro
     stats.push(...getTextStatsGiovani(data.map((x:any)=>x.orientamento_lavoro?.utilita), 'Orientamento Lavoro Utilità', 'Orientamento Lavoro Utilità', 'C4_BIS'))
@@ -890,6 +883,7 @@ export default function AmministratoriDashboard() {
     // Livelli utilità (C8.1-C8.4)
     if (data[0].livelli_utilita) {
       const livelliLabels = ['Studiare', 'Formazione', 'Lavorare', 'Ricerca Lavoro']
+      const livelliCodici = ['C8.1', 'C8.2', 'C8.3', 'C8.4']
       const utilitaLabels = ['Per niente', 'Poco', 'Abbastanza', 'Molto']
       
       livelliLabels.forEach((label, index) => {
@@ -905,7 +899,7 @@ export default function AmministratoriDashboard() {
           
           Object.entries(valueCounts).forEach(([utilitaLabel, count]) => {
           stats.push({
-            Codice: 'C8',
+            Codice: livelliCodici[index],
             Domanda: `Livelli Utilità - ${label}`,
               Risposta: utilitaLabel,
             Frequenza: count,
