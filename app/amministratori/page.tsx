@@ -165,14 +165,56 @@ export default function AmministratoriDashboard() {
       stats.push(...getTextStatsStruttureCustom(caratteristicheNonOspitiAltro, 'Caratt. Non Ospiti Altro', 'Caratteristiche Non Ospiti Altro'))
     }
 
-    // Attività inserimento, nuove attività, collaborazioni
-    stats.push(...getTextStatsStruttureCustom(data.flatMap((x:any)=>x.attivita_inserimento||[]), 'Attività Inserimento', 'Attività Inserimento'))
+    // Attività inserimento (D3): array di oggetti con nome, periodo, contenuto, destinatari, attori, punti_forza, criticita
+    const attivitaInserimentoNomi = data.flatMap((x:any)=>x.attivita_inserimento?.map((a:any)=>a.nome) || []).filter(v => v && v.trim() !== '')
+    if (attivitaInserimentoNomi.length > 0) {
+      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoNomi, 'Attività Inserimento Nome (D3.x NOM)', 'Attività Inserimento Nome'))
+    }
+    const attivitaInserimentoPeriodo = data.flatMap((x:any)=>x.attivita_inserimento?.map((a:any)=>a.periodo) || []).filter(v => v && v.trim() !== '')
+    if (attivitaInserimentoPeriodo.length > 0) {
+      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoPeriodo, 'Attività Inserimento Periodo (D3.x PER)', 'Attività Inserimento Periodo'))
+    }
+    const attivitaInserimentoContenuto = data.flatMap((x:any)=>x.attivita_inserimento?.map((a:any)=>a.contenuto) || []).filter(v => v && v.trim() !== '')
+    if (attivitaInserimentoContenuto.length > 0) {
+      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoContenuto, 'Attività Inserimento Contenuto (D3.x CONT)', 'Attività Inserimento Contenuto'))
+    }
+    const attivitaInserimentoDestinatari = data.flatMap((x:any)=>x.attivita_inserimento?.map((a:any)=>a.destinatari) || []).filter(v => v && v.trim() !== '')
+    if (attivitaInserimentoDestinatari.length > 0) {
+      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoDestinatari, 'Attività Inserimento Destinatari (D3.x DEST)', 'Attività Inserimento Destinatari'))
+    }
+    const attivitaInserimentoAttori = data.flatMap((x:any)=>x.attivita_inserimento?.map((a:any)=>a.attori) || []).filter(v => v && v.trim() !== '')
+    if (attivitaInserimentoAttori.length > 0) {
+      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoAttori, 'Attività Inserimento Attori (D3.x ATT)', 'Attività Inserimento Attori'))
+    }
+    const attivitaInserimentoPuntiForza = data.flatMap((x:any)=>x.attivita_inserimento?.map((a:any)=>a.punti_forza) || []).filter(v => v && v.trim() !== '')
+    if (attivitaInserimentoPuntiForza.length > 0) {
+      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoPuntiForza, 'Attività Inserimento Punti Forza (D3.x PFOR)', 'Attività Inserimento Punti Forza'))
+    }
+    const attivitaInserimentoCriticita = data.flatMap((x:any)=>x.attivita_inserimento?.map((a:any)=>a.criticita) || []).filter(v => v && v.trim() !== '')
+    if (attivitaInserimentoCriticita.length > 0) {
+      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoCriticita, 'Attività Inserimento Criticità (D3.x CRIT)', 'Attività Inserimento Criticità'))
+    }
+    
+    // Nuove attività
     stats.push(...getTextStatsStruttureCustom(data.flatMap((x:any)=>x.nuove_attivita||[]), 'Nuove Attività', 'Nuove Attività'))
-    stats.push(...getTextStatsStruttureCustom(data.flatMap((x:any)=>x.collaborazioni||[]), 'Collaborazioni', 'Collaborazioni'))
+    
+    // Collaborazioni (E1): array di oggetti con soggetto, tipo, oggetto
+    const collaborazioniSoggetto = data.flatMap((x:any)=>x.collaborazioni?.map((c:any)=>c.soggetto) || []).filter(v => v && v.trim() !== '')
+    if (collaborazioniSoggetto.length > 0) {
+      stats.push(...getTextStatsStruttureCustom(collaborazioniSoggetto, 'Collaborazioni Soggetto (E1.x SOGG)', 'Collaborazioni Soggetto'))
+    }
+    const collaborazioniTipo = data.flatMap((x:any)=>x.collaborazioni?.map((c:any)=>c.tipo) || []).filter(v => v !== undefined && v !== null && v !== '')
+    if (collaborazioniTipo.length > 0) {
+      stats.push(...getNumericStatsStrutture(collaborazioniTipo, 'Collaborazioni Tipo (E1.x TIPO)', 'Collaborazioni Tipo'))
+    }
+    const collaborazioniOggetto = data.flatMap((x:any)=>x.collaborazioni?.map((c:any)=>c.oggetto) || []).filter(v => v && v.trim() !== '')
+    if (collaborazioniOggetto.length > 0) {
+      stats.push(...getTextStatsStruttureCustom(collaborazioniOggetto, 'Collaborazioni Oggetto (E1.x OGGETTO)', 'Collaborazioni Oggetto'))
+    }
 
-    // Punti forza, critica network
-    stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.punti_forza_network), 'Punti Forza Network', 'Punti Forza Network'))
-    stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.critica_network), 'Critica Network', 'Critica Network'))
+    // Punti forza, critica network (E2, E3)
+    stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.punti_forza_network), 'Punti Forza Network (E2)', 'Punti Forza Network'))
+    stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.critica_network), 'Critica Network (E3)', 'Critica Network'))
 
     // Finanziamenti
     if (data[0].finanziamenti) {
@@ -845,10 +887,11 @@ export default function AmministratoriDashboard() {
       stats.push(...getTextStatsGiovani(ricercaLavoroAltro, 'Ricerca Lavoro Altro', 'Ricerca Lavoro Altro'))
     }
 
-    // Aspetti lavoro (numerici)
-    if (data[0].aspetti_lavoro) {
+    // Condizioni lavoro (C13.1-C13.8, numerici)
+    if (data[0].condizioni_lavoro || data[0].aspetti_lavoro) {
       (['stabilita','flessibilita','valorizzazione','retribuzione','fatica','sicurezza','utilita_sociale','vicinanza_casa'] as const).forEach((f: any) => {
-        stats.push(...getNumericStatsGiovani(data.map((x:any)=>x.aspetti_lavoro?.[f]), `Aspetti Lavoro ${f}`, `Aspetti Lavoro - ${f}`))
+        const values = data.map((x:any)=> (x.condizioni_lavoro?.[f] || x.aspetti_lavoro?.[f]))
+        stats.push(...getNumericStatsGiovani(values, `Condizioni Lavoro ${f}`, `Condizioni Lavoro - ${f}`))
       })
     }
 
@@ -1072,11 +1115,29 @@ export default function AmministratoriDashboard() {
       })
     }
 
-    // Pronto uscita, aiuto futuro, desiderio, nota aggiuntiva
-    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.pronto_uscita?.motivazione), 'Pronto Uscita Motivazione', 'Pronto Uscita Motivazione'))
-    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.aiuto_futuro), 'Aiuto Futuro', 'Aiuto Futuro'))
-    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.desiderio), 'Desiderio', 'Desiderio'))
-    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.nota_aggiuntiva), 'Nota Aggiuntiva', 'Nota Aggiuntiva'))
+    // Pronto uscita (E4 boolean, E4.1 e E4.2 motivazioni)
+    const prontoUscitaCount = data.filter(item => item.pronto_uscita === true || item.pronto_uscita === 1 || item.pronto_uscita === '1').length
+    stats.push({
+      Domanda: 'Pronto Uscita (E4)',
+      Risposta: 'Sì',
+      Frequenza: prontoUscitaCount,
+      Percentuale: `${((prontoUscitaCount / total) * 100).toFixed(1)}%`
+    })
+    stats.push({
+      Domanda: 'Pronto Uscita (E4)',
+      Risposta: 'No',
+      Frequenza: total - prontoUscitaCount,
+      Percentuale: `${(((total - prontoUscitaCount) / total) * 100).toFixed(1)}%`
+    })
+    
+    // E4.1 e E4.2: motivazioni pronto uscita
+    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.pronto_uscita_perche_no), 'Pronto Uscita Perché No (E4.1)', 'Pronto Uscita Perché No'))
+    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.pronto_uscita_perche_si), 'Pronto Uscita Perché Sì (E4.2)', 'Pronto Uscita Perché Sì'))
+    
+    // Aiuto futuro, desiderio, nota aggiuntiva (E3, E6, E7)
+    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.aiuto_futuro), 'Aiuto Futuro (E3)', 'Aiuto Futuro'))
+    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.desiderio), 'Desiderio (E6)', 'Desiderio'))
+    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.nota_aggiuntiva), 'Nota Aggiuntiva (E7)', 'Nota Aggiuntiva'))
 
     // Preoccupazioni futuro (Sezione E1)
     if (data[0].preoccupazioni_futuro) {
