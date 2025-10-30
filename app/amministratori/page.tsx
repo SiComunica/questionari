@@ -601,45 +601,7 @@ export default function AmministratoriDashboard() {
       stats.push(...getTextStatsOperatori(interventiPotenziareAltro, 'Interventi Potenziare Altro', 'Interventi Potenziare Altro'))
     }
 
-    // Difficoltà uscita (numerici da 1 a 10)
-    if (data[0].difficolta_uscita) {
-      (['problemi_economici','trovare_lavoro','lavori_qualita','trovare_casa','discriminazioni','salute_fisica','problemi_psicologici','difficolta_linguistiche','altro'] as const).forEach((f: any) => {
-        const values = data.map((x:any)=>x.difficolta_uscita?.[f]).filter(val => val !== undefined && val !== null && val !== '')
-        
-        if (values.length > 0) {
-          // Raggruppa per grado di difficoltà (1-10)
-          const valueCounts = values.reduce((acc: Record<number, number>, val) => {
-            acc[val] = (acc[val] || 0) + 1
-            return acc
-          }, {})
-          
-          Object.entries(valueCounts).forEach(([grado, count]) => {
-            stats.push({
-              Domanda: `Difficoltà Uscita - ${f.replace(/_/g, ' ')}`,
-              Risposta: `Grado ${grado}`,
-              Frequenza: count,
-              Percentuale: `${((count / data.length) * 100).toFixed(1)}%`
-            })
-          })
-        }
-      })
-      const difficoltaAltro = data.map((x:any)=>x.difficolta_uscita?.altro_specificare).filter(val => val && val.trim() !== '')
-      if (difficoltaAltro.length > 0) {
-        stats.push(...getTextStatsOperatori(difficoltaAltro, 'Difficoltà Uscita Altro', 'Difficoltà Uscita Altro'))
-      }
-    }
-
-    return stats
-  }
-
-  // Copia la vecchia funzione per le domande chiuse
-  function generateOperatoriStats_OLD(data: any[]): Array<{Domanda: string, Risposta: string, Frequenza: number, Percentuale: string}> {
-    if (data.length === 0) return []
-    
-    const stats: Array<{Domanda: string, Risposta: string, Frequenza: number, Percentuale: string}> = []
-    const total = data.length
-
-    // Professione
+    // Professione (aggregato)
     const professione = data.reduce((acc, item) => {
       acc[item.professione?.tipo || 'Non specificato'] = (acc[item.professione?.tipo || 'Non specificato'] || 0) + 1
       return acc
@@ -659,7 +621,6 @@ export default function AmministratoriDashboard() {
     
     caratteristiche.forEach(car => {
       const count = data.filter(item => {
-        // Il campo corretto è caratteristiche_persone (oggetto con chiavi booleane)
         if (typeof item.caratteristiche_persone === 'object' && item.caratteristiche_persone !== null) {
           return item.caratteristiche_persone[car] === true
         }
@@ -685,7 +646,6 @@ export default function AmministratoriDashboard() {
     
     tipoInterventi.forEach(intervento => {
       const count = data.filter(item => {
-        // Il campo corretto è tipo_intervento (oggetto con chiavi booleane)
         if (typeof item.tipo_intervento === 'object' && item.tipo_intervento !== null) {
           return item.tipo_intervento[intervento] === true
         }
@@ -727,6 +687,34 @@ export default function AmministratoriDashboard() {
         Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
       })
     })
+
+    // Difficoltà uscita (numerici da 1 a 10)
+    if (data[0].difficolta_uscita) {
+      (['problemi_economici','trovare_lavoro','lavori_qualita','trovare_casa','discriminazioni','salute_fisica','problemi_psicologici','difficolta_linguistiche','altro'] as const).forEach((f: any) => {
+        const values = data.map((x:any)=>x.difficolta_uscita?.[f]).filter(val => val !== undefined && val !== null && val !== '')
+        
+        if (values.length > 0) {
+          // Raggruppa per grado di difficoltà (1-10)
+          const valueCounts = values.reduce((acc: Record<number, number>, val) => {
+            acc[val] = (acc[val] || 0) + 1
+            return acc
+          }, {})
+          
+          Object.entries(valueCounts).forEach(([grado, count]) => {
+            stats.push({
+              Domanda: `Difficoltà Uscita - ${f.replace(/_/g, ' ')}`,
+              Risposta: `Grado ${grado}`,
+              Frequenza: count,
+              Percentuale: `${((count / data.length) * 100).toFixed(1)}%`
+            })
+          })
+        }
+      })
+      const difficoltaAltro = data.map((x:any)=>x.difficolta_uscita?.altro_specificare).filter(val => val && val.trim() !== '')
+      if (difficoltaAltro.length > 0) {
+        stats.push(...getTextStatsOperatori(difficoltaAltro, 'Difficoltà Uscita Altro', 'Difficoltà Uscita Altro'))
+      }
+    }
 
     return stats
   }
