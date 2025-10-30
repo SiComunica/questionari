@@ -402,18 +402,18 @@ export default function QuestionariStruttureNew() {
         'D1.4DESC': q.attivita_servizi?.ospitalita_diurna?.descrizione || '',
         'D1.5': q.attivita_servizi?.supporto_psicologico?.attivo ? 1 : 0,
         'D1.5DESC': q.attivita_servizi?.supporto_psicologico?.descrizione || '',
-        'D1.6': q.attivita_servizi?.sostegno_autonomia?.attivo ? 1 : 0,
-        'D1.6DESC': q.attivita_servizi?.sostegno_autonomia?.descrizione || '',
-        'D1.7': q.attivita_servizi?.orientamento_lavoro?.attivo ? 1 : 0,
-        'D1.7DESC': q.attivita_servizi?.orientamento_lavoro?.descrizione || '',
-        'D1.8': q.attivita_servizi?.orientamento_formazione?.attivo ? 1 : 0,
-        'D1.8DESC': q.attivita_servizi?.orientamento_formazione?.descrizione || '',
-        'D1.9': q.attivita_servizi?.istruzione?.attivo ? 1 : 0,
-        'D1.9DESC': q.attivita_servizi?.istruzione?.descrizione || '',
+        'D1.6': ((q.attivita_servizi?.sostegno_autonomia?.attivo) || ((q.attivita_servizi as any)?.sostegno_abitativo?.attivo)) ? 1 : 0,
+        'D1.6DESC': (q.attivita_servizi?.sostegno_autonomia?.descrizione || (q.attivita_servizi as any)?.sostegno_abitativo?.descrizione || ''),
+        'D1.7': ((q.attivita_servizi?.orientamento_lavoro?.attivo) || ((q.attivita_servizi as any)?.inserimento_lavorativo?.attivo)) ? 1 : 0,
+        'D1.7DESC': (q.attivita_servizi?.orientamento_lavoro?.descrizione || (q.attivita_servizi as any)?.inserimento_lavorativo?.descrizione || ''),
+        'D1.8': ((q.attivita_servizi?.orientamento_formazione?.attivo) || ((q.attivita_servizi as any)?.orientamento_scolastico?.attivo)) ? 1 : 0,
+        'D1.8DESC': (q.attivita_servizi?.orientamento_formazione?.descrizione || (q.attivita_servizi as any)?.orientamento_scolastico?.descrizione || ''),
+        'D1.9': ((q.attivita_servizi?.istruzione?.attivo) || ((q.attivita_servizi as any)?.istruzione_scolastica?.attivo)) ? 1 : 0,
+        'D1.9DESC': (q.attivita_servizi?.istruzione?.descrizione || (q.attivita_servizi as any)?.istruzione_scolastica?.descrizione || ''),
         'D1.10': q.attivita_servizi?.formazione_professionale?.attivo ? 1 : 0,
         'D1.10DESC': q.attivita_servizi?.formazione_professionale?.descrizione || '',
-        'D1.11': q.attivita_servizi?.attivita_socializzazione?.attivo ? 1 : 0,
-        'D1.11DESC': q.attivita_servizi?.attivita_socializzazione?.descrizione || '',
+        'D1.11': ((q.attivita_servizi?.attivita_socializzazione?.attivo) || ((q.attivita_servizi as any)?.attivita_ricreative?.attivo)) ? 1 : 0,
+        'D1.11DESC': (q.attivita_servizi?.attivita_socializzazione?.descrizione || (q.attivita_servizi as any)?.attivita_ricreative?.descrizione || ''),
         'D1.12': q.attivita_servizi?.altro?.attivo ? 1 : 0,
         'D1.12DESC': q.attivita_servizi?.altro?.descrizione || '',
 
@@ -444,6 +444,9 @@ export default function QuestionariStruttureNew() {
         'D3.3ATT': q.attivita_inserimento?.[2]?.attori || '',
         'D3.3PFOR': q.attivita_inserimento?.[2]?.punti_forza || '',
         'D3.3CRIT': q.attivita_inserimento?.[2]?.criticita || '',
+
+        // D4 (colonna richiesta dal tracciato, placeholder se non presente nel modello dati)
+        'D4': '',
 
         // Collaborazioni
         'E1.1SOGG': q.collaborazioni?.[0]?.soggetto || '',
