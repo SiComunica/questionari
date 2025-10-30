@@ -728,9 +728,8 @@ export default function AmministratoriDashboard() {
     
     caratteristiche.forEach(car => {
       const count = data.filter(item => {
-        if (Array.isArray(item.caratteristiche_persone_seguite)) {
-          return item.caratteristiche_persone_seguite.includes(car)
-        } else if (typeof item.caratteristiche_persone === 'object' && item.caratteristiche_persone !== null) {
+        // Il campo corretto è caratteristiche_persone (oggetto con chiavi booleane)
+        if (typeof item.caratteristiche_persone === 'object' && item.caratteristiche_persone !== null) {
           return item.caratteristiche_persone[car] === true
         }
         return false
@@ -755,9 +754,8 @@ export default function AmministratoriDashboard() {
     
     tipoInterventi.forEach(intervento => {
       const count = data.filter(item => {
-        if (Array.isArray(item.tipo_interventi)) {
-          return item.tipo_interventi.includes(intervento)
-        } else if (typeof item.tipo_intervento === 'object' && item.tipo_intervento !== null) {
+        // Il campo corretto è tipo_intervento (oggetto con chiavi booleane)
+        if (typeof item.tipo_intervento === 'object' && item.tipo_intervento !== null) {
           return item.tipo_intervento[intervento] === true
         }
         return false
@@ -923,9 +921,9 @@ export default function AmministratoriDashboard() {
       })
     }
 
-    // Canali ricerca lavoro (C9)
+    // Canali ricerca lavoro (C9) - chiavi corrette dal database
     if (data[0].ricerca_lavoro) {
-      (['centro_impiego','sportelli','inps_patronati','servizi_sociali','agenzie_interinali','cooperative','struttura','conoscenti','portali_online','social','altro'] as const).forEach((f: any) => {
+      (['centro_impiego','sportelli','inps','servizi_sociali','agenzie','cooperative','struttura','conoscenti','portali','social','altro'] as const).forEach((f: any) => {
         const count = data.filter(item => item.ricerca_lavoro?.[f] === true).length
         stats.push({
           Domanda: `Canali Ricerca Lavoro - ${f.replace(/_/g, ' ')}`,
