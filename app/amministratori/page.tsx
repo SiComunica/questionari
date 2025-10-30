@@ -45,17 +45,23 @@ export default function AmministratoriDashboard() {
 
       // Statistiche Questionari Strutture
       const struttureStats = generateStruttureStats(strutture)
-      const struttureSheet = XLSX.utils.json_to_sheet(struttureStats)
+      const struttureSheet = XLSX.utils.json_to_sheet(struttureStats, {
+        header: ['Codice', 'Domanda', 'Risposta', 'Frequenza', 'Percentuale']
+      })
       XLSX.utils.book_append_sheet(workbook, struttureSheet, "Strutture")
 
       // Statistiche Questionari Operatori
       const operatoriStats = generateOperatoriStats(operatori)
-      const operatoriSheet = XLSX.utils.json_to_sheet(operatoriStats)
+      const operatoriSheet = XLSX.utils.json_to_sheet(operatoriStats, {
+        header: ['Codice', 'Domanda', 'Risposta', 'Frequenza', 'Percentuale']
+      })
       XLSX.utils.book_append_sheet(workbook, operatoriSheet, "Operatori")
 
       // Statistiche Questionari Giovani
       const giovaniStats = generateGiovaniStats(giovani)
-      const giovaniSheet = XLSX.utils.json_to_sheet(giovaniStats)
+      const giovaniSheet = XLSX.utils.json_to_sheet(giovaniStats, {
+        header: ['Codice', 'Domanda', 'Risposta', 'Frequenza', 'Percentuale']
+      })
       XLSX.utils.book_append_sheet(workbook, giovaniSheet, "Giovani")
 
       // Salva il file
@@ -70,7 +76,7 @@ export default function AmministratoriDashboard() {
   }
 
   // Tipo per le statistiche con codice
-  type StatRow = {Codice: string, Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}
+  type StatRow = {Codice?: string, Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}
 
   // Utility per statistiche numeriche
   function getNumericStatsStrutture(arr: number[], label: string, domanda: string, codice: string, totalQuestionari?: number): Array<StatRow> {
@@ -786,7 +792,7 @@ export default function AmministratoriDashboard() {
   }
 
   // Utility per statistiche numeriche giovani
-  function getNumericStatsGiovani(arr: number[], label: string, domanda: string): Array<{Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}> {
+  function getNumericStatsGiovani(arr: number[], label: string, domanda: string, codice: string = ''): Array<{Codice: string, Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}> {
     const valid = arr.filter((x: number) => typeof x === 'number' && !isNaN(x) && x !== null && x !== undefined)
     if (valid.length === 0) return []
     const total = arr.length
@@ -797,10 +803,11 @@ export default function AmministratoriDashboard() {
       return acc
     }, {})
     
-    const results: Array<{Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}> = []
+    const results: Array<{Codice: string, Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}> = []
     
     Object.entries(valueCounts).forEach(([value, count]) => {
       results.push({
+        Codice: codice,
         Domanda: domanda,
         Risposta: `${label}: ${value}`,
         Frequenza: count,
@@ -812,12 +819,13 @@ export default function AmministratoriDashboard() {
   }
 
   // Utility per testo libero giovani
-  function getTextStatsGiovani(arr: string[], label: string, domanda: string): Array<{Domanda: string, Risposta: string, Frequenza: number, Percentuale: string}> {
+  function getTextStatsGiovani(arr: string[], label: string, domanda: string, codice: string = ''): Array<{Codice: string, Domanda: string, Risposta: string, Frequenza: number, Percentuale: string}> {
     const valid = arr.filter((x: string) => typeof x === 'string' && x.trim() !== '')
     if (valid.length === 0) return []
     const total = arr.length
     const counts = valid.reduce((acc: Record<string, number>, v: string) => { acc[v] = (acc[v]||0)+1; return acc }, {})
     return Object.entries(counts).map(([val, freq]) => ({
+      Codice: codice,
       Domanda: domanda,
       Risposta: `${label}: ${val}`,
       Frequenza: freq,
@@ -825,17 +833,17 @@ export default function AmministratoriDashboard() {
     }))
   }
 
-  function generateGiovaniStats(data: any[]): Array<{Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}> {
-    if (data.length === 0) return [{ Domanda: 'Nessun dato disponibile', Risposta: '', Frequenza: 0, Percentuale: '0%' }]
+  function generateGiovaniStats(data: any[]): Array<StatRow> {
+    if (data.length === 0) return [{ Codice: '', Domanda: 'Nessun dato disponibile', Risposta: '', Frequenza: 0, Percentuale: '0%' }]
     
-    const stats: Array<{Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}> = []
+    const stats: Array<StatRow> = []
     const total = data.length
 
     // Campi base
-    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.id_struttura), 'ID Struttura', 'ID Struttura'))
-    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.tipo_struttura), 'Tipo Struttura', 'Tipo Struttura'))
-    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.tipo_percorso), 'Tipo Percorso', 'Tipo Percorso'))
-    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.collocazione_attuale_spec), 'Collocazione Attuale Spec', 'Collocazione Attuale Spec'))
+    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.id_struttura), 'ID Struttura', 'ID Struttura', 'ID_QUEST'))
+    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.tipo_struttura), 'Tipo Struttura', 'Tipo Struttura', 'FONTE'))
+    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.tipo_percorso), 'Tipo Percorso', 'Tipo Percorso', 'PERCAUT_SPEC'))
+    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.collocazione_attuale_spec), 'Collocazione Attuale Spec', 'Collocazione Attuale Spec', 'CONDATT_SPEC'))
 
     // Luogo nascita
     stats.push(...getTextStatsGiovani(data.map((x:any)=>x.luogo_nascita?.altro_paese), 'Luogo Nascita Altro Paese', 'Luogo Nascita Altro Paese'))
@@ -896,6 +904,7 @@ export default function AmministratoriDashboard() {
           
           Object.entries(valueCounts).forEach(([utilitaLabel, count]) => {
           stats.push({
+            Codice: 'C8',
             Domanda: `Livelli Utilità - ${label}`,
               Risposta: utilitaLabel,
             Frequenza: count,
