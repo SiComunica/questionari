@@ -1114,62 +1114,37 @@ export default function AmministratoriDashboard() {
       })
     }
 
-    return stats
-  }
-
-  // Copia la vecchia funzione per le domande chiuse
-  function generateGiovaniStats_OLD(data: any[]): Array<{Domanda: string, Risposta: string, Frequenza: number, Percentuale: string}> {
-    if (data.length === 0) return []
-    
-    const stats: Array<{Domanda: string, Risposta: string, Frequenza: number, Percentuale: string}> = []
-    const total = data.length
-
-    // Percorso autonomia
+    // Percorso autonomia (A1)
     const percAut = data.filter(item => item.percorso_autonomia === true).length
     stats.push({
-      Domanda: 'Percorso Autonomia',
+      Domanda: 'A1 Percorso Autonomia',
       Risposta: 'Sì',
       Frequenza: percAut,
       Percentuale: `${((percAut / total) * 100).toFixed(1)}%`
     })
     stats.push({
-      Domanda: 'Percorso Autonomia',
+      Domanda: 'A1 Percorso Autonomia',
       Risposta: 'No',
       Frequenza: total - percAut,
       Percentuale: `${(((total - percAut) / total) * 100).toFixed(1)}%`
     })
 
-    // Tipo percorso
-    const tipoPercorso = data.reduce((acc, item) => {
-      acc[item.tipo_percorso || 'Non specificato'] = (acc[item.tipo_percorso || 'Non specificato'] || 0) + 1
-      return acc
-    }, {} as Record<string, number>)
-
-    Object.entries(tipoPercorso).forEach(([key, value]) => {
-      stats.push({
-        Domanda: 'Tipo Percorso',
-        Risposta: key,
-        Frequenza: value as number,
-        Percentuale: `${((value as number / total) * 100).toFixed(1)}%`
-      })
-    })
-
-    // Vive in struttura
+    // Vive in struttura (A2)
     const viveStruttura = data.filter(item => item.vive_in_struttura === true).length
     stats.push({
-      Domanda: 'Vive in Struttura',
+      Domanda: 'A2 Vive in Struttura',
       Risposta: 'Sì',
       Frequenza: viveStruttura,
       Percentuale: `${((viveStruttura / total) * 100).toFixed(1)}%`
     })
     stats.push({
-      Domanda: 'Vive in Struttura',
+      Domanda: 'A2 Vive in Struttura',
       Risposta: 'No',
       Frequenza: total - viveStruttura,
       Percentuale: `${(((total - viveStruttura) / total) * 100).toFixed(1)}%`
     })
 
-    // Collocazione attuale
+    // Collocazione attuale (A3)
     const collocazioneAttuale = data.reduce((acc, item) => {
       acc[item.collocazione_attuale || 'Non specificato'] = (acc[item.collocazione_attuale || 'Non specificato'] || 0) + 1
       return acc
@@ -1177,14 +1152,14 @@ export default function AmministratoriDashboard() {
 
     Object.entries(collocazioneAttuale).forEach(([key, value]) => {
       stats.push({
-        Domanda: 'Collocazione Attuale',
+        Domanda: 'A3 Collocazione Attuale',
         Risposta: key,
         Frequenza: value as number,
         Percentuale: `${((value as number / total) * 100).toFixed(1)}%`
       })
     })
 
-    // Sesso
+    // Sesso (B1)
     const sesso = data.reduce((acc, item) => {
       acc[item.sesso || 'Non specificato'] = (acc[item.sesso || 'Non specificato'] || 0) + 1
       return acc
@@ -1192,14 +1167,14 @@ export default function AmministratoriDashboard() {
 
     Object.entries(sesso).forEach(([key, value]) => {
       stats.push({
-        Domanda: 'Sesso',
+        Domanda: 'B1 Sesso',
         Risposta: key,
         Frequenza: value as number,
         Percentuale: `${((value as number / total) * 100).toFixed(1)}%`
       })
     })
 
-    // Classe età
+    // Classe età (B2)
     const classeEta = data.reduce((acc, item) => {
       acc[item.classe_eta || 'Non specificato'] = (acc[item.classe_eta || 'Non specificato'] || 0) + 1
       return acc
@@ -1207,29 +1182,14 @@ export default function AmministratoriDashboard() {
 
     Object.entries(classeEta).forEach(([key, value]) => {
       stats.push({
-        Domanda: 'Classe Età',
+        Domanda: 'B2 Classe Età',
         Risposta: key,
         Frequenza: value as number,
         Percentuale: `${((value as number / total) * 100).toFixed(1)}%`
       })
     })
 
-    // Luogo nascita
-    const luogoNascita = data.reduce((acc, item) => {
-      acc[item.luogo_nascita || 'Non specificato'] = (acc[item.luogo_nascita || 'Non specificato'] || 0) + 1
-      return acc
-    }, {} as Record<string, number>)
-
-    Object.entries(luogoNascita).forEach(([key, value]) => {
-      stats.push({
-        Domanda: 'Luogo Nascita',
-        Risposta: key,
-        Frequenza: value as number,
-        Percentuale: `${((value as number / total) * 100).toFixed(1)}%`
-      })
-    })
-
-    // Cittadinanza
+    // Cittadinanza (B4)
     const cittadinanza = data.reduce((acc, item) => {
       acc[item.cittadinanza || 'Non specificato'] = (acc[item.cittadinanza || 'Non specificato'] || 0) + 1
       return acc
@@ -1237,29 +1197,14 @@ export default function AmministratoriDashboard() {
 
     Object.entries(cittadinanza).forEach(([key, value]) => {
       stats.push({
-        Domanda: 'Cittadinanza',
+        Domanda: 'B4 Cittadinanza',
         Risposta: key,
         Frequenza: value as number,
         Percentuale: `${((value as number / total) * 100).toFixed(1)}%`
       })
     })
 
-    // Permesso soggiorno
-    const permessoSoggiorno = data.reduce((acc, item) => {
-      acc[item.permesso_soggiorno || 'Non specificato'] = (acc[item.permesso_soggiorno || 'Non specificato'] || 0) + 1
-      return acc
-    }, {} as Record<string, number>)
-
-    Object.entries(permessoSoggiorno).forEach(([key, value]) => {
-      stats.push({
-        Domanda: 'Permesso Soggiorno',
-        Risposta: key,
-        Frequenza: value as number,
-        Percentuale: `${((value as number / total) * 100).toFixed(1)}%`
-      })
-    })
-
-    // Titolo studio
+    // Titolo studio (C1)
     const titoloStudio = data.reduce((acc, item) => {
       acc[item.titolo_studio || 'Non specificato'] = (acc[item.titolo_studio || 'Non specificato'] || 0) + 1
       return acc
@@ -1267,90 +1212,57 @@ export default function AmministratoriDashboard() {
 
     Object.entries(titoloStudio).forEach(([key, value]) => {
       stats.push({
-        Domanda: 'Titolo Studio',
+        Domanda: 'C1 Titolo Studio',
         Risposta: key,
         Frequenza: value as number,
         Percentuale: `${((value as number / total) * 100).toFixed(1)}%`
       })
     })
 
-    // Tempo in struttura
-    const tempoStruttura = data.reduce((acc, item) => {
-      acc[item.tempo_in_struttura || 'Non specificato'] = (acc[item.tempo_in_struttura || 'Non specificato'] || 0) + 1
-      return acc
-    }, {} as Record<string, number>)
-
-    Object.entries(tempoStruttura).forEach(([key, value]) => {
-      stats.push({
-        Domanda: 'Tempo in Struttura',
-        Risposta: key,
-        Frequenza: value as number,
-        Percentuale: `${((value as number / total) * 100).toFixed(1)}%`
-      })
-    })
-
-    // Precedenti strutture
-    const precedentiStrutture = data.reduce((acc, item) => {
-      acc[item.precedenti_strutture || 'Non specificato'] = (acc[item.precedenti_strutture || 'Non specificato'] || 0) + 1
-      return acc
-    }, {} as Record<string, number>)
-
-    Object.entries(precedentiStrutture).forEach(([key, value]) => {
-      stats.push({
-        Domanda: 'Precedenti Strutture',
-        Risposta: key,
-        Frequenza: value as number,
-        Percentuale: `${((value as number / total) * 100).toFixed(1)}%`
-      })
-    })
-
-    // Fattori vulnerabilità - mappatura corretta con i nomi reali dei campi
+    // Fattori vulnerabilità (A4)
     const fattoriVulnMapping = [
-      { key: 'fv1_stranieri', label: 'stranieri', altKey: 'stranieri' },
-      { key: 'fv2_vittime_tratta', label: 'fv2_vittime_tratta', altKey: 'vittime_tratta' },
-      { key: 'fv3_vittime_violenza', label: 'vittime_violenza', altKey: 'vittime_violenza' },
-      { key: 'fv4_allontanati_famiglia', label: 'fv4_allontanati_famiglia', altKey: 'allontanati_famiglia' },
-      { key: 'fv5_detenuti', label: 'detenuti', altKey: 'detenuti' },
-      { key: 'fv6_ex_detenuti', label: 'ex_detenuti', altKey: 'ex_detenuti' },
-      { key: 'fv7_esecuzione_penale', label: 'fv7_esecuzione_penale', altKey: 'esecuzione_penale' },
-      { key: 'fv8_indigenti', label: 'indigenti', altKey: 'senza_dimora' },
-      { key: 'fv9_rom_sinti', label: 'rom_sinti', altKey: 'rom_sinti' },
-      { key: 'fv10_disabilita_fisica', label: 'disabilita_fisica', altKey: 'disabilita_fisica' },
-      { key: 'fv11_disabilita_cognitiva', label: 'disabilita_cognitiva', altKey: 'disabilita_cognitiva' },
-      { key: 'fv12_disturbi_psichiatrici', label: 'disturbi_psichiatrici', altKey: 'disturbi_psichiatrici' },
-      { key: 'fv13_dipendenze', label: 'dipendenze', altKey: 'dipendenze' },
-      { key: 'fv14_genitori_precoci', label: 'genitori_precoci', altKey: 'genitori_precoci' },
-      { key: 'fv15_orientamento_sessuale', label: 'orientamento_sessuale', altKey: 'orientamento_sessuale' }
+      { key: 'fv1_stranieri', label: 'Stranieri' },
+      { key: 'fv2_vittime_tratta', label: 'Vittime tratta' },
+      { key: 'fv3_vittime_violenza', label: 'Vittime violenza' },
+      { key: 'fv4_allontanati_famiglia', label: 'Allontanati famiglia' },
+      { key: 'fv5_detenuti', label: 'Detenuti' },
+      { key: 'fv6_ex_detenuti', label: 'Ex detenuti' },
+      { key: 'fv7_esecuzione_penale', label: 'Esecuzione penale' },
+      { key: 'fv8_indigenti', label: 'Indigenti senza dimora' },
+      { key: 'fv9_rom_sinti', label: 'Rom Sinti' },
+      { key: 'fv10_disabilita_fisica', label: 'Disabilità fisica' },
+      { key: 'fv11_disabilita_cognitiva', label: 'Disabilità cognitiva' },
+      { key: 'fv12_disturbi_psichiatrici', label: 'Disturbi psichiatrici' },
+      { key: 'fv13_dipendenze', label: 'Dipendenze' },
+      { key: 'fv14_genitori_precoci', label: 'Genitori precoci' },
+      { key: 'fv15_orientamento_sessuale', label: 'Orientamento sessuale' }
     ]
     
-    fattoriVulnMapping.forEach(({ key, label, altKey }) => {
+    fattoriVulnMapping.forEach(({ key, label }) => {
       const count = data.filter(item => {
         if (Array.isArray(item.fattori_vulnerabilita)) {
-          return item.fattori_vulnerabilita.includes(label)
+          return item.fattori_vulnerabilita.includes(label) || item.fattori_vulnerabilita.includes(key)
         } else if (typeof item.fattori_vulnerabilita === 'object' && item.fattori_vulnerabilita !== null) {
-          // Controlla entrambi i formati: con prefisso fv, senza prefisso, e chiavi alternative
-          return item.fattori_vulnerabilita[key] === true || 
-                 item.fattori_vulnerabilita[label] === true || 
-                 item.fattori_vulnerabilita[altKey] === true
+          return item.fattori_vulnerabilita[key] === true
         }
         return false
       }).length
       
       stats.push({
-        Domanda: `Fattori Vulnerabilità - ${label.replace(/_/g, ' ')}`,
+        Domanda: `A4 Fattori Vulnerabilità - ${label}`,
         Risposta: 'Sì',
         Frequenza: count,
         Percentuale: `${((count / total) * 100).toFixed(1)}%`
       })
       stats.push({
-        Domanda: `Fattori Vulnerabilità - ${label.replace(/_/g, ' ')}`,
+        Domanda: `A4 Fattori Vulnerabilità - ${label}`,
         Risposta: 'No',
         Frequenza: total - count,
         Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
       })
     })
 
-    // Famiglia origine
+    // Famiglia origine (B8)
     const famigliaOrigine = ['padre', 'madre', 'fratelli', 'nonni', 'altri_parenti', 'non_parenti']
     
     famigliaOrigine.forEach(membro => {
@@ -1358,7 +1270,6 @@ export default function AmministratoriDashboard() {
         if (Array.isArray(item.famiglia_origine)) {
           return item.famiglia_origine.includes(membro)
         } else if (typeof item.famiglia_origine === 'object' && item.famiglia_origine !== null) {
-          // Gestisce sia il formato nuovo che quello vecchio
           return item.famiglia_origine[membro] === true || 
                  item.famiglia_origine[membro.replace('fratelli', 'fratelli_sorelle')] === true ||
                  item.famiglia_origine[membro.replace('non_parenti', 'altri_conviventi')] === true
@@ -1367,13 +1278,13 @@ export default function AmministratoriDashboard() {
       }).length
       
       stats.push({
-        Domanda: `Famiglia Origine - ${membro.replace(/_/g, ' ')}`,
+        Domanda: `B8 Famiglia Origine - ${membro.replace(/_/g, ' ')}`,
         Risposta: 'Sì',
         Frequenza: count,
         Percentuale: `${((count / total) * 100).toFixed(1)}%`
       })
       stats.push({
-        Domanda: `Famiglia Origine - ${membro.replace(/_/g, ' ')}`,
+        Domanda: `B8 Famiglia Origine - ${membro.replace(/_/g, ' ')}`,
         Risposta: 'No',
         Frequenza: total - count,
         Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
