@@ -117,10 +117,10 @@ export default function AmministratoriDashboard() {
     const total = data.length
 
     // Campi base
-    stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.nome_struttura), 'Nome Struttura', 'Nome Struttura'))
-    stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.id_struttura), 'ID Struttura', 'ID Struttura'))
-    stats.push(...getNumericStatsStrutture(data.map((x:any)=>x.anno_inizio), 'Anno Inizio', 'Anno Inizio'))
-    stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.missione), 'Missione', 'Missione'))
+    stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.nome_struttura), 'Nome Struttura', 'Nome Struttura', total))
+    stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.id_struttura), 'ID Struttura', 'ID Struttura', total))
+    stats.push(...getNumericStatsStrutture(data.map((x:any)=>x.anno_inizio), 'Anno Inizio', 'Anno Inizio', total))
+    stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.missione), 'Missione', 'Missione', total))
 
     // Forma giuridica altro
     const formaGiuridicaAltro = data.map((x:any)=>x.forma_giuridica_altro).filter(val => val && val.trim() !== '')
@@ -150,7 +150,7 @@ export default function AmministratoriDashboard() {
       for (const sub of personaleSubKeys) {
         if (data[0][key] && data[0][key][sub] !== undefined) {
           const labelChiara = `${personaleKeysLabels[key]} - ${personaleSubKeysLabels[sub]}`
-          stats.push(...getNumericStatsStrutture(data.map((x:any)=>x[key]?.[sub]), labelChiara, labelChiara))
+          stats.push(...getNumericStatsStrutture(data.map((x:any)=>x[key]?.[sub]), labelChiara, labelChiara, total))
         }
       }
     }
@@ -180,7 +180,7 @@ export default function AmministratoriDashboard() {
         for (const sub of personeSubKeys) {
           if (data[0][key] && data[0][key][gruppo] && data[0][key][gruppo][sub] !== undefined) {
             const labelChiara = `${personeKeysLabels[key]} - ${personeGruppiLabels[gruppo]} - ${personeSubLabels[sub]}`
-            stats.push(...getNumericStatsStrutture(data.map((x:any)=>x[key]?.[gruppo]?.[sub]), labelChiara, labelChiara))
+            stats.push(...getNumericStatsStrutture(data.map((x:any)=>x[key]?.[gruppo]?.[sub]), labelChiara, labelChiara, total))
           }
         }
       }
@@ -228,7 +228,7 @@ export default function AmministratoriDashboard() {
     }
     
     // Nuove attività
-    stats.push(...getTextStatsStruttureCustom(data.flatMap((x:any)=>x.nuove_attivita||[]), 'Nuove Attività', 'Nuove Attività'))
+    stats.push(...getTextStatsStruttureCustom(data.flatMap((x:any)=>x.nuove_attivita||[]), 'Nuove Attività', 'Nuove Attività', total))
     
     // Collaborazioni (E1): array di oggetti con soggetto, tipo, oggetto
     const collaborazioniSoggetto = data.flatMap((x:any)=>x.collaborazioni?.map((c:any)=>c.soggetto) || []).filter(v => v && v.trim() !== '')
@@ -245,18 +245,18 @@ export default function AmministratoriDashboard() {
     }
 
     // Punti forza, critica network (E2, E3)
-    stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.punti_forza_network), 'Punti Forza Network (E2)', 'Punti Forza Network'))
-    stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.critica_network), 'Critica Network (E3)', 'Critica Network'))
+    stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.punti_forza_network), 'Punti Forza Network (E2)', 'Punti Forza Network', total))
+    stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.critica_network), 'Critica Network (E3)', 'Critica Network', total))
 
     // Finanziamenti
     if (data[0].finanziamenti) {
       const finanziamentiKeys = ['fondi_pubblici','fondi_privati','totale'] as const
       for (const f of finanziamentiKeys) {
-        stats.push(...getNumericStatsStrutture(data.map((x:any)=>x.finanziamenti?.[f]), `Finanziamenti ${f}`, `Finanziamenti - ${f}`))
+        stats.push(...getNumericStatsStrutture(data.map((x:any)=>x.finanziamenti?.[f]), `Finanziamenti ${f}`, `Finanziamenti - ${f}`, total))
       }
-      stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.finanziamenti?.fondi_pubblici_specifiche), 'Fondi Pubblici Specifiche', 'Fondi Pubblici Specifiche'))
-      stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.finanziamenti?.fondi_privati_specifiche), 'Fondi Privati Specifiche', 'Fondi Privati Specifiche'))
-      stats.push(...getTextStatsStruttureCustom(data.flatMap((x:any)=>x.finanziamenti?.fornitori||[]), 'Fornitori', 'Fornitori'))
+      stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.finanziamenti?.fondi_pubblici_specifiche), 'Fondi Pubblici Specifiche', 'Fondi Pubblici Specifiche', total))
+      stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.finanziamenti?.fondi_privati_specifiche), 'Fondi Privati Specifiche', 'Fondi Privati Specifiche', total))
+      stats.push(...getTextStatsStruttureCustom(data.flatMap((x:any)=>x.finanziamenti?.fornitori||[]), 'Fornitori', 'Fornitori', total))
     }
 
     return stats
