@@ -121,6 +121,34 @@ export default function AmministratoriDashboard() {
     stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.id_struttura), 'ID Struttura', 'ID Struttura', total))
     stats.push(...getNumericStatsStrutture(data.map((x:any)=>x.anno_inizio), 'Anno Inizio', 'Anno Inizio', total))
     stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.missione), 'Missione', 'Missione', total))
+    
+    // Tipo struttura (aggregato)
+    const tipoStruttura = data.reduce((acc, item) => {
+      acc[item.tipo_struttura || 'Non specificato'] = (acc[item.tipo_struttura || 'Non specificato'] || 0) + 1
+      return acc
+    }, {} as Record<string, number>)
+    Object.entries(tipoStruttura).forEach(([key, value]) => {
+      stats.push({
+        Domanda: 'Tipo Struttura',
+        Risposta: key,
+        Frequenza: value as number,
+        Percentuale: `${((value as number / total) * 100).toFixed(1)}%`
+      })
+    })
+    
+    // Forma giuridica (aggregato)
+    const formaGiuridica = data.reduce((acc, item) => {
+      acc[item.forma_giuridica || 'Non specificato'] = (acc[item.forma_giuridica || 'Non specificato'] || 0) + 1
+      return acc
+    }, {} as Record<string, number>)
+    Object.entries(formaGiuridica).forEach(([key, value]) => {
+      stats.push({
+        Domanda: 'Forma Giuridica',
+        Risposta: key,
+        Frequenza: value as number,
+        Percentuale: `${((value as number / total) * 100).toFixed(1)}%`
+      })
+    })
 
     // Forma giuridica altro
     const formaGiuridicaAltro = data.map((x:any)=>x.forma_giuridica_altro).filter(val => val && val.trim() !== '')
@@ -130,6 +158,31 @@ export default function AmministratoriDashboard() {
       stats.push(stat)
       }
     }
+    
+    // Figure professionali
+    const figureProf = ['Psicologi', 'Assistenti sociali', 'Educatori', 'Mediatori', 'Medici', 'Personale infermieristico/operatori sanitari', 'Insegnanti/formatori', 'Cappellano/operatori religiosi e spirituali', 'Tutor', 'Operatore legale', 'Operatore multifunzionale', 'Amministrativo', 'Altro']
+    figureProf.forEach(figura => {
+      const count = data.filter(item => {
+        if (Array.isArray(item.figure_professionali)) {
+          return item.figure_professionali.includes(figura)
+        } else if (typeof item.figure_professionali === 'object' && item.figure_professionali !== null) {
+          return item.figure_professionali[figura.toLowerCase().replace(/[^a-z]/g, '_')] === true
+        }
+        return false
+      }).length
+      stats.push({
+        Domanda: `Figure Professionali - ${figura}`,
+        Risposta: 'Sì',
+        Frequenza: count,
+        Percentuale: `${((count / total) * 100).toFixed(1)}%`
+      })
+      stats.push({
+        Domanda: `Figure Professionali - ${figura}`,
+        Risposta: 'No',
+        Frequenza: total - count,
+        Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
+      })
+    })
 
     // Personale retribuito/volontario
     const personaleKeysLabels: Record<string, string> = {
