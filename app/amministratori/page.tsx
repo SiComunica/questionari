@@ -558,7 +558,7 @@ export default function AmministratoriDashboard() {
   }
 
   // Utility per statistiche numeriche operatori
-  function getNumericStatsOperatori(arr: number[], label: string, domanda: string): Array<{Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}> {
+  function getNumericStatsOperatori(arr: number[], label: string, domanda: string, codice: string = ''): Array<{Codice: string, Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}> {
     const valid = arr.filter((x: number) => typeof x === 'number' && !isNaN(x) && x !== null && x !== undefined)
     if (valid.length === 0) return []
     const total = arr.length
@@ -569,10 +569,11 @@ export default function AmministratoriDashboard() {
       return acc
     }, {})
     
-    const results: Array<{Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}> = []
+    const results: Array<{Codice: string, Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}> = []
     
     Object.entries(valueCounts).forEach(([value, count]) => {
       results.push({
+        Codice: codice,
         Domanda: domanda,
         Risposta: `${label}: ${value}`,
         Frequenza: count,
@@ -584,12 +585,13 @@ export default function AmministratoriDashboard() {
   }
 
   // Utility per testo libero operatori
-  function getTextStatsOperatori(arr: string[], label: string, domanda: string): Array<{Domanda: string, Risposta: string, Frequenza: number, Percentuale: string}> {
+  function getTextStatsOperatori(arr: string[], label: string, domanda: string, codice: string = ''): Array<{Codice: string, Domanda: string, Risposta: string, Frequenza: number, Percentuale: string}> {
     const valid = arr.filter((x: string) => typeof x === 'string' && x.trim() !== '')
     if (valid.length === 0) return []
     const total = arr.length
     const counts = valid.reduce((acc: Record<string, number>, v: string) => { acc[v] = (acc[v]||0)+1; return acc }, {})
     return Object.entries(counts).map(([val, freq]) => ({
+      Codice: codice,
       Domanda: domanda,
       Risposta: `${label}: ${val}`,
       Frequenza: freq,
@@ -597,20 +599,20 @@ export default function AmministratoriDashboard() {
     }))
   }
 
-  function generateOperatoriStats(data: any[]): Array<{Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}> {
-    if (data.length === 0) return [{ Domanda: 'Nessun dato disponibile', Risposta: '', Frequenza: 0, Percentuale: '0%' }]
+  function generateOperatoriStats(data: any[]): Array<StatRow> {
+    if (data.length === 0) return [{ Codice: '', Domanda: 'Nessun dato disponibile', Risposta: '', Frequenza: 0, Percentuale: '0%' }]
     
-    const stats: Array<{Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}> = []
+    const stats: Array<StatRow> = []
     const total = data.length
 
     // Campi base
-    for (const stat of getTextStatsOperatori(data.map((x:any)=>x.id_struttura), 'ID Struttura', 'ID Struttura')) {
+    for (const stat of getTextStatsOperatori(data.map((x:any)=>x.id_struttura), 'ID Struttura', 'ID Struttura', 'ID_QUEST')) {
       stats.push(stat)
     }
-    for (const stat of getTextStatsOperatori(data.map((x:any)=>x.tipo_struttura), 'Tipo Struttura', 'Tipo Struttura')) {
+    for (const stat of getTextStatsOperatori(data.map((x:any)=>x.tipo_struttura), 'Tipo Struttura', 'Tipo Struttura', 'TIPO_STRUTTURA')) {
       stats.push(stat)
     }
-    for (const stat of getTextStatsOperatori(data.map((x:any)=>x.professione?.altro_specificare), 'Professione Altro', 'Professione Altro')) {
+    for (const stat of getTextStatsOperatori(data.map((x:any)=>x.professione?.altro_specificare), 'Professione Altro', 'Professione Altro', 'PROF_SPEC')) {
       stats.push(stat)
     }
 
@@ -619,17 +621,17 @@ export default function AmministratoriDashboard() {
       'persone_seguite': 'Persone Seguite',
       'persone_maggiorenni': 'Persone Maggiorenni'
     }
-    const genereLabels = {
-      'uomini': 'Uomini',
-      'donne': 'Donne',
-      'totale': 'Totale'
+    const personaleCodici = {
+      'persone_seguite': { 'uomini': 'B1U', 'donne': 'B1D', 'totale': 'B1T' },
+      'persone_maggiorenni': { 'uomini': 'B2U', 'donne': 'B2D', 'totale': 'B2T' }
     };
     
     (['persone_seguite','persone_maggiorenni'] as const).forEach((key: 'persone_seguite'|'persone_maggiorenni') => {
       (['uomini','donne','totale'] as const).forEach((sub: 'uomini'|'donne'|'totale') => {
         if (data[0][key] && data[0][key][sub] !== undefined) {
-          const labelChiara = `${personaleLabels[key]} - ${genereLabels[sub]}`
-          stats.push(...getNumericStatsOperatori(data.map((x:any)=>x[key]?.[sub]), labelChiara, labelChiara))
+          const labelChiara = `${personaleLabels[key]} - ${sub.charAt(0).toUpperCase() + sub.slice(1)}`
+          const codice = personaleCodici[key][sub]
+          stats.push(...getNumericStatsOperatori(data.map((x:any)=>x[key]?.[sub]), labelChiara, labelChiara, codice))
         }
       })
     })
@@ -637,19 +639,19 @@ export default function AmministratoriDashboard() {
     // Caratteristiche altro specificare
     const caratteristicheAltro = data.map((x:any)=>x.caratteristiche_persone?.altro_specificare).filter(val => val && val.trim() !== '')
     if (caratteristicheAltro.length > 0) {
-      stats.push(...getTextStatsOperatori(caratteristicheAltro, 'Caratteristiche Altro', 'Caratteristiche Altro'))
+      stats.push(...getTextStatsOperatori(caratteristicheAltro, 'Caratteristiche Altro', 'Caratteristiche Altro', 'B3_16SPEC'))
     }
 
     // Tipo intervento altro specificare
     const tipoInterventoAltro = data.map((x:any)=>x.tipo_intervento?.altro_specificare).filter(val => val && val.trim() !== '')
     if (tipoInterventoAltro.length > 0) {
-      stats.push(...getTextStatsOperatori(tipoInterventoAltro, 'Tipo Intervento Altro', 'Tipo Intervento Altro'))
+      stats.push(...getTextStatsOperatori(tipoInterventoAltro, 'Tipo Intervento Altro', 'Tipo Intervento Altro', 'B4_10SPEC'))
     }
 
     // Interventi potenziare altro specificare
     const interventiPotenziareAltro = data.map((x:any)=>x.interventi_potenziare?.altro_specificare).filter(val => val && val.trim() !== '')
     if (interventiPotenziareAltro.length > 0) {
-      stats.push(...getTextStatsOperatori(interventiPotenziareAltro, 'Interventi Potenziare Altro', 'Interventi Potenziare Altro'))
+      stats.push(...getTextStatsOperatori(interventiPotenziareAltro, 'Interventi Potenziare Altro', 'Interventi Potenziare Altro', 'B5_11SPEC'))
     }
 
     // Professione (aggregato)
@@ -660,6 +662,7 @@ export default function AmministratoriDashboard() {
 
     Object.entries(professione).forEach(([key, value]) => {
       stats.push({
+        Codice: 'PROF',
         Domanda: 'Professione',
         Risposta: key,
         Frequenza: value as number,
@@ -670,7 +673,7 @@ export default function AmministratoriDashboard() {
     // Caratteristiche persone seguite
     const caratteristiche = ['stranieri_migranti', 'vittime_tratta', 'vittime_violenza', 'allontanati_famiglia', 'detenuti', 'ex_detenuti', 'misure_alternative', 'indigenti_senzatetto', 'rom_sinti', 'disabilita_fisica', 'disabilita_cognitiva', 'disturbi_psichiatrici', 'dipendenze', 'genitori_precoci', 'problemi_orientamento']
     
-    caratteristiche.forEach(car => {
+    caratteristiche.forEach((car, idx) => {
       const count = data.filter(item => {
         if (typeof item.caratteristiche_persone === 'object' && item.caratteristiche_persone !== null) {
           return item.caratteristiche_persone[car] === true
@@ -678,13 +681,16 @@ export default function AmministratoriDashboard() {
         return false
       }).length
       
+      const codice = `B3_${idx + 1}`
       stats.push({
+        Codice: codice,
         Domanda: `Caratteristiche - ${car.replace(/_/g, ' ')}`,
         Risposta: 'Sì',
         Frequenza: count,
         Percentuale: `${((count / total) * 100).toFixed(1)}%`
       })
       stats.push({
+        Codice: codice,
         Domanda: `Caratteristiche - ${car.replace(/_/g, ' ')}`,
         Risposta: 'No',
         Frequenza: total - count,
@@ -695,7 +701,7 @@ export default function AmministratoriDashboard() {
     // Tipo interventi
     const tipoInterventi = ['sostegno_formazione', 'sostegno_lavoro', 'sostegno_abitativo', 'sostegno_famiglia', 'sostegno_coetanei', 'sostegno_competenze', 'sostegno_legale', 'sostegno_sociosanitario', 'mediazione_interculturale']
     
-    tipoInterventi.forEach(intervento => {
+    tipoInterventi.forEach((intervento, idx) => {
       const count = data.filter(item => {
         if (typeof item.tipo_intervento === 'object' && item.tipo_intervento !== null) {
           return item.tipo_intervento[intervento] === true
@@ -703,13 +709,16 @@ export default function AmministratoriDashboard() {
         return false
       }).length
       
+      const codice = `B4_${idx + 1}`
       stats.push({
+        Codice: codice,
         Domanda: `Tipo Intervento - ${intervento.replace(/_/g, ' ')}`,
         Risposta: 'Sì',
         Frequenza: count,
         Percentuale: `${((count / total) * 100).toFixed(1)}%`
       })
       stats.push({
+        Codice: codice,
         Domanda: `Tipo Intervento - ${intervento.replace(/_/g, ' ')}`,
         Risposta: 'No',
         Frequenza: total - count,
@@ -720,18 +729,21 @@ export default function AmministratoriDashboard() {
     // Interventi da potenziare
     const interventiPotenziare = ['sostegno_formazione', 'sostegno_lavoro', 'sostegno_abitativo', 'sostegno_famiglia', 'sostegno_coetanei', 'sostegno_competenze', 'sostegno_legale', 'sostegno_sociosanitario', 'mediazione_interculturale', 'nessuno', 'altro']
     
-    interventiPotenziare.forEach(intervento => {
+    interventiPotenziare.forEach((intervento, idx) => {
       const count = data.filter(item => {
         return item.interventi_potenziare?.[intervento] === true
       }).length
       
+      const codice = `B5_${idx + 1}`
       stats.push({
+        Codice: codice,
         Domanda: `Interventi da Potenziare - ${intervento.replace(/_/g, ' ')}`,
         Risposta: 'Sì',
         Frequenza: count,
         Percentuale: `${((count / total) * 100).toFixed(1)}%`
       })
       stats.push({
+        Codice: codice,
         Domanda: `Interventi da Potenziare - ${intervento.replace(/_/g, ' ')}`,
         Risposta: 'No',
         Frequenza: total - count,
@@ -741,10 +753,12 @@ export default function AmministratoriDashboard() {
 
     // Difficoltà uscita (numerici da 1 a 10)
     if (data[0].difficolta_uscita) {
-      (['problemi_economici','trovare_lavoro','lavori_qualita','trovare_casa','discriminazioni','salute_fisica','problemi_psicologici','difficolta_linguistiche','altro'] as const).forEach((f: any) => {
+      const difficoltaKeys = ['problemi_economici','trovare_lavoro','lavori_qualita','trovare_casa','discriminazioni','salute_fisica','problemi_psicologici','difficolta_linguistiche','altro']
+      difficoltaKeys.forEach((f: any, idx) => {
         const values = data.map((x:any)=>x.difficolta_uscita?.[f]).filter(val => val !== undefined && val !== null && val !== '')
         
         if (values.length > 0) {
+          const codice = `C${idx + 1}`
           // Raggruppa per grado di difficoltà (1-10)
           const valueCounts = values.reduce((acc: Record<number, number>, val) => {
             acc[val] = (acc[val] || 0) + 1
@@ -753,6 +767,7 @@ export default function AmministratoriDashboard() {
           
           Object.entries(valueCounts).forEach(([grado, count]) => {
             stats.push({
+              Codice: codice,
               Domanda: `Difficoltà Uscita - ${f.replace(/_/g, ' ')}`,
               Risposta: `Grado ${grado}`,
               Frequenza: count,
@@ -763,7 +778,7 @@ export default function AmministratoriDashboard() {
       })
       const difficoltaAltro = data.map((x:any)=>x.difficolta_uscita?.altro_specificare).filter(val => val && val.trim() !== '')
       if (difficoltaAltro.length > 0) {
-        stats.push(...getTextStatsOperatori(difficoltaAltro, 'Difficoltà Uscita Altro', 'Difficoltà Uscita Altro'))
+        stats.push(...getTextStatsOperatori(difficoltaAltro, 'Difficoltà Uscita Altro', 'Difficoltà Uscita Altro', 'C9SPEC'))
       }
     }
 
