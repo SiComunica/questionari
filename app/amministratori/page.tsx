@@ -147,7 +147,7 @@ export default function AmministratoriDashboard() {
         Percentuale: `${((value as number / total) * 100).toFixed(1)}%`
       })
     })
-    
+
     // Forma giuridica (aggregato)
     const formaGiuridica = data.reduce((acc, item) => {
       acc[item.forma_giuridica || 'Non specificato'] = (acc[item.forma_giuridica || 'Non specificato'] || 0) + 1
@@ -172,7 +172,37 @@ export default function AmministratoriDashboard() {
       }
     }
     
-    // Figure professionali
+    // Personale retribuito/volontario (B1 e B2 DEVONO VENIRE PRIMA DI B3)
+    const personaleKeysLabels: Record<string, string> = {
+      'personale_retribuito': 'Personale Retribuito',
+      'personale_volontario': 'Personale Volontario'
+    }
+    const personaleSubKeysLabels: Record<string, Record<string, string>> = {
+      'personale_retribuito': {
+        'uomini': 'B1U',
+        'donne': 'B1D',
+        'totale': 'B1T'
+      },
+      'personale_volontario': {
+        'uomini': 'B2U',
+        'donne': 'B2D',
+        'totale': 'B2T'
+      }
+    }
+    const personaleKeys = ['personale_retribuito','personale_volontario'] as const
+    const personaleSubKeys = ['uomini','donne','totale'] as const
+    
+    for (const key of personaleKeys) {
+      for (const sub of personaleSubKeys) {
+        if (data[0][key] && data[0][key][sub] !== undefined) {
+          const labelChiara = `${personaleKeysLabels[key]} - ${sub.charAt(0).toUpperCase() + sub.slice(1)}`
+          const codice = personaleSubKeysLabels[key][sub]
+          stats.push(...getNumericStatsStrutture(data.map((x:any)=>x[key]?.[sub]), labelChiara, labelChiara, codice, total))
+        }
+      }
+    }
+
+    // Figure professionali (B3)
     const figureProf = [
       { nome: 'Psicologi', cod: 'B3.1' },
       { nome: 'Assistenti sociali', cod: 'B3.2' },
@@ -213,166 +243,24 @@ export default function AmministratoriDashboard() {
       })
     })
 
-    // Personale retribuito/volontario
-    const personaleKeysLabels: Record<string, string> = {
-      'personale_retribuito': 'Personale Retribuito',
-      'personale_volontario': 'Personale Volontario'
+    // Persone ospitate (C1 - gestite solo per persone_ospitate, non persone_non_ospitate che vengono dopo le caratteristiche)
+    const personeOspitateCodici = {
+      'fino_16': { 'uomini': 'C1A.U', 'donne': 'C1A.D', 'totale': 'C1A.T' },
+      'da_16_a_18': { 'uomini': 'C1B.U', 'donne': 'C1B.D', 'totale': 'C1B.T' },
+      'maggiorenni': { 'uomini': 'C1C.U', 'donne': 'C1C.D', 'totale': 'C1C.T' },
+      'totale': { 'uomini': 'C1.T.U', 'donne': 'C1T.D', 'totale': 'C1T.T' }
     }
-    const personaleSubKeysLabels: Record<string, Record<string, string>> = {
-      'personale_retribuito': {
-        'uomini': 'B1U',
-        'donne': 'B1D',
-        'totale': 'B1T'
-      },
-      'personale_volontario': {
-        'uomini': 'B2U',
-        'donne': 'B2D',
-        'totale': 'B2T'
-      }
-    }
-    const personaleKeys = ['personale_retribuito','personale_volontario'] as const
-    const personaleSubKeys = ['uomini','donne','totale'] as const
-    
-    for (const key of personaleKeys) {
-      for (const sub of personaleSubKeys) {
-        if (data[0][key] && data[0][key][sub] !== undefined) {
-          const labelChiara = `${personaleKeysLabels[key]} - ${sub.charAt(0).toUpperCase() + sub.slice(1)}`
-          const codice = personaleSubKeysLabels[key][sub]
-          stats.push(...getNumericStatsStrutture(data.map((x:any)=>x[key]?.[sub]), labelChiara, labelChiara, codice, total))
-        }
-      }
-    }
-
-    // Persone ospitate/non ospitate
-    const personeKeysLabels: Record<string, string> = {
-      'persone_ospitate': 'Persone Ospitate',
-      'persone_non_ospitate': 'Persone Non Ospitate'
-    }
-    // Mapping codici esatti per persone
-    const personeCodici: Record<string, Record<string, Record<string, string>>> = {
-      'persone_ospitate': {
-        'fino_16': { 'uomini': 'C1A.U', 'donne': 'C1A.D', 'totale': 'C1A.T' },
-        'da_16_a_18': { 'uomini': 'C1B.U', 'donne': 'C1B.D', 'totale': 'C1B.T' },
-        'maggiorenni': { 'uomini': 'C1C.U', 'donne': 'C1C.D', 'totale': 'C1C.T' },
-        'totale': { 'uomini': 'C1.T.U', 'donne': 'C1T.D', 'totale': 'C1T.T' }
-      },
-      'persone_non_ospitate': {
-        'fino_16': { 'uomini': 'C3A.U', 'donne': 'C3A.D', 'totale': 'C3A.T' },
-        'da_16_a_18': { 'uomini': 'C3B.U', 'donne': 'C3B.D', 'totale': 'C3B.T' },
-        'maggiorenni': { 'uomini': 'C3C.U', 'donne': 'C3C.D', 'totale': 'C3C.T' },
-        'totale': { 'uomini': 'C3.T.U', 'donne': 'C3T.D', 'totale': 'C3T.T' }
-      }
-    }
-    const personeKeys = ['persone_ospitate','persone_non_ospitate'] as const
     const personeGruppi = ['fino_16','da_16_a_18','maggiorenni','totale'] as const
     const personeSubKeys = ['uomini','donne','totale'] as const
     
-    for (const key of personeKeys) {
-      for (const gruppo of personeGruppi) {
-        for (const sub of personeSubKeys) {
-          if (data[0][key] && data[0][key][gruppo] && data[0][key][gruppo][sub] !== undefined) {
-            const labelChiara = `${personeKeysLabels[key]} - ${gruppo} - ${sub}`
-            const codice = personeCodici[key][gruppo][sub]
-            stats.push(...getNumericStatsStrutture(data.map((x:any)=>x[key]?.[gruppo]?.[sub]), labelChiara, labelChiara, codice, total))
-          }
+    // Solo Persone Ospitate C1
+    for (const gruppo of personeGruppi) {
+      for (const sub of personeSubKeys) {
+        if (data[0].persone_ospitate && data[0].persone_ospitate[gruppo] && data[0].persone_ospitate[gruppo][sub] !== undefined) {
+          const labelChiara = `Persone Ospitate - ${gruppo} - ${sub}`
+          const codice = personeOspitateCodici[gruppo][sub]
+          stats.push(...getNumericStatsStrutture(data.map((x:any)=>x.persone_ospitate?.[gruppo]?.[sub]), labelChiara, labelChiara, codice, total))
         }
-      }
-    }
-
-    // Caratteristiche altro (C2.16A_SPEC per ospiti adolescenti, C2.16B_SPEC per ospiti giovani, C4.16ALTRO per non ospiti)
-    const caratteristicheOspitiAltro = data.map((x:any)=>x.caratteristiche_ospiti_altro).filter(val => val && val.trim() !== '')
-    if (caratteristicheOspitiAltro.length > 0) {
-      stats.push(...getTextStatsStruttureCustom(caratteristicheOspitiAltro, 'Caratt. Ospiti Altro (Adolescenti)', 'Caratteristiche Ospiti Altro', 'C2.16A_SPEC', total))
-      stats.push(...getTextStatsStruttureCustom(caratteristicheOspitiAltro, 'Caratt. Ospiti Altro (Giovani)', 'Caratteristiche Ospiti Altro', 'C2.16B_SPEC', total))
-    }
-    
-    const caratteristicheNonOspitiAltro = data.map((x:any)=>x.caratteristiche_non_ospiti_altro).filter(val => val && val.trim() !== '')
-    if (caratteristicheNonOspitiAltro.length > 0) {
-      stats.push(...getTextStatsStruttureCustom(caratteristicheNonOspitiAltro, 'Caratt. Non Ospiti Altro', 'Caratteristiche Non Ospiti Altro', 'C4.16ALTRO', total))
-    }
-
-    // Attività inserimento (D3): array di oggetti con nome, periodo, contenuto, destinatari, attori, punti_forza, criticita
-    const attivitaInserimentoNomi = data.flatMap((x:any)=>x.attivita_inserimento?.map((a:any)=>a.nome) || []).filter(v => v && v.trim() !== '')
-    if (attivitaInserimentoNomi.length > 0) {
-      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoNomi, 'Attività Inserimento Nome (D3.x NOM)', 'Attività Inserimento Nome', 'D3', total))
-    }
-    const attivitaInserimentoPeriodo = data.flatMap((x:any)=>x.attivita_inserimento?.map((a:any)=>a.periodo) || []).filter(v => v && v.trim() !== '')
-    if (attivitaInserimentoPeriodo.length > 0) {
-      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoPeriodo, 'Attività Inserimento Periodo (D3.x PER)', 'Attività Inserimento Periodo', 'D3', total))
-    }
-    const attivitaInserimentoContenuto = data.flatMap((x:any)=>x.attivita_inserimento?.map((a:any)=>a.contenuto) || []).filter(v => v && v.trim() !== '')
-    if (attivitaInserimentoContenuto.length > 0) {
-      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoContenuto, 'Attività Inserimento Contenuto (D3.x CONT)', 'Attività Inserimento Contenuto', 'D3', total))
-    }
-    const attivitaInserimentoDestinatari = data.flatMap((x:any)=>x.attivita_inserimento?.map((a:any)=>a.destinatari) || []).filter(v => v && v.trim() !== '')
-    if (attivitaInserimentoDestinatari.length > 0) {
-      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoDestinatari, 'Attività Inserimento Destinatari (D3.x DEST)', 'Attività Inserimento Destinatari', 'D3', total))
-    }
-    const attivitaInserimentoAttori = data.flatMap((x:any)=>x.attivita_inserimento?.map((a:any)=>a.attori) || []).filter(v => v && v.trim() !== '')
-    if (attivitaInserimentoAttori.length > 0) {
-      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoAttori, 'Attività Inserimento Attori (D3.x ATT)', 'Attività Inserimento Attori', 'D3', total))
-    }
-    const attivitaInserimentoPuntiForza = data.flatMap((x:any)=>x.attivita_inserimento?.map((a:any)=>a.punti_forza) || []).filter(v => v && v.trim() !== '')
-    if (attivitaInserimentoPuntiForza.length > 0) {
-      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoPuntiForza, 'Attività Inserimento Punti Forza (D3.x PFOR)', 'Attività Inserimento Punti Forza', 'D3', total))
-    }
-    const attivitaInserimentoCriticita = data.flatMap((x:any)=>x.attivita_inserimento?.map((a:any)=>a.criticita) || []).filter(v => v && v.trim() !== '')
-    if (attivitaInserimentoCriticita.length > 0) {
-      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoCriticita, 'Attività Inserimento Criticità (D3.x CRIT)', 'Attività Inserimento Criticità', 'D3', total))
-    }
-    
-    // Nuove attività
-    stats.push(...getTextStatsStruttureCustom(data.flatMap((x:any)=>x.nuove_attivita||[]), 'Nuove Attività', 'Nuove Attività', 'D4', total))
-    
-    // Collaborazioni (E1): array di oggetti con soggetto, tipo, oggetto
-    const collaborazioniSoggetto = data.flatMap((x:any)=>x.collaborazioni?.map((c:any)=>c.soggetto) || []).filter(v => v && v.trim() !== '')
-    if (collaborazioniSoggetto.length > 0) {
-      stats.push(...getTextStatsStruttureCustom(collaborazioniSoggetto, 'Collaborazioni Soggetto (E1.x SOGG)', 'Collaborazioni Soggetto', 'E1', total))
-    }
-    const collaborazioniTipo = data.flatMap((x:any)=>x.collaborazioni?.map((c:any)=>c.tipo) || []).filter(v => v !== undefined && v !== null && v !== '')
-    if (collaborazioniTipo.length > 0) {
-      stats.push(...getNumericStatsStrutture(collaborazioniTipo, 'Collaborazioni Tipo (E1.x TIPO)', 'Collaborazioni Tipo', 'E1', total))
-    }
-    const collaborazioniOggetto = data.flatMap((x:any)=>x.collaborazioni?.map((c:any)=>c.oggetto) || []).filter(v => v && v.trim() !== '')
-    if (collaborazioniOggetto.length > 0) {
-      stats.push(...getTextStatsStruttureCustom(collaborazioniOggetto, 'Collaborazioni Oggetto (E1.x OGGETTO)', 'Collaborazioni Oggetto', 'E1', total))
-    }
-
-    // Punti forza, critica network (E2, E3)
-    stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.punti_forza_network), 'Punti Forza Network (E2)', 'Punti Forza Network', 'E2', total))
-    stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.critica_network), 'Critica Network (E3)', 'Critica Network', 'E3', total))
-
-    // Finanziamenti (F1.1, F1.2, F1.1SPEC, F1.2SPEC, F2.xforn, F2.xsost)
-    if (data[0].finanziamenti) {
-      stats.push(...getNumericStatsStrutture(data.map((x:any)=>x.finanziamenti?.fondi_pubblici), 'Fondi Pubblici', 'Finanziamenti - Fondi Pubblici', 'F1.1', total))
-      stats.push(...getNumericStatsStrutture(data.map((x:any)=>x.finanziamenti?.fondi_privati), 'Fondi Privati', 'Finanziamenti - Fondi Privati', 'F1.2', total))
-      
-      const fondiPubbliciSpec = data.map((x:any)=>x.finanziamenti?.fondi_pubblici_specifica || x.finanziamenti?.fondi_pubblici_specifiche).filter(val => val && val.trim() !== '')
-      if (fondiPubbliciSpec.length > 0) {
-        stats.push(...getTextStatsStruttureCustom(fondiPubbliciSpec, 'Fondi Pubblici Specifiche', 'Fondi Pubblici Specifiche', 'F1.1SPEC', total))
-      }
-      
-      const fondiPrivatiSpec = data.map((x:any)=>x.finanziamenti?.fondi_privati_specifica || x.finanziamenti?.fondi_privati_specifiche).filter(val => val && val.trim() !== '')
-      if (fondiPrivatiSpec.length > 0) {
-        stats.push(...getTextStatsStruttureCustom(fondiPrivatiSpec, 'Fondi Privati Specifiche', 'Fondi Privati Specifiche', 'F1.2SPEC', total))
-      }
-      
-      // Fornitori (F2.1forn, F2.1sost, F2.2forn, F2.2sost)
-      const fornitore1Nome = data.map((x:any)=>x.finanziamenti?.fornitori?.[0]?.nome).filter(val => val && val.trim() !== '')
-      if (fornitore1Nome.length > 0) {
-        stats.push(...getTextStatsStruttureCustom(fornitore1Nome, 'Fornitore 1 - Nome', 'Fornitore 1 - Nome', 'F2.1forn', total))
-      }
-      const fornitore1Sost = data.map((x:any)=>x.finanziamenti?.fornitori?.[0]?.tipo_sostegno).filter(val => val && val.trim() !== '')
-      if (fornitore1Sost.length > 0) {
-        stats.push(...getTextStatsStruttureCustom(fornitore1Sost, 'Fornitore 1 - Tipo Sostegno', 'Fornitore 1 - Tipo Sostegno', 'F2.1sost', total))
-      }
-      const fornitore2Nome = data.map((x:any)=>x.finanziamenti?.fornitori?.[1]?.nome).filter(val => val && val.trim() !== '')
-      if (fornitore2Nome.length > 0) {
-        stats.push(...getTextStatsStruttureCustom(fornitore2Nome, 'Fornitore 2 - Nome', 'Fornitore 2 - Nome', 'F2.2forn', total))
-      }
-      const fornitore2Sost = data.map((x:any)=>x.finanziamenti?.fornitori?.[1]?.tipo_sostegno).filter(val => val && val.trim() !== '')
-      if (fornitore2Sost.length > 0) {
-        stats.push(...getTextStatsStruttureCustom(fornitore2Sost, 'Fornitore 2 - Tipo Sostegno', 'Fornitore 2 - Tipo Sostegno', 'F2.2sost', total))
       }
     }
 
@@ -487,6 +375,31 @@ export default function AmministratoriDashboard() {
       })
     })
 
+    // Caratteristiche altro ospiti (C2.16A_SPEC per ospiti adolescenti, C2.16B_SPEC per ospiti giovani)
+    const caratteristicheOspitiAltro = data.map((x:any)=>x.caratteristiche_ospiti_altro).filter(val => val && val.trim() !== '')
+    if (caratteristicheOspitiAltro.length > 0) {
+      stats.push(...getTextStatsStruttureCustom(caratteristicheOspitiAltro, 'Caratt. Ospiti Altro (Adolescenti)', 'Caratteristiche Ospiti Altro', 'C2.16A_SPEC', total))
+      stats.push(...getTextStatsStruttureCustom(caratteristicheOspitiAltro, 'Caratt. Ospiti Altro (Giovani)', 'Caratteristiche Ospiti Altro', 'C2.16B_SPEC', total))
+    }
+    
+    // Persone NON ospitate (C3)
+    const personeNonOspitateCodici = {
+      'fino_16': { 'uomini': 'C3A.U', 'donne': 'C3A.D', 'totale': 'C3A.T' },
+      'da_16_a_18': { 'uomini': 'C3B.U', 'donne': 'C3B.D', 'totale': 'C3B.T' },
+      'maggiorenni': { 'uomini': 'C3C.U', 'donne': 'C3C.D', 'totale': 'C3C.T' },
+      'totale': { 'uomini': 'C3.T.U', 'donne': 'C3T.D', 'totale': 'C3T.T' }
+    }
+    
+    for (const gruppo of personeGruppi) {
+      for (const sub of personeSubKeys) {
+        if (data[0].persone_non_ospitate && data[0].persone_non_ospitate[gruppo] && data[0].persone_non_ospitate[gruppo][sub] !== undefined) {
+          const labelChiara = `Persone Non Ospitate - ${gruppo} - ${sub}`
+          const codice = personeNonOspitateCodici[gruppo][sub]
+          stats.push(...getNumericStatsStrutture(data.map((x:any)=>x.persone_non_ospitate?.[gruppo]?.[sub]), labelChiara, labelChiara, codice, total))
+        }
+      }
+    }
+
     // Caratteristiche non ospiti adolescenti - solo valori standard (C4.xA nell'export)
     caratteristicheOspitiAdolescenti.forEach((car, idx) => {
       const count = data.filter(item => {
@@ -535,7 +448,13 @@ export default function AmministratoriDashboard() {
       })
     })
 
-    // Attività servizi
+    // Caratteristiche altro NON ospiti (C4.16ALTRO)
+    const caratteristicheNonOspitiAltro = data.map((x:any)=>x.caratteristiche_non_ospiti_altro).filter(val => val && val.trim() !== '')
+    if (caratteristicheNonOspitiAltro.length > 0) {
+      stats.push(...getTextStatsStruttureCustom(caratteristicheNonOspitiAltro, 'Caratt. Non Ospiti Altro', 'Caratteristiche Non Ospiti Altro', 'C4.16ALTRO', total))
+    }
+
+    // Attività servizi (D1)
     const attivitaServizi = ['alloggio', 'vitto', 'servizi_bassa_soglia', 'ospitalita_diurna', 'supporto_psicologico', 'sostegno_autonomia', 'orientamento_lavoro', 'orientamento_formazione', 'istruzione', 'formazione_professionale', 'attivita_socializzazione', 'altro']
     
     attivitaServizi.forEach((servizio, idx) => {
@@ -567,7 +486,7 @@ export default function AmministratoriDashboard() {
       })
     })
 
-    // Esperienze inserimento lavorativo
+    // Esperienze inserimento lavorativo (D2)
     const esperienzeLavoro = data.filter(item => item.esperienze_inserimento_lavorativo === true).length
     stats.push({
       Codice: 'D2',
@@ -583,6 +502,91 @@ export default function AmministratoriDashboard() {
       Frequenza: total - esperienzeLavoro,
       Percentuale: `${(((total - esperienzeLavoro) / total) * 100).toFixed(1)}%`
     })
+
+    // Attività inserimento (D3): array di oggetti con nome, periodo, contenuto, destinatari, attori, punti_forza, criticita
+    const attivitaInserimentoNomi = data.flatMap((x:any)=>x.attivita_inserimento?.map((a:any)=>a.nome) || []).filter(v => v && v.trim() !== '')
+    if (attivitaInserimentoNomi.length > 0) {
+      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoNomi, 'Attività Inserimento Nome (D3.x NOM)', 'Attività Inserimento Nome', 'D3', total))
+    }
+    const attivitaInserimentoPeriodo = data.flatMap((x:any)=>x.attivita_inserimento?.map((a:any)=>a.periodo) || []).filter(v => v && v.trim() !== '')
+    if (attivitaInserimentoPeriodo.length > 0) {
+      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoPeriodo, 'Attività Inserimento Periodo (D3.x PER)', 'Attività Inserimento Periodo', 'D3', total))
+    }
+    const attivitaInserimentoContenuto = data.flatMap((x:any)=>x.attivita_inserimento?.map((a:any)=>a.contenuto) || []).filter(v => v && v.trim() !== '')
+    if (attivitaInserimentoContenuto.length > 0) {
+      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoContenuto, 'Attività Inserimento Contenuto (D3.x CONT)', 'Attività Inserimento Contenuto', 'D3', total))
+    }
+    const attivitaInserimentoDestinatari = data.flatMap((x:any)=>x.attivita_inserimento?.map((a:any)=>a.destinatari) || []).filter(v => v && v.trim() !== '')
+    if (attivitaInserimentoDestinatari.length > 0) {
+      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoDestinatari, 'Attività Inserimento Destinatari (D3.x DEST)', 'Attività Inserimento Destinatari', 'D3', total))
+    }
+    const attivitaInserimentoAttori = data.flatMap((x:any)=>x.attivita_inserimento?.map((a:any)=>a.attori) || []).filter(v => v && v.trim() !== '')
+    if (attivitaInserimentoAttori.length > 0) {
+      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoAttori, 'Attività Inserimento Attori (D3.x ATT)', 'Attività Inserimento Attori', 'D3', total))
+    }
+    const attivitaInserimentoPuntiForza = data.flatMap((x:any)=>x.attivita_inserimento?.map((a:any)=>a.punti_forza) || []).filter(v => v && v.trim() !== '')
+    if (attivitaInserimentoPuntiForza.length > 0) {
+      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoPuntiForza, 'Attività Inserimento Punti Forza (D3.x PFOR)', 'Attività Inserimento Punti Forza', 'D3', total))
+    }
+    const attivitaInserimentoCriticita = data.flatMap((x:any)=>x.attivita_inserimento?.map((a:any)=>a.criticita) || []).filter(v => v && v.trim() !== '')
+    if (attivitaInserimentoCriticita.length > 0) {
+      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoCriticita, 'Attività Inserimento Criticità (D3.x CRIT)', 'Attività Inserimento Criticità', 'D3', total))
+    }
+    
+    // Nuove attività (D4)
+    stats.push(...getTextStatsStruttureCustom(data.flatMap((x:any)=>x.nuove_attivita||[]), 'Nuove Attività', 'Nuove Attività', 'D4', total))
+    
+    // Collaborazioni (E1): array di oggetti con soggetto, tipo, oggetto
+    const collaborazioniSoggetto = data.flatMap((x:any)=>x.collaborazioni?.map((c:any)=>c.soggetto) || []).filter(v => v && v.trim() !== '')
+    if (collaborazioniSoggetto.length > 0) {
+      stats.push(...getTextStatsStruttureCustom(collaborazioniSoggetto, 'Collaborazioni Soggetto (E1.x SOGG)', 'Collaborazioni Soggetto', 'E1', total))
+    }
+    const collaborazioniTipo = data.flatMap((x:any)=>x.collaborazioni?.map((c:any)=>c.tipo) || []).filter(v => v !== undefined && v !== null && v !== '')
+    if (collaborazioniTipo.length > 0) {
+      stats.push(...getNumericStatsStrutture(collaborazioniTipo, 'Collaborazioni Tipo (E1.x TIPO)', 'Collaborazioni Tipo', 'E1', total))
+    }
+    const collaborazioniOggetto = data.flatMap((x:any)=>x.collaborazioni?.map((c:any)=>c.oggetto) || []).filter(v => v && v.trim() !== '')
+    if (collaborazioniOggetto.length > 0) {
+      stats.push(...getTextStatsStruttureCustom(collaborazioniOggetto, 'Collaborazioni Oggetto (E1.x OGGETTO)', 'Collaborazioni Oggetto', 'E1', total))
+    }
+
+    // Punti forza, critica network (E2, E3)
+    stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.punti_forza_network), 'Punti Forza Network (E2)', 'Punti Forza Network', 'E2', total))
+    stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.critica_network), 'Critica Network (E3)', 'Critica Network', 'E3', total))
+
+    // Finanziamenti (F1.1, F1.2, F1.1SPEC, F1.2SPEC, F2.xforn, F2.xsost)
+    if (data[0].finanziamenti) {
+      stats.push(...getNumericStatsStrutture(data.map((x:any)=>x.finanziamenti?.fondi_pubblici), 'Fondi Pubblici', 'Finanziamenti - Fondi Pubblici', 'F1.1', total))
+      stats.push(...getNumericStatsStrutture(data.map((x:any)=>x.finanziamenti?.fondi_privati), 'Fondi Privati', 'Finanziamenti - Fondi Privati', 'F1.2', total))
+      
+      const fondiPubbliciSpec = data.map((x:any)=>x.finanziamenti?.fondi_pubblici_specifica || x.finanziamenti?.fondi_pubblici_specifiche).filter(val => val && val.trim() !== '')
+      if (fondiPubbliciSpec.length > 0) {
+        stats.push(...getTextStatsStruttureCustom(fondiPubbliciSpec, 'Fondi Pubblici Specifiche', 'Fondi Pubblici Specifiche', 'F1.1SPEC', total))
+      }
+      
+      const fondiPrivatiSpec = data.map((x:any)=>x.finanziamenti?.fondi_privati_specifica || x.finanziamenti?.fondi_privati_specifiche).filter(val => val && val.trim() !== '')
+      if (fondiPrivatiSpec.length > 0) {
+        stats.push(...getTextStatsStruttureCustom(fondiPrivatiSpec, 'Fondi Privati Specifiche', 'Fondi Privati Specifiche', 'F1.2SPEC', total))
+      }
+      
+      // Fornitori (F2.1forn, F2.1sost, F2.2forn, F2.2sost)
+      const fornitore1Nome = data.map((x:any)=>x.finanziamenti?.fornitori?.[0]?.nome).filter(val => val && val.trim() !== '')
+      if (fornitore1Nome.length > 0) {
+        stats.push(...getTextStatsStruttureCustom(fornitore1Nome, 'Fornitore 1 - Nome', 'Fornitore 1 - Nome', 'F2.1forn', total))
+      }
+      const fornitore1Sost = data.map((x:any)=>x.finanziamenti?.fornitori?.[0]?.tipo_sostegno).filter(val => val && val.trim() !== '')
+      if (fornitore1Sost.length > 0) {
+        stats.push(...getTextStatsStruttureCustom(fornitore1Sost, 'Fornitore 1 - Tipo Sostegno', 'Fornitore 1 - Tipo Sostegno', 'F2.1sost', total))
+      }
+      const fornitore2Nome = data.map((x:any)=>x.finanziamenti?.fornitori?.[1]?.nome).filter(val => val && val.trim() !== '')
+      if (fornitore2Nome.length > 0) {
+        stats.push(...getTextStatsStruttureCustom(fornitore2Nome, 'Fornitore 2 - Nome', 'Fornitore 2 - Nome', 'F2.2forn', total))
+      }
+      const fornitore2Sost = data.map((x:any)=>x.finanziamenti?.fornitori?.[1]?.tipo_sostegno).filter(val => val && val.trim() !== '')
+      if (fornitore2Sost.length > 0) {
+        stats.push(...getTextStatsStruttureCustom(fornitore2Sost, 'Fornitore 2 - Tipo Sostegno', 'Fornitore 2 - Tipo Sostegno', 'F2.2sost', total))
+      }
+    }
 
     return stats
   }
