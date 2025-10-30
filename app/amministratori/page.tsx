@@ -854,8 +854,17 @@ export default function AmministratoriDashboard() {
     stats.push(...getTextStatsGiovani(data.map((x:any)=>x.padre?.titolo_studio), 'Padre Titolo Studio', 'Padre Titolo Studio', 'B11'))
     stats.push(...getTextStatsGiovani(data.map((x:any)=>x.padre?.situazione), 'Padre Situazione', 'Padre Situazione', 'B12'))
 
-    // Motivi non studio (C6 è numerico nell'export, non array)
-    // Corso formazione e lavoro attuale sono campi testuali (C7, C8) - non generano statistiche aggregate
+    // Sezione C: Formazione, lavoro, autonomia
+    // C1 (Titolo studio) - gestito più avanti
+    // C2.1-C2.6 (Attività precedenti) - gestito più avanti
+    // C3 (Orientamento lavoro) - gestito più avanti
+    // C4.1-C4.5 (Orientamento luoghi) - gestito più avanti
+    // C4_BIS (Utilità servizio) - gestito qui sotto
+    // C5.1-C5.5 (Attività attuali) - gestito più avanti
+    // C6 (Motivi non studio) - campo numerico, gestito qui sotto
+    // C7 (Corso formazione) - campo testuale, non genera statistiche aggregate
+    // C8 (Lavoro attuale) - campo testuale, non genera statistiche aggregate
+    // C8.1-C8.4 (Livelli utilità) - gestito più avanti
 
     // Orientamento lavoro
     stats.push(...getTextStatsGiovani(data.map((x:any)=>x.orientamento_lavoro?.utilita), 'Orientamento Lavoro Utilità', 'Orientamento Lavoro Utilità', 'C4_BIS'))
@@ -865,11 +874,8 @@ export default function AmministratoriDashboard() {
       stats.push(...getTextStatsGiovani(orientamentoLavoroDoveAltro, 'Orientamento Lavoro Dove Altro', 'Orientamento Lavoro Dove Altro', 'C4.5SPEC'))
     }
 
-    // Ricerca lavoro altro specificare
-    const ricercaLavoroAltro = data.map((x:any)=>x.ricerca_lavoro?.altro_specificare)
-    if (ricercaLavoroAltro.some(val => val && val.trim() !== '')) {
-      stats.push(...getTextStatsGiovani(ricercaLavoroAltro, 'Ricerca Lavoro Altro', 'Ricerca Lavoro Altro', 'C9.11SPEC'))
-    }
+    // Motivi non studio (C6) - campo numerico
+    stats.push(...getNumericStatsGiovani(data.map((x:any)=>x.motivi_non_studio), 'Motivi Non Studio', 'Motivi Non Studio', 'C6'))
 
     // Condizioni lavoro (C13.1-C13.8, numerici)
     if (data[0].condizioni_lavoro || data[0].aspetti_lavoro) {
