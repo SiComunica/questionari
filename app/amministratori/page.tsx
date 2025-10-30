@@ -69,8 +69,11 @@ export default function AmministratoriDashboard() {
     }
   }
 
+  // Tipo per le statistiche con codice
+  type StatRow = {Codice: string, Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}
+
   // Utility per statistiche numeriche
-  function getNumericStatsStrutture(arr: number[], label: string, domanda: string, totalQuestionari?: number): Array<{Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}> {
+  function getNumericStatsStrutture(arr: number[], label: string, domanda: string, codice: string, totalQuestionari?: number): Array<StatRow> {
     const valid = arr.filter((x: number) => typeof x === 'number' && !isNaN(x) && x !== null && x !== undefined)
     if (valid.length === 0) return []
     // Usa il totale dei questionari ricevuti, non solo i valori validi
@@ -82,10 +85,11 @@ export default function AmministratoriDashboard() {
       return acc
     }, {})
     
-    const results: Array<{Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}> = []
+    const results: Array<StatRow> = []
     
     Object.entries(valueCounts).forEach(([value, count]) => {
       results.push({
+        Codice: codice,
         Domanda: domanda,
         Risposta: `${label}: ${value}`,
         Frequenza: count,
@@ -97,13 +101,14 @@ export default function AmministratoriDashboard() {
   }
 
   // Utility per testo libero
-  function getTextStatsStruttureCustom(arr: string[], label: string, domanda: string, totalQuestionari?: number): Array<{Domanda: string, Risposta: string, Frequenza: number, Percentuale: string}> {
+  function getTextStatsStruttureCustom(arr: string[], label: string, domanda: string, codice: string, totalQuestionari?: number): Array<StatRow> {
     const valid = arr.filter((x: string) => typeof x === 'string' && x.trim() !== '')
     if (valid.length === 0) return []
     // Usa il totale dei questionari ricevuti, non solo i valori validi
     const total = totalQuestionari || arr.length
     const counts = valid.reduce((acc: Record<string, number>, v: string) => { acc[v] = (acc[v]||0)+1; return acc }, {})
     return Object.entries(counts).map(([val, freq]) => ({
+      Codice: codice,
       Domanda: domanda,
       Risposta: `${label}: ${val}`,
       Frequenza: freq,
@@ -111,16 +116,16 @@ export default function AmministratoriDashboard() {
     }))
   }
 
-  function generateStruttureStats(data: any[]): Array<{Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}> {
-    if (data.length === 0) return [{ Domanda: 'Nessun dato disponibile', Risposta: '', Frequenza: 0, Percentuale: '0%' }]
-    const stats: Array<{Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}> = []
+  function generateStruttureStats(data: any[]): Array<StatRow> {
+    if (data.length === 0) return [{ Codice: '', Domanda: 'Nessun dato disponibile', Risposta: '', Frequenza: 0, Percentuale: '0%' }]
+    const stats: Array<StatRow> = []
     const total = data.length
 
     // Campi base
-    stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.nome_struttura), 'Nome Struttura', 'Nome Struttura', total))
-    stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.id_struttura), 'ID Struttura', 'ID Struttura', total))
-    stats.push(...getNumericStatsStrutture(data.map((x:any)=>x.anno_inizio), 'Anno Inizio', 'Anno Inizio', total))
-    stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.missione), 'Missione', 'Missione', total))
+    stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.nome_struttura), 'Nome Struttura', 'Nome Struttura', 'A', total))
+    stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.id_struttura), 'ID Struttura', 'ID Struttura', 'A', total))
+    stats.push(...getNumericStatsStrutture(data.map((x:any)=>x.anno_inizio), 'Anno Inizio', 'Anno Inizio', 'A', total))
+    stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.missione), 'Missione', 'Missione', 'A', total))
     
     // Tipo struttura (aggregato)
     const tipoStruttura = data.reduce((acc, item) => {
@@ -129,6 +134,7 @@ export default function AmministratoriDashboard() {
     }, {} as Record<string, number>)
     Object.entries(tipoStruttura).forEach(([key, value]) => {
       stats.push({
+        Codice: 'A',
         Domanda: 'Tipo Struttura',
         Risposta: key,
         Frequenza: value as number,
@@ -143,6 +149,7 @@ export default function AmministratoriDashboard() {
     }, {} as Record<string, number>)
     Object.entries(formaGiuridica).forEach(([key, value]) => {
       stats.push({
+        Codice: 'A',
         Domanda: 'Forma Giuridica',
         Risposta: key,
         Frequenza: value as number,
@@ -153,7 +160,7 @@ export default function AmministratoriDashboard() {
     // Forma giuridica altro
     const formaGiuridicaAltro = data.map((x:any)=>x.forma_giuridica_altro).filter(val => val && val.trim() !== '')
     if (formaGiuridicaAltro.length > 0) {
-      const formaGiuridicaAltroStats = getTextStatsStruttureCustom(formaGiuridicaAltro, 'Forma Giuridica Altro', 'Forma Giuridica Altro', total)
+      const formaGiuridicaAltroStats = getTextStatsStruttureCustom(formaGiuridicaAltro, 'Forma Giuridica Altro', 'Forma Giuridica Altro', 'A', total)
     for (const stat of formaGiuridicaAltroStats) {
       stats.push(stat)
       }
@@ -171,12 +178,14 @@ export default function AmministratoriDashboard() {
         return false
       }).length
       stats.push({
+        Codice: 'B',
         Domanda: `Figure Professionali - ${figura}`,
         Risposta: 'Sì',
         Frequenza: count,
         Percentuale: `${((count / total) * 100).toFixed(1)}%`
       })
       stats.push({
+        Codice: 'B',
         Domanda: `Figure Professionali - ${figura}`,
         Risposta: 'No',
         Frequenza: total - count,
@@ -203,7 +212,7 @@ export default function AmministratoriDashboard() {
       for (const sub of personaleSubKeys) {
         if (data[0][key] && data[0][key][sub] !== undefined) {
           const labelChiara = `${personaleKeysLabels[key]} - ${personaleSubKeysLabels[sub]}`
-          stats.push(...getNumericStatsStrutture(data.map((x:any)=>x[key]?.[sub]), labelChiara, labelChiara, total))
+          stats.push(...getNumericStatsStrutture(data.map((x:any)=>x[key]?.[sub]), labelChiara, labelChiara, 'B', total))
         }
       }
     }
@@ -233,7 +242,7 @@ export default function AmministratoriDashboard() {
         for (const sub of personeSubKeys) {
           if (data[0][key] && data[0][key][gruppo] && data[0][key][gruppo][sub] !== undefined) {
             const labelChiara = `${personeKeysLabels[key]} - ${personeGruppiLabels[gruppo]} - ${personeSubLabels[sub]}`
-            stats.push(...getNumericStatsStrutture(data.map((x:any)=>x[key]?.[gruppo]?.[sub]), labelChiara, labelChiara, total))
+            stats.push(...getNumericStatsStrutture(data.map((x:any)=>x[key]?.[gruppo]?.[sub]), labelChiara, labelChiara, 'C', total))
           }
         }
       }
@@ -242,74 +251,74 @@ export default function AmministratoriDashboard() {
     // Caratteristiche altro
     const caratteristicheOspitiAltro = data.map((x:any)=>x.caratteristiche_ospiti_altro).filter(val => val && val.trim() !== '')
     if (caratteristicheOspitiAltro.length > 0) {
-      stats.push(...getTextStatsStruttureCustom(caratteristicheOspitiAltro, 'Caratt. Ospiti Altro', 'Caratteristiche Ospiti Altro', total))
+      stats.push(...getTextStatsStruttureCustom(caratteristicheOspitiAltro, 'Caratt. Ospiti Altro', 'Caratteristiche Ospiti Altro', 'C', total))
     }
     
     const caratteristicheNonOspitiAltro = data.map((x:any)=>x.caratteristiche_non_ospiti_altro).filter(val => val && val.trim() !== '')
     if (caratteristicheNonOspitiAltro.length > 0) {
-      stats.push(...getTextStatsStruttureCustom(caratteristicheNonOspitiAltro, 'Caratt. Non Ospiti Altro', 'Caratteristiche Non Ospiti Altro', total))
+      stats.push(...getTextStatsStruttureCustom(caratteristicheNonOspitiAltro, 'Caratt. Non Ospiti Altro', 'Caratteristiche Non Ospiti Altro', 'C', total))
     }
 
     // Attività inserimento (D3): array di oggetti con nome, periodo, contenuto, destinatari, attori, punti_forza, criticita
     const attivitaInserimentoNomi = data.flatMap((x:any)=>x.attivita_inserimento?.map((a:any)=>a.nome) || []).filter(v => v && v.trim() !== '')
     if (attivitaInserimentoNomi.length > 0) {
-      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoNomi, 'Attività Inserimento Nome (D3.x NOM)', 'Attività Inserimento Nome', total))
+      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoNomi, 'Attività Inserimento Nome (D3.x NOM)', 'Attività Inserimento Nome', 'D3', total))
     }
     const attivitaInserimentoPeriodo = data.flatMap((x:any)=>x.attivita_inserimento?.map((a:any)=>a.periodo) || []).filter(v => v && v.trim() !== '')
     if (attivitaInserimentoPeriodo.length > 0) {
-      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoPeriodo, 'Attività Inserimento Periodo (D3.x PER)', 'Attività Inserimento Periodo', total))
+      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoPeriodo, 'Attività Inserimento Periodo (D3.x PER)', 'Attività Inserimento Periodo', 'D3', total))
     }
     const attivitaInserimentoContenuto = data.flatMap((x:any)=>x.attivita_inserimento?.map((a:any)=>a.contenuto) || []).filter(v => v && v.trim() !== '')
     if (attivitaInserimentoContenuto.length > 0) {
-      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoContenuto, 'Attività Inserimento Contenuto (D3.x CONT)', 'Attività Inserimento Contenuto', total))
+      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoContenuto, 'Attività Inserimento Contenuto (D3.x CONT)', 'Attività Inserimento Contenuto', 'D3', total))
     }
     const attivitaInserimentoDestinatari = data.flatMap((x:any)=>x.attivita_inserimento?.map((a:any)=>a.destinatari) || []).filter(v => v && v.trim() !== '')
     if (attivitaInserimentoDestinatari.length > 0) {
-      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoDestinatari, 'Attività Inserimento Destinatari (D3.x DEST)', 'Attività Inserimento Destinatari', total))
+      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoDestinatari, 'Attività Inserimento Destinatari (D3.x DEST)', 'Attività Inserimento Destinatari', 'D3', total))
     }
     const attivitaInserimentoAttori = data.flatMap((x:any)=>x.attivita_inserimento?.map((a:any)=>a.attori) || []).filter(v => v && v.trim() !== '')
     if (attivitaInserimentoAttori.length > 0) {
-      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoAttori, 'Attività Inserimento Attori (D3.x ATT)', 'Attività Inserimento Attori', total))
+      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoAttori, 'Attività Inserimento Attori (D3.x ATT)', 'Attività Inserimento Attori', 'D3', total))
     }
     const attivitaInserimentoPuntiForza = data.flatMap((x:any)=>x.attivita_inserimento?.map((a:any)=>a.punti_forza) || []).filter(v => v && v.trim() !== '')
     if (attivitaInserimentoPuntiForza.length > 0) {
-      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoPuntiForza, 'Attività Inserimento Punti Forza (D3.x PFOR)', 'Attività Inserimento Punti Forza', total))
+      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoPuntiForza, 'Attività Inserimento Punti Forza (D3.x PFOR)', 'Attività Inserimento Punti Forza', 'D3', total))
     }
     const attivitaInserimentoCriticita = data.flatMap((x:any)=>x.attivita_inserimento?.map((a:any)=>a.criticita) || []).filter(v => v && v.trim() !== '')
     if (attivitaInserimentoCriticita.length > 0) {
-      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoCriticita, 'Attività Inserimento Criticità (D3.x CRIT)', 'Attività Inserimento Criticità', total))
+      stats.push(...getTextStatsStruttureCustom(attivitaInserimentoCriticita, 'Attività Inserimento Criticità (D3.x CRIT)', 'Attività Inserimento Criticità', 'D3', total))
     }
     
     // Nuove attività
-    stats.push(...getTextStatsStruttureCustom(data.flatMap((x:any)=>x.nuove_attivita||[]), 'Nuove Attività', 'Nuove Attività', total))
+    stats.push(...getTextStatsStruttureCustom(data.flatMap((x:any)=>x.nuove_attivita||[]), 'Nuove Attività', 'Nuove Attività', 'D4', total))
     
     // Collaborazioni (E1): array di oggetti con soggetto, tipo, oggetto
     const collaborazioniSoggetto = data.flatMap((x:any)=>x.collaborazioni?.map((c:any)=>c.soggetto) || []).filter(v => v && v.trim() !== '')
     if (collaborazioniSoggetto.length > 0) {
-      stats.push(...getTextStatsStruttureCustom(collaborazioniSoggetto, 'Collaborazioni Soggetto (E1.x SOGG)', 'Collaborazioni Soggetto', total))
+      stats.push(...getTextStatsStruttureCustom(collaborazioniSoggetto, 'Collaborazioni Soggetto (E1.x SOGG)', 'Collaborazioni Soggetto', 'E1', total))
     }
     const collaborazioniTipo = data.flatMap((x:any)=>x.collaborazioni?.map((c:any)=>c.tipo) || []).filter(v => v !== undefined && v !== null && v !== '')
     if (collaborazioniTipo.length > 0) {
-      stats.push(...getNumericStatsStrutture(collaborazioniTipo, 'Collaborazioni Tipo (E1.x TIPO)', 'Collaborazioni Tipo', total))
+      stats.push(...getNumericStatsStrutture(collaborazioniTipo, 'Collaborazioni Tipo (E1.x TIPO)', 'Collaborazioni Tipo', 'E1', total))
     }
     const collaborazioniOggetto = data.flatMap((x:any)=>x.collaborazioni?.map((c:any)=>c.oggetto) || []).filter(v => v && v.trim() !== '')
     if (collaborazioniOggetto.length > 0) {
-      stats.push(...getTextStatsStruttureCustom(collaborazioniOggetto, 'Collaborazioni Oggetto (E1.x OGGETTO)', 'Collaborazioni Oggetto', total))
+      stats.push(...getTextStatsStruttureCustom(collaborazioniOggetto, 'Collaborazioni Oggetto (E1.x OGGETTO)', 'Collaborazioni Oggetto', 'E1', total))
     }
 
     // Punti forza, critica network (E2, E3)
-    stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.punti_forza_network), 'Punti Forza Network (E2)', 'Punti Forza Network', total))
-    stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.critica_network), 'Critica Network (E3)', 'Critica Network', total))
+    stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.punti_forza_network), 'Punti Forza Network (E2)', 'Punti Forza Network', 'E2', total))
+    stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.critica_network), 'Critica Network (E3)', 'Critica Network', 'E3', total))
 
     // Finanziamenti
     if (data[0].finanziamenti) {
       const finanziamentiKeys = ['fondi_pubblici','fondi_privati','totale'] as const
       for (const f of finanziamentiKeys) {
-        stats.push(...getNumericStatsStrutture(data.map((x:any)=>x.finanziamenti?.[f]), `Finanziamenti ${f}`, `Finanziamenti - ${f}`, total))
+        stats.push(...getNumericStatsStrutture(data.map((x:any)=>x.finanziamenti?.[f]), `Finanziamenti ${f}`, `Finanziamenti - ${f}`, 'F', total))
       }
-      stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.finanziamenti?.fondi_pubblici_specifiche), 'Fondi Pubblici Specifiche', 'Fondi Pubblici Specifiche', total))
-      stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.finanziamenti?.fondi_privati_specifiche), 'Fondi Privati Specifiche', 'Fondi Privati Specifiche', total))
-      stats.push(...getTextStatsStruttureCustom(data.flatMap((x:any)=>x.finanziamenti?.fornitori||[]), 'Fornitori', 'Fornitori', total))
+      stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.finanziamenti?.fondi_pubblici_specifiche), 'Fondi Pubblici Specifiche', 'Fondi Pubblici Specifiche', 'F', total))
+      stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.finanziamenti?.fondi_privati_specifiche), 'Fondi Privati Specifiche', 'Fondi Privati Specifiche', 'F', total))
+      stats.push(...getTextStatsStruttureCustom(data.flatMap((x:any)=>x.finanziamenti?.fornitori||[]), 'Fornitori', 'Fornitori', 'F', total))
     }
 
     // Mapping valori form -> valori standard per caratteristiche adolescenti
@@ -383,12 +392,14 @@ export default function AmministratoriDashboard() {
       }).length
       
       stats.push({
+        Codice: 'C2',
         Domanda: `C4 Caratteristiche Ospiti Adolescenti - ${car}`,
         Risposta: 'Sì',
         Frequenza: count,
         Percentuale: `${((count / total) * 100).toFixed(1)}%`
       })
       stats.push({
+        Codice: 'C2',
         Domanda: `C4 Caratteristiche Ospiti Adolescenti - ${car}`,
         Risposta: 'No',
         Frequenza: total - count,
@@ -404,12 +415,14 @@ export default function AmministratoriDashboard() {
       }).length
       
       stats.push({
+        Codice: 'C2',
         Domanda: `C5 Caratteristiche Ospiti Giovani - ${car}`,
         Risposta: 'Sì',
         Frequenza: count,
         Percentuale: `${((count / total) * 100).toFixed(1)}%`
       })
       stats.push({
+        Codice: 'C2',
         Domanda: `C5 Caratteristiche Ospiti Giovani - ${car}`,
         Risposta: 'No',
         Frequenza: total - count,
@@ -425,12 +438,14 @@ export default function AmministratoriDashboard() {
       }).length
       
       stats.push({
+        Codice: 'C4',
         Domanda: `C6 Caratteristiche Non Ospiti Adolescenti - ${car}`,
         Risposta: 'Sì',
         Frequenza: count,
         Percentuale: `${((count / total) * 100).toFixed(1)}%`
       })
       stats.push({
+        Codice: 'C4',
         Domanda: `C6 Caratteristiche Non Ospiti Adolescenti - ${car}`,
         Risposta: 'No',
         Frequenza: total - count,
@@ -446,12 +461,14 @@ export default function AmministratoriDashboard() {
       }).length
       
       stats.push({
+        Codice: 'C4',
         Domanda: `C6 Caratteristiche Non Ospiti Giovani - ${car}`,
         Risposta: 'Sì',
         Frequenza: count,
         Percentuale: `${((count / total) * 100).toFixed(1)}%`
       })
       stats.push({
+        Codice: 'C4',
         Domanda: `C6 Caratteristiche Non Ospiti Giovani - ${car}`,
         Risposta: 'No',
         Frequenza: total - count,
@@ -475,12 +492,14 @@ export default function AmministratoriDashboard() {
       }).length
       
       stats.push({
+        Codice: 'D1',
         Domanda: `Attività Servizi - ${servizio.replace(/_/g, ' ')}`,
         Risposta: 'Sì',
         Frequenza: count,
         Percentuale: `${((count / total) * 100).toFixed(1)}%`
       })
       stats.push({
+        Codice: 'D1',
         Domanda: `Attività Servizi - ${servizio.replace(/_/g, ' ')}`,
         Risposta: 'No',
         Frequenza: total - count,
@@ -491,12 +510,14 @@ export default function AmministratoriDashboard() {
     // Esperienze inserimento lavorativo
     const esperienzeLavoro = data.filter(item => item.esperienze_inserimento_lavorativo === true).length
     stats.push({
+      Codice: 'D2',
       Domanda: 'Esperienze Inserimento Lavorativo',
       Risposta: 'Sì',
       Frequenza: esperienzeLavoro,
       Percentuale: `${((esperienzeLavoro / total) * 100).toFixed(1)}%`
     })
     stats.push({
+      Codice: 'D2',
       Domanda: 'Esperienze Inserimento Lavorativo',
       Risposta: 'No',
       Frequenza: total - esperienzeLavoro,
