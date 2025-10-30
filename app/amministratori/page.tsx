@@ -312,73 +312,6 @@ export default function AmministratoriDashboard() {
       stats.push(...getTextStatsStruttureCustom(data.flatMap((x:any)=>x.finanziamenti?.fornitori||[]), 'Fornitori', 'Fornitori', total))
     }
 
-    return stats
-  }
-
-  // Copia la vecchia funzione con nome diverso per non perdere la logica delle domande chiuse
-  function generateStruttureStats_OLD(data: any[]): Array<{Domanda: string, Risposta: string, Frequenza: number, Percentuale: string}> {
-    if (data.length === 0) return []
-    
-    const stats: Array<{Domanda: string, Risposta: string, Frequenza: number, Percentuale: string}> = []
-    const total = data.length
-
-    // Tipo struttura
-    const tipoStruttura = data.reduce((acc, item) => {
-      acc[item.tipo_struttura || 'Non specificato'] = (acc[item.tipo_struttura || 'Non specificato'] || 0) + 1
-      return acc
-    }, {} as Record<string, number>)
-
-    Object.entries(tipoStruttura).forEach(([key, value]) => {
-      stats.push({
-        Domanda: 'Tipo Struttura',
-        Risposta: key,
-        Frequenza: value as number,
-        Percentuale: `${((value as number / total) * 100).toFixed(1)}%`
-      })
-    })
-
-    // Forma giuridica
-    const formaGiuridica = data.reduce((acc, item) => {
-      acc[item.forma_giuridica || 'Non specificato'] = (acc[item.forma_giuridica || 'Non specificato'] || 0) + 1
-      return acc
-    }, {} as Record<string, number>)
-
-    Object.entries(formaGiuridica).forEach(([key, value]) => {
-      stats.push({
-        Domanda: 'Forma Giuridica',
-        Risposta: key,
-        Frequenza: value as number,
-        Percentuale: `${((value as number / total) * 100).toFixed(1)}%`
-      })
-    })
-
-    // Figure professionali - gestisco sia array che oggetti
-    const figureProf = ['Psicologi', 'Assistenti sociali', 'Educatori', 'Mediatori', 'Medici', 'Personale infermieristico/operatori sanitari', 'Insegnanti/formatori', 'Cappellano/operatori religiosi e spirituali', 'Tutor', 'Operatore legale', 'Operatore multifunzionale', 'Amministrativo', 'Altro']
-    
-    figureProf.forEach(figura => {
-      const count = data.filter(item => {
-        if (Array.isArray(item.figure_professionali)) {
-          return item.figure_professionali.includes(figura)
-        } else if (typeof item.figure_professionali === 'object' && item.figure_professionali !== null) {
-          return item.figure_professionali[figura.toLowerCase().replace(/[^a-z]/g, '_')] === true
-        }
-        return false
-      }).length
-      
-      stats.push({
-        Domanda: `Figures Professionali - ${figura}`,
-        Risposta: 'Sì',
-        Frequenza: count,
-        Percentuale: `${((count / total) * 100).toFixed(1)}%`
-      })
-      stats.push({
-        Domanda: `Figures Professionali - ${figura}`,
-        Risposta: 'No',
-        Frequenza: total - count,
-        Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
-      })
-    })
-
     // Mapping valori form -> valori standard per caratteristiche adolescenti
     const mappingAdolescenti: Record<string, string[]> = {
       'Stranieri con problemi legati alla condizione migratoria': ['MSNA', 'Minori stranieri accompagnati'],
@@ -450,13 +383,13 @@ export default function AmministratoriDashboard() {
       }).length
       
       stats.push({
-        Domanda: `Caratteristiche Ospiti Adolescenti - ${car}`,
+        Domanda: `C4 Caratteristiche Ospiti Adolescenti - ${car}`,
         Risposta: 'Sì',
         Frequenza: count,
         Percentuale: `${((count / total) * 100).toFixed(1)}%`
       })
       stats.push({
-        Domanda: `Caratteristiche Ospiti Adolescenti - ${car}`,
+        Domanda: `C4 Caratteristiche Ospiti Adolescenti - ${car}`,
         Risposta: 'No',
         Frequenza: total - count,
         Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
@@ -471,13 +404,13 @@ export default function AmministratoriDashboard() {
       }).length
       
       stats.push({
-        Domanda: `Caratteristiche Ospiti Giovani - ${car}`,
+        Domanda: `C5 Caratteristiche Ospiti Giovani - ${car}`,
         Risposta: 'Sì',
         Frequenza: count,
         Percentuale: `${((count / total) * 100).toFixed(1)}%`
       })
       stats.push({
-        Domanda: `Caratteristiche Ospiti Giovani - ${car}`,
+        Domanda: `C5 Caratteristiche Ospiti Giovani - ${car}`,
         Risposta: 'No',
         Frequenza: total - count,
         Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
@@ -492,13 +425,13 @@ export default function AmministratoriDashboard() {
       }).length
       
       stats.push({
-        Domanda: `Caratteristiche Non Ospiti Adolescenti - ${car}`,
+        Domanda: `C6 Caratteristiche Non Ospiti Adolescenti - ${car}`,
         Risposta: 'Sì',
         Frequenza: count,
         Percentuale: `${((count / total) * 100).toFixed(1)}%`
       })
       stats.push({
-        Domanda: `Caratteristiche Non Ospiti Adolescenti - ${car}`,
+        Domanda: `C6 Caratteristiche Non Ospiti Adolescenti - ${car}`,
         Risposta: 'No',
         Frequenza: total - count,
         Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
@@ -513,13 +446,13 @@ export default function AmministratoriDashboard() {
       }).length
       
       stats.push({
-        Domanda: `Caratteristiche Non Ospiti Giovani - ${car}`,
+        Domanda: `C6 Caratteristiche Non Ospiti Giovani - ${car}`,
         Risposta: 'Sì',
         Frequenza: count,
         Percentuale: `${((count / total) * 100).toFixed(1)}%`
       })
       stats.push({
-        Domanda: `Caratteristiche Non Ospiti Giovani - ${car}`,
+        Domanda: `C6 Caratteristiche Non Ospiti Giovani - ${car}`,
         Risposta: 'No',
         Frequenza: total - count,
         Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
