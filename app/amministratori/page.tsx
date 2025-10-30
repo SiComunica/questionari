@@ -132,17 +132,45 @@ export default function AmministratoriDashboard() {
     }
 
     // Personale retribuito/volontario
+    const personaleKeysLabels: Record<string, string> = {
+      'personale_retribuito': 'Personale Retribuito',
+      'personale_volontario': 'Personale Volontario'
+    }
+    const personaleSubKeysLabels: Record<string, string> = {
+      'uomini': 'Uomini',
+      'donne': 'Donne',
+      'totale': 'Totale',
+      'part_time': 'Part Time',
+      'full_time': 'Full Time'
+    }
     const personaleKeys = ['personale_retribuito','personale_volontario'] as const
     const personaleSubKeys = ['uomini','donne','totale','part_time','full_time'] as const
     
     for (const key of personaleKeys) {
       for (const sub of personaleSubKeys) {
-        if (data[0][key] && data[0][key][sub] !== undefined)
-          stats.push(...getNumericStatsStrutture(data.map((x:any)=>x[key]?.[sub]), `${key} ${sub}`, `${key} - ${sub}`))
+        if (data[0][key] && data[0][key][sub] !== undefined) {
+          const labelChiara = `${personaleKeysLabels[key]} - ${personaleSubKeysLabels[sub]}`
+          stats.push(...getNumericStatsStrutture(data.map((x:any)=>x[key]?.[sub]), labelChiara, labelChiara))
+        }
       }
     }
 
     // Persone ospitate/non ospitate
+    const personeKeysLabels: Record<string, string> = {
+      'persone_ospitate': 'Persone Ospitate',
+      'persone_non_ospitate': 'Persone Non Ospitate'
+    }
+    const personeGruppiLabels: Record<string, string> = {
+      'fino_16': 'Fino 16 anni',
+      'da_16_a_18': '16-18 anni',
+      'maggiorenni': 'Maggiorenni',
+      'totale': 'Totale'
+    }
+    const personeSubLabels: Record<string, string> = {
+      'uomini': 'Uomini',
+      'donne': 'Donne',
+      'totale': 'Totale'
+    }
     const personeKeys = ['persone_ospitate','persone_non_ospitate'] as const
     const personeGruppi = ['fino_16','da_16_a_18','maggiorenni','totale'] as const
     const personeSubKeys = ['uomini','donne','totale'] as const
@@ -150,8 +178,10 @@ export default function AmministratoriDashboard() {
     for (const key of personeKeys) {
       for (const gruppo of personeGruppi) {
         for (const sub of personeSubKeys) {
-          if (data[0][key] && data[0][key][gruppo] && data[0][key][gruppo][sub] !== undefined)
-            stats.push(...getNumericStatsStrutture(data.map((x:any)=>x[key]?.[gruppo]?.[sub]), `${key} ${gruppo} ${sub}`, `${key} - ${gruppo} - ${sub}`))
+          if (data[0][key] && data[0][key][gruppo] && data[0][key][gruppo][sub] !== undefined) {
+            const labelChiara = `${personeKeysLabels[key]} - ${personeGruppiLabels[gruppo]} - ${personeSubLabels[sub]}`
+            stats.push(...getNumericStatsStrutture(data.map((x:any)=>x[key]?.[gruppo]?.[sub]), labelChiara, labelChiara))
+          }
         }
       }
     }
@@ -641,10 +671,22 @@ export default function AmministratoriDashboard() {
     }
 
     // Persone seguite (numerici)
+    const personaleLabels = {
+      'persone_seguite': 'Persone Seguite',
+      'persone_maggiorenni': 'Persone Maggiorenni'
+    }
+    const genereLabels = {
+      'uomini': 'Uomini',
+      'donne': 'Donne',
+      'totale': 'Totale'
+    };
+    
     (['persone_seguite','persone_maggiorenni'] as const).forEach((key: 'persone_seguite'|'persone_maggiorenni') => {
       (['uomini','donne','totale'] as const).forEach((sub: 'uomini'|'donne'|'totale') => {
-        if (data[0][key] && data[0][key][sub] !== undefined)
-          stats.push(...getNumericStatsOperatori(data.map((x:any)=>x[key]?.[sub]), `${key} ${sub}`, `${key} - ${sub}`))
+        if (data[0][key] && data[0][key][sub] !== undefined) {
+          const labelChiara = `${personaleLabels[key]} - ${genereLabels[sub]}`
+          stats.push(...getNumericStatsOperatori(data.map((x:any)=>x[key]?.[sub]), labelChiara, labelChiara))
+        }
       })
     })
 
