@@ -676,8 +676,8 @@ export default function AmministratoriDashboard() {
       })
     })
 
-    // Caratteristiche persone seguite
-    const caratteristiche = ['stranieri_migranti', 'vittime_tratta', 'vittime_violenza', 'allontanati_famiglia', 'detenuti', 'ex_detenuti', 'misure_alternative', 'indigenti_senzatetto', 'rom_sinti', 'disabilita_fisica', 'disabilita_cognitiva', 'disturbi_psichiatrici', 'dipendenze', 'genitori_precoci', 'problemi_orientamento']
+    // Caratteristiche persone seguite (B3_1 - B3_16)
+    const caratteristiche = ['stranieri_migranti', 'vittime_tratta', 'vittime_violenza', 'allontanati_famiglia', 'detenuti', 'ex_detenuti', 'misure_alternative', 'indigenti_senzatetto', 'rom_sinti', 'disabilita_fisica', 'disabilita_cognitiva', 'disturbi_psichiatrici', 'dipendenze', 'genitori_precoci', 'problemi_orientamento', 'altro']
     
     caratteristiche.forEach((car, idx) => {
       const count = data.filter(item => {
@@ -704,8 +704,8 @@ export default function AmministratoriDashboard() {
       })
     })
 
-    // Tipo interventi
-    const tipoInterventi = ['sostegno_formazione', 'sostegno_lavoro', 'sostegno_abitativo', 'sostegno_famiglia', 'sostegno_coetanei', 'sostegno_competenze', 'sostegno_legale', 'sostegno_sociosanitario', 'mediazione_interculturale']
+    // Tipo interventi (B4_1 - B4_10)
+    const tipoInterventi = ['sostegno_formazione', 'sostegno_lavoro', 'sostegno_abitativo', 'sostegno_famiglia', 'sostegno_coetanei', 'sostegno_competenze', 'sostegno_legale', 'sostegno_sociosanitario', 'mediazione_interculturale', 'altro']
     
     tipoInterventi.forEach((intervento, idx) => {
       const count = data.filter(item => {
