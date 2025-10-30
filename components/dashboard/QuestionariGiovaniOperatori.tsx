@@ -215,6 +215,7 @@ export default function QuestionariGiovaniOperatori() {
             *,
             operatori:fonte
           `)
+          .neq('stato', 'cancellato')
           .order('creato_a', { ascending: false })
 
         if (error) throw error
