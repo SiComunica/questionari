@@ -1090,7 +1090,7 @@ export default function AmministratoriDashboard() {
     // Figura aiuto (D2)
     if (data[0].figura_aiuto) {
       const figuraAiutoCodici = ['D2.1', 'D2.2', 'D2.3', 'D2.4', 'D2.5', 'D2.6', 'D2.7', 'D2.8', 'D2.9', 'D2.10'];
-      (['padre','madre','fratelli','altri_parenti','amici','tutore','insegnanti','figure_sostegno','volontari','altri'] as const).forEach((f: any, idx) => {
+      (['padre','madre','fratelli','altri_parenti','amici','tutore','insegnanti','figure_sostegno','volontari','altre_persone'] as const).forEach((f: any, idx) => {
         const count = data.filter(item => item.figura_aiuto?.[f] === true).length
         stats.push({
           Codice: figuraAiutoCodici[idx],
@@ -1107,15 +1107,15 @@ export default function AmministratoriDashboard() {
           Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
         })
       })
-      const figuraAiutoAltriSpec = data.map((x:any)=>x.figura_aiuto?.altri_specificare)
+      const figuraAiutoAltriSpec = data.map((x:any)=>x.figura_aiuto?.altre_persone_spec)
       if (figuraAiutoAltriSpec.some(val => val && val.trim() !== '')) {
         stats.push(...getTextStatsGiovani(figuraAiutoAltriSpec, 'Figura Aiuto Altri Spec', 'Figura Aiuto Altri Spec', 'D2.10SPEC'))
       }
     }
 
-    // Emozioni uscita
+    // Emozioni uscita (E5.1-E5.10)
     if (data[0].emozioni_uscita) {
-      const emozioniCodici = ['D3.1', 'D3.2', 'D3.3', 'D3.4', 'D3.5', 'D3.6', 'D3.7', 'D3.8', 'D3.9', 'D3.10'];
+      const emozioniCodici = ['E5.1', 'E5.2', 'E5.3', 'E5.4', 'E5.5', 'E5.6', 'E5.7', 'E5.8', 'E5.9', 'E5.10'];
       (['felicita','tristezza','curiosita','preoccupazione','paura','liberazione','solitudine','rabbia','speranza','determinazione'] as const).forEach((f: any, idx) => {
         const count = data.filter(item => item.emozioni_uscita?.[f] === true).length
         stats.push({
@@ -1164,9 +1164,9 @@ export default function AmministratoriDashboard() {
     // Preoccupazioni futuro (Sezione E1)
     if (data[0].preoccupazioni_futuro) {
       const preoccupazioniLabels = ['Per niente', 'Poco', 'Abbastanza', 'Molto'];
-      const preoccupazioniCodici = ['E1.1', 'E1.2', 'E1.3', 'E1.4', 'E1.5', 'E1.6', 'E1.7'];
+      const preoccupazioniCodici = ['E1.1', 'E1.2', 'E1.3', 'E1.4', 'E1.5', 'E1.6', 'E1.7', 'E1.8'];
       
-      (['pregiudizi','mancanza_lavoro','mancanza_aiuto','mancanza_casa','solitudine','salute','perdita_persone'] as const).forEach((f: any, idx) => {
+      (['pregiudizi','mancanza_lavoro','mancanza_aiuto','mancanza_casa','solitudine','salute','perdita_persone','altro'] as const).forEach((f: any, idx) => {
         const values = data.map(item => item.preoccupazioni_futuro?.[f]).filter(val => val !== undefined && val !== '' && val !== null)
         
         if (values.length > 0) {
@@ -1188,9 +1188,9 @@ export default function AmministratoriDashboard() {
           })
         }
       })
-      const preoccupazioniFuturoAltro = data.map((x:any)=>x.preoccupazioni_futuro?.altro_specificare)
-      if (preoccupazioniFuturoAltro.some(val => val && val.trim() !== '')) {
-        stats.push(...getTextStatsGiovani(preoccupazioniFuturoAltro, 'Preoccupazioni Futuro Altro', 'Preoccupazioni Futuro Altro', 'E1.7SPEC'))
+      const preoccupazioniFuturoAltroSpec = data.map((x:any)=>x.preoccupazioni_futuro?.altro_spec)
+      if (preoccupazioniFuturoAltroSpec.some(val => val && val.trim() !== '')) {
+        stats.push(...getTextStatsGiovani(preoccupazioniFuturoAltroSpec, 'Preoccupazioni Futuro Altro Spec', 'Preoccupazioni Futuro Altro Spec', 'E1.8SPEC'))
       }
     }
 
