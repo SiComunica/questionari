@@ -122,10 +122,10 @@ export default function AmministratoriDashboard() {
     const total = data.length
 
     // Campi base
-    stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.nome_struttura), 'Nome Struttura', 'Nome Struttura', 'A', total))
-    stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.id_struttura), 'ID Struttura', 'ID Struttura', 'A', total))
-    stats.push(...getNumericStatsStrutture(data.map((x:any)=>x.anno_inizio), 'Anno Inizio', 'Anno Inizio', 'A', total))
-    stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.missione), 'Missione', 'Missione', 'A', total))
+    stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.nome_struttura), 'Nome Struttura', 'Nome Struttura', '-', total))
+    stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.id_struttura), 'ID Struttura', 'ID Struttura', 'ID_QUEST', total))
+    stats.push(...getNumericStatsStrutture(data.map((x:any)=>x.anno_inizio), 'Anno Inizio', 'Anno Inizio', 'ANNO_INIZIO', total))
+    stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.missione), 'Missione', 'Missione', 'MISSION', total))
     
     // Tipo struttura (aggregato)
     const tipoStruttura = data.reduce((acc, item) => {
@@ -134,7 +134,7 @@ export default function AmministratoriDashboard() {
     }, {} as Record<string, number>)
     Object.entries(tipoStruttura).forEach(([key, value]) => {
       stats.push({
-        Codice: 'A',
+        Codice: 'TIPO_STRUTTURA',
         Domanda: 'Tipo Struttura',
         Risposta: key,
         Frequenza: value as number,
@@ -149,7 +149,7 @@ export default function AmministratoriDashboard() {
     }, {} as Record<string, number>)
     Object.entries(formaGiuridica).forEach(([key, value]) => {
       stats.push({
-        Codice: 'A',
+        Codice: 'FORMAGIU',
         Domanda: 'Forma Giuridica',
         Risposta: key,
         Frequenza: value as number,
@@ -160,33 +160,47 @@ export default function AmministratoriDashboard() {
     // Forma giuridica altro
     const formaGiuridicaAltro = data.map((x:any)=>x.forma_giuridica_altro).filter(val => val && val.trim() !== '')
     if (formaGiuridicaAltro.length > 0) {
-      const formaGiuridicaAltroStats = getTextStatsStruttureCustom(formaGiuridicaAltro, 'Forma Giuridica Altro', 'Forma Giuridica Altro', 'A', total)
+      const formaGiuridicaAltroStats = getTextStatsStruttureCustom(formaGiuridicaAltro, 'Forma Giuridica Altro', 'Forma Giuridica Altro', 'FORMAGIU_SPEC', total)
     for (const stat of formaGiuridicaAltroStats) {
       stats.push(stat)
       }
     }
     
     // Figure professionali
-    const figureProf = ['Psicologi', 'Assistenti sociali', 'Educatori', 'Mediatori', 'Medici', 'Personale infermieristico/operatori sanitari', 'Insegnanti/formatori', 'Cappellano/operatori religiosi e spirituali', 'Tutor', 'Operatore legale', 'Operatore multifunzionale', 'Amministrativo', 'Altro']
-    figureProf.forEach(figura => {
+    const figureProf = [
+      { nome: 'Psicologi', cod: 'B3.1' },
+      { nome: 'Assistenti sociali', cod: 'B3.2' },
+      { nome: 'Educatori', cod: 'B3.3' },
+      { nome: 'Mediatori', cod: 'B3.4' },
+      { nome: 'Medici', cod: 'B3.5' },
+      { nome: 'Personale infermieristico/operatori sanitari', cod: 'B3.6' },
+      { nome: 'Insegnanti/formatori', cod: 'B3.7' },
+      { nome: 'Cappellano/operatori religiosi e spirituali', cod: 'B3.8' },
+      { nome: 'Tutor', cod: 'B3.9' },
+      { nome: 'Operatore legale', cod: 'B3.10' },
+      { nome: 'Operatore multifunzionale', cod: 'B3.11' },
+      { nome: 'Amministrativo', cod: 'B3.12' },
+      { nome: 'Altro', cod: 'B3.13' }
+    ]
+    figureProf.forEach(({ nome, cod }) => {
       const count = data.filter(item => {
         if (Array.isArray(item.figure_professionali)) {
-          return item.figure_professionali.includes(figura)
+          return item.figure_professionali.includes(nome)
         } else if (typeof item.figure_professionali === 'object' && item.figure_professionali !== null) {
-          return item.figure_professionali[figura.toLowerCase().replace(/[^a-z]/g, '_')] === true
+          return item.figure_professionali[nome.toLowerCase().replace(/[^a-z]/g, '_')] === true
         }
         return false
       }).length
       stats.push({
-        Codice: 'B',
-        Domanda: `Figure Professionali - ${figura}`,
+        Codice: cod,
+        Domanda: `Figure Professionali - ${nome}`,
         Risposta: 'Sì',
         Frequenza: count,
         Percentuale: `${((count / total) * 100).toFixed(1)}%`
       })
       stats.push({
-        Codice: 'B',
-        Domanda: `Figure Professionali - ${figura}`,
+        Codice: cod,
+        Domanda: `Figure Professionali - ${nome}`,
         Risposta: 'No',
         Frequenza: total - count,
         Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
@@ -198,21 +212,27 @@ export default function AmministratoriDashboard() {
       'personale_retribuito': 'Personale Retribuito',
       'personale_volontario': 'Personale Volontario'
     }
-    const personaleSubKeysLabels: Record<string, string> = {
-      'uomini': 'Uomini',
-      'donne': 'Donne',
-      'totale': 'Totale',
-      'part_time': 'Part Time',
-      'full_time': 'Full Time'
+    const personaleSubKeysLabels: Record<string, Record<string, string>> = {
+      'personale_retribuito': {
+        'uomini': 'B1U',
+        'donne': 'B1D',
+        'totale': 'B1T'
+      },
+      'personale_volontario': {
+        'uomini': 'B2U',
+        'donne': 'B2D',
+        'totale': 'B2T'
+      }
     }
     const personaleKeys = ['personale_retribuito','personale_volontario'] as const
-    const personaleSubKeys = ['uomini','donne','totale','part_time','full_time'] as const
+    const personaleSubKeys = ['uomini','donne','totale'] as const
     
     for (const key of personaleKeys) {
       for (const sub of personaleSubKeys) {
         if (data[0][key] && data[0][key][sub] !== undefined) {
-          const labelChiara = `${personaleKeysLabels[key]} - ${personaleSubKeysLabels[sub]}`
-          stats.push(...getNumericStatsStrutture(data.map((x:any)=>x[key]?.[sub]), labelChiara, labelChiara, 'B', total))
+          const labelChiara = `${personaleKeysLabels[key]} - ${sub.charAt(0).toUpperCase() + sub.slice(1)}`
+          const codice = personaleSubKeysLabels[key][sub]
+          stats.push(...getNumericStatsStrutture(data.map((x:any)=>x[key]?.[sub]), labelChiara, labelChiara, codice, total))
         }
       }
     }
@@ -222,16 +242,20 @@ export default function AmministratoriDashboard() {
       'persone_ospitate': 'Persone Ospitate',
       'persone_non_ospitate': 'Persone Non Ospitate'
     }
-    const personeGruppiLabels: Record<string, string> = {
-      'fino_16': 'Fino 16 anni',
-      'da_16_a_18': '16-18 anni',
-      'maggiorenni': 'Maggiorenni',
-      'totale': 'Totale'
-    }
-    const personeSubLabels: Record<string, string> = {
-      'uomini': 'Uomini',
-      'donne': 'Donne',
-      'totale': 'Totale'
+    // Mapping codici esatti per persone
+    const personeCodici: Record<string, Record<string, Record<string, string>>> = {
+      'persone_ospitate': {
+        'fino_16': { 'uomini': 'C1A.U', 'donne': 'C1A.D', 'totale': 'C1A.T' },
+        'da_16_a_18': { 'uomini': 'C1B.U', 'donne': 'C1B.D', 'totale': 'C1B.T' },
+        'maggiorenni': { 'uomini': 'C1C.U', 'donne': 'C1C.D', 'totale': 'C1C.T' },
+        'totale': { 'uomini': 'C1.T.U', 'donne': 'C1T.D', 'totale': 'C1T.T' }
+      },
+      'persone_non_ospitate': {
+        'fino_16': { 'uomini': 'C3A.U', 'donne': 'C3A.D', 'totale': 'C3A.T' },
+        'da_16_a_18': { 'uomini': 'C3B.U', 'donne': 'C3B.D', 'totale': 'C3B.T' },
+        'maggiorenni': { 'uomini': 'C3C.U', 'donne': 'C3C.D', 'totale': 'C3C.T' },
+        'totale': { 'uomini': 'C3.T.U', 'donne': 'C3T.D', 'totale': 'C3T.T' }
+      }
     }
     const personeKeys = ['persone_ospitate','persone_non_ospitate'] as const
     const personeGruppi = ['fino_16','da_16_a_18','maggiorenni','totale'] as const
@@ -241,8 +265,9 @@ export default function AmministratoriDashboard() {
       for (const gruppo of personeGruppi) {
         for (const sub of personeSubKeys) {
           if (data[0][key] && data[0][key][gruppo] && data[0][key][gruppo][sub] !== undefined) {
-            const labelChiara = `${personeKeysLabels[key]} - ${personeGruppiLabels[gruppo]} - ${personeSubLabels[sub]}`
-            stats.push(...getNumericStatsStrutture(data.map((x:any)=>x[key]?.[gruppo]?.[sub]), labelChiara, labelChiara, 'C', total))
+            const labelChiara = `${personeKeysLabels[key]} - ${gruppo} - ${sub}`
+            const codice = personeCodici[key][gruppo][sub]
+            stats.push(...getNumericStatsStrutture(data.map((x:any)=>x[key]?.[gruppo]?.[sub]), labelChiara, labelChiara, codice, total))
           }
         }
       }
@@ -385,21 +410,22 @@ export default function AmministratoriDashboard() {
     ]
     
     // Caratteristiche ospiti adolescenti - solo valori standard
-    caratteristicheOspitiAdolescenti.forEach(car => {
+    caratteristicheOspitiAdolescenti.forEach((car, idx) => {
       const count = data.filter(item => {
         const ospitiAdolescenti = Array.isArray(item.caratteristiche_ospiti_adolescenti) ? item.caratteristiche_ospiti_adolescenti : []
         return hasCaratteristica(ospitiAdolescenti, car, mappingAdolescenti[car] || [])
       }).length
       
+      const codice = `C2.${idx + 1}A`
       stats.push({
-        Codice: 'C2',
+        Codice: codice,
         Domanda: `C4 Caratteristiche Ospiti Adolescenti - ${car}`,
         Risposta: 'Sì',
         Frequenza: count,
         Percentuale: `${((count / total) * 100).toFixed(1)}%`
       })
       stats.push({
-        Codice: 'C2',
+        Codice: codice,
         Domanda: `C4 Caratteristiche Ospiti Adolescenti - ${car}`,
         Risposta: 'No',
         Frequenza: total - count,
@@ -408,21 +434,22 @@ export default function AmministratoriDashboard() {
     })
     
     // Caratteristiche ospiti giovani - solo valori standard
-    caratteristicheOspitiGiovani.forEach(car => {
+    caratteristicheOspitiGiovani.forEach((car, idx) => {
       const count = data.filter(item => {
         const ospitiGiovani = Array.isArray(item.caratteristiche_ospiti_giovani) ? item.caratteristiche_ospiti_giovani : []
         return hasCaratteristica(ospitiGiovani, car, mappingGiovani[car] || [])
       }).length
       
+      const codice = `C2.${idx + 1}B`
       stats.push({
-        Codice: 'C2',
+        Codice: codice,
         Domanda: `C5 Caratteristiche Ospiti Giovani - ${car}`,
         Risposta: 'Sì',
         Frequenza: count,
         Percentuale: `${((count / total) * 100).toFixed(1)}%`
       })
       stats.push({
-        Codice: 'C2',
+        Codice: codice,
         Domanda: `C5 Caratteristiche Ospiti Giovani - ${car}`,
         Risposta: 'No',
         Frequenza: total - count,
@@ -431,21 +458,22 @@ export default function AmministratoriDashboard() {
     })
 
     // Caratteristiche non ospiti adolescenti - solo valori standard
-    caratteristicheOspitiAdolescenti.forEach(car => {
+    caratteristicheOspitiAdolescenti.forEach((car, idx) => {
       const count = data.filter(item => {
         const nonOspitiAdolescenti = Array.isArray(item.caratteristiche_non_ospiti_adolescenti) ? item.caratteristiche_non_ospiti_adolescenti : []
         return hasCaratteristica(nonOspitiAdolescenti, car, mappingAdolescenti[car] || [])
       }).length
       
+      const codice = `C4.${idx + 1}A`
       stats.push({
-        Codice: 'C4',
+        Codice: codice,
         Domanda: `C6 Caratteristiche Non Ospiti Adolescenti - ${car}`,
         Risposta: 'Sì',
         Frequenza: count,
         Percentuale: `${((count / total) * 100).toFixed(1)}%`
       })
       stats.push({
-        Codice: 'C4',
+        Codice: codice,
         Domanda: `C6 Caratteristiche Non Ospiti Adolescenti - ${car}`,
         Risposta: 'No',
         Frequenza: total - count,
@@ -454,21 +482,22 @@ export default function AmministratoriDashboard() {
     })
     
     // Caratteristiche non ospiti giovani - solo valori standard
-    caratteristicheOspitiGiovani.forEach(car => {
+    caratteristicheOspitiGiovani.forEach((car, idx) => {
       const count = data.filter(item => {
         const nonOspitiGiovani = Array.isArray(item.caratteristiche_non_ospiti_giovani) ? item.caratteristiche_non_ospiti_giovani : []
         return hasCaratteristica(nonOspitiGiovani, car, mappingGiovani[car] || [])
       }).length
       
+      const codice = `C4.${idx + 1}B`
       stats.push({
-        Codice: 'C4',
+        Codice: codice,
         Domanda: `C6 Caratteristiche Non Ospiti Giovani - ${car}`,
         Risposta: 'Sì',
         Frequenza: count,
         Percentuale: `${((count / total) * 100).toFixed(1)}%`
       })
       stats.push({
-        Codice: 'C4',
+        Codice: codice,
         Domanda: `C6 Caratteristiche Non Ospiti Giovani - ${car}`,
         Risposta: 'No',
         Frequenza: total - count,
@@ -479,7 +508,7 @@ export default function AmministratoriDashboard() {
     // Attività servizi
     const attivitaServizi = ['alloggio', 'vitto', 'servizi_bassa_soglia', 'ospitalita_diurna', 'supporto_psicologico', 'sostegno_autonomia', 'orientamento_lavoro', 'orientamento_formazione', 'istruzione', 'formazione_professionale', 'attivita_socializzazione', 'altro']
     
-    attivitaServizi.forEach(servizio => {
+    attivitaServizi.forEach((servizio, idx) => {
       const count = data.filter(item => {
         const servizioData = item.attivita_servizi?.[servizio]
         // Gestisce entrambi i casi: oggetto {attivo: boolean} o valore booleano diretto
@@ -491,15 +520,16 @@ export default function AmministratoriDashboard() {
         return false
       }).length
       
+      const codice = `D1.${idx + 1}`
       stats.push({
-        Codice: 'D1',
+        Codice: codice,
         Domanda: `Attività Servizi - ${servizio.replace(/_/g, ' ')}`,
         Risposta: 'Sì',
         Frequenza: count,
         Percentuale: `${((count / total) * 100).toFixed(1)}%`
       })
       stats.push({
-        Codice: 'D1',
+        Codice: codice,
         Domanda: `Attività Servizi - ${servizio.replace(/_/g, ' ')}`,
         Risposta: 'No',
         Frequenza: total - count,
