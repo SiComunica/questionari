@@ -229,9 +229,6 @@ export default function AmministratoriDashboard() {
       stats.push(...getTextStatsStruttureCustom(data.flatMap((x:any)=>x.finanziamenti?.fornitori||[]), 'Fornitori', 'Fornitori'))
     }
 
-    // Aggiungo le statistiche già esistenti (domande chiuse)
-    stats.push(...generateStruttureStats_OLD(data))
-
     return stats
   }
 
@@ -696,9 +693,6 @@ export default function AmministratoriDashboard() {
         stats.push(...getTextStatsOperatori(difficoltaAltro, 'Difficoltà Uscita Altro', 'Difficoltà Uscita Altro'))
       }
     }
-
-    // Aggiungo le statistiche già esistenti (domande chiuse)
-    stats.push(...generateOperatoriStats_OLD(data))
 
     return stats
   }
@@ -1196,9 +1190,6 @@ export default function AmministratoriDashboard() {
         }
       })
     }
-
-    // Aggiungo le statistiche già esistenti (domande chiuse)
-    stats.push(...generateGiovaniStats_OLD(data))
 
     return stats
   }
