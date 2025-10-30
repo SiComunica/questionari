@@ -282,12 +282,12 @@ export default function AmministratoriDashboard() {
     // Caratteristiche altro
     const caratteristicheOspitiAltro = data.map((x:any)=>x.caratteristiche_ospiti_altro).filter(val => val && val.trim() !== '')
     if (caratteristicheOspitiAltro.length > 0) {
-      stats.push(...getTextStatsStruttureCustom(caratteristicheOspitiAltro, 'Caratt. Ospiti Altro', 'Caratteristiche Ospiti Altro', 'C', total))
+      stats.push(...getTextStatsStruttureCustom(caratteristicheOspitiAltro, 'Caratt. Ospiti Altro', 'Caratteristiche Ospiti Altro', 'C2.16A_SPEC', total))
     }
     
     const caratteristicheNonOspitiAltro = data.map((x:any)=>x.caratteristiche_non_ospiti_altro).filter(val => val && val.trim() !== '')
     if (caratteristicheNonOspitiAltro.length > 0) {
-      stats.push(...getTextStatsStruttureCustom(caratteristicheNonOspitiAltro, 'Caratt. Non Ospiti Altro', 'Caratteristiche Non Ospiti Altro', 'C', total))
+      stats.push(...getTextStatsStruttureCustom(caratteristicheNonOspitiAltro, 'Caratt. Non Ospiti Altro', 'Caratteristiche Non Ospiti Altro', 'C2.16C_SPEC', total))
     }
 
     // Attività inserimento (D3): array di oggetti con nome, periodo, contenuto, destinatari, attori, punti_forza, criticita
@@ -846,43 +846,44 @@ export default function AmministratoriDashboard() {
     stats.push(...getTextStatsGiovani(data.map((x:any)=>x.collocazione_attuale_spec), 'Collocazione Attuale Spec', 'Collocazione Attuale Spec', 'CONDATT_SPEC'))
 
     // Luogo nascita
-    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.luogo_nascita?.altro_paese), 'Luogo Nascita Altro Paese', 'Luogo Nascita Altro Paese'))
+    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.luogo_nascita?.altro_paese), 'Luogo Nascita Altro Paese', 'Luogo Nascita Altro Paese', 'B3SPEC'))
 
     // Madre e Padre
-    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.madre?.titolo_studio), 'Madre Titolo Studio', 'Madre Titolo Studio'))
-    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.madre?.situazione), 'Madre Situazione', 'Madre Situazione'))
-    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.padre?.titolo_studio), 'Padre Titolo Studio', 'Padre Titolo Studio'))
-    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.padre?.situazione), 'Padre Situazione', 'Padre Situazione'))
+    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.madre?.titolo_studio), 'Madre Titolo Studio', 'Madre Titolo Studio', 'B9'))
+    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.madre?.situazione), 'Madre Situazione', 'Madre Situazione', 'B10'))
+    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.padre?.titolo_studio), 'Padre Titolo Studio', 'Padre Titolo Studio', 'B11'))
+    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.padre?.situazione), 'Padre Situazione', 'Padre Situazione', 'B12'))
 
     // Motivi non studio, corso formazione, lavoro attuale
     const motiviNonStudio = data.flatMap((x:any)=>x.motivi_non_studio||[])
     if (motiviNonStudio.length > 0) {
-      stats.push(...getTextStatsGiovani(motiviNonStudio, 'Motivi Non Studio', 'Motivi Non Studio'))
+      stats.push(...getTextStatsGiovani(motiviNonStudio, 'Motivi Non Studio', 'Motivi Non Studio', 'C6'))
     }
-    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.corso_formazione?.descrizione), 'Corso Formazione Descrizione', 'Corso Formazione Descrizione'))
-    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.lavoro_attuale?.descrizione), 'Lavoro Attuale Descrizione', 'Lavoro Attuale Descrizione'))
-    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.lavoro_attuale?.tipo_contratto), 'Lavoro Attuale Tipo Contratto', 'Lavoro Attuale Tipo Contratto'))
-    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.lavoro_attuale?.settore), 'Lavoro Attuale Settore', 'Lavoro Attuale Settore'))
+    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.corso_formazione?.descrizione), 'Corso Formazione Descrizione', 'Corso Formazione Descrizione', 'C7'))
+    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.lavoro_attuale?.descrizione), 'Lavoro Attuale Descrizione', 'Lavoro Attuale Descrizione', 'C8'))
+    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.lavoro_attuale?.tipo_contratto), 'Lavoro Attuale Tipo Contratto', 'Lavoro Attuale Tipo Contratto', 'C8'))
+    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.lavoro_attuale?.settore), 'Lavoro Attuale Settore', 'Lavoro Attuale Settore', 'C8'))
 
     // Orientamento lavoro
-    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.orientamento_lavoro?.utilita), 'Orientamento Lavoro Utilità', 'Orientamento Lavoro Utilità'))
+    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.orientamento_lavoro?.utilita), 'Orientamento Lavoro Utilità', 'Orientamento Lavoro Utilità', 'C4_BIS'))
     
     const orientamentoLavoroDoveAltro = data.map((x:any)=>x.orientamento_lavoro?.dove?.altro_specificare)
     if (orientamentoLavoroDoveAltro.some(val => val && val.trim() !== '')) {
-      stats.push(...getTextStatsGiovani(orientamentoLavoroDoveAltro, 'Orientamento Lavoro Dove Altro', 'Orientamento Lavoro Dove Altro'))
+      stats.push(...getTextStatsGiovani(orientamentoLavoroDoveAltro, 'Orientamento Lavoro Dove Altro', 'Orientamento Lavoro Dove Altro', 'C4.5SPEC'))
     }
 
     // Ricerca lavoro altro specificare
     const ricercaLavoroAltro = data.map((x:any)=>x.ricerca_lavoro?.altro_specificare)
     if (ricercaLavoroAltro.some(val => val && val.trim() !== '')) {
-      stats.push(...getTextStatsGiovani(ricercaLavoroAltro, 'Ricerca Lavoro Altro', 'Ricerca Lavoro Altro'))
+      stats.push(...getTextStatsGiovani(ricercaLavoroAltro, 'Ricerca Lavoro Altro', 'Ricerca Lavoro Altro', 'C9.11SPEC'))
     }
 
     // Condizioni lavoro (C13.1-C13.8, numerici)
     if (data[0].condizioni_lavoro || data[0].aspetti_lavoro) {
-      (['stabilita','flessibilita','valorizzazione','retribuzione','fatica','sicurezza','utilita_sociale','vicinanza_casa'] as const).forEach((f: any) => {
+      const condizioniCodici = ['C13.1', 'C13.2', 'C13.3', 'C13.4', 'C13.5', 'C13.6', 'C13.7', 'C13.8'];
+      (['stabilita','flessibilita','valorizzazione','retribuzione','fatica','sicurezza','utilita_sociale','vicinanza_casa'] as const).forEach((f: any, idx) => {
         const values = data.map((x:any)=> (x.condizioni_lavoro?.[f] || x.aspetti_lavoro?.[f]))
-        stats.push(...getNumericStatsGiovani(values, `Condizioni Lavoro ${f}`, `Condizioni Lavoro - ${f}`))
+        stats.push(...getNumericStatsGiovani(values, `Condizioni Lavoro ${f}`, `Condizioni Lavoro - ${f}`, condizioniCodici[idx]))
       })
     }
 
@@ -917,15 +918,18 @@ export default function AmministratoriDashboard() {
 
     // Canali ricerca lavoro (C9) - chiavi corrette dal database
     if (data[0].ricerca_lavoro) {
-      (['centro_impiego','sportelli','inps','servizi_sociali','agenzie','cooperative','struttura','conoscenti','portali','social','altro'] as const).forEach((f: any) => {
+      const canaliCodici = ['C9.1', 'C9.2', 'C9.3', 'C9.4', 'C9.5', 'C9.6', 'C9.7', 'C9.8', 'C9.9', 'C9.10', 'C9.11'];
+      (['centro_impiego','sportelli','inps','servizi_sociali','agenzie','cooperative','struttura','conoscenti','portali','social','altro'] as const).forEach((f: any, idx) => {
         const count = data.filter(item => item.ricerca_lavoro?.[f] === true).length
         stats.push({
+          Codice: canaliCodici[idx],
           Domanda: `Canali Ricerca Lavoro - ${f.replace(/_/g, ' ')}`,
           Risposta: 'Sì',
           Frequenza: count,
           Percentuale: `${((count / total) * 100).toFixed(1)}%`
         })
         stats.push({
+          Codice: canaliCodici[idx],
           Domanda: `Canali Ricerca Lavoro - ${f.replace(/_/g, ' ')}`,
           Risposta: 'No',
           Frequenza: total - count,
@@ -934,21 +938,24 @@ export default function AmministratoriDashboard() {
       })
       const canaliRicercaLavoroAltro = data.map((x:any)=>x.ricerca_lavoro?.altro_specificare)
       if (canaliRicercaLavoroAltro.some(val => val && val.trim() !== '')) {
-        stats.push(...getTextStatsGiovani(canaliRicercaLavoroAltro, 'Canali Ricerca Lavoro Altro', 'Canali Ricerca Lavoro Altro'))
+        stats.push(...getTextStatsGiovani(canaliRicercaLavoroAltro, 'Canali Ricerca Lavoro Altro', 'Canali Ricerca Lavoro Altro', 'C9.11SPEC'))
       }
     }
 
     // Attività precedenti (C2)
     if (data[0].attivita_precedenti) {
-      (['studiavo','lavoravo_stabile','lavoravo_saltuario','corso_formazione','altro','nessuna'] as const).forEach((f: any) => {
+      const attivitaPrecCodici = ['C2.1', 'C2.2', 'C2.3', 'C2.4', 'C2.5', 'C2.6'];
+      (['studiavo','lavoravo_stabile','lavoravo_saltuario','corso_formazione','altro','nessuna'] as const).forEach((f: any, idx) => {
         const count = data.filter(item => item.attivita_precedenti?.[f] === true).length
         stats.push({
+          Codice: attivitaPrecCodici[idx],
           Domanda: `Attività Precedenti - ${f.replace(/_/g, ' ')}`,
           Risposta: 'Sì',
           Frequenza: count,
           Percentuale: `${((count / total) * 100).toFixed(1)}%`
         })
         stats.push({
+          Codice: attivitaPrecCodici[idx],
           Domanda: `Attività Precedenti - ${f.replace(/_/g, ' ')}`,
           Risposta: 'No',
           Frequenza: total - count,
@@ -957,21 +964,24 @@ export default function AmministratoriDashboard() {
       })
       const attivitaPrecedentiAltro = data.map((x:any)=>x.attivita_precedenti?.altro_spec).filter(val => val && val.trim() !== '')
       if (attivitaPrecedentiAltro.length > 0) {
-        stats.push(...getTextStatsGiovani(attivitaPrecedentiAltro, 'Attività Precedenti Altro', 'Attività Precedenti Altro'))
+        stats.push(...getTextStatsGiovani(attivitaPrecedentiAltro, 'Attività Precedenti Altro', 'Attività Precedenti Altro', 'C2.5SPEC'))
       }
     }
 
     // Attività attuali (C5)
     if (data[0].attivita_attuali) {
-      (['studio','formazione','lavoro','ricerca_lavoro','nessuna'] as const).forEach((f: any) => {
+      const attivitaAttCodici = ['C5.1', 'C5.2', 'C5.3', 'C5.4', 'C5.5'];
+      (['studio','formazione','lavoro','ricerca_lavoro','nessuna'] as const).forEach((f: any, idx) => {
         const count = data.filter(item => item.attivita_attuali?.[f] === true).length
         stats.push({
+          Codice: attivitaAttCodici[idx],
           Domanda: `Attività Attuali - ${f.replace(/_/g, ' ')}`,
           Risposta: 'Sì',
           Frequenza: count,
           Percentuale: `${((count / total) * 100).toFixed(1)}%`
         })
         stats.push({
+          Codice: attivitaAttCodici[idx],
           Domanda: `Attività Attuali - ${f.replace(/_/g, ' ')}`,
           Risposta: 'No',
           Frequenza: total - count,
@@ -982,15 +992,18 @@ export default function AmministratoriDashboard() {
 
     // Orientamento luoghi (C4)
     if (data[0].orientamento_luoghi) {
-      (['scuola','enti_formazione','servizi_impiego','struttura','altro'] as const).forEach((f: any) => {
+      const orientamentoCodici = ['C4.1', 'C4.2', 'C4.3', 'C4.4', 'C4.5'];
+      (['scuola','enti_formazione','servizi_impiego','struttura','altro'] as const).forEach((f: any, idx) => {
         const count = data.filter(item => item.orientamento_luoghi?.[f] === true).length
         stats.push({
+          Codice: orientamentoCodici[idx],
           Domanda: `Orientamento Luoghi - ${f.replace(/_/g, ' ')}`,
           Risposta: 'Sì',
           Frequenza: count,
           Percentuale: `${((count / total) * 100).toFixed(1)}%`
         })
         stats.push({
+          Codice: orientamentoCodici[idx],
           Domanda: `Orientamento Luoghi - ${f.replace(/_/g, ' ')}`,
           Risposta: 'No',
           Frequenza: total - count,
@@ -999,19 +1012,21 @@ export default function AmministratoriDashboard() {
       })
       const orientamentoLuoghiAltro = data.map((x:any)=>x.orientamento_luoghi?.altro_spec).filter(val => val && val.trim() !== '')
       if (orientamentoLuoghiAltro.length > 0) {
-        stats.push(...getTextStatsGiovani(orientamentoLuoghiAltro, 'Orientamento Luoghi Altro', 'Orientamento Luoghi Altro'))
+        stats.push(...getTextStatsGiovani(orientamentoLuoghiAltro, 'Orientamento Luoghi Altro', 'Orientamento Luoghi Altro', 'C4.5SPEC'))
       }
     }
 
     // Curriculum vitae, centro impiego, lavoro autonomo (C10-C12)
     const cvCount = data.filter(item => item.curriculum_vitae === true || item.curriculum_vitae === '1').length
     stats.push({
+      Codice: 'C10',
       Domanda: 'Curriculum Vitae',
       Risposta: 'Sì',
       Frequenza: cvCount,
       Percentuale: `${((cvCount / total) * 100).toFixed(1)}%`
     })
     stats.push({
+      Codice: 'C10',
       Domanda: 'Curriculum Vitae',
       Risposta: 'No',
       Frequenza: total - cvCount,
@@ -1020,12 +1035,14 @@ export default function AmministratoriDashboard() {
 
     const centroCount = data.filter(item => item.centro_impiego === true || item.centro_impiego === '1').length
     stats.push({
+      Codice: 'C11',
       Domanda: 'Centro Impiego',
       Risposta: 'Sì',
       Frequenza: centroCount,
       Percentuale: `${((centroCount / total) * 100).toFixed(1)}%`
     })
     stats.push({
+      Codice: 'C11',
       Domanda: 'Centro Impiego',
       Risposta: 'No',
       Frequenza: total - centroCount,
@@ -1034,12 +1051,14 @@ export default function AmministratoriDashboard() {
 
     const autonomoCount = data.filter(item => item.lavoro_autonomo === true || item.lavoro_autonomo === '1').length
     stats.push({
+      Codice: 'C12',
       Domanda: 'Lavoro Autonomo',
       Risposta: 'Sì',
       Frequenza: autonomoCount,
       Percentuale: `${((autonomoCount / total) * 100).toFixed(1)}%`
     })
     stats.push({
+      Codice: 'C12',
       Domanda: 'Lavoro Autonomo',
       Risposta: 'No',
       Frequenza: total - autonomoCount,
@@ -1048,15 +1067,18 @@ export default function AmministratoriDashboard() {
 
     // Abitazione precedente
     if (data[0].abitazione_precedente) {
-      (['solo','struttura','madre','padre','partner','figli','fratelli','nonni','altri_parenti','amici'] as const).forEach((f: any) => {
+      const abitazioneCodici = ['D1.1', 'D1.2', 'D1.3', 'D1.4', 'D1.5', 'D1.6', 'D1.7', 'D1.8', 'D1.9', 'D1.10'];
+      (['solo','struttura','madre','padre','partner','figli','fratelli','nonni','altri_parenti','amici'] as const).forEach((f: any, idx) => {
         const count = data.filter(item => item.abitazione_precedente?.[f] === true).length
         stats.push({
+          Codice: abitazioneCodici[idx],
           Domanda: `Abitazione Precedente - ${f.replace(/_/g, ' ')}`,
           Risposta: 'Sì',
           Frequenza: count,
           Percentuale: `${((count / total) * 100).toFixed(1)}%`
         })
         stats.push({
+          Codice: abitazioneCodici[idx],
           Domanda: `Abitazione Precedente - ${f.replace(/_/g, ' ')}`,
           Risposta: 'No',
           Frequenza: total - count,
@@ -1067,15 +1089,18 @@ export default function AmministratoriDashboard() {
 
     // Figura aiuto (D2)
     if (data[0].figura_aiuto) {
-      (['padre','madre','fratelli','altri_parenti','amici','tutore','insegnanti','figure_sostegno','volontari','altri'] as const).forEach((f: any) => {
+      const figuraAiutoCodici = ['D2.1', 'D2.2', 'D2.3', 'D2.4', 'D2.5', 'D2.6', 'D2.7', 'D2.8', 'D2.9', 'D2.10'];
+      (['padre','madre','fratelli','altri_parenti','amici','tutore','insegnanti','figure_sostegno','volontari','altri'] as const).forEach((f: any, idx) => {
         const count = data.filter(item => item.figura_aiuto?.[f] === true).length
         stats.push({
+          Codice: figuraAiutoCodici[idx],
           Domanda: `Figura Aiuto - ${f.replace(/_/g, ' ')}`,
           Risposta: 'Sì',
           Frequenza: count,
           Percentuale: `${((count / total) * 100).toFixed(1)}%`
         })
         stats.push({
+          Codice: figuraAiutoCodici[idx],
           Domanda: `Figura Aiuto - ${f.replace(/_/g, ' ')}`,
           Risposta: 'No',
           Frequenza: total - count,
@@ -1084,21 +1109,24 @@ export default function AmministratoriDashboard() {
       })
       const figuraAiutoAltriSpec = data.map((x:any)=>x.figura_aiuto?.altri_specificare)
       if (figuraAiutoAltriSpec.some(val => val && val.trim() !== '')) {
-        stats.push(...getTextStatsGiovani(figuraAiutoAltriSpec, 'Figura Aiuto Altri Spec', 'Figura Aiuto Altri Spec'))
+        stats.push(...getTextStatsGiovani(figuraAiutoAltriSpec, 'Figura Aiuto Altri Spec', 'Figura Aiuto Altri Spec', 'D2.10SPEC'))
       }
     }
 
     // Emozioni uscita
     if (data[0].emozioni_uscita) {
-      (['felicita','tristezza','curiosita','preoccupazione','paura','liberazione','solitudine','rabbia','speranza','determinazione'] as const).forEach((f: any) => {
+      const emozioniCodici = ['D3.1', 'D3.2', 'D3.3', 'D3.4', 'D3.5', 'D3.6', 'D3.7', 'D3.8', 'D3.9', 'D3.10'];
+      (['felicita','tristezza','curiosita','preoccupazione','paura','liberazione','solitudine','rabbia','speranza','determinazione'] as const).forEach((f: any, idx) => {
         const count = data.filter(item => item.emozioni_uscita?.[f] === true).length
         stats.push({
+          Codice: emozioniCodici[idx],
           Domanda: `Emozioni Uscita - ${f.replace(/_/g, ' ')}`,
           Risposta: 'Sì',
           Frequenza: count,
           Percentuale: `${((count / total) * 100).toFixed(1)}%`
         })
         stats.push({
+          Codice: emozioniCodici[idx],
           Domanda: `Emozioni Uscita - ${f.replace(/_/g, ' ')}`,
           Risposta: 'No',
           Frequenza: total - count,
@@ -1110,12 +1138,14 @@ export default function AmministratoriDashboard() {
     // Pronto uscita (E4 boolean, E4.1 e E4.2 motivazioni)
     const prontoUscitaCount = data.filter(item => item.pronto_uscita === true || item.pronto_uscita === 1 || item.pronto_uscita === '1').length
     stats.push({
+      Codice: 'E4',
       Domanda: 'Pronto Uscita (E4)',
       Risposta: 'Sì',
       Frequenza: prontoUscitaCount,
       Percentuale: `${((prontoUscitaCount / total) * 100).toFixed(1)}%`
     })
     stats.push({
+      Codice: 'E4',
       Domanda: 'Pronto Uscita (E4)',
       Risposta: 'No',
       Frequenza: total - prontoUscitaCount,
@@ -1123,19 +1153,20 @@ export default function AmministratoriDashboard() {
     })
     
     // E4.1 e E4.2: motivazioni pronto uscita
-    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.pronto_uscita_perche_no), 'Pronto Uscita Perché No (E4.1)', 'Pronto Uscita Perché No'))
-    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.pronto_uscita_perche_si), 'Pronto Uscita Perché Sì (E4.2)', 'Pronto Uscita Perché Sì'))
+    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.pronto_uscita_perche_no), 'Pronto Uscita Perché No (E4.1)', 'Pronto Uscita Perché No', 'E4.1'))
+    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.pronto_uscita_perche_si), 'Pronto Uscita Perché Sì (E4.2)', 'Pronto Uscita Perché Sì', 'E4.2'))
     
     // Aiuto futuro, desiderio, nota aggiuntiva (E3, E6, E7)
-    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.aiuto_futuro), 'Aiuto Futuro (E3)', 'Aiuto Futuro'))
-    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.desiderio), 'Desiderio (E6)', 'Desiderio'))
-    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.nota_aggiuntiva), 'Nota Aggiuntiva (E7)', 'Nota Aggiuntiva'))
+    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.aiuto_futuro), 'Aiuto Futuro (E3)', 'Aiuto Futuro', 'E3'))
+    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.desiderio), 'Desiderio (E6)', 'Desiderio', 'E6'))
+    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.nota_aggiuntiva), 'Nota Aggiuntiva (E7)', 'Nota Aggiuntiva', 'E7'))
 
     // Preoccupazioni futuro (Sezione E1)
     if (data[0].preoccupazioni_futuro) {
       const preoccupazioniLabels = ['Per niente', 'Poco', 'Abbastanza', 'Molto'];
+      const preoccupazioniCodici = ['E1.1', 'E1.2', 'E1.3', 'E1.4', 'E1.5', 'E1.6', 'E1.7'];
       
-      (['pregiudizi','mancanza_lavoro','mancanza_aiuto','mancanza_casa','solitudine','salute','perdita_persone'] as const).forEach((f: any) => {
+      (['pregiudizi','mancanza_lavoro','mancanza_aiuto','mancanza_casa','solitudine','salute','perdita_persone'] as const).forEach((f: any, idx) => {
         const values = data.map(item => item.preoccupazioni_futuro?.[f]).filter(val => val !== undefined && val !== '' && val !== null)
         
         if (values.length > 0) {
@@ -1148,6 +1179,7 @@ export default function AmministratoriDashboard() {
           
           Object.entries(valueCounts).forEach(([preoccupazioneLabel, count]) => {
           stats.push({
+            Codice: preoccupazioniCodici[idx],
             Domanda: `Preoccupazioni Futuro - ${f.replace(/_/g, ' ')}`,
               Risposta: preoccupazioneLabel,
             Frequenza: count,
@@ -1158,15 +1190,16 @@ export default function AmministratoriDashboard() {
       })
       const preoccupazioniFuturoAltro = data.map((x:any)=>x.preoccupazioni_futuro?.altro_specificare)
       if (preoccupazioniFuturoAltro.some(val => val && val.trim() !== '')) {
-        stats.push(...getTextStatsGiovani(preoccupazioniFuturoAltro, 'Preoccupazioni Futuro Altro', 'Preoccupazioni Futuro Altro'))
+        stats.push(...getTextStatsGiovani(preoccupazioniFuturoAltro, 'Preoccupazioni Futuro Altro', 'Preoccupazioni Futuro Altro', 'E1.7SPEC'))
       }
     }
 
     // Obiettivi realizzabili (Sezione E2)
     if (data[0].obiettivi_realizzabili) {
       const obiettiviLabels = ['Per niente', 'Poco', 'Abbastanza', 'Molto'];
+      const obiettiviCodici = ['E2.1', 'E2.2', 'E2.3', 'E2.4', 'E2.5', 'E2.6'];
       
-      (['lavoro_piacevole','autonomia','famiglia','trovare_lavoro','salute','casa'] as const).forEach((f: any) => {
+      (['lavoro_piacevole','autonomia','famiglia','trovare_lavoro','salute','casa'] as const).forEach((f: any, idx) => {
         const values = data.map(item => item.obiettivi_realizzabili?.[f]).filter(val => val !== undefined && val !== '' && val !== null)
         
         if (values.length > 0) {
@@ -1179,6 +1212,7 @@ export default function AmministratoriDashboard() {
           
           Object.entries(valueCounts).forEach(([obiettivoLabel, count]) => {
           stats.push({
+            Codice: obiettiviCodici[idx],
             Domanda: `Obiettivi Realizzabili - ${f.replace(/_/g, ' ')}`,
               Risposta: obiettivoLabel,
             Frequenza: count,
@@ -1192,12 +1226,14 @@ export default function AmministratoriDashboard() {
     // Percorso autonomia (A1)
     const percAut = data.filter(item => item.percorso_autonomia === true).length
     stats.push({
+      Codice: 'PERCAUT',
       Domanda: 'A1 Percorso Autonomia',
       Risposta: 'Sì',
       Frequenza: percAut,
       Percentuale: `${((percAut / total) * 100).toFixed(1)}%`
     })
     stats.push({
+      Codice: 'PERCAUT',
       Domanda: 'A1 Percorso Autonomia',
       Risposta: 'No',
       Frequenza: total - percAut,
@@ -1207,12 +1243,14 @@ export default function AmministratoriDashboard() {
     // Vive in struttura (A2)
     const viveStruttura = data.filter(item => item.vive_in_struttura === true).length
     stats.push({
+      Codice: 'VIVE',
       Domanda: 'A2 Vive in Struttura',
       Risposta: 'Sì',
       Frequenza: viveStruttura,
       Percentuale: `${((viveStruttura / total) * 100).toFixed(1)}%`
     })
     stats.push({
+      Codice: 'VIVE',
       Domanda: 'A2 Vive in Struttura',
       Risposta: 'No',
       Frequenza: total - viveStruttura,
@@ -1227,6 +1265,7 @@ export default function AmministratoriDashboard() {
 
     Object.entries(collocazioneAttuale).forEach(([key, value]) => {
       stats.push({
+        Codice: 'CONDATT',
         Domanda: 'A3 Collocazione Attuale',
         Risposta: key,
         Frequenza: value as number,
@@ -1242,6 +1281,7 @@ export default function AmministratoriDashboard() {
 
     Object.entries(sesso).forEach(([key, value]) => {
       stats.push({
+        Codice: 'B1',
         Domanda: 'B1 Sesso',
         Risposta: key,
         Frequenza: value as number,
@@ -1257,6 +1297,7 @@ export default function AmministratoriDashboard() {
 
     Object.entries(classeEta).forEach(([key, value]) => {
       stats.push({
+        Codice: 'B2',
         Domanda: 'B2 Classe Età',
         Risposta: key,
         Frequenza: value as number,
@@ -1272,6 +1313,7 @@ export default function AmministratoriDashboard() {
 
     Object.entries(cittadinanza).forEach(([key, value]) => {
       stats.push({
+        Codice: 'B4',
         Domanda: 'B4 Cittadinanza',
         Risposta: key,
         Frequenza: value as number,
@@ -1287,6 +1329,7 @@ export default function AmministratoriDashboard() {
 
     Object.entries(titoloStudio).forEach(([key, value]) => {
       stats.push({
+        Codice: 'C1',
         Domanda: 'C1 Titolo Studio',
         Risposta: key,
         Frequenza: value as number,
@@ -1296,24 +1339,24 @@ export default function AmministratoriDashboard() {
 
     // Fattori vulnerabilità (A4)
     const fattoriVulnMapping = [
-      { key: 'fv1_stranieri', label: 'Stranieri' },
-      { key: 'fv2_vittime_tratta', label: 'Vittime tratta' },
-      { key: 'fv3_vittime_violenza', label: 'Vittime violenza' },
-      { key: 'fv4_allontanati_famiglia', label: 'Allontanati famiglia' },
-      { key: 'fv5_detenuti', label: 'Detenuti' },
-      { key: 'fv6_ex_detenuti', label: 'Ex detenuti' },
-      { key: 'fv7_esecuzione_penale', label: 'Esecuzione penale' },
-      { key: 'fv8_indigenti', label: 'Indigenti senza dimora' },
-      { key: 'fv9_rom_sinti', label: 'Rom Sinti' },
-      { key: 'fv10_disabilita_fisica', label: 'Disabilità fisica' },
-      { key: 'fv11_disabilita_cognitiva', label: 'Disabilità cognitiva' },
-      { key: 'fv12_disturbi_psichiatrici', label: 'Disturbi psichiatrici' },
-      { key: 'fv13_dipendenze', label: 'Dipendenze' },
-      { key: 'fv14_genitori_precoci', label: 'Genitori precoci' },
-      { key: 'fv15_orientamento_sessuale', label: 'Orientamento sessuale' }
+      { key: 'fv1_stranieri', label: 'Stranieri', codice: 'FV.1' },
+      { key: 'fv2_vittime_tratta', label: 'Vittime tratta', codice: 'FV.2' },
+      { key: 'fv3_vittime_violenza', label: 'Vittime violenza', codice: 'FV.3' },
+      { key: 'fv4_allontanati_famiglia', label: 'Allontanati famiglia', codice: 'FV.4' },
+      { key: 'fv5_detenuti', label: 'Detenuti', codice: 'FV.5' },
+      { key: 'fv6_ex_detenuti', label: 'Ex detenuti', codice: 'FV.6' },
+      { key: 'fv7_esecuzione_penale', label: 'Esecuzione penale', codice: 'FV.7' },
+      { key: 'fv8_indigenti', label: 'Indigenti senza dimora', codice: 'FV.8' },
+      { key: 'fv9_rom_sinti', label: 'Rom Sinti', codice: 'FV.9' },
+      { key: 'fv10_disabilita_fisica', label: 'Disabilità fisica', codice: 'FV.10' },
+      { key: 'fv11_disabilita_cognitiva', label: 'Disabilità cognitiva', codice: 'FV.11' },
+      { key: 'fv12_disturbi_psichiatrici', label: 'Disturbi psichiatrici', codice: 'FV.12' },
+      { key: 'fv13_dipendenze', label: 'Dipendenze', codice: 'FV.13' },
+      { key: 'fv14_genitori_precoci', label: 'Genitori precoci', codice: 'FV.14' },
+      { key: 'fv15_orientamento_sessuale', label: 'Orientamento sessuale', codice: 'FV.15' }
     ]
     
-    fattoriVulnMapping.forEach(({ key, label }) => {
+    fattoriVulnMapping.forEach(({ key, label, codice }) => {
       const count = data.filter(item => {
         if (Array.isArray(item.fattori_vulnerabilita)) {
           return item.fattori_vulnerabilita.includes(label) || item.fattori_vulnerabilita.includes(key)
@@ -1324,12 +1367,14 @@ export default function AmministratoriDashboard() {
       }).length
       
       stats.push({
+        Codice: codice,
         Domanda: `A4 Fattori Vulnerabilità - ${label}`,
         Risposta: 'Sì',
         Frequenza: count,
         Percentuale: `${((count / total) * 100).toFixed(1)}%`
       })
       stats.push({
+        Codice: codice,
         Domanda: `A4 Fattori Vulnerabilità - ${label}`,
         Risposta: 'No',
         Frequenza: total - count,
@@ -1338,9 +1383,16 @@ export default function AmministratoriDashboard() {
     })
 
     // Famiglia origine (B8)
-    const famigliaOrigine = ['padre', 'madre', 'fratelli', 'nonni', 'altri_parenti', 'non_parenti']
+    const famigliaOrigine = [
+      { membro: 'padre', codice: 'B8.1' },
+      { membro: 'madre', codice: 'B8.2' },
+      { membro: 'fratelli', codice: 'B8.3' },
+      { membro: 'nonni', codice: 'B8.4' },
+      { membro: 'altri_parenti', codice: 'B8.5' },
+      { membro: 'non_parenti', codice: 'B8.6' }
+    ]
     
-    famigliaOrigine.forEach(membro => {
+    famigliaOrigine.forEach(({ membro, codice }) => {
       const count = data.filter(item => {
         if (Array.isArray(item.famiglia_origine)) {
           return item.famiglia_origine.includes(membro)
@@ -1353,12 +1405,14 @@ export default function AmministratoriDashboard() {
       }).length
       
       stats.push({
+        Codice: codice,
         Domanda: `B8 Famiglia Origine - ${membro.replace(/_/g, ' ')}`,
         Risposta: 'Sì',
         Frequenza: count,
         Percentuale: `${((count / total) * 100).toFixed(1)}%`
       })
       stats.push({
+        Codice: codice,
         Domanda: `B8 Famiglia Origine - ${membro.replace(/_/g, ' ')}`,
         Risposta: 'No',
         Frequenza: total - count,
