@@ -177,30 +177,27 @@ export default function AmministratoriDashboard() {
       'personale_retribuito': 'Personale Retribuito',
       'personale_volontario': 'Personale Volontario'
     }
-    const personaleSubKeysLabels: Record<string, Record<string, string>> = {
-      'personale_retribuito': {
-        'uomini': 'B1U',
-        'donne': 'B1D',
-        'totale': 'B1T'
-      },
-      'personale_volontario': {
-        'uomini': 'B2U',
-        'donne': 'B2D',
-        'totale': 'B2T'
-      }
-    }
-    const personaleKeys = ['personale_retribuito','personale_volontario'] as const
-    const personaleSubKeys = ['uomini','donne','totale'] as const
+    // Personale Retribuito (B1U, B1D, B1T)
+    // B1U - Uomini
+    stats.push(...getNumericStatsStrutture(data.map((x:any)=>x.personale_retribuito_uomini), 'Personale Retribuito - Uomini', 'Personale Retribuito - Uomini', 'B1U', total))
     
-    for (const key of personaleKeys) {
-      for (const sub of personaleSubKeys) {
-        if (data[0][key] && data[0][key][sub] !== undefined) {
-          const labelChiara = `${personaleKeysLabels[key]} - ${sub.charAt(0).toUpperCase() + sub.slice(1)}`
-          const codice = personaleSubKeysLabels[key][sub]
-          stats.push(...getNumericStatsStrutture(data.map((x:any)=>x[key]?.[sub]), labelChiara, labelChiara, codice, total))
-        }
-      }
-    }
+    // B1D - Donne
+    stats.push(...getNumericStatsStrutture(data.map((x:any)=>x.personale_retribuito_donne), 'Personale Retribuito - Donne', 'Personale Retribuito - Donne', 'B1D', total))
+    
+    // B1T - Totale (calcolato come uomini + donne)
+    const b1Totale = data.map((x:any) => (x.personale_retribuito_uomini || 0) + (x.personale_retribuito_donne || 0))
+    stats.push(...getNumericStatsStrutture(b1Totale, 'Personale Retribuito - Totale', 'Personale Retribuito - Totale', 'B1T', total))
+
+    // Personale Volontario (B2U, B2D, B2T)
+    // B2U - Uomini
+    stats.push(...getNumericStatsStrutture(data.map((x:any)=>x.personale_volontario_uomini), 'Personale Volontario - Uomini', 'Personale Volontario - Uomini', 'B2U', total))
+    
+    // B2D - Donne
+    stats.push(...getNumericStatsStrutture(data.map((x:any)=>x.personale_volontario_donne), 'Personale Volontario - Donne', 'Personale Volontario - Donne', 'B2D', total))
+    
+    // B2T - Totale (calcolato come uomini + donne)
+    const b2Totale = data.map((x:any) => (x.personale_volontario_uomini || 0) + (x.personale_volontario_donne || 0))
+    stats.push(...getNumericStatsStrutture(b2Totale, 'Personale Volontario - Totale', 'Personale Volontario - Totale', 'B2T', total))
 
     // Figure professionali (B3)
     const figureProf = [
@@ -247,22 +244,60 @@ export default function AmministratoriDashboard() {
     const personeOspitateCodici = {
       'fino_16': { 'uomini': 'C1A.U', 'donne': 'C1A.D', 'totale': 'C1A.T' },
       'da_16_a_18': { 'uomini': 'C1B.U', 'donne': 'C1B.D', 'totale': 'C1B.T' },
-      'maggiorenni': { 'uomini': 'C1C.U', 'donne': 'C1C.D', 'totale': 'C1C.T' },
-      'totale': { 'uomini': 'C1.T.U', 'donne': 'C1T.D', 'totale': 'C1T.T' }
+      'maggiorenni': { 'uomini': 'C1C.U', 'donne': 'C1C.D', 'totale': 'C1C.T' }
     }
-    const personeGruppi = ['fino_16','da_16_a_18','maggiorenni','totale'] as const
+    const personeGruppi = ['fino_16','da_16_a_18','maggiorenni'] as const
     const personeSubKeys = ['uomini','donne','totale'] as const
     
-    // Solo Persone Ospitate C1
+    // Persone Ospitate C1A, C1B, C1C (i gruppi effettivi dal database)
     for (const gruppo of personeGruppi) {
       for (const sub of personeSubKeys) {
-        if (data[0].persone_ospitate && data[0].persone_ospitate[gruppo] && data[0].persone_ospitate[gruppo][sub] !== undefined) {
+        // Per 'totale', calcoliamo uomini + donne
+        if (sub === 'totale') {
+          const valoriCalcolati = data.map((x:any) => 
+            (x.persone_ospitate?.[gruppo]?.uomini || 0) + (x.persone_ospitate?.[gruppo]?.donne || 0)
+          )
           const labelChiara = `Persone Ospitate - ${gruppo} - ${sub}`
           const codice = personeOspitateCodici[gruppo][sub]
-          stats.push(...getNumericStatsStrutture(data.map((x:any)=>x.persone_ospitate?.[gruppo]?.[sub]), labelChiara, labelChiara, codice, total))
+          stats.push(...getNumericStatsStrutture(valoriCalcolati, labelChiara, labelChiara, codice, total))
+        } else {
+          // Per uomini e donne, leggiamo direttamente dal database
+          if (data[0].persone_ospitate && data[0].persone_ospitate[gruppo] && data[0].persone_ospitate[gruppo][sub] !== undefined) {
+            const labelChiara = `Persone Ospitate - ${gruppo} - ${sub}`
+            const codice = personeOspitateCodici[gruppo][sub]
+            stats.push(...getNumericStatsStrutture(data.map((x:any)=>x.persone_ospitate?.[gruppo]?.[sub]), labelChiara, labelChiara, codice, total))
+          }
         }
       }
     }
+
+    // Totali complessivi C1.T.U (somma uomini), C1T.D (somma donne), C1T.T (somma tutti)
+    // C1.T.U = C1A.U + C1B.U + C1C.U
+    const totalUomini = data.map((x:any) => 
+      (x.persone_ospitate?.fino_16?.uomini || 0) + 
+      (x.persone_ospitate?.da_16_a_18?.uomini || 0) + 
+      (x.persone_ospitate?.maggiorenni?.uomini || 0)
+    )
+    stats.push(...getNumericStatsStrutture(totalUomini, 'Persone Ospitate - Totale Uomini', 'Persone Ospitate - Totale Uomini', 'C1.T.U', total))
+
+    // C1T.D = C1A.D + C1B.D + C1C.D
+    const totalDonne = data.map((x:any) => 
+      (x.persone_ospitate?.fino_16?.donne || 0) + 
+      (x.persone_ospitate?.da_16_a_18?.donne || 0) + 
+      (x.persone_ospitate?.maggiorenni?.donne || 0)
+    )
+    stats.push(...getNumericStatsStrutture(totalDonne, 'Persone Ospitate - Totale Donne', 'Persone Ospitate - Totale Donne', 'C1T.D', total))
+
+    // C1T.T = C1A.T + C1B.T + C1C.T (oppure C1.T.U + C1T.D)
+    const totalTotale = data.map((x:any) => 
+      (x.persone_ospitate?.fino_16?.uomini || 0) + 
+      (x.persone_ospitate?.da_16_a_18?.uomini || 0) + 
+      (x.persone_ospitate?.maggiorenni?.uomini || 0) +
+      (x.persone_ospitate?.fino_16?.donne || 0) + 
+      (x.persone_ospitate?.da_16_a_18?.donne || 0) + 
+      (x.persone_ospitate?.maggiorenni?.donne || 0)
+    )
+    stats.push(...getNumericStatsStrutture(totalTotale, 'Persone Ospitate - Totale Generale', 'Persone Ospitate - Totale Generale', 'C1T.T', total))
 
     // Mapping valori form -> valori standard per caratteristiche adolescenti
     const mappingAdolescenti: Record<string, string[]> = {
@@ -386,19 +421,58 @@ export default function AmministratoriDashboard() {
     const personeNonOspitateCodici = {
       'fino_16': { 'uomini': 'C3A.U', 'donne': 'C3A.D', 'totale': 'C3A.T' },
       'da_16_a_18': { 'uomini': 'C3B.U', 'donne': 'C3B.D', 'totale': 'C3B.T' },
-      'maggiorenni': { 'uomini': 'C3C.U', 'donne': 'C3C.D', 'totale': 'C3C.T' },
-      'totale': { 'uomini': 'C3.T.U', 'donne': 'C3T.D', 'totale': 'C3T.T' }
+      'maggiorenni': { 'uomini': 'C3C.U', 'donne': 'C3C.D', 'totale': 'C3C.T' }
     }
     
+    // Persone Non Ospitate C3A, C3B, C3C (i gruppi effettivi dal database)
     for (const gruppo of personeGruppi) {
       for (const sub of personeSubKeys) {
-        if (data[0].persone_non_ospitate && data[0].persone_non_ospitate[gruppo] && data[0].persone_non_ospitate[gruppo][sub] !== undefined) {
+        // Per 'totale', calcoliamo uomini + donne
+        if (sub === 'totale') {
+          const valoriCalcolati = data.map((x:any) => 
+            (x.persone_non_ospitate?.[gruppo]?.uomini || 0) + (x.persone_non_ospitate?.[gruppo]?.donne || 0)
+          )
           const labelChiara = `Persone Non Ospitate - ${gruppo} - ${sub}`
           const codice = personeNonOspitateCodici[gruppo][sub]
-          stats.push(...getNumericStatsStrutture(data.map((x:any)=>x.persone_non_ospitate?.[gruppo]?.[sub]), labelChiara, labelChiara, codice, total))
+          stats.push(...getNumericStatsStrutture(valoriCalcolati, labelChiara, labelChiara, codice, total))
+        } else {
+          // Per uomini e donne, leggiamo direttamente dal database
+          if (data[0].persone_non_ospitate && data[0].persone_non_ospitate[gruppo] && data[0].persone_non_ospitate[gruppo][sub] !== undefined) {
+            const labelChiara = `Persone Non Ospitate - ${gruppo} - ${sub}`
+            const codice = personeNonOspitateCodici[gruppo][sub]
+            stats.push(...getNumericStatsStrutture(data.map((x:any)=>x.persone_non_ospitate?.[gruppo]?.[sub]), labelChiara, labelChiara, codice, total))
+          }
         }
       }
     }
+
+    // Totali complessivi C3.T.U (somma uomini), C3T.D (somma donne), C3T.T (somma tutti)
+    // C3.T.U = C3A.U + C3B.U + C3C.U
+    const totalNonOspitatiUomini = data.map((x:any) => 
+      (x.persone_non_ospitate?.fino_16?.uomini || 0) + 
+      (x.persone_non_ospitate?.da_16_a_18?.uomini || 0) + 
+      (x.persone_non_ospitate?.maggiorenni?.uomini || 0)
+    )
+    stats.push(...getNumericStatsStrutture(totalNonOspitatiUomini, 'Persone Non Ospitate - Totale Uomini', 'Persone Non Ospitate - Totale Uomini', 'C3.T.U', total))
+
+    // C3T.D = C3A.D + C3B.D + C3C.D
+    const totalNonOspitateDonne = data.map((x:any) => 
+      (x.persone_non_ospitate?.fino_16?.donne || 0) + 
+      (x.persone_non_ospitate?.da_16_a_18?.donne || 0) + 
+      (x.persone_non_ospitate?.maggiorenni?.donne || 0)
+    )
+    stats.push(...getNumericStatsStrutture(totalNonOspitateDonne, 'Persone Non Ospitate - Totale Donne', 'Persone Non Ospitate - Totale Donne', 'C3T.D', total))
+
+    // C3T.T = C3A.T + C3B.T + C3C.T (oppure C3.T.U + C3T.D)
+    const totalNonOspitateTotale = data.map((x:any) => 
+      (x.persone_non_ospitate?.fino_16?.uomini || 0) + 
+      (x.persone_non_ospitate?.da_16_a_18?.uomini || 0) + 
+      (x.persone_non_ospitate?.maggiorenni?.uomini || 0) +
+      (x.persone_non_ospitate?.fino_16?.donne || 0) + 
+      (x.persone_non_ospitate?.da_16_a_18?.donne || 0) + 
+      (x.persone_non_ospitate?.maggiorenni?.donne || 0)
+    )
+    stats.push(...getNumericStatsStrutture(totalNonOspitateTotale, 'Persone Non Ospitate - Totale Generale', 'Persone Non Ospitate - Totale Generale', 'C3T.T', total))
 
     // Caratteristiche non ospiti adolescenti - solo valori standard (C4.xA nell'export)
     caratteristicheOspitiAdolescenti.forEach((car, idx) => {
