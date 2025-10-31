@@ -127,13 +127,15 @@ export default function AmministratoriDashboard() {
     const stats: Array<StatRow> = []
     const total = data.length
 
-    // Campi base
-    stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.nome_struttura), 'Nome Struttura', 'Nome Struttura', '-', total))
+    // ==== ORDINE ESATTO DEL TRACCIATO DI ESPORTAZIONE ====
+
+    // 1. COD_OPE - Codice Operatore (creato_da)
+    stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.creato_da), 'Codice Operatore', 'Codice Operatore', 'COD_OPE', total))
+
+    // 2. ID_QUEST - ID Struttura
     stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.id_struttura), 'ID Struttura', 'ID Struttura', 'ID_QUEST', total))
-    stats.push(...getNumericStatsStrutture(data.map((x:any)=>x.anno_inizio), 'Anno Inizio', 'Anno Inizio', 'ANNO_INIZIO', total))
-    stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.missione), 'Missione', 'Missione', 'MISSION', total))
-    
-    // Tipo struttura (aggregato)
+
+    // 3. TIPO_STRUTTURA - Tipo Struttura (aggregato)
     const tipoStruttura = data.reduce((acc, item) => {
       acc[item.tipo_struttura || 'Non specificato'] = (acc[item.tipo_struttura || 'Non specificato'] || 0) + 1
       return acc
@@ -148,7 +150,7 @@ export default function AmministratoriDashboard() {
       })
     })
 
-    // Forma giuridica (aggregato)
+    // 4. FORMAGIU - Forma Giuridica (aggregato)
     const formaGiuridica = data.reduce((acc, item) => {
       acc[item.forma_giuridica || 'Non specificato'] = (acc[item.forma_giuridica || 'Non specificato'] || 0) + 1
       return acc
@@ -163,14 +165,20 @@ export default function AmministratoriDashboard() {
       })
     })
 
-    // Forma giuridica altro
+    // 5. FORMAGIU_SPEC - Forma Giuridica Altro
     const formaGiuridicaAltro = data.map((x:any)=>x.forma_giuridica_altro).filter(val => val && val.trim() !== '')
     if (formaGiuridicaAltro.length > 0) {
       const formaGiuridicaAltroStats = getTextStatsStruttureCustom(formaGiuridicaAltro, 'Forma Giuridica Altro', 'Forma Giuridica Altro', 'FORMAGIU_SPEC', total)
-    for (const stat of formaGiuridicaAltroStats) {
-      stats.push(stat)
+      for (const stat of formaGiuridicaAltroStats) {
+        stats.push(stat)
       }
     }
+
+    // 6. ANNO_INIZIO - Anno Inizio
+    stats.push(...getNumericStatsStrutture(data.map((x:any)=>x.anno_inizio), 'Anno Inizio', 'Anno Inizio', 'ANNO_INIZIO', total))
+
+    // 7. MISSION - Missione
+    stats.push(...getTextStatsStruttureCustom(data.map((x:any)=>x.missione), 'Missione', 'Missione', 'MISSION', total))
     
     // Personale retribuito/volontario (B1 e B2 DEVONO VENIRE PRIMA DI B3)
     const personaleKeysLabels: Record<string, string> = {
@@ -239,6 +247,12 @@ export default function AmministratoriDashboard() {
         Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
       })
     })
+
+    // B3.13_SPEC - Figure Professionali Altro Specificare
+    const figureProfAltro = data.map((x:any)=>x.figure_professionali_altro).filter(val => val && val.trim() !== '')
+    if (figureProfAltro.length > 0) {
+      stats.push(...getTextStatsStruttureCustom(figureProfAltro, 'Figure Professionali Altro Specificare', 'Figure Professionali Altro Specificare', 'B3.13_SPEC', total))
+    }
 
     // Persone ospitate (C1 - gestite solo per persone_ospitate, non persone_non_ospitate che vengono dopo le caratteristiche)
     const personeOspitateCodici = {
