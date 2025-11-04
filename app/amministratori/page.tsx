@@ -1299,12 +1299,31 @@ export default function AmministratoriDashboard() {
     })
 
     // C6 - Motivo non studio (campo numerico) - Sempre mostra anche se vuoto
-    stats.push(...getNumericStatsGiovani(data.map((x:any)=>x.motivo_non_studio), 'Motivo Non Studio', 'Motivo Non Studio', 'C6'))
+    const c6Stats = getNumericStatsGiovani(data.map((x:any)=>x.motivo_non_studio), 'Motivo Non Studio', 'Motivo Non Studio', 'C6')
+    if (c6Stats.length > 0) {
+      stats.push(...c6Stats)
+    } else {
+      stats.push({
+        Codice: 'C6',
+        Domanda: 'Motivo Non Studio',
+        Risposta: 'Nessun dato disponibile',
+        Frequenza: 0,
+        Percentuale: '0%'
+      })
+    }
 
     // C7 - Corso frequentato (campo testuale) - Sempre mostra anche se vuoto
     const corsoFrequentato = data.map((x:any)=>x.corso_frequentato).filter(isValidString)
     if (corsoFrequentato.length > 0) {
       stats.push(...getTextStatsGiovani(corsoFrequentato, 'Corso Frequentato', 'Corso Frequentato', 'C7'))
+    } else {
+      stats.push({
+        Codice: 'C7',
+        Domanda: 'Corso Frequentato',
+        Risposta: 'Nessun dato disponibile',
+        Frequenza: 0,
+        Percentuale: '0%'
+      })
     }
 
     // C8 - Lavoro attuale (campo testuale) - Sempre mostra anche se vuoto
