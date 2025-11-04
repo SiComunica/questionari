@@ -1300,7 +1300,19 @@ export default function AmministratoriDashboard() {
     })
 
     // C6 - Motivo non studio (campo numerico) - Sempre mostra anche se vuoto
-    const c6Stats = getNumericStatsGiovani(data.map((x:any)=>x.motivo_non_studio), 'Motivo Non Studio', 'Motivo Non Studio', 'C6')
+    // Nel database si salva come motivi_non_studio (array), prendiamo il primo elemento
+    const c6Stats = getNumericStatsGiovani(
+      data.map((x:any)=> {
+        // Prova entrambi i formati: array e singolo valore
+        if (Array.isArray(x.motivi_non_studio) && x.motivi_non_studio.length > 0) {
+          return parseInt(x.motivi_non_studio[0])
+        }
+        return x.motivo_non_studio || null
+      }), 
+      'Motivo Non Studio', 
+      'Motivo Non Studio', 
+      'C6'
+    )
     if (c6Stats.length > 0) {
       stats.push(...c6Stats)
     } else {
@@ -1314,7 +1326,8 @@ export default function AmministratoriDashboard() {
     }
 
     // C7 - Corso frequentato (campo testuale) - Sempre mostra anche se vuoto
-    const corsoFrequentato = data.map((x:any)=>x.corso_frequentato).filter(isValidString)
+    // Nel database si salva come corso_formazione.descrizione
+    const corsoFrequentato = data.map((x:any)=> x.corso_formazione?.descrizione || x.corso_frequentato || '').filter(isValidString)
     if (corsoFrequentato.length > 0) {
       stats.push(...getTextStatsGiovani(corsoFrequentato, 'Corso Frequentato', 'Corso Frequentato', 'C7'))
     } else {
