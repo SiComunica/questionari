@@ -1175,8 +1175,8 @@ export default function AmministratoriDashboard() {
     // C1 - Titolo studio
     stats.push(...getNumericStatsGiovani(data.map((x:any)=>x.titolo_studio), 'Titolo Studio', 'Titolo Studio', 'C1'))
 
-    // C2.1-C2.6 - Attività precedenti
-    if (data[0].attivita_precedenti) {
+    // C2.1-C2.6 - Attività precedenti - SEMPRE generare
+    if (true) {
       const attivitaPrecCodici = ['C2.1', 'C2.2', 'C2.3', 'C2.4', 'C2.5', 'C2.6'];
       (['studiavo','lavoravo_stabile','lavoravo_saltuario','corso_formazione','altro','nessuna'] as const).forEach((f: any, idx) => {
         const count = data.filter(item => item.attivita_precedenti?.[f] === true).length
@@ -1220,8 +1220,8 @@ export default function AmministratoriDashboard() {
       Percentuale: `${(((total - orientamentoLavoroCount) / total) * 100).toFixed(1)}%`
     })
 
-    // C4.1-C4.5 - Orientamento luoghi
-    if (data[0].orientamento_luoghi) {
+    // C4.1-C4.5 - Orientamento luoghi - SEMPRE generare
+    if (true) {
       const orientamentoCodici = ['C4.1', 'C4.2', 'C4.3', 'C4.4', 'C4.5'];
       (['scuola','enti_formazione','servizi_impiego','struttura','altro'] as const).forEach((f: any, idx) => {
         const count = data.filter(item => item.orientamento_luoghi?.[f] === true).length
@@ -1251,27 +1251,25 @@ export default function AmministratoriDashboard() {
     // C4_BIS - Utilità servizio orientamento
     stats.push(...getNumericStatsGiovani(data.map((x:any)=>x.utilita_servizio), 'Utilità Servizio Orientamento', 'Utilità Servizio Orientamento', 'C4_BIS'))
 
-    // C5.1-C5.5 - Attività attuali
-    if (data[0].attivita_attuali) {
-      const attivitaAttCodici = ['C5.1', 'C5.2', 'C5.3', 'C5.4', 'C5.5'];
-      (['studio','formazione','lavoro','ricerca_lavoro','nessuna'] as const).forEach((f: any, idx) => {
-        const count = data.filter(item => item.attivita_attuali?.[f] === true).length
-        stats.push({
-          Codice: attivitaAttCodici[idx],
-          Domanda: `Attività Attuali - ${f.replace(/_/g, ' ')}`,
-          Risposta: 'Sì',
-          Frequenza: count,
-          Percentuale: `${((count / total) * 100).toFixed(1)}%`
-        })
-        stats.push({
-          Codice: attivitaAttCodici[idx],
-          Domanda: `Attività Attuali - ${f.replace(/_/g, ' ')}`,
-          Risposta: 'No',
-          Frequenza: total - count,
-          Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
-        })
+    // C5.1-C5.5 - Attività attuali - SEMPRE generare
+    const attivitaAttCodici = ['C5.1', 'C5.2', 'C5.3', 'C5.4', 'C5.5'];
+    (['studio','formazione','lavoro','ricerca_lavoro','nessuna'] as const).forEach((f: any, idx) => {
+      const count = data.filter(item => item.attivita_attuali?.[f] === true).length
+      stats.push({
+        Codice: attivitaAttCodici[idx],
+        Domanda: `Attività Attuali - ${f.replace(/_/g, ' ')}`,
+        Risposta: 'Sì',
+        Frequenza: count,
+        Percentuale: `${((count / total) * 100).toFixed(1)}%`
       })
-    }
+      stats.push({
+        Codice: attivitaAttCodici[idx],
+        Domanda: `Attività Attuali - ${f.replace(/_/g, ' ')}`,
+        Risposta: 'No',
+        Frequenza: total - count,
+        Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
+      })
+    })
 
     // C6 - Motivi non studio (campo numerico)
     stats.push(...getNumericStatsGiovani(data.map((x:any)=>x.motivi_non_studio), 'Motivi Non Studio', 'Motivi Non Studio', 'C6'))
@@ -1280,7 +1278,8 @@ export default function AmministratoriDashboard() {
     // C8 - Lavoro attuale (campo testuale, non genera statistiche aggregate)
 
     // C8.1-C8.4 - Livelli utilità
-    if (data[0].livelli_utilita) {
+    // SEMPRE generare
+    if (true) {
       const livelliLabels = ['Studiare', 'Formazione', 'Lavorare', 'Ricerca Lavoro']
       const livelliCodici = ['C8.1', 'C8.2', 'C8.3', 'C8.4']
       const utilitaLabels = ['Per niente', 'Poco', 'Abbastanza', 'Molto']
@@ -1308,8 +1307,8 @@ export default function AmministratoriDashboard() {
       })
     }
 
-    // C9.1-C9.11 - Canali ricerca lavoro
-    if (data[0].ricerca_lavoro) {
+    // C9.1-C9.11 - Canali ricerca lavoro - SEMPRE generare
+    if (true) {
       const canaliCodici = ['C9.1', 'C9.2', 'C9.3', 'C9.4', 'C9.5', 'C9.6', 'C9.7', 'C9.8', 'C9.9', 'C9.10', 'C9.11'];
       (['centro_impiego','sportelli','inps','servizi_sociali','agenzie','cooperative','struttura','conoscenti','portali','social','altro'] as const).forEach((f: any, idx) => {
         const count = data.filter(item => item.ricerca_lavoro?.[f] === true).length
@@ -1387,19 +1386,17 @@ export default function AmministratoriDashboard() {
       Percentuale: `${(((total - autonomoCount) / total) * 100).toFixed(1)}%`
     })
 
-    // C13.1-C13.8 - Condizioni lavoro (valori numerici 1-10)
-    if (data[0].condizioni_lavoro || data[0].aspetti_lavoro) {
-      const condizioniCodici = ['C13.1', 'C13.2', 'C13.3', 'C13.4', 'C13.5', 'C13.6', 'C13.7', 'C13.8'];
-      (['stabilita','flessibilita','valorizzazione','retribuzione','fatica','sicurezza','utilita_sociale','vicinanza_casa'] as const).forEach((f: any, idx) => {
-        const values = data.map((x:any)=> (x.condizioni_lavoro?.[f] || x.aspetti_lavoro?.[f]))
-        stats.push(...getNumericStatsGiovani(values, `Condizioni Lavoro - ${f}`, `Condizioni Lavoro - ${f}`, condizioniCodici[idx]))
-      })
-    }
+    // C13.1-C13.8 - Condizioni lavoro (valori numerici 1-10) - SEMPRE generare
+    const condizioniCodici = ['C13.1', 'C13.2', 'C13.3', 'C13.4', 'C13.5', 'C13.6', 'C13.7', 'C13.8'];
+    (['stabilita','flessibilita','valorizzazione','retribuzione','fatica','sicurezza','utilita_sociale','vicinanza_casa'] as const).forEach((f: any, idx) => {
+      const values = data.map((x:any)=> (x.condizioni_lavoro?.[f] || x.aspetti_lavoro?.[f]))
+      stats.push(...getNumericStatsGiovani(values, `Condizioni Lavoro - ${f}`, `Condizioni Lavoro - ${f}`, condizioniCodici[idx]))
+    })
 
     // ==== SEZIONE D: ABITAZIONE E SUPPORTO ====
 
-    // D1.1-D1.10 - Abitazione precedente
-    if (data[0].abitazione_precedente) {
+    // D1.1-D1.10 - Abitazione precedente - SEMPRE generare
+    if (true) {
       const abitazioneCodici = ['D1.1', 'D1.2', 'D1.3', 'D1.4', 'D1.5', 'D1.6', 'D1.7', 'D1.8', 'D1.9', 'D1.10'];
       (['solo','struttura','madre','padre','partner','figli','fratelli','nonni','altri_parenti','amici'] as const).forEach((f: any, idx) => {
         const count = data.filter(item => item.abitazione_precedente?.[f] === true).length
@@ -1420,8 +1417,8 @@ export default function AmministratoriDashboard() {
       })
     }
 
-    // D2.1-D2.10 - Figura aiuto
-    if (data[0].figura_aiuto) {
+    // D2.1-D2.10 - Figura aiuto - SEMPRE generare
+    if (true) {
       const figuraAiutoCodici = ['D2.1', 'D2.2', 'D2.3', 'D2.4', 'D2.5', 'D2.6', 'D2.7', 'D2.8', 'D2.9', 'D2.10'];
       (['padre','madre','fratelli','altri_parenti','amici','tutore','insegnanti','figure_sostegno','volontari','altre_persone'] as const).forEach((f: any, idx) => {
         const count = data.filter(item => item.figura_aiuto?.[f] === true).length
@@ -1451,7 +1448,8 @@ export default function AmministratoriDashboard() {
     // ==== SEZIONE E: PROSPETTIVE FUTURE ====
 
     // E1.1-E1.8 - Preoccupazioni futuro (valori numerici 0-3: Per niente, Poco, Abbastanza, Molto)
-    if (data[0].preoccupazioni_futuro) {
+    // SEMPRE generare
+    if (true) {
       const preoccupazioniLabels = ['Per niente', 'Poco', 'Abbastanza', 'Molto'];
       const preoccupazioniCodici = ['E1.1', 'E1.2', 'E1.3', 'E1.4', 'E1.5', 'E1.6', 'E1.7', 'E1.8'];
       
@@ -1485,7 +1483,8 @@ export default function AmministratoriDashboard() {
     }
 
     // E2.1-E2.6 - Obiettivi realizzabili (valori numerici 0-3: Per niente, Poco, Abbastanza, Molto)
-    if (data[0].obiettivi_realizzabili) {
+    // SEMPRE generare
+    if (true) {
       const obiettiviLabels = ['Per niente', 'Poco', 'Abbastanza', 'Molto'];
       const obiettiviCodici = ['E2.1', 'E2.2', 'E2.3', 'E2.4', 'E2.5', 'E2.6'];
       
@@ -1539,7 +1538,8 @@ export default function AmministratoriDashboard() {
     stats.push(...getTextStatsGiovani(data.map((x:any)=>x.pronto_uscita_perche_si), 'Pronto Uscita Perché Sì', 'Pronto Uscita Perché Sì', 'E4.2'))
 
     // E5.1-E5.10 - Emozioni uscita
-    if (data[0].emozioni_uscita) {
+    // SEMPRE generare
+    if (true) {
       const emozioniCodici = ['E5.1', 'E5.2', 'E5.3', 'E5.4', 'E5.5', 'E5.6', 'E5.7', 'E5.8', 'E5.9', 'E5.10'];
       (['felicita','tristezza','curiosita','preoccupazione','paura','liberazione','solitudine','rabbia','speranza','determinazione'] as const).forEach((f: any, idx) => {
         const count = data.filter(item => item.emozioni_uscita?.[f] === true).length
