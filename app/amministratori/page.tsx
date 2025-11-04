@@ -1414,7 +1414,7 @@ export default function AmministratoriDashboard() {
       }
 
     // C9.11SPEC - Canali ricerca lavoro altro specificare
-    const canaliRicercaLavoroAltro = data.map((x:any)=>x.ricerca_lavoro?.altro_specificare).filter(isValidString)
+    const canaliRicercaLavoroAltro = data.map((x:any)=>(x.ricerca_lavoro?.altro_spec || x.ricerca_lavoro?.altro_specificare)).filter(isValidString)
     if (canaliRicercaLavoroAltro.length > 0) {
       stats.push(...getTextStatsGiovani(canaliRicercaLavoroAltro, 'Canali Ricerca Lavoro Altro Specificare', 'Canali Ricerca Lavoro Altro Specificare', 'C9.11SPEC'))
     }
