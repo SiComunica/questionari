@@ -1240,18 +1240,33 @@ export default function AmministratoriDashboard() {
     // C2.1-C2.6 - Attività precedenti - SEMPRE generare
     if (true) {
       const attivitaPrecCodici = ['C2.1', 'C2.2', 'C2.3', 'C2.4', 'C2.5', 'C2.6'];
-      (['studiavo','lavoravo_stabile','lavoravo_saltuario','corso_formazione','altro','nessuna'] as const).forEach((f: any, idx) => {
-        const count = data.filter(item => item.attivita_precedenti?.[f] === true).length
+      const attivitaPrecFields = [
+        { key: 'studiavo', label: 'Studiavo' },
+        { key: 'lavoravo_stabile', altKey: 'lavoravo_stabilmente', label: 'Lavoravo stabilmente' },
+        { key: 'lavoravo_saltuario', altKey: 'lavoravo_saltuariamente', label: 'Lavoravo saltuariamente' },
+        { key: 'corso_formazione', label: 'Corso formazione' },
+        { key: 'altro', label: 'Altro' },
+        { key: 'nessuna', label: 'Nessuna' }
+      ];
+      
+      attivitaPrecFields.forEach((field, idx) => {
+        const count = data.filter(item => {
+          if (field.altKey) {
+            return item.attivita_precedenti?.[field.key] === true || item.attivita_precedenti?.[field.altKey] === true
+          }
+          return item.attivita_precedenti?.[field.key] === true
+        }).length
+        
         stats.push({
           Codice: attivitaPrecCodici[idx],
-          Domanda: `Attività Precedenti - ${f.replace(/_/g, ' ')}`,
+          Domanda: `Attività Precedenti - ${field.label}`,
           Risposta: 'Sì',
           Frequenza: count,
           Percentuale: `${((count / total) * 100).toFixed(1)}%`
         })
         stats.push({
           Codice: attivitaPrecCodici[idx],
-          Domanda: `Attività Precedenti - ${f.replace(/_/g, ' ')}`,
+          Domanda: `Attività Precedenti - ${field.label}`,
           Risposta: 'No',
           Frequenza: total - count,
           Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
@@ -1260,7 +1275,7 @@ export default function AmministratoriDashboard() {
     }
 
     // C2.5SPEC - Attività precedenti altro specificare
-    const attivitaPrecedentiAltro = data.map((x:any)=>x.attivita_precedenti?.altro_spec).filter(isValidString)
+    const attivitaPrecedentiAltro = data.map((x:any)=>(x.attivita_precedenti?.altro_spec || x.attivita_precedenti?.altro_specificare)).filter(isValidString)
     if (attivitaPrecedentiAltro.length > 0) {
       stats.push(...getTextStatsGiovani(attivitaPrecedentiAltro, 'Attività Precedenti Altro Specificare', 'Attività Precedenti Altro Specificare', 'C2.5SPEC'))
     }
