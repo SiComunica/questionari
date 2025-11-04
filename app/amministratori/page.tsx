@@ -705,7 +705,8 @@ export default function AmministratoriDashboard() {
   function getNumericStatsOperatori(arr: number[], label: string, domanda: string, codice: string = ''): Array<{Codice: string, Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}> {
     const valid = arr.filter((x: number) => typeof x === 'number' && !isNaN(x) && x !== null && x !== undefined)
     if (valid.length === 0) return []
-    const total = arr.length
+    // La percentuale deve essere calcolata sul totale delle risposte valide
+    const total = valid.length
     
     // Raggruppa per valore per mostrare la distribuzione
     const valueCounts = valid.reduce((acc: Record<number, number>, val) => {
@@ -732,7 +733,8 @@ export default function AmministratoriDashboard() {
   function getTextStatsOperatori(arr: string[], label: string, domanda: string, codice: string = ''): Array<{Codice: string, Domanda: string, Risposta: string, Frequenza: number, Percentuale: string}> {
     const valid = arr.filter((x: string) => typeof x === 'string' && x.trim() !== '')
     if (valid.length === 0) return []
-    const total = arr.length
+    // La percentuale deve essere calcolata sul totale delle risposte valide
+    const total = valid.length
     const counts = valid.reduce((acc: Record<string, number>, v: string) => { acc[v] = (acc[v]||0)+1; return acc }, {})
     return Object.entries(counts).map(([val, freq]) => ({
       Codice: codice,
@@ -922,13 +924,16 @@ export default function AmministratoriDashboard() {
           return acc
         }, {})
         
+        // La percentuale deve essere calcolata sul totale delle risposte valide per questo campo
+        const totalRisposteValide = values.length
+        
         Object.entries(valueCounts).forEach(([grado, count]) => {
           stats.push({
             Codice: codice,
             Domanda: `Difficoltà Uscita - ${f.replace(/_/g, ' ')}`,
             Risposta: `Grado ${grado}`,
             Frequenza: count,
-            Percentuale: `${((count / data.length) * 100).toFixed(1)}%`
+            Percentuale: `${((count / totalRisposteValide) * 100).toFixed(1)}%`
           })
         })
       }
@@ -945,7 +950,8 @@ export default function AmministratoriDashboard() {
   function getNumericStatsGiovani(arr: number[], label: string, domanda: string, codice: string = ''): Array<{Codice: string, Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}> {
     const valid = arr.filter((x: number) => typeof x === 'number' && !isNaN(x) && x !== null && x !== undefined)
     if (valid.length === 0) return []
-    const total = arr.length
+    // La percentuale deve essere calcolata sul totale delle risposte valide
+    const total = valid.length
     
     // Raggruppa per valore per mostrare la distribuzione
     const valueCounts = valid.reduce((acc: Record<number, number>, val) => {
@@ -972,7 +978,8 @@ export default function AmministratoriDashboard() {
   function getTextStatsGiovani(arr: string[], label: string, domanda: string, codice: string = ''): Array<{Codice: string, Domanda: string, Risposta: string, Frequenza: number, Percentuale: string}> {
     const valid = arr.filter((x: string) => typeof x === 'string' && x.trim() !== '')
     if (valid.length === 0) return []
-    const total = arr.length
+    // La percentuale deve essere calcolata sul totale delle risposte valide
+    const total = valid.length
     const counts = valid.reduce((acc: Record<string, number>, v: string) => { acc[v] = (acc[v]||0)+1; return acc }, {})
     return Object.entries(counts).map(([val, freq]) => ({
       Codice: codice,
@@ -1271,11 +1278,20 @@ export default function AmministratoriDashboard() {
       })
     })
 
-    // C6 - Motivi non studio (campo numerico)
-    stats.push(...getNumericStatsGiovani(data.map((x:any)=>x.motivi_non_studio), 'Motivi Non Studio', 'Motivi Non Studio', 'C6'))
+    // C6 - Motivo non studio (campo numerico)
+    stats.push(...getNumericStatsGiovani(data.map((x:any)=>x.motivo_non_studio), 'Motivo Non Studio', 'Motivo Non Studio', 'C6'))
 
-    // C7 - Corso formazione (campo testuale, non genera statistiche aggregate)
-    // C8 - Lavoro attuale (campo testuale, non genera statistiche aggregate)
+    // C7 - Corso frequentato (campo testuale)
+    const corsoFrequentato = data.map((x:any)=>x.corso_frequentato).filter(val => val && val.trim() !== '')
+    if (corsoFrequentato.length > 0) {
+      stats.push(...getTextStatsGiovani(corsoFrequentato, 'Corso Frequentato', 'Corso Frequentato', 'C7'))
+    }
+
+    // C8 - Lavoro attuale (campo testuale)
+    const lavoroAttuale = data.map((x:any)=>x.lavoro_attuale).filter(val => val && val.trim() !== '')
+    if (lavoroAttuale.length > 0) {
+      stats.push(...getTextStatsGiovani(lavoroAttuale, 'Lavoro Attuale', 'Lavoro Attuale', 'C8'))
+    }
 
     // C8.1-C8.4 - Livelli utilità
     // SEMPRE generare
@@ -1294,13 +1310,16 @@ export default function AmministratoriDashboard() {
             return acc
           }, {})
           
+          // La percentuale deve essere calcolata sul totale delle risposte valide per questo campo
+          const totalRisposteValide = values.length
+          
           Object.entries(valueCounts).forEach(([utilitaLabel, count]) => {
-            stats.push({
+          stats.push({
               Codice: livelliCodici[index],
-              Domanda: `Livelli Utilità - ${label}`,
+            Domanda: `Livelli Utilità - ${label}`,
               Risposta: utilitaLabel,
-              Frequenza: count,
-              Percentuale: `${((count / total) * 100).toFixed(1)}%`
+            Frequenza: count,
+            Percentuale: `${((count / totalRisposteValide) * 100).toFixed(1)}%`
             })
           })
         }
@@ -1327,7 +1346,7 @@ export default function AmministratoriDashboard() {
           Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
         })
       })
-    }
+      }
 
     // C9.11SPEC - Canali ricerca lavoro altro specificare
     const canaliRicercaLavoroAltro = data.map((x:any)=>x.ricerca_lavoro?.altro_specificare).filter(val => val && val.trim() !== '')
@@ -1463,18 +1482,21 @@ export default function AmministratoriDashboard() {
             return acc
           }, {})
           
+          // La percentuale deve essere calcolata sul totale delle risposte valide per questo campo
+          const totalRisposteValide = values.length
+          
           Object.entries(valueCounts).forEach(([preoccupazioneLabel, count]) => {
-            stats.push({
+          stats.push({
               Codice: preoccupazioniCodici[idx],
-              Domanda: `Preoccupazioni Futuro - ${f.replace(/_/g, ' ')}`,
+            Domanda: `Preoccupazioni Futuro - ${f.replace(/_/g, ' ')}`,
               Risposta: preoccupazioneLabel,
-              Frequenza: count,
-              Percentuale: `${((count / total) * 100).toFixed(1)}%`
+            Frequenza: count,
+            Percentuale: `${((count / totalRisposteValide) * 100).toFixed(1)}%`
             })
           })
         }
       })
-    }
+      }
 
     // E1.8SPEC - Preoccupazioni futuro altro specificare
     const preoccupazioniFuturoAltroSpec = data.map((x:any)=>x.preoccupazioni_futuro?.altro_spec).filter(val => val && val.trim() !== '')
@@ -1498,13 +1520,16 @@ export default function AmministratoriDashboard() {
             return acc
           }, {})
           
+          // La percentuale deve essere calcolata sul totale delle risposte valide per questo campo
+          const totalRisposteValide = values.length
+          
           Object.entries(valueCounts).forEach(([obiettivoLabel, count]) => {
-            stats.push({
+          stats.push({
               Codice: obiettiviCodici[idx],
-              Domanda: `Obiettivi Realizzabili - ${f.replace(/_/g, ' ')}`,
+            Domanda: `Obiettivi Realizzabili - ${f.replace(/_/g, ' ')}`,
               Risposta: obiettivoLabel,
-              Frequenza: count,
-              Percentuale: `${((count / total) * 100).toFixed(1)}%`
+            Frequenza: count,
+            Percentuale: `${((count / totalRisposteValide) * 100).toFixed(1)}%`
             })
           })
         }
@@ -1543,21 +1568,21 @@ export default function AmministratoriDashboard() {
       const emozioniCodici = ['E5.1', 'E5.2', 'E5.3', 'E5.4', 'E5.5', 'E5.6', 'E5.7', 'E5.8', 'E5.9', 'E5.10'];
       (['felicita','tristezza','curiosita','preoccupazione','paura','liberazione','solitudine','rabbia','speranza','determinazione'] as const).forEach((f: any, idx) => {
         const count = data.filter(item => item.emozioni_uscita?.[f] === true).length
-        stats.push({
+    stats.push({
           Codice: emozioniCodici[idx],
           Domanda: `Emozioni Uscita - ${f.replace(/_/g, ' ')}`,
-          Risposta: 'Sì',
-          Frequenza: count,
-          Percentuale: `${((count / total) * 100).toFixed(1)}%`
-        })
-        stats.push({
-          Codice: emozioniCodici[idx],
-          Domanda: `Emozioni Uscita - ${f.replace(/_/g, ' ')}`,
-          Risposta: 'No',
-          Frequenza: total - count,
-          Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
-        })
+        Risposta: 'Sì',
+        Frequenza: count,
+        Percentuale: `${((count / total) * 100).toFixed(1)}%`
       })
+      stats.push({
+          Codice: emozioniCodici[idx],
+          Domanda: `Emozioni Uscita - ${f.replace(/_/g, ' ')}`,
+        Risposta: 'No',
+        Frequenza: total - count,
+        Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
+      })
+    })
     }
 
     // E6 - Desiderio (campo testuale)
