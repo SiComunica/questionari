@@ -962,8 +962,9 @@ export default function AmministratoriDashboard() {
   }
 
   // Utility per statistiche numeriche giovani
-  function getNumericStatsGiovani(arr: number[], label: string, domanda: string, codice: string = ''): Array<{Codice: string, Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}> {
-    const valid = arr.filter((x: number) => typeof x === 'number' && !isNaN(x) && x !== null && x !== undefined)
+  function getNumericStatsGiovani(arr: any[], label: string, domanda: string, codice: string = ''): Array<{Codice: string, Domanda: string, Risposta: string, Frequenza: number|string, Percentuale: string}> {
+    // Filtra valori numerici validi, includendo lo 0
+    const valid = arr.filter((x: any) => x !== null && x !== undefined && typeof x === 'number' && !isNaN(x))
     if (valid.length === 0) return []
     // La percentuale deve essere calcolata sul totale delle risposte valide
     const total = valid.length
