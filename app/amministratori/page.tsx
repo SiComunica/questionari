@@ -122,8 +122,8 @@ export default function AmministratoriDashboard() {
       Codice: codice,
       Domanda: domanda,
       Risposta: `${label}: ${val}`,
-      Frequenza: freq,
-      Percentuale: `${((freq / total) * 100).toFixed(1)}%`
+      Frequenza: freq as number,
+      Percentuale: `${(((freq as number) / total) * 100).toFixed(1)}%`
     }))
   }
 
@@ -750,8 +750,8 @@ export default function AmministratoriDashboard() {
       Codice: codice,
       Domanda: domanda,
       Risposta: `${label}: ${val}`,
-      Frequenza: freq,
-      Percentuale: `${((freq / total) * 100).toFixed(1)}%`
+      Frequenza: freq as number,
+      Percentuale: `${(((freq as number) / total) * 100).toFixed(1)}%`
     }))
   }
 
@@ -1000,8 +1000,8 @@ export default function AmministratoriDashboard() {
       Codice: codice,
       Domanda: domanda,
       Risposta: `${label}: ${val}`,
-      Frequenza: freq,
-      Percentuale: `${((freq / total) * 100).toFixed(1)}%`
+      Frequenza: freq as number,
+      Percentuale: `${(((freq as number) / total) * 100).toFixed(1)}%`
     }))
   }
 
