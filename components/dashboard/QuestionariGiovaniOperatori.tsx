@@ -74,7 +74,18 @@ type QuestionarioGiovani = {
     nessuna: boolean;
     altro_spec: string;
   };
-  orientamento_lavoro: boolean;
+  orientamento_lavoro: {
+    usufruito: boolean;
+    dove?: {
+      scuola_universita: boolean;
+      enti_formazione: boolean;
+      servizi_impiego: boolean;
+      struttura: boolean;
+      altro: boolean;
+      altro_specificare: string;
+    };
+    utilita?: number;
+  };
   orientamento_luoghi: {
     scuola: boolean;
     enti_formazione: boolean;
@@ -91,8 +102,8 @@ type QuestionarioGiovani = {
     ricerca_lavoro: boolean;
     nessuna: boolean;
   };
-  motivi_non_studio: number;
-  corso_formazione: string;
+  motivo_non_studio: number;
+  corso_frequentato: string;
   lavoro_attuale: string;
   livelli_utilita: number[];
   ricerca_lavoro: {
@@ -289,7 +300,7 @@ export default function QuestionariGiovaniOperatori() {
         'C2.5': q.attivita_precedenti?.altro ? 1 : 0,
         'C2.6': q.attivita_precedenti?.nessuna ? 1 : 0,
         'C2.5SPEC': q.attivita_precedenti?.altro_spec || '',
-        'C3': q.orientamento_lavoro ? 1 : 0,
+        'C3': q.orientamento_lavoro?.usufruito ? 1 : 0,
         'C4.1': q.orientamento_luoghi?.scuola ? 1 : 0,
         'C4.2': q.orientamento_luoghi?.enti_formazione ? 1 : 0,
         'C4.3': q.orientamento_luoghi?.servizi_impiego ? 1 : 0,
@@ -302,8 +313,8 @@ export default function QuestionariGiovaniOperatori() {
         'C5.3': q.attivita_attuali?.lavoro ? 1 : 0,
         'C5.4': q.attivita_attuali?.ricerca_lavoro ? 1 : 0,
         'C5.5': q.attivita_attuali?.nessuna ? 1 : 0,
-        'C6': q.motivi_non_studio || 0,
-        'C7': q.corso_formazione || '',
+        'C6': q.motivo_non_studio || 0,
+        'C7': q.corso_frequentato || '',
         'C8': q.lavoro_attuale || '',
         'C8.1': q.livelli_utilita?.[0] || 0,
         'C8.2': q.livelli_utilita?.[1] || 0,
@@ -324,14 +335,14 @@ export default function QuestionariGiovaniOperatori() {
         'C10': q.curriculum_vitae ? 1 : 0,
         'C11': q.centro_impiego ? 1 : 0,
         'C12': q.lavoro_autonomo ? 1 : 0,
-        'C13.1': q.condizioni_lavoro?.stabilita || 0,
-        'C13.2': q.condizioni_lavoro?.flessibilita || 0,
-        'C13.3': q.condizioni_lavoro?.valorizzazione || 0,
-        'C13.4': q.condizioni_lavoro?.retribuzione || 0,
-        'C13.5': q.condizioni_lavoro?.fatica || 0,
-        'C13.6': q.condizioni_lavoro?.sicurezza || 0,
-        'C13.7': q.condizioni_lavoro?.utilita_sociale || 0,
-        'C13.8': q.condizioni_lavoro?.vicinanza_casa || 0,
+        'C13.1': q.aspetti_lavoro?.stabilita || 0,
+        'C13.2': q.aspetti_lavoro?.flessibilita || 0,
+        'C13.3': q.aspetti_lavoro?.valorizzazione || 0,
+        'C13.4': q.aspetti_lavoro?.retribuzione || 0,
+        'C13.5': q.aspetti_lavoro?.fatica || 0,
+        'C13.6': q.aspetti_lavoro?.sicurezza || 0,
+        'C13.7': q.aspetti_lavoro?.utilita_sociale || 0,
+        'C13.8': q.aspetti_lavoro?.vicinanza_casa || 0,
         'D1.1': q.abitazione_precedente?.solo ? 1 : 0,
         'D1.2': q.abitazione_precedente?.struttura ? 1 : 0,
         'D1.3': q.abitazione_precedente?.madre ? 1 : 0,
