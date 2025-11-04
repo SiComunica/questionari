@@ -106,6 +106,11 @@ export default function AmministratoriDashboard() {
     return results
   }
 
+  // Helper per filtrare stringhe valide in modo sicuro
+  function isValidString(val: any): val is string {
+    return val != null && typeof val === 'string' && val.trim() !== ''
+  }
+
   // Utility per testo libero
   function getTextStatsStruttureCustom(arr: any[], label: string, domanda: string, codice: string, totalQuestionari?: number): Array<StatRow> {
     const valid = arr.filter((x: any) => {
@@ -171,7 +176,7 @@ export default function AmministratoriDashboard() {
     })
 
     // 5. FORMAGIU_SPEC - Forma Giuridica Altro
-    const formaGiuridicaAltro = data.map((x:any)=>x.forma_giuridica_altro).filter(val => val && val.trim() !== '')
+    const formaGiuridicaAltro = data.map((x:any)=>x.forma_giuridica_altro).filter(isValidString)
     if (formaGiuridicaAltro.length > 0) {
       const formaGiuridicaAltroStats = getTextStatsStruttureCustom(formaGiuridicaAltro, 'Forma Giuridica Altro', 'Forma Giuridica Altro', 'FORMAGIU_SPEC', total)
       for (const stat of formaGiuridicaAltroStats) {
@@ -254,7 +259,7 @@ export default function AmministratoriDashboard() {
     })
 
     // B3.13_SPEC - Figure Professionali Altro Specificare
-    const figureProfAltro = data.map((x:any)=>x.figure_professionali_altro).filter(val => val && val.trim() !== '')
+    const figureProfAltro = data.map((x:any)=>x.figure_professionali_altro).filter(isValidString)
     if (figureProfAltro.length > 0) {
       stats.push(...getTextStatsStruttureCustom(figureProfAltro, 'Figure Professionali Altro Specificare', 'Figure Professionali Altro Specificare', 'B3.13_SPEC', total))
     }
@@ -428,7 +433,7 @@ export default function AmministratoriDashboard() {
     })
 
     // Caratteristiche altro ospiti (C2.16A_SPEC per ospiti adolescenti, C2.16B_SPEC per ospiti giovani)
-    const caratteristicheOspitiAltro = data.map((x:any)=>x.caratteristiche_ospiti_altro).filter(val => val && val.trim() !== '')
+    const caratteristicheOspitiAltro = data.map((x:any)=>x.caratteristiche_ospiti_altro).filter(isValidString)
     if (caratteristicheOspitiAltro.length > 0) {
       stats.push(...getTextStatsStruttureCustom(caratteristicheOspitiAltro, 'Caratt. Ospiti Altro (Adolescenti)', 'Caratteristiche Ospiti Altro', 'C2.16A_SPEC', total))
       stats.push(...getTextStatsStruttureCustom(caratteristicheOspitiAltro, 'Caratt. Ospiti Altro (Giovani)', 'Caratteristiche Ospiti Altro', 'C2.16B_SPEC', total))
@@ -538,7 +543,7 @@ export default function AmministratoriDashboard() {
     })
 
     // Caratteristiche altro NON ospiti (C4.16ALTRO)
-    const caratteristicheNonOspitiAltro = data.map((x:any)=>x.caratteristiche_non_ospiti_altro).filter(val => val && val.trim() !== '')
+    const caratteristicheNonOspitiAltro = data.map((x:any)=>x.caratteristiche_non_ospiti_altro).filter(isValidString)
     if (caratteristicheNonOspitiAltro.length > 0) {
       stats.push(...getTextStatsStruttureCustom(caratteristicheNonOspitiAltro, 'Caratt. Non Ospiti Altro', 'Caratteristiche Non Ospiti Altro', 'C4.16ALTRO', total))
     }
@@ -628,7 +633,7 @@ export default function AmministratoriDashboard() {
       if (x.nuove_esperienze_previste !== undefined) {
         return x.nuove_esperienze_previste ? 1 : 0
       }
-      if (x.nuove_attivita && Array.isArray(x.nuove_attivita) && x.nuove_attivita.some((a: string) => a && a.trim() !== '')) {
+      if (x.nuove_attivita && Array.isArray(x.nuove_attivita) && x.nuove_attivita.some(isValidString)) {
         return 1
       }
       return 0
@@ -674,30 +679,30 @@ export default function AmministratoriDashboard() {
       stats.push(...getNumericStatsStrutture(data.map((x:any)=>x.finanziamenti?.fondi_pubblici), 'Fondi Pubblici', 'Finanziamenti - Fondi Pubblici', 'F1.1', total))
       stats.push(...getNumericStatsStrutture(data.map((x:any)=>x.finanziamenti?.fondi_privati), 'Fondi Privati', 'Finanziamenti - Fondi Privati', 'F1.2', total))
       
-      const fondiPubbliciSpec = data.map((x:any)=>x.finanziamenti?.fondi_pubblici_specifica || x.finanziamenti?.fondi_pubblici_specifiche).filter(val => val && val.trim() !== '')
+      const fondiPubbliciSpec = data.map((x:any)=>x.finanziamenti?.fondi_pubblici_specifica || x.finanziamenti?.fondi_pubblici_specifiche).filter(isValidString)
       if (fondiPubbliciSpec.length > 0) {
         stats.push(...getTextStatsStruttureCustom(fondiPubbliciSpec, 'Fondi Pubblici Specifiche', 'Fondi Pubblici Specifiche', 'F1.1SPEC', total))
       }
       
-      const fondiPrivatiSpec = data.map((x:any)=>x.finanziamenti?.fondi_privati_specifica || x.finanziamenti?.fondi_privati_specifiche).filter(val => val && val.trim() !== '')
+      const fondiPrivatiSpec = data.map((x:any)=>x.finanziamenti?.fondi_privati_specifica || x.finanziamenti?.fondi_privati_specifiche).filter(isValidString)
       if (fondiPrivatiSpec.length > 0) {
         stats.push(...getTextStatsStruttureCustom(fondiPrivatiSpec, 'Fondi Privati Specifiche', 'Fondi Privati Specifiche', 'F1.2SPEC', total))
       }
       
       // Fornitori (F2.1forn, F2.1sost, F2.2forn, F2.2sost)
-      const fornitore1Nome = data.map((x:any)=>x.finanziamenti?.fornitori?.[0]?.nome).filter(val => val && val.trim() !== '')
+      const fornitore1Nome = data.map((x:any)=>x.finanziamenti?.fornitori?.[0]?.nome).filter(isValidString)
       if (fornitore1Nome.length > 0) {
         stats.push(...getTextStatsStruttureCustom(fornitore1Nome, 'Fornitore 1 - Nome', 'Fornitore 1 - Nome', 'F2.1forn', total))
       }
-      const fornitore1Sost = data.map((x:any)=>x.finanziamenti?.fornitori?.[0]?.tipo_sostegno).filter(val => val && val.trim() !== '')
+      const fornitore1Sost = data.map((x:any)=>x.finanziamenti?.fornitori?.[0]?.tipo_sostegno).filter(isValidString)
       if (fornitore1Sost.length > 0) {
         stats.push(...getTextStatsStruttureCustom(fornitore1Sost, 'Fornitore 1 - Tipo Sostegno', 'Fornitore 1 - Tipo Sostegno', 'F2.1sost', total))
       }
-      const fornitore2Nome = data.map((x:any)=>x.finanziamenti?.fornitori?.[1]?.nome).filter(val => val && val.trim() !== '')
+      const fornitore2Nome = data.map((x:any)=>x.finanziamenti?.fornitori?.[1]?.nome).filter(isValidString)
       if (fornitore2Nome.length > 0) {
         stats.push(...getTextStatsStruttureCustom(fornitore2Nome, 'Fornitore 2 - Nome', 'Fornitore 2 - Nome', 'F2.2forn', total))
       }
-      const fornitore2Sost = data.map((x:any)=>x.finanziamenti?.fornitori?.[1]?.tipo_sostegno).filter(val => val && val.trim() !== '')
+      const fornitore2Sost = data.map((x:any)=>x.finanziamenti?.fornitori?.[1]?.tipo_sostegno).filter(isValidString)
       if (fornitore2Sost.length > 0) {
         stats.push(...getTextStatsStruttureCustom(fornitore2Sost, 'Fornitore 2 - Tipo Sostegno', 'Fornitore 2 - Tipo Sostegno', 'F2.2sost', total))
       }
@@ -851,7 +856,7 @@ export default function AmministratoriDashboard() {
     })
 
     // Caratteristiche altro specificare (B3_16SPEC)
-    const caratteristicheAltro = data.map((x:any)=>x.caratteristiche_persone?.altro_specificare).filter(val => val && val.trim() !== '')
+    const caratteristicheAltro = data.map((x:any)=>x.caratteristiche_persone?.altro_specificare).filter(isValidString)
     if (caratteristicheAltro.length > 0) {
       stats.push(...getTextStatsOperatori(caratteristicheAltro, 'Caratteristiche Altro', 'Caratteristiche Altro', 'B3_16SPEC'))
     }
@@ -885,7 +890,7 @@ export default function AmministratoriDashboard() {
     })
 
     // Tipo intervento altro specificare (B4_10SPEC)
-    const tipoInterventoAltro = data.map((x:any)=>x.tipo_intervento?.altro_specificare).filter(val => val && val.trim() !== '')
+    const tipoInterventoAltro = data.map((x:any)=>x.tipo_intervento?.altro_specificare).filter(isValidString)
     if (tipoInterventoAltro.length > 0) {
       stats.push(...getTextStatsOperatori(tipoInterventoAltro, 'Tipo Intervento Altro', 'Tipo Intervento Altro', 'B4_10SPEC'))
     }
@@ -916,7 +921,7 @@ export default function AmministratoriDashboard() {
     })
 
     // Interventi potenziare altro specificare (B5_11SPEC)
-    const interventiPotenziareAltro = data.map((x:any)=>x.interventi_potenziare?.altro_specificare).filter(val => val && val.trim() !== '')
+    const interventiPotenziareAltro = data.map((x:any)=>x.interventi_potenziare?.altro_specificare).filter(isValidString)
     if (interventiPotenziareAltro.length > 0) {
       stats.push(...getTextStatsOperatori(interventiPotenziareAltro, 'Interventi Potenziare Altro', 'Interventi Potenziare Altro', 'B5_11SPEC'))
     }
@@ -948,7 +953,7 @@ export default function AmministratoriDashboard() {
         })
       }
     })
-    const difficoltaAltro = data.map((x:any)=>x.difficolta_uscita?.altro_specificare).filter(val => val && val.trim() !== '')
+    const difficoltaAltro = data.map((x:any)=>x.difficolta_uscita?.altro_specificare).filter(isValidString)
     if (difficoltaAltro.length > 0) {
       stats.push(...getTextStatsOperatori(difficoltaAltro, 'Difficoltà Uscita Altro', 'Difficoltà Uscita Altro', 'C9SPEC'))
     }
@@ -1220,7 +1225,7 @@ export default function AmministratoriDashboard() {
     }
 
     // C2.5SPEC - Attività precedenti altro specificare
-    const attivitaPrecedentiAltro = data.map((x:any)=>x.attivita_precedenti?.altro_spec).filter(val => val && val.trim() !== '')
+    const attivitaPrecedentiAltro = data.map((x:any)=>x.attivita_precedenti?.altro_spec).filter(isValidString)
     if (attivitaPrecedentiAltro.length > 0) {
       stats.push(...getTextStatsGiovani(attivitaPrecedentiAltro, 'Attività Precedenti Altro Specificare', 'Attività Precedenti Altro Specificare', 'C2.5SPEC'))
     }
@@ -1265,7 +1270,7 @@ export default function AmministratoriDashboard() {
     }
 
     // C4.5SPEC - Orientamento luoghi altro specificare
-    const orientamentoLuoghiAltro = data.map((x:any)=>x.orientamento_luoghi?.altro_spec).filter(val => val && val.trim() !== '')
+    const orientamentoLuoghiAltro = data.map((x:any)=>x.orientamento_luoghi?.altro_spec).filter(isValidString)
     if (orientamentoLuoghiAltro.length > 0) {
       stats.push(...getTextStatsGiovani(orientamentoLuoghiAltro, 'Orientamento Luoghi Altro Specificare', 'Orientamento Luoghi Altro Specificare', 'C4.5SPEC'))
     }
@@ -1297,13 +1302,13 @@ export default function AmministratoriDashboard() {
     stats.push(...getNumericStatsGiovani(data.map((x:any)=>x.motivo_non_studio), 'Motivo Non Studio', 'Motivo Non Studio', 'C6'))
 
     // C7 - Corso frequentato (campo testuale)
-    const corsoFrequentato = data.map((x:any)=>x.corso_frequentato).filter(val => val && val.trim() !== '')
+    const corsoFrequentato = data.map((x:any)=>x.corso_frequentato).filter(isValidString)
     if (corsoFrequentato.length > 0) {
       stats.push(...getTextStatsGiovani(corsoFrequentato, 'Corso Frequentato', 'Corso Frequentato', 'C7'))
     }
 
     // C8 - Lavoro attuale (campo testuale)
-    const lavoroAttuale = data.map((x:any)=>x.lavoro_attuale).filter(val => val && val.trim() !== '')
+    const lavoroAttuale = data.map((x:any)=>x.lavoro_attuale).filter(isValidString)
     if (lavoroAttuale.length > 0) {
       stats.push(...getTextStatsGiovani(lavoroAttuale, 'Lavoro Attuale', 'Lavoro Attuale', 'C8'))
     }
@@ -1364,7 +1369,7 @@ export default function AmministratoriDashboard() {
       }
 
     // C9.11SPEC - Canali ricerca lavoro altro specificare
-    const canaliRicercaLavoroAltro = data.map((x:any)=>x.ricerca_lavoro?.altro_specificare).filter(val => val && val.trim() !== '')
+    const canaliRicercaLavoroAltro = data.map((x:any)=>x.ricerca_lavoro?.altro_specificare).filter(isValidString)
     if (canaliRicercaLavoroAltro.length > 0) {
       stats.push(...getTextStatsGiovani(canaliRicercaLavoroAltro, 'Canali Ricerca Lavoro Altro Specificare', 'Canali Ricerca Lavoro Altro Specificare', 'C9.11SPEC'))
     }
@@ -1474,7 +1479,7 @@ export default function AmministratoriDashboard() {
     }
 
     // D2.10SPEC - Figura aiuto altre persone specificare
-    const figuraAiutoAltriSpec = data.map((x:any)=>x.figura_aiuto?.altre_persone_spec).filter(val => val && val.trim() !== '')
+    const figuraAiutoAltriSpec = data.map((x:any)=>x.figura_aiuto?.altre_persone_spec).filter(isValidString)
     if (figuraAiutoAltriSpec.length > 0) {
       stats.push(...getTextStatsGiovani(figuraAiutoAltriSpec, 'Figura Aiuto Altre Persone Specificare', 'Figura Aiuto Altre Persone Specificare', 'D2.10SPEC'))
     }
@@ -1514,7 +1519,7 @@ export default function AmministratoriDashboard() {
       }
 
     // E1.8SPEC - Preoccupazioni futuro altro specificare
-    const preoccupazioniFuturoAltroSpec = data.map((x:any)=>x.preoccupazioni_futuro?.altro_spec).filter(val => val && val.trim() !== '')
+    const preoccupazioniFuturoAltroSpec = data.map((x:any)=>x.preoccupazioni_futuro?.altro_spec).filter(isValidString)
     if (preoccupazioniFuturoAltroSpec.length > 0) {
       stats.push(...getTextStatsGiovani(preoccupazioniFuturoAltroSpec, 'Preoccupazioni Futuro Altro Specificare', 'Preoccupazioni Futuro Altro Specificare', 'E1.8SPEC'))
     }
