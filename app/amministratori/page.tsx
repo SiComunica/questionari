@@ -1459,11 +1459,24 @@ export default function AmministratoriDashboard() {
       Percentuale: `${(((total - autonomoCount) / total) * 100).toFixed(1)}%`
     })
 
-    // C13.1-C13.8 - Condizioni lavoro (valori numerici 1-10) - SEMPRE generare
+    // C13.1-C13.8 - Condizioni lavoro (valori numerici 0-3) - SEMPRE generare
     const condizioniCodici = ['C13.1', 'C13.2', 'C13.3', 'C13.4', 'C13.5', 'C13.6', 'C13.7', 'C13.8'];
+    const condizioniLabels = ['Stabilità', 'Flessibilità', 'Valorizzazione', 'Retribuzione', 'Fatica', 'Sicurezza', 'Utilità Sociale', 'Vicinanza Casa'];
     (['stabilita','flessibilita','valorizzazione','retribuzione','fatica','sicurezza','utilita_sociale','vicinanza_casa'] as const).forEach((f: any, idx) => {
       const values = data.map((x:any)=> (x.condizioni_lavoro?.[f] || x.aspetti_lavoro?.[f]))
-      stats.push(...getNumericStatsGiovani(values, `Condizioni Lavoro - ${f}`, `Condizioni Lavoro - ${f}`, condizioniCodici[idx]))
+      const c13Stats = getNumericStatsGiovani(values, condizioniLabels[idx], `Condizioni Lavoro - ${condizioniLabels[idx]}`, condizioniCodici[idx])
+      if (c13Stats.length > 0) {
+        stats.push(...c13Stats)
+      } else {
+        // Mostra sempre anche se vuoto
+        stats.push({
+          Codice: condizioniCodici[idx],
+          Domanda: `Condizioni Lavoro - ${condizioniLabels[idx]}`,
+          Risposta: 'Nessun dato disponibile',
+          Frequenza: 0,
+          Percentuale: '0%'
+        })
+      }
     })
 
     // ==== SEZIONE D: ABITAZIONE E SUPPORTO ====
