@@ -275,12 +275,10 @@ export default function AmministratoriDashboard() {
           const codice = personeOspitateCodici[gruppo][sub]
           stats.push(...getNumericStatsStrutture(valoriCalcolati, labelChiara, labelChiara, codice, total))
         } else {
-          // Per uomini e donne, leggiamo direttamente dal database
-          if (data[0].persone_ospitate && data[0].persone_ospitate[gruppo] && data[0].persone_ospitate[gruppo][sub] !== undefined) {
-            const labelChiara = `Persone Ospitate - ${gruppo} - ${sub}`
-            const codice = personeOspitateCodici[gruppo][sub]
-            stats.push(...getNumericStatsStrutture(data.map((x:any)=>x.persone_ospitate?.[gruppo]?.[sub]), labelChiara, labelChiara, codice, total))
-          }
+          // Per uomini e donne, leggiamo direttamente dal database (SEMPRE, senza controllo data[0])
+          const labelChiara = `Persone Ospitate - ${gruppo} - ${sub}`
+          const codice = personeOspitateCodici[gruppo][sub]
+          stats.push(...getNumericStatsStrutture(data.map((x:any)=>x.persone_ospitate?.[gruppo]?.[sub] || 0), labelChiara, labelChiara, codice, total))
         }
       }
     }
@@ -450,12 +448,10 @@ export default function AmministratoriDashboard() {
           const codice = personeNonOspitateCodici[gruppo][sub]
           stats.push(...getNumericStatsStrutture(valoriCalcolati, labelChiara, labelChiara, codice, total))
         } else {
-          // Per uomini e donne, leggiamo direttamente dal database
-          if (data[0].persone_non_ospitate && data[0].persone_non_ospitate[gruppo] && data[0].persone_non_ospitate[gruppo][sub] !== undefined) {
-            const labelChiara = `Persone Non Ospitate - ${gruppo} - ${sub}`
-            const codice = personeNonOspitateCodici[gruppo][sub]
-            stats.push(...getNumericStatsStrutture(data.map((x:any)=>x.persone_non_ospitate?.[gruppo]?.[sub]), labelChiara, labelChiara, codice, total))
-          }
+          // Per uomini e donne, leggiamo direttamente dal database (SEMPRE, senza controllo data[0])
+          const labelChiara = `Persone Non Ospitate - ${gruppo} - ${sub}`
+          const codice = personeNonOspitateCodici[gruppo][sub]
+          stats.push(...getNumericStatsStrutture(data.map((x:any)=>x.persone_non_ospitate?.[gruppo]?.[sub] || 0), labelChiara, labelChiara, codice, total))
         }
       }
     }
@@ -762,7 +758,7 @@ export default function AmministratoriDashboard() {
       stats.push(stat)
     }
 
-    // Persone seguite (B1U, B1D, B1T)
+    // Persone seguite (B1U, B1D, B1T) e Persone maggiorenni (B2U, B2D, B2T)
     const personaleLabels = {
       'persone_seguite': 'Persone Seguite',
       'persone_maggiorenni': 'Persone Maggiorenni'
@@ -774,10 +770,18 @@ export default function AmministratoriDashboard() {
     
     (['persone_seguite','persone_maggiorenni'] as const).forEach((key: 'persone_seguite'|'persone_maggiorenni') => {
       (['uomini','donne','totale'] as const).forEach((sub: 'uomini'|'donne'|'totale') => {
-        if (data[0][key] && data[0][key][sub] !== undefined) {
-          const labelChiara = `${personaleLabels[key]} - ${sub.charAt(0).toUpperCase() + sub.slice(1)}`
-          const codice = personaleCodici[key][sub]
-          stats.push(...getNumericStatsOperatori(data.map((x:any)=>x[key]?.[sub]), labelChiara, labelChiara, codice))
+        const labelChiara = `${personaleLabels[key]} - ${sub.charAt(0).toUpperCase() + sub.slice(1)}`
+        const codice = personaleCodici[key][sub]
+        
+        // Per 'totale', calcoliamo uomini + donne
+        if (sub === 'totale') {
+          const valoriCalcolati = data.map((x:any) => 
+            (x[key]?.uomini || 0) + (x[key]?.donne || 0)
+          )
+          stats.push(...getNumericStatsOperatori(valoriCalcolati, labelChiara, labelChiara, codice))
+        } else {
+          // Per uomini e donne, leggiamo direttamente (SEMPRE, senza controllo data[0])
+          stats.push(...getNumericStatsOperatori(data.map((x:any)=>x[key]?.[sub] || 0), labelChiara, labelChiara, codice))
         }
       })
     })
@@ -881,35 +885,33 @@ export default function AmministratoriDashboard() {
       stats.push(...getTextStatsOperatori(interventiPotenziareAltro, 'Interventi Potenziare Altro', 'Interventi Potenziare Altro', 'B5_11SPEC'))
     }
 
-    // Difficoltà uscita (C1 - C9, numerici da 1 a 10)
-    if (data[0].difficolta_uscita) {
-      const difficoltaKeys = ['problemi_economici','trovare_lavoro','lavori_qualita','trovare_casa','discriminazioni','salute_fisica','problemi_psicologici','difficolta_linguistiche','altro']
-      difficoltaKeys.forEach((f: any, idx) => {
-        const values = data.map((x:any)=>x.difficolta_uscita?.[f]).filter(val => val !== undefined && val !== null && val !== '')
+    // Difficoltà uscita (C1 - C9, numerici da 1 a 10) - SEMPRE generare statistiche
+    const difficoltaKeys = ['problemi_economici','trovare_lavoro','lavori_qualita','trovare_casa','discriminazioni','salute_fisica','problemi_psicologici','difficolta_linguistiche','altro']
+    difficoltaKeys.forEach((f: any, idx) => {
+      const values = data.map((x:any)=>x.difficolta_uscita?.[f]).filter(val => val !== undefined && val !== null && val !== '')
+      
+      if (values.length > 0) {
+        const codice = `C${idx + 1}`
+        // Raggruppa per grado di difficoltà (1-10)
+        const valueCounts = values.reduce((acc: Record<number, number>, val) => {
+          acc[val] = (acc[val] || 0) + 1
+          return acc
+        }, {})
         
-        if (values.length > 0) {
-          const codice = `C${idx + 1}`
-          // Raggruppa per grado di difficoltà (1-10)
-          const valueCounts = values.reduce((acc: Record<number, number>, val) => {
-            acc[val] = (acc[val] || 0) + 1
-            return acc
-          }, {})
-          
-          Object.entries(valueCounts).forEach(([grado, count]) => {
-            stats.push({
-              Codice: codice,
-              Domanda: `Difficoltà Uscita - ${f.replace(/_/g, ' ')}`,
-              Risposta: `Grado ${grado}`,
-              Frequenza: count,
-              Percentuale: `${((count / data.length) * 100).toFixed(1)}%`
-            })
+        Object.entries(valueCounts).forEach(([grado, count]) => {
+          stats.push({
+            Codice: codice,
+            Domanda: `Difficoltà Uscita - ${f.replace(/_/g, ' ')}`,
+            Risposta: `Grado ${grado}`,
+            Frequenza: count,
+            Percentuale: `${((count / data.length) * 100).toFixed(1)}%`
           })
-        }
-      })
-      const difficoltaAltro = data.map((x:any)=>x.difficolta_uscita?.altro_specificare).filter(val => val && val.trim() !== '')
-      if (difficoltaAltro.length > 0) {
-        stats.push(...getTextStatsOperatori(difficoltaAltro, 'Difficoltà Uscita Altro', 'Difficoltà Uscita Altro', 'C9SPEC'))
+        })
       }
+    })
+    const difficoltaAltro = data.map((x:any)=>x.difficolta_uscita?.altro_specificare).filter(val => val && val.trim() !== '')
+    if (difficoltaAltro.length > 0) {
+      stats.push(...getTextStatsOperatori(difficoltaAltro, 'Difficoltà Uscita Altro', 'Difficoltà Uscita Altro', 'C9SPEC'))
     }
 
     return stats
