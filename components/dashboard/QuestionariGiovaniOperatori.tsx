@@ -67,12 +67,15 @@ type QuestionarioGiovani = {
   titolo_studio: number;
   attivita_precedenti: {
     studiavo: boolean;
-    lavoravo_stabile: boolean;
-    lavoravo_saltuario: boolean;
+    lavoravo_stabile?: boolean;
+    lavoravo_stabilmente?: boolean;
+    lavoravo_saltuario?: boolean;
+    lavoravo_saltuariamente?: boolean;
     corso_formazione: boolean;
     altro: boolean;
     nessuna: boolean;
-    altro_spec: string;
+    altro_spec?: string;
+    altro_specificare?: string;
   };
   orientamento_lavoro: {
     usufruito: boolean;
