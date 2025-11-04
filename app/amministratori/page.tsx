@@ -1232,7 +1232,7 @@ export default function AmministratoriDashboard() {
     }
 
     // C3 - Orientamento lavoro
-    const orientamentoLavoroCount = data.filter(item => item.orientamento_lavoro === true || item.orientamento_lavoro === 1).length
+    const orientamentoLavoroCount = data.filter(item => item.orientamento_lavoro?.usufruito === true || item.orientamento_lavoro === true || item.orientamento_lavoro === 1).length
     stats.push({
       Codice: 'C3',
       Domanda: 'Orientamento Lavoro',
@@ -1341,7 +1341,8 @@ export default function AmministratoriDashboard() {
     }
 
     // C8 - Lavoro attuale (campo testuale) - Sempre mostra anche se vuoto
-    const lavoroAttuale = data.map((x:any)=>x.lavoro_attuale).filter(isValidString)
+    // Nel database si salva come lavoro_attuale.descrizione (oggetto)
+    const lavoroAttuale = data.map((x:any)=> x.lavoro_attuale?.descrizione || x.lavoro_attuale || '').filter(isValidString)
     if (lavoroAttuale.length > 0) {
       stats.push(...getTextStatsGiovani(lavoroAttuale, 'Lavoro Attuale', 'Lavoro Attuale', 'C8'))
     }
