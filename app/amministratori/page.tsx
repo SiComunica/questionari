@@ -107,8 +107,13 @@ export default function AmministratoriDashboard() {
   }
 
   // Utility per testo libero
-  function getTextStatsStruttureCustom(arr: string[], label: string, domanda: string, codice: string, totalQuestionari?: number): Array<StatRow> {
-    const valid = arr.filter((x: string) => typeof x === 'string' && x.trim() !== '')
+  function getTextStatsStruttureCustom(arr: any[], label: string, domanda: string, codice: string, totalQuestionari?: number): Array<StatRow> {
+    const valid = arr.filter((x: any) => {
+      if (x == null) return false
+      if (typeof x !== 'string') return false
+      if (x.trim() === '') return false
+      return true
+    })
     if (valid.length === 0) return []
     // Usa il totale dei questionari ricevuti, non solo i valori validi
     const total = totalQuestionari || arr.length
@@ -730,8 +735,13 @@ export default function AmministratoriDashboard() {
   }
 
   // Utility per testo libero operatori
-  function getTextStatsOperatori(arr: string[], label: string, domanda: string, codice: string = ''): Array<{Codice: string, Domanda: string, Risposta: string, Frequenza: number, Percentuale: string}> {
-    const valid = arr.filter((x: string) => typeof x === 'string' && x.trim() !== '')
+  function getTextStatsOperatori(arr: any[], label: string, domanda: string, codice: string = ''): Array<{Codice: string, Domanda: string, Risposta: string, Frequenza: number, Percentuale: string}> {
+    const valid = arr.filter((x: any) => {
+      if (x == null) return false
+      if (typeof x !== 'string') return false
+      if (x.trim() === '') return false
+      return true
+    })
     if (valid.length === 0) return []
     // La percentuale deve essere calcolata sul totale delle risposte valide
     const total = valid.length
@@ -975,8 +985,13 @@ export default function AmministratoriDashboard() {
   }
 
   // Utility per testo libero giovani
-  function getTextStatsGiovani(arr: string[], label: string, domanda: string, codice: string = ''): Array<{Codice: string, Domanda: string, Risposta: string, Frequenza: number, Percentuale: string}> {
-    const valid = arr.filter((x: string) => typeof x === 'string' && x.trim() !== '')
+  function getTextStatsGiovani(arr: any[], label: string, domanda: string, codice: string = ''): Array<{Codice: string, Domanda: string, Risposta: string, Frequenza: number, Percentuale: string}> {
+    const valid = arr.filter((x: any) => {
+      if (x == null) return false
+      if (typeof x !== 'string') return false
+      if (x.trim() === '') return false
+      return true
+    })
     if (valid.length === 0) return []
     // La percentuale deve essere calcolata sul totale delle risposte valide
     const total = valid.length
