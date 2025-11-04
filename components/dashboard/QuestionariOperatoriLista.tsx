@@ -333,13 +333,14 @@ export default function QuestionariOperatoriLista() {
           PROF: parseInt(professioneTipo) || 13,
           PROF_SPEC: professioneSpec,
           
-          // Persone seguite
+          // Persone seguite (B1U, B1D, B1T - TOTALE CALCOLATO)
           B1U: persone_seguite.uomini || 0,
           B1D: persone_seguite.donne || 0,
-          B1T: persone_seguite.totale || 0,
+          B1T: (persone_seguite.uomini || 0) + (persone_seguite.donne || 0),
+          // Persone maggiorenni (B2U, B2D, B2T - TOTALE CALCOLATO)
           B2U: persone_maggiorenni.uomini || 0,
           B2D: persone_maggiorenni.donne || 0,
-          B2T: persone_maggiorenni.totale || 0,
+          B2T: (persone_maggiorenni.uomini || 0) + (persone_maggiorenni.donne || 0),
           
           // Caratteristiche persone seguite
           B3_1: caratteristiche_persone.stranieri_migranti ? 1 : 0,

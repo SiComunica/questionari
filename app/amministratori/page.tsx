@@ -618,8 +618,32 @@ export default function AmministratoriDashboard() {
       stats.push(...getTextStatsStruttureCustom(attivitaInserimentoCriticita, 'Attività Inserimento Criticità (D3.CRIT)', 'Attività Inserimento Criticità', 'D3.CRIT', total))
     }
     
-    // Nuove attività (D4)
-    stats.push(...getTextStatsStruttureCustom(data.flatMap((x:any)=>x.nuove_attivita||[]), 'Nuove Attività', 'Nuove Attività', 'D4', total))
+    // D4 - Prevedete di realizzare nei prossimi due anni esperienze significative? (0=No, 1=Sì)
+    const d4Values = data.map((x:any) => {
+      if (x.nuove_esperienze_previste !== undefined) {
+        return x.nuove_esperienze_previste ? 1 : 0
+      }
+      if (x.nuove_attivita && Array.isArray(x.nuove_attivita) && x.nuove_attivita.some((a: string) => a && a.trim() !== '')) {
+        return 1
+      }
+      return 0
+    })
+    const d4Si = d4Values.filter((v: number) => v === 1).length
+    const d4No = d4Values.filter((v: number) => v === 0).length
+    stats.push({
+      Codice: 'D4',
+      Domanda: 'Nuove esperienze previste prossimi 2 anni',
+      Risposta: 'Sì',
+      Frequenza: d4Si,
+      Percentuale: `${((d4Si / total) * 100).toFixed(1)}%`
+    })
+    stats.push({
+      Codice: 'D4',
+      Domanda: 'Nuove esperienze previste prossimi 2 anni',
+      Risposta: 'No',
+      Frequenza: d4No,
+      Percentuale: `${((d4No / total) * 100).toFixed(1)}%`
+    })
     
     // Collaborazioni (E1): array di oggetti con soggetto, tipo, oggetto
     // Codici: E1.1SOGG, E1.2SOGG, E1.3SOGG, E1.1TIPO, ecc. → usiamo E1.SOGG, E1.TIPO, E1.OGGETTO per aggregare

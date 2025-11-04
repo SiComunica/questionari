@@ -468,8 +468,13 @@ export default function QuestionariStruttureNew() {
         'D3.3PFOR': q.attivita_inserimento?.[2]?.punti_forza || '',
         'D3.3CRIT': q.attivita_inserimento?.[2]?.criticita || '',
 
-        // D4 (colonna richiesta dal tracciato, placeholder se non presente nel modello dati)
-        'D4': '',
+        // D4 - Prevedete di realizzare nei prossimi due anni esperienze significative? (0=No, 1=Sì)
+        // Gestisce sia boolean che array nuove_attivita (se array non vuoto = 1)
+        'D4': (q as any).nuove_esperienze_previste !== undefined 
+          ? ((q as any).nuove_esperienze_previste ? 1 : 0)
+          : (q as any).nuove_attivita && Array.isArray((q as any).nuove_attivita) && (q as any).nuove_attivita.some((a: string) => a && a.trim() !== '')
+            ? 1 
+            : 0,
 
         // Collaborazioni
         'E1.1SOGG': q.collaborazioni?.[0]?.soggetto || '',
