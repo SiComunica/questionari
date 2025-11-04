@@ -216,9 +216,9 @@ export default function AmministratoriDashboard() {
     // B1D - Donne
     stats.push(...getNumericStatsStrutture(data.map((x:any)=>x.personale_retribuito_donne), 'Personale Retribuito - Donne', 'Personale Retribuito - Donne', 'B1D', total))
     
-    // B1T - Totale (SOMMA di tutti i questionari)
+    // B1T - Totale (FREQUENZA di uomini + donne per ogni questionario)
     const b1Totale = data.map((x:any) => (x.personale_retribuito_uomini || 0) + (x.personale_retribuito_donne || 0))
-    stats.push(...getSumStatsStrutture(b1Totale, 'Totale', 'Personale Retribuito - Totale', 'B1T'))
+    stats.push(...getNumericStatsStrutture(b1Totale, 'Totale', 'Personale Retribuito - Totale', 'B1T', total))
 
     // Personale Volontario (B2U, B2D, B2T)
     // B2U - Uomini
@@ -227,9 +227,9 @@ export default function AmministratoriDashboard() {
     // B2D - Donne
     stats.push(...getNumericStatsStrutture(data.map((x:any)=>x.personale_volontario_donne), 'Personale Volontario - Donne', 'Personale Volontario - Donne', 'B2D', total))
     
-    // B2T - Totale (SOMMA di tutti i questionari)
+    // B2T - Totale (FREQUENZA di uomini + donne per ogni questionario)
     const b2Totale = data.map((x:any) => (x.personale_volontario_uomini || 0) + (x.personale_volontario_donne || 0))
-    stats.push(...getSumStatsStrutture(b2Totale, 'Totale', 'Personale Volontario - Totale', 'B2T'))
+    stats.push(...getNumericStatsStrutture(b2Totale, 'Totale', 'Personale Volontario - Totale', 'B2T', total))
 
     // Figure professionali (B3)
     const figureProf = [
@@ -289,42 +289,40 @@ export default function AmministratoriDashboard() {
     
     // Persone Ospitate C1A, C1B, C1C (i gruppi effettivi dal database)
     for (const gruppo of personeGruppi) {
-      for (const sub of personeSubKeys) {
-        // Per 'totale', calcoliamo SOMMA uomini + donne di tutti i questionari
-        if (sub === 'totale') {
-          const valoriCalcolati = data.map((x:any) => 
-            (x.persone_ospitate?.[gruppo]?.uomini || 0) + (x.persone_ospitate?.[gruppo]?.donne || 0)
-          )
-          const labelChiara = `Totale`
-          const codice = personeOspitateCodici[gruppo][sub]
-          stats.push(...getSumStatsStrutture(valoriCalcolati, labelChiara, `Persone Ospitate - ${gruppo} - ${sub}`, codice))
-        } else {
-          // Per uomini e donne, leggiamo direttamente dal database (SEMPRE, senza controllo data[0])
-          const labelChiara = `Persone Ospitate - ${gruppo} - ${sub}`
-          const codice = personeOspitateCodici[gruppo][sub]
-          stats.push(...getNumericStatsStrutture(data.map((x:any)=>x.persone_ospitate?.[gruppo]?.[sub] || 0), labelChiara, labelChiara, codice, total))
-        }
-      }
+      // UOMINI
+      const uominiValues = data.map((x:any)=>x.persone_ospitate?.[gruppo]?.uomini || 0)
+      stats.push(...getNumericStatsStrutture(uominiValues, `Persone Ospitate - ${gruppo} - uomini`, `Persone Ospitate - ${gruppo} - uomini`, personeOspitateCodici[gruppo]['uomini'], total))
+      
+      // DONNE
+      const donneValues = data.map((x:any)=>x.persone_ospitate?.[gruppo]?.donne || 0)
+      stats.push(...getNumericStatsStrutture(donneValues, `Persone Ospitate - ${gruppo} - donne`, `Persone Ospitate - ${gruppo} - donne`, personeOspitateCodici[gruppo]['donne'], total))
+      
+      // TOTALE = Conta quanti questionari hanno uomini + donne = valore specifico
+      // Calcola il totale per ogni questionario
+      const totaliValues = data.map((x:any) => 
+        (x.persone_ospitate?.[gruppo]?.uomini || 0) + (x.persone_ospitate?.[gruppo]?.donne || 0)
+      )
+      stats.push(...getNumericStatsStrutture(totaliValues, `Totale`, `Persone Ospitate - ${gruppo} - totale`, personeOspitateCodici[gruppo]['totale'], total))
     }
 
-    // Totali complessivi C1.T.U (SOMMA uomini), C1T.D (SOMMA donne), C1T.T (SOMMA tutti)
-    // C1.T.U = SOMMA di (C1A.U + C1B.U + C1C.U) per ogni questionario
+    // Totali complessivi C1.T.U (frequenza uomini totali), C1T.D (frequenza donne totali), C1T.T (frequenza tutti)
+    // C1.T.U = Frequenza di (C1A.U + C1B.U + C1C.U) per ogni questionario
     const totalUomini = data.map((x:any) => 
       (x.persone_ospitate?.fino_16?.uomini || 0) + 
       (x.persone_ospitate?.da_16_a_18?.uomini || 0) + 
       (x.persone_ospitate?.maggiorenni?.uomini || 0)
     )
-    stats.push(...getSumStatsStrutture(totalUomini, 'Totale Uomini', 'Persone Ospitate - Totale Uomini', 'C1.T.U'))
+    stats.push(...getNumericStatsStrutture(totalUomini, 'Totale Uomini', 'Persone Ospitate - Totale Uomini', 'C1.T.U', total))
 
-    // C1T.D = SOMMA di (C1A.D + C1B.D + C1C.D) per ogni questionario
+    // C1T.D = Frequenza di (C1A.D + C1B.D + C1C.D) per ogni questionario
     const totalDonne = data.map((x:any) => 
       (x.persone_ospitate?.fino_16?.donne || 0) + 
       (x.persone_ospitate?.da_16_a_18?.donne || 0) + 
       (x.persone_ospitate?.maggiorenni?.donne || 0)
     )
-    stats.push(...getSumStatsStrutture(totalDonne, 'Totale Donne', 'Persone Ospitate - Totale Donne', 'C1T.D'))
+    stats.push(...getNumericStatsStrutture(totalDonne, 'Totale Donne', 'Persone Ospitate - Totale Donne', 'C1T.D', total))
 
-    // C1T.T = SOMMA totale di tutti (uomini + donne di tutte le fasce)
+    // C1T.T = Frequenza totale di tutti (uomini + donne di tutte le fasce)
     const totalTotale = data.map((x:any) => 
       (x.persone_ospitate?.fino_16?.uomini || 0) + 
       (x.persone_ospitate?.da_16_a_18?.uomini || 0) + 
@@ -333,7 +331,7 @@ export default function AmministratoriDashboard() {
       (x.persone_ospitate?.da_16_a_18?.donne || 0) + 
       (x.persone_ospitate?.maggiorenni?.donne || 0)
     )
-    stats.push(...getSumStatsStrutture(totalTotale, 'Totale Generale', 'Persone Ospitate - Totale Generale', 'C1T.T'))
+    stats.push(...getNumericStatsStrutture(totalTotale, 'Totale Generale', 'Persone Ospitate - Totale Generale', 'C1T.T', total))
 
     // Mapping valori form -> valori standard per caratteristiche adolescenti
     const mappingAdolescenti: Record<string, string[]> = {
@@ -462,42 +460,39 @@ export default function AmministratoriDashboard() {
     
     // Persone Non Ospitate C3A, C3B, C3C (i gruppi effettivi dal database)
     for (const gruppo of personeGruppi) {
-      for (const sub of personeSubKeys) {
-        // Per 'totale', calcoliamo SOMMA uomini + donne di tutti i questionari
-        if (sub === 'totale') {
-          const valoriCalcolati = data.map((x:any) => 
-            (x.persone_non_ospitate?.[gruppo]?.uomini || 0) + (x.persone_non_ospitate?.[gruppo]?.donne || 0)
-          )
-          const labelChiara = `Totale`
-          const codice = personeNonOspitateCodici[gruppo][sub]
-          stats.push(...getSumStatsStrutture(valoriCalcolati, labelChiara, `Persone Non Ospitate - ${gruppo} - ${sub}`, codice))
-        } else {
-          // Per uomini e donne, leggiamo direttamente dal database (SEMPRE, senza controllo data[0])
-          const labelChiara = `Persone Non Ospitate - ${gruppo} - ${sub}`
-          const codice = personeNonOspitateCodici[gruppo][sub]
-          stats.push(...getNumericStatsStrutture(data.map((x:any)=>x.persone_non_ospitate?.[gruppo]?.[sub] || 0), labelChiara, labelChiara, codice, total))
-        }
-      }
+      // UOMINI
+      const uominiValues = data.map((x:any)=>x.persone_non_ospitate?.[gruppo]?.uomini || 0)
+      stats.push(...getNumericStatsStrutture(uominiValues, `Persone Non Ospitate - ${gruppo} - uomini`, `Persone Non Ospitate - ${gruppo} - uomini`, personeNonOspitateCodici[gruppo]['uomini'], total))
+      
+      // DONNE
+      const donneValues = data.map((x:any)=>x.persone_non_ospitate?.[gruppo]?.donne || 0)
+      stats.push(...getNumericStatsStrutture(donneValues, `Persone Non Ospitate - ${gruppo} - donne`, `Persone Non Ospitate - ${gruppo} - donne`, personeNonOspitateCodici[gruppo]['donne'], total))
+      
+      // TOTALE = Conta quanti questionari hanno uomini + donne = valore specifico
+      const totaliValues = data.map((x:any) => 
+        (x.persone_non_ospitate?.[gruppo]?.uomini || 0) + (x.persone_non_ospitate?.[gruppo]?.donne || 0)
+      )
+      stats.push(...getNumericStatsStrutture(totaliValues, `Totale`, `Persone Non Ospitate - ${gruppo} - totale`, personeNonOspitateCodici[gruppo]['totale'], total))
     }
 
-    // Totali complessivi C3.T.U (SOMMA uomini), C3T.D (SOMMA donne), C3T.T (SOMMA tutti)
-    // C3.T.U = SOMMA di (C3A.U + C3B.U + C3C.U) per ogni questionario
+    // Totali complessivi C3.T.U (frequenza uomini totali), C3T.D (frequenza donne totali), C3T.T (frequenza tutti)
+    // C3.T.U = Frequenza di (C3A.U + C3B.U + C3C.U) per ogni questionario
     const totalNonOspitatiUomini = data.map((x:any) => 
       (x.persone_non_ospitate?.fino_16?.uomini || 0) + 
       (x.persone_non_ospitate?.da_16_a_18?.uomini || 0) + 
       (x.persone_non_ospitate?.maggiorenni?.uomini || 0)
     )
-    stats.push(...getSumStatsStrutture(totalNonOspitatiUomini, 'Totale Uomini', 'Persone Non Ospitate - Totale Uomini', 'C3.T.U'))
+    stats.push(...getNumericStatsStrutture(totalNonOspitatiUomini, 'Totale Uomini', 'Persone Non Ospitate - Totale Uomini', 'C3.T.U', total))
 
-    // C3T.D = SOMMA di (C3A.D + C3B.D + C3C.D) per ogni questionario
+    // C3T.D = Frequenza di (C3A.D + C3B.D + C3C.D) per ogni questionario
     const totalNonOspitateDonne = data.map((x:any) => 
       (x.persone_non_ospitate?.fino_16?.donne || 0) + 
       (x.persone_non_ospitate?.da_16_a_18?.donne || 0) + 
       (x.persone_non_ospitate?.maggiorenni?.donne || 0)
     )
-    stats.push(...getSumStatsStrutture(totalNonOspitateDonne, 'Totale Donne', 'Persone Non Ospitate - Totale Donne', 'C3T.D'))
+    stats.push(...getNumericStatsStrutture(totalNonOspitateDonne, 'Totale Donne', 'Persone Non Ospitate - Totale Donne', 'C3T.D', total))
 
-    // C3T.T = SOMMA totale di tutti (uomini + donne di tutte le fasce)
+    // C3T.T = Frequenza totale di tutti (uomini + donne di tutte le fasce)
     const totalNonOspitateTotale = data.map((x:any) => 
       (x.persone_non_ospitate?.fino_16?.uomini || 0) + 
       (x.persone_non_ospitate?.da_16_a_18?.uomini || 0) + 
@@ -506,7 +501,7 @@ export default function AmministratoriDashboard() {
       (x.persone_non_ospitate?.da_16_a_18?.donne || 0) + 
       (x.persone_non_ospitate?.maggiorenni?.donne || 0)
     )
-    stats.push(...getSumStatsStrutture(totalNonOspitateTotale, 'Totale Generale', 'Persone Non Ospitate - Totale Generale', 'C3T.T'))
+    stats.push(...getNumericStatsStrutture(totalNonOspitateTotale, 'Totale Generale', 'Persone Non Ospitate - Totale Generale', 'C3T.T', total))
 
     // Caratteristiche non ospiti adolescenti - solo valori standard (C4.xA nell'export)
     caratteristicheOspitiAdolescenti.forEach((car, idx) => {
@@ -842,12 +837,12 @@ export default function AmministratoriDashboard() {
         const labelChiara = `${personaleLabels[key]} - ${sub.charAt(0).toUpperCase() + sub.slice(1)}`
         const codice = personaleCodici[key][sub]
         
-        // Per 'totale', calcoliamo SOMMA uomini + donne di tutti i questionari
+        // Per 'totale', calcoliamo FREQUENZA di uomini + donne per ogni questionario
         if (sub === 'totale') {
           const valoriCalcolati = data.map((x:any) => 
             (x[key]?.uomini || 0) + (x[key]?.donne || 0)
           )
-          stats.push(...getSumStatsOperatori(valoriCalcolati, 'Totale', labelChiara, codice))
+          stats.push(...getNumericStatsOperatori(valoriCalcolati, 'Totale', labelChiara, codice))
         } else {
           // Per uomini e donne, leggiamo direttamente (SEMPRE, senza controllo data[0])
           stats.push(...getNumericStatsOperatori(data.map((x:any)=>x[key]?.[sub] || 0), labelChiara, labelChiara, codice))
