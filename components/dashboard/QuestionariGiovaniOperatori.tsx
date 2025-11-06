@@ -195,7 +195,7 @@ type QuestionarioGiovani = {
     casa: number;
   };
   aiuto_futuro: string;
-  pronto_uscita: boolean;
+  pronto_uscita: boolean | { pronto: boolean; motivazione: string };
   pronto_uscita_perche_no: string;
   pronto_uscita_perche_si: string;
   emozioni_uscita: {
@@ -387,9 +387,9 @@ export default function QuestionariGiovaniOperatori() {
         'E2.5': q.obiettivi_realizzabili?.salute || 0,
         'E2.6': q.obiettivi_realizzabili?.casa || 0,
         'E3': q.aiuto_futuro || '',
-        'E4': q.pronto_uscita ? 1 : 0,
-        'E4.1': q.pronto_uscita_perche_no || '',
-        'E4.2': q.pronto_uscita_perche_si || '',
+        'E4': (q.pronto_uscita?.pronto || q.pronto_uscita === true || q.pronto_uscita === 1) ? 1 : 0,
+        'E4.1': (typeof q.pronto_uscita === 'object' && !q.pronto_uscita?.pronto ? q.pronto_uscita?.motivazione : q.pronto_uscita_perche_no) || '',
+        'E4.2': (typeof q.pronto_uscita === 'object' && q.pronto_uscita?.pronto ? q.pronto_uscita?.motivazione : q.pronto_uscita_perche_si) || '',
         'E5.1': q.emozioni_uscita?.felicita ? 1 : 0,
         'E5.2': q.emozioni_uscita?.tristezza ? 1 : 0,
         'E5.3': q.emozioni_uscita?.curiosita ? 1 : 0,

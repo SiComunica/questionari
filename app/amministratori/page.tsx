@@ -1653,8 +1653,13 @@ export default function AmministratoriDashboard() {
     // E3 - Aiuto futuro (campo testuale)
     stats.push(...getTextStatsGiovani(data.map((x:any)=>x.aiuto_futuro), 'Aiuto Futuro', 'Aiuto Futuro', 'E3'))
 
-    // E4 - Pronto uscita (boolean)
-    const prontoUscitaCount = data.filter(item => item.pronto_uscita === true || item.pronto_uscita === 1 || item.pronto_uscita === '1').length
+    // E4 - Pronto uscita (boolean or object with pronto property)
+    const prontoUscitaCount = data.filter(item => {
+      if (typeof item.pronto_uscita === 'object' && item.pronto_uscita !== null) {
+        return item.pronto_uscita.pronto === true
+      }
+      return item.pronto_uscita === true || item.pronto_uscita === 1 || item.pronto_uscita === '1'
+    }).length
     stats.push({
       Codice: 'E4',
       Domanda: 'Pronto Uscita',
@@ -1671,10 +1676,20 @@ export default function AmministratoriDashboard() {
     })
     
     // E4.1 - Pronto uscita perché no (campo testuale)
-    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.pronto_uscita_perche_no), 'Pronto Uscita Perché No', 'Pronto Uscita Perché No', 'E4.1'))
+    stats.push(...getTextStatsGiovani(data.map((x:any)=> {
+      if (typeof x.pronto_uscita === 'object' && x.pronto_uscita !== null && !x.pronto_uscita.pronto) {
+        return x.pronto_uscita.motivazione
+      }
+      return x.pronto_uscita_perche_no
+    }), 'Pronto Uscita Perché No', 'Pronto Uscita Perché No', 'E4.1'))
     
     // E4.2 - Pronto uscita perché sì (campo testuale)
-    stats.push(...getTextStatsGiovani(data.map((x:any)=>x.pronto_uscita_perche_si), 'Pronto Uscita Perché Sì', 'Pronto Uscita Perché Sì', 'E4.2'))
+    stats.push(...getTextStatsGiovani(data.map((x:any)=> {
+      if (typeof x.pronto_uscita === 'object' && x.pronto_uscita !== null && x.pronto_uscita.pronto) {
+        return x.pronto_uscita.motivazione
+      }
+      return x.pronto_uscita_perche_si
+    }), 'Pronto Uscita Perché Sì', 'Pronto Uscita Perché Sì', 'E4.2'))
 
     // E5.1-E5.10 - Emozioni uscita
     // SEMPRE generare
