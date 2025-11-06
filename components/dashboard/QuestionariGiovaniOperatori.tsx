@@ -195,7 +195,7 @@ type QuestionarioGiovani = {
     casa: number;
   };
   aiuto_futuro: string;
-  pronto_uscita: boolean | { pronto: boolean; motivazione: string };
+  pronto_uscita: boolean | number | { pronto: boolean; motivazione: string };
   pronto_uscita_perche_no: string;
   pronto_uscita_perche_si: string;
   emozioni_uscita: {
