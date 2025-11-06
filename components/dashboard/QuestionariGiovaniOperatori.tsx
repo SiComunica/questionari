@@ -59,10 +59,14 @@ type QuestionarioGiovani = {
     situazione: number;
   };
   famiglia_origine: {
-    fratelli: boolean;
-    nonni: boolean;
-    altri_parenti: boolean;
-    non_parenti: boolean;
+    padre?: boolean;
+    madre?: boolean;
+    fratelli?: boolean;
+    fratelli_sorelle?: boolean;
+    nonni?: boolean;
+    altri_parenti?: boolean;
+    non_parenti?: boolean;
+    altri_conviventi?: boolean;
   };
   titolo_studio: number;
   attivita_precedenti: {
