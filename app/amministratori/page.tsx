@@ -1192,8 +1192,6 @@ export default function AmministratoriDashboard() {
     
     famigliaOrigine.forEach(({ membro, codice, label }) => {
       const count = data.filter(item => {
-        if (codice === 'B8.1') return item.padre !== null && item.padre !== undefined
-        if (codice === 'B8.2') return item.madre !== null && item.madre !== undefined
         if (Array.isArray(item.famiglia_origine)) {
           return item.famiglia_origine.includes(membro)
         } else if (typeof item.famiglia_origine === 'object' && item.famiglia_origine !== null) {
