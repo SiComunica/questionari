@@ -1723,6 +1723,330 @@ export default function AmministratoriDashboard() {
     return stats
   }
 
+  // Funzione per generare statistiche incrociate
+  const generateCrosstabs = async () => {
+    try {
+      toast.success('Generazione statistiche incrociate in corso...')
+      
+      // Recupera i dati dei giovani
+      const { data: giovaniData, error } = await supabase.from('operatorinew').select('*')
+      
+      if (error) throw error
+      if (!giovaniData || giovaniData.length === 0) {
+        toast.error('Nessun questionario giovani trovato')
+        return
+      }
+
+      // Carica le definizioni delle tabelle da generare (dal file locale)
+      const crosstabsDef = await fetch('/incrociate-data.json')
+        .then(res => res.json())
+
+      // Crea workbook per l'output
+      const workbook = XLSX.utils.book_new()
+
+      // Genera ogni tabella incrociata
+      for (let i = 0; i < crosstabsDef.length; i++) {
+        const def = crosstabsDef[i] as any
+        const sheetName = `${String(def.PROG).padStart(3, '0')}_${def.RIGHE}_x_${def.COLONNE}`.substring(0, 31)
+        
+        try {
+          const crosstab = buildCrosstab(giovaniData, def.RIGHE, def.COLONNE)
+          const ws = XLSX.utils.aoa_to_sheet(crosstab)
+          XLSX.utils.book_append_sheet(workbook, ws, sheetName)
+        } catch (err) {
+          console.error(`Errore nella tabella ${def.PROG}:`, err)
+        }
+        
+        // Aggiorna progresso ogni 50 tabelle
+        if (i % 50 === 0) {
+          toast.success(`Elaborate ${i} / ${crosstabsDef.length} tabelle...`)
+        }
+      }
+
+      // Salva il file
+      const fileName = `statistiche_incrociate_${format(new Date(), 'yyyy-MM-dd_HH-mm')}.xlsx`
+      XLSX.writeFile(workbook, fileName)
+
+      toast.success('Statistiche incrociate generate con successo!')
+    } catch (error) {
+      console.error('Errore:', error)
+      toast.error('Errore nella generazione delle statistiche incrociate')
+    }
+  }
+
+  // Funzione helper per costruire una singola tabella incrociata
+  function buildCrosstab(data: any[], rowField: string, colField: string): any[][] {
+    // Filtra i dati se il rowField è un criterio (es. "SOMMA D2.1+D2.2...")
+    let filteredData = data
+    if (rowField.includes('SOMMA')) {
+      filteredData = applyFilter(data, rowField)
+      rowField = colField // Per i filtri, usiamo solo le colonne
+    }
+
+    // Estrai i valori per righe e colonne
+    const rowValues = extractValues(filteredData, rowField)
+    const colValues = extractValues(filteredData, colField)
+
+    // Costruisci la tabella
+    const result: any[][] = []
+    
+    // Intestazione con nome del campo colonne
+    result.push([getFieldLabel(colField)])
+    result.push([]) // Riga vuota
+    
+    // Header della tabella
+    const colKeys = Array.from(new Set(colValues.map(v => v.value))).sort()
+    result.push([getFieldLabel(rowField), ...colKeys.map(k => formatValue(colField, k)), 'Totale complessivo'])
+
+    // Righe dei dati
+    const rowKeys = Array.from(new Set(rowValues.map(v => v.value))).sort()
+    rowKeys.forEach(rowKey => {
+      const row: any[] = [formatValue(rowField, rowKey)]
+      let rowTotal = 0
+      
+      colKeys.forEach(colKey => {
+        const count = countMatches(filteredData, rowField, rowKey, colField, colKey)
+        row.push(count)
+        rowTotal += count
+      })
+      
+      row.push(rowTotal)
+      result.push(row)
+    })
+
+    // Riga totale
+    const totalRow: any[] = ['Totale complessivo']
+    let grandTotal = 0
+    colKeys.forEach(colKey => {
+      const colTotal = countMatchesCol(filteredData, colField, colKey)
+      totalRow.push(colTotal)
+      grandTotal += colTotal
+    })
+    totalRow.push(grandTotal)
+    result.push(totalRow)
+
+    return result
+  }
+
+  // Funzione per applicare filtri (es. SOMMA D2.1+D2.2...)
+  function applyFilter(data: any[], filterExpr: string): any[] {
+    if (filterExpr.includes('SOMMA D2.1+D2.2+D2.3+D2.4+D2.5)>0')) {
+      return data.filter(item => {
+        const sum = (item.figura_aiuto?.padre ? 1 : 0) +
+                    (item.figura_aiuto?.madre ? 1 : 0) +
+                    (item.figura_aiuto?.fratelli ? 1 : 0) +
+                    (item.figura_aiuto?.altri_parenti ? 1 : 0) +
+                    (item.figura_aiuto?.amici ? 1 : 0)
+        return sum > 0
+      })
+    }
+    if (filterExpr.includes('SOMMA D2.6+D2.7+D2.8)>0')) {
+      return data.filter(item => {
+        const sum = (item.figura_aiuto?.tutore ? 1 : 0) +
+                    (item.figura_aiuto?.insegnanti ? 1 : 0) +
+                    (item.figura_aiuto?.figure_sostegno ? 1 : 0)
+        return sum > 0
+      })
+    }
+    return data
+  }
+
+  // Funzione per estrarre valori da un campo
+  function extractValues(data: any[], field: string): Array<{id: string, value: any}> {
+    return data.map((item, idx) => ({
+      id: item.id || idx.toString(),
+      value: getFieldValue(item, field)
+    }))
+  }
+
+  // Funzione per ottenere il valore di un campo dal questionario
+  function getFieldValue(item: any, field: string): any {
+    const fieldMap: Record<string, any> = {
+      // Fattori vulnerabilità (FV.1 - FV.16)
+      'FV.1': () => item.fattori_vulnerabilita?.fv1_stranieri ? 1 : 0,
+      'FV.2': () => item.fattori_vulnerabilita?.fv2_vittime_tratta ? 1 : 0,
+      'FV.3': () => item.fattori_vulnerabilita?.fv3_vittime_violenza ? 1 : 0,
+      'FV.4': () => item.fattori_vulnerabilita?.fv4_allontanati_famiglia ? 1 : 0,
+      'FV.5': () => item.fattori_vulnerabilita?.fv5_detenuti ? 1 : 0,
+      'FV.6': () => item.fattori_vulnerabilita?.fv6_ex_detenuti ? 1 : 0,
+      'FV.7': () => item.fattori_vulnerabilita?.fv7_esecuzione_penale ? 1 : 0,
+      'FV.8': () => item.fattori_vulnerabilita?.fv8_indigenti ? 1 : 0,
+      'FV.9': () => item.fattori_vulnerabilita?.fv9_rom_sinti ? 1 : 0,
+      'FV.10': () => item.fattori_vulnerabilita?.fv10_disabilita_fisica ? 1 : 0,
+      'FV.11': () => item.fattori_vulnerabilita?.fv11_disabilita_cognitiva ? 1 : 0,
+      'FV.12': () => item.fattori_vulnerabilita?.fv12_disturbi_psichiatrici ? 1 : 0,
+      'FV.13': () => item.fattori_vulnerabilita?.fv13_dipendenze ? 1 : 0,
+      'FV.14': () => item.fattori_vulnerabilita?.fv14_genitori_precoci ? 1 : 0,
+      'FV.15': () => item.fattori_vulnerabilita?.fv15_orientamento_sessuale ? 1 : 0,
+      'FV.16': () => item.fattori_vulnerabilita?.fv16_altro ? 1 : 0,
+      
+      // Sezione B - Dati anagrafici
+      'B1': () => item.sesso || 0,
+      'B2': () => item.classe_eta || 0,
+      'B4': () => item.cittadinanza || 0,
+      'B6': () => item.tempo_in_struttura || 0,
+      'B9': () => item.titolo_studio_madre || item.madre?.titolo_studio || 0,
+      'B11': () => item.titolo_studio_padre || item.padre?.titolo_studio || 0,
+      
+      // Sezione C - Formazione e lavoro
+      'C1': () => item.titolo_studio || 0,
+      'C2.1': () => item.attivita_precedenti?.studiavo ? 1 : 0,
+      'C2.2': () => (item.attivita_precedenti?.lavoravo_stabile || item.attivita_precedenti?.lavoravo_stabilmente) ? 1 : 0,
+      'C2.3': () => (item.attivita_precedenti?.lavoravo_saltuario || item.attivita_precedenti?.lavoravo_saltuariamente) ? 1 : 0,
+      'C2.4': () => item.attivita_precedenti?.corso_formazione ? 1 : 0,
+      'C2.5': () => item.attivita_precedenti?.altro ? 1 : 0,
+      'C2.6': () => item.attivita_precedenti?.nessuna ? 1 : 0,
+      'C3': () => item.orientamento_lavoro?.usufruito ? 1 : 0,
+      'C4.1': () => item.orientamento_luoghi?.scuola ? 1 : 0,
+      'C4.2': () => item.orientamento_luoghi?.enti_formazione ? 1 : 0,
+      'C4.3': () => item.orientamento_luoghi?.servizi_impiego ? 1 : 0,
+      'C4.4': () => item.orientamento_luoghi?.struttura ? 1 : 0,
+      'C4.5': () => item.orientamento_luoghi?.altro ? 1 : 0,
+      'C5.1': () => item.attivita_attuali?.studio ? 1 : 0,
+      'C5.2': () => item.attivita_attuali?.formazione ? 1 : 0,
+      'C5.3': () => item.attivita_attuali?.lavoro ? 1 : 0,
+      'C5.4': () => item.attivita_attuali?.ricerca_lavoro ? 1 : 0,
+      'C5.5': () => item.attivita_attuali?.nessuna ? 1 : 0,
+      
+      // Sezione D - Figure di aiuto
+      'D2.1': () => item.figura_aiuto?.padre ? 1 : 0,
+      'D2.2': () => item.figura_aiuto?.madre ? 1 : 0,
+      'D2.3': () => item.figura_aiuto?.fratelli ? 1 : 0,
+      'D2.4': () => item.figura_aiuto?.altri_parenti ? 1 : 0,
+      'D2.5': () => item.figura_aiuto?.amici ? 1 : 0,
+      'D2.6': () => item.figura_aiuto?.tutore ? 1 : 0,
+      'D2.7': () => item.figura_aiuto?.insegnanti ? 1 : 0,
+      'D2.8': () => item.figura_aiuto?.figure_sostegno ? 1 : 0,
+      'D2.9': () => item.figura_aiuto?.volontari ? 1 : 0,
+      'D2.10': () => item.figura_aiuto?.altre_persone ? 1 : 0,
+      
+      // Sezione E - Preoccupazioni e obiettivi
+      'E1.1': () => item.preoccupazioni_futuro?.pregiudizi || 0,
+      'E1.2': () => item.preoccupazioni_futuro?.solitudine || 0,
+      'E1.3': () => item.preoccupazioni_futuro?.relazioni || 0,
+      'E1.4': () => item.preoccupazioni_futuro?.trovare_lavoro || 0,
+      'E1.5': () => item.preoccupazioni_futuro?.mantenimento || 0,
+      'E1.6': () => item.preoccupazioni_futuro?.salute || 0,
+      'E1.7': () => item.preoccupazioni_futuro?.casa || 0,
+      'E1.8': () => item.preoccupazioni_futuro?.documenti || 0,
+      'E2.1': () => item.obiettivi_realizzabili?.pregiudizi || 0,
+      'E2.2': () => item.obiettivi_realizzabili?.solitudine || 0,
+      'E2.3': () => item.obiettivi_realizzabili?.relazioni || item.obiettivi_realizzabili?.famiglia || 0,
+      'E2.4': () => item.obiettivi_realizzabili?.trovare_lavoro || 0,
+      'E2.5': () => item.obiettivi_realizzabili?.salute || 0,
+      'E2.6': () => item.obiettivi_realizzabili?.casa || 0,
+      'E2.7': () => item.obiettivi_realizzabili?.documenti || 0,
+      'E2.8': () => item.obiettivi_realizzabili?.mantenimento || 0,
+      'E3': () => item.aiuto_futuro ? 1 : 0,
+      'E4': () => {
+        if (typeof item.pronto_uscita === 'object' && item.pronto_uscita !== null && 'pronto' in item.pronto_uscita) {
+          return item.pronto_uscita.pronto ? 1 : 0
+        }
+        return item.pronto_uscita ? 1 : 0
+      },
+      'E5.1': () => item.emozioni_uscita?.felicita ? 1 : 0,
+      'E5.2': () => item.emozioni_uscita?.tristezza ? 1 : 0,
+      'E5.3': () => item.emozioni_uscita?.curiosita ? 1 : 0,
+      'E5.4': () => item.emozioni_uscita?.preoccupazione ? 1 : 0,
+      'E5.5': () => item.emozioni_uscita?.paura ? 1 : 0,
+      'E5.6': () => item.emozioni_uscita?.liberazione ? 1 : 0,
+      'E5.7': () => item.emozioni_uscita?.solitudine ? 1 : 0,
+      'E5.8': () => item.emozioni_uscita?.rabbia ? 1 : 0,
+      'E5.9': () => item.emozioni_uscita?.speranza ? 1 : 0,
+      'E5.10': () => item.emozioni_uscita?.determinazione ? 1 : 0,
+      'E6': () => item.desiderio ? 1 : 0,
+      'PERCAUT': () => item.percorso_autonomia ? 1 : 0,
+      'VIVE': () => item.vive_in_struttura ? 1 : 0,
+    }
+
+    const getter = fieldMap[field]
+    return getter ? getter() : null
+  }
+
+  // Funzione per ottenere l'etichetta di un campo
+  function getFieldLabel(field: string): string {
+    const labels: Record<string, string> = {
+      'FV.1': 'Stranieri', 'FV.2': 'Vittime tratta', 'FV.3': 'Vittime violenza',
+      'FV.4': 'Allontanati famiglia', 'FV.5': 'Detenuti', 'FV.6': 'Ex detenuti',
+      'FV.7': 'Esecuzione penale', 'FV.8': 'Indigenti', 'FV.9': 'Rom/Sinti',
+      'FV.10': 'Disabilità fisica', 'FV.11': 'Disabilità cognitiva', 
+      'FV.12': 'Disturbi psichiatrici', 'FV.13': 'Dipendenze',
+      'FV.14': 'Genitori precoci', 'FV.15': 'Orientamento sessuale', 'FV.16': 'Altro',
+      'B1': 'Sesso', 'B2': 'Classe età', 'B4': 'Cittadinanza', 'B6': 'Tempo in struttura',
+      'B9': 'Titolo studio madre', 'B11': 'Titolo studio padre',
+      'C1': 'Titolo studio', 
+      'C2.1': 'Studiavo', 'C2.2': 'Lavoravo stabilmente', 'C2.3': 'Lavoravo saltuariamente',
+      'C2.4': 'Corso formazione', 'C2.5': 'Altro', 'C2.6': 'Nessuna',
+      'C3': 'Orientamento lavoro', 
+      'C4.1': 'Scuola/Università', 'C4.2': 'Enti formazione', 'C4.3': 'Servizi impiego',
+      'C4.4': 'Struttura', 'C4.5': 'Altro',
+      'C5.1': 'Studio', 'C5.2': 'Formazione', 'C5.3': 'Lavoro',
+      'C5.4': 'Ricerca lavoro', 'C5.5': 'Nessuna',
+      'D2.1': 'Padre', 'D2.2': 'Madre', 'D2.3': 'Fratelli', 'D2.4': 'Altri parenti',
+      'D2.5': 'Amici', 'D2.6': 'Tutore', 'D2.7': 'Insegnanti', 'D2.8': 'Figure sostegno',
+      'D2.9': 'Volontari', 'D2.10': 'Altre persone',
+      'E1.1': 'Pregiudizi nei miei confronti', 'E1.2': 'Solitudine', 'E1.3': 'Relazioni familiari',
+      'E1.4': 'Trovare lavoro', 'E1.5': 'Mantenimento economico', 'E1.6': 'Salute',
+      'E1.7': 'Casa', 'E1.8': 'Documenti',
+      'E2.1': 'Pregiudizi nei miei confronti', 'E2.2': 'Solitudine', 'E2.3': 'Famiglia',
+      'E2.4': 'Trovare lavoro', 'E2.5': 'Salute', 'E2.6': 'Avere una casa',
+      'E2.7': 'Documenti', 'E2.8': 'Mantenimento economico',
+      'E3': 'Aiuto futuro', 'E4': 'Pronto uscita',
+      'E5.1': 'Felicità', 'E5.2': 'Tristezza', 'E5.3': 'Curiosità',
+      'E5.4': 'Preoccupazione', 'E5.5': 'Paura', 'E5.6': 'Liberazione',
+      'E5.7': 'Solitudine', 'E5.8': 'Rabbia', 'E5.9': 'Speranza', 'E5.10': 'Determinazione',
+      'E6': 'Desiderio', 'PERCAUT': 'Percorso autonomia', 'VIVE': 'Vive in struttura'
+    }
+    return labels[field] || field
+  }
+
+  // Funzione per formattare un valore per la visualizzazione
+  function formatValue(field: string, value: any): string {
+    if (value === null || value === undefined) return 'N/D'
+    
+    // Campi binari (0/1) -> No/Sì
+    const binaryFields = ['FV.1', 'FV.2', 'FV.3', 'FV.4', 'FV.5', 'FV.6', 'FV.7', 'FV.8', 'FV.9', 
+      'FV.10', 'FV.11', 'FV.12', 'FV.13', 'FV.14', 'FV.15', 'FV.16',
+      'C2.1', 'C2.2', 'C2.3', 'C2.4', 'C2.5', 'C2.6', 'C3', 
+      'C4.1', 'C4.2', 'C4.3', 'C4.4', 'C4.5', 
+      'C5.1', 'C5.2', 'C5.3', 'C5.4', 'C5.5',
+      'D2.1', 'D2.2', 'D2.3', 'D2.4', 'D2.5', 'D2.6', 'D2.7', 'D2.8', 'D2.9', 'D2.10',
+      'E3', 'E4', 'E5.1', 'E5.2', 'E5.3', 'E5.4', 'E5.5', 'E5.6', 'E5.7', 'E5.8', 'E5.9', 'E5.10', 'E6',
+      'PERCAUT', 'VIVE']
+    
+    if (binaryFields.includes(field)) {
+      return value === 1 ? 'Sì' : 'No'
+    }
+    
+    // Campi con scale di valutazione (0-3) per E1 ed E2
+    const scaleFields = ['E1.1', 'E1.2', 'E1.3', 'E1.4', 'E1.5', 'E1.6', 'E1.7', 'E1.8',
+      'E2.1', 'E2.2', 'E2.3', 'E2.4', 'E2.5', 'E2.6', 'E2.7', 'E2.8']
+    
+    if (scaleFields.includes(field)) {
+      const labels = ['per niente', 'poco', 'abbastanza', 'molto']
+      if (field.startsWith('E2')) {
+        labels.push('Non è mio obiettivo')
+      }
+      return labels[value] || String(value)
+    }
+    
+    return String(value)
+  }
+
+  // Funzione per contare le corrispondenze
+  function countMatches(data: any[], rowField: string, rowValue: any, colField: string, colValue: any): number {
+    return data.filter(item => {
+      const rowMatch = getFieldValue(item, rowField) === rowValue
+      const colMatch = getFieldValue(item, colField) === colValue
+      return rowMatch && colMatch
+    }).length
+  }
+
+  // Funzione per contare le corrispondenze solo per colonna (per i totali)
+  function countMatchesCol(data: any[], colField: string, colValue: any): number {
+    return data.filter(item => getFieldValue(item, colField) === colValue).length
+  }
+
   return (
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-8">
@@ -1733,6 +2057,12 @@ export default function AmministratoriDashboard() {
             className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
           >
             Statistiche Generali
+          </button>
+          <button
+            onClick={generateCrosstabs}
+            className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
+          >
+            Statistiche Incrociate
           </button>
           <button
             onClick={handleLogout}
