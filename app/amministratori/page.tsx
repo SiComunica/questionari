@@ -1700,14 +1700,14 @@ export default function AmministratoriDashboard() {
     stats.push({
           Codice: emozioniCodici[idx],
           Domanda: `Emozioni Uscita - ${f.replace(/_/g, ' ')}`,
-        Risposta: 'Sì',
+      Risposta: 'Sì',
         Frequenza: count,
         Percentuale: `${((count / total) * 100).toFixed(1)}%`
-      })
-      stats.push({
+    })
+    stats.push({
           Codice: emozioniCodici[idx],
           Domanda: `Emozioni Uscita - ${f.replace(/_/g, ' ')}`,
-        Risposta: 'No',
+      Risposta: 'No',
         Frequenza: total - count,
         Percentuale: `${(((total - count) / total) * 100).toFixed(1)}%`
       })
@@ -1741,33 +1741,43 @@ export default function AmministratoriDashboard() {
       const crosstabsDef = await fetch('/incrociate-data.json')
         .then(res => res.json())
 
-      // Crea workbook per l'output
-      const workbook = XLSX.utils.book_new()
+      // Dividi in 4 gruppi
+      const groups = [
+        { start: 0, end: 315, name: 'Parte_1_Record_001-315' },
+        { start: 315, end: 630, name: 'Parte_2_Record_316-630' },
+        { start: 630, end: 895, name: 'Parte_3_Record_631-895' },
+        { start: 895, end: 944, name: 'Parte_4_Record_896-944_Filtri' }
+      ]
 
-      // Genera ogni tabella incrociata
-      for (let i = 0; i < crosstabsDef.length; i++) {
-        const def = crosstabsDef[i] as any
-        const sheetName = `${String(def.PROG).padStart(3, '0')}_${def.RIGHE}_x_${def.COLONNE}`.substring(0, 31)
+      // Genera un file per ogni gruppo
+      for (const group of groups) {
+        const workbook = XLSX.utils.book_new()
         
-        try {
-          const crosstab = buildCrosstab(giovaniData, def.RIGHE, def.COLONNE)
-          const ws = XLSX.utils.aoa_to_sheet(crosstab)
-          XLSX.utils.book_append_sheet(workbook, ws, sheetName)
-        } catch (err) {
-          console.error(`Errore nella tabella ${def.PROG}:`, err)
+        for (let i = group.start; i < group.end; i++) {
+          const def = crosstabsDef[i] as any
+          const sheetName = `${String(def.PROG).padStart(3, '0')}_${def.RIGHE}_x_${def.COLONNE}`.substring(0, 31)
+          
+          try {
+            const crosstab = buildCrosstab(giovaniData, def.RIGHE, def.COLONNE)
+            const ws = XLSX.utils.aoa_to_sheet(crosstab)
+            XLSX.utils.book_append_sheet(workbook, ws, sheetName)
+          } catch (err) {
+            console.error(`Errore nella tabella ${def.PROG}:`, err)
+          }
+          
+          // Aggiorna progresso
+          if (i % 50 === 0) {
+            toast.success(`${group.name}: elaborate ${i - group.start + 1} / ${group.end - group.start} tabelle...`)
+          }
         }
-        
-        // Aggiorna progresso ogni 50 tabelle
-        if (i % 50 === 0) {
-          toast.success(`Elaborate ${i} / ${crosstabsDef.length} tabelle...`)
-        }
+
+        // Salva il file
+        const fileName = `statistiche_incrociate_${group.name}_${format(new Date(), 'yyyy-MM-dd_HH-mm')}.xlsx`
+        XLSX.writeFile(workbook, fileName)
+        toast.success(`${group.name} completato!`)
       }
 
-      // Salva il file
-      const fileName = `statistiche_incrociate_${format(new Date(), 'yyyy-MM-dd_HH-mm')}.xlsx`
-      XLSX.writeFile(workbook, fileName)
-
-      toast.success('Statistiche incrociate generate con successo!')
+      toast.success('Tutti i 4 file di statistiche incrociate generati con successo!')
     } catch (error) {
       console.error('Errore:', error)
       toast.error('Errore nella generazione delle statistiche incrociate')
