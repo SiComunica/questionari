@@ -1741,26 +1741,40 @@ export default function AmministratoriDashboard() {
       const crosstabsDef = await fetch('/incrociate-data.json')
         .then(res => res.json())
 
-      // Dividi in 4 gruppi
+      // Dividi in gruppi più piccoli (max 200 fogli per file per evitare limiti Excel/browser)
       const groups = [
-        { start: 0, end: 315, name: 'Parte_1_Record_001-315' },
-        { start: 315, end: 630, name: 'Parte_2_Record_316-630' },
-        { start: 630, end: 895, name: 'Parte_3_Record_631-895' },
-        { start: 895, end: 944, name: 'Parte_4_Record_896-944_Filtri' }
+        { start: 0, end: 200, name: 'Parte_1_Record_001-200' },
+        { start: 200, end: 400, name: 'Parte_2_Record_201-400' },
+        { start: 400, end: 600, name: 'Parte_3_Record_401-600' },
+        { start: 600, end: 800, name: 'Parte_4_Record_601-800' },
+        { start: 800, end: 895, name: 'Parte_5_Record_801-895' },
+        { start: 895, end: 944, name: 'Parte_6_Record_896-944_Filtri' }
       ]
 
-      // Genera un file per ogni gruppo
-      for (const group of groups) {
-        const workbook = XLSX.utils.book_new()
+      // Crea UN SOLO FILE con più fogli
+      const workbook = XLSX.utils.book_new()
+      
+      // Genera un foglio per ogni gruppo
+      for (let groupIdx = 0; groupIdx < groups.length; groupIdx++) {
+        const group = groups[groupIdx]
+        
+        toast.success(`Generazione ${group.name}...`)
+        
+        // Array che conterrà tutte le righe di questo foglio
+        const allRows: any[][] = []
         
         for (let i = group.start; i < group.end; i++) {
           const def = crosstabsDef[i] as any
-          const sheetName = `${String(def.PROG).padStart(3, '0')}_${def.RIGHE}_x_${def.COLONNE}`.substring(0, 31)
           
           try {
             const crosstab = buildCrosstab(giovaniData, def.RIGHE, def.COLONNE)
-            const ws = XLSX.utils.aoa_to_sheet(crosstab)
-            XLSX.utils.book_append_sheet(workbook, ws, sheetName)
+            
+            // Aggiungi le righe della tabella
+            allRows.push(...crosstab)
+            
+            // Aggiungi 2 righe vuote tra una tabella e l'altra
+            allRows.push([])
+            allRows.push([])
           } catch (err) {
             console.error(`Errore nella tabella ${def.PROG}:`, err)
           }
@@ -1771,13 +1785,19 @@ export default function AmministratoriDashboard() {
           }
         }
 
-        // Salva il file
-        const fileName = `statistiche_incrociate_${group.name}_${format(new Date(), 'yyyy-MM-dd_HH-mm')}.xlsx`
-        XLSX.writeFile(workbook, fileName)
+        // Crea il foglio con tutte le tabelle impilate
+        const ws = XLSX.utils.aoa_to_sheet(allRows)
+        const sheetName = `Foglio ${groupIdx + 1} (${group.start + 1}-${group.end})`
+        XLSX.utils.book_append_sheet(workbook, ws, sheetName)
+        
         toast.success(`${group.name} completato!`)
       }
 
-      toast.success('Tutti i 4 file di statistiche incrociate generati con successo!')
+      // Salva UN SOLO file
+      const fileName = `statistiche_incrociate_completo_${format(new Date(), 'yyyy-MM-dd_HH-mm')}.xlsx`
+      XLSX.writeFile(workbook, fileName)
+
+      toast.success('File con tutte le statistiche incrociate generato con successo!')
     } catch (error) {
       console.error('Errore:', error)
       toast.error('Errore nella generazione delle statistiche incrociate')
