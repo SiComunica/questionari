@@ -1767,6 +1767,10 @@ export default function AmministratoriDashboard() {
           const def = crosstabsDef[i] as any
           
           try {
+            // Aggiungi intestazione VERDE con numero record e campi
+            allRows.push([`RECORD ${def.PROG}: ${def.RIGHE} x ${def.COLONNE}`])
+            allRows.push([]) // Riga vuota dopo l'intestazione
+            
             const crosstab = buildCrosstab(giovaniData, def.RIGHE, def.COLONNE)
             
             // Aggiungi le righe della tabella
@@ -1787,6 +1791,22 @@ export default function AmministratoriDashboard() {
 
         // Crea il foglio con tutte le tabelle impilate
         const ws = XLSX.utils.aoa_to_sheet(allRows)
+        
+        // Applica formattazione verde alle intestazioni dei record
+        const range = XLSX.utils.decode_range(ws['!ref'] || 'A1')
+        for (let R = range.s.r; R <= range.e.r; R++) {
+          const cellAddress = XLSX.utils.encode_cell({ r: R, c: 0 })
+          const cell = ws[cellAddress]
+          if (cell && cell.v && typeof cell.v === 'string' && cell.v.startsWith('RECORD')) {
+            // Applica stile verde grassetto
+            cell.s = {
+              fill: { fgColor: { rgb: '92D050' } }, // Verde
+              font: { bold: true, sz: 12, color: { rgb: '000000' } },
+              alignment: { horizontal: 'left', vertical: 'center' }
+            }
+          }
+        }
+        
         const sheetName = `Foglio ${groupIdx + 1} (${group.start + 1}-${group.end})`
         XLSX.utils.book_append_sheet(workbook, ws, sheetName)
         
